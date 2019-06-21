@@ -10,4 +10,6 @@ public class Api {
     public final static String SOURCE_6_API = "http://jx.skyfollowsnow.pro/?url=";
     //检测更新
     public final static String CHECK_UPDATE = "https://api.github.com/repos/670848654/SakuraAnime/releases/latest";
+    //樱花动漫解析Api
+    public final static String PARSE_API = "http://tup.yhdm.tv/?vid=%s";
 }

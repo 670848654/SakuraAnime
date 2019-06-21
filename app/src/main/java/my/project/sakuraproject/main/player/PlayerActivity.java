@@ -29,6 +29,7 @@ import cn.jzvd.Jzvd;
 import cn.jzvd.JzvdStd;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.adapter.DramaAdapter;
+import my.project.sakuraproject.api.Api;
 import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.bean.AnimeDescBean;
 import my.project.sakuraproject.main.base.BaseActivity;
@@ -217,7 +218,10 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
                 Sakura.getInstance().showToastMsg("该播放地址貌似应该使用网页播放！？");
                 startActivity(new Intent(PlayerActivity.this, DefaultWebActivity.class).putExtra("url", url));
             }
-        } else Sakura.getInstance().showToastMsg(Utils.getString(R.string.cannot_load_msg));
+        }  else {
+            Sakura.getInstance().showToastMsg("注意：该播放地址可能无法正常播放！");
+            startActivity(new Intent(PlayerActivity.this, DefaultWebActivity.class).putExtra("url",String.format(Api.PARSE_API, url)));
+        }
     }
 
     @OnClick({R.id.select_player, R.id.open_in_browser})

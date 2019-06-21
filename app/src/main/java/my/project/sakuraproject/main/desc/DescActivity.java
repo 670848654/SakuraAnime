@@ -38,6 +38,7 @@ import butterknife.BindView;
 import jp.wasabeef.blurry.Blurry;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.adapter.DescAdapter;
+import my.project.sakuraproject.api.Api;
 import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.bean.AnimeDescBean;
 import my.project.sakuraproject.bean.AnimeListBean;
@@ -243,7 +244,10 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
                 Sakura.getInstance().showToastMsg("该播放地址貌似应该使用网页播放！？");
                 startActivity(new Intent(DescActivity.this, DefaultWebActivity.class).putExtra("url", animeUrl));
             }
-        } else Sakura.getInstance().showToastMsg(Utils.getString(R.string.cannot_load_msg));
+        } else {
+            Sakura.getInstance().showToastMsg("注意：该播放地址可能无法正常播放！");
+            startActivity(new Intent(DescActivity.this, DefaultWebActivity.class).putExtra("url",String.format(Api.PARSE_API, animeUrl)));
+        }
     }
 
     @Override

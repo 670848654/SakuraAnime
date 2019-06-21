@@ -47,7 +47,6 @@
     <string name="load_desc_info">请在番剧详情加载完毕后再进行操作</string>
     <!-- msg文本 -->
     <string name="parsing">解析中，请稍后&#8230;</string>
-    <string name="cannot_load_msg">该类型暂时无法播放</string>
     <string name="error_700">网络错误，请重试!</string>
     <string name="error_800">未能获取到播放地址\n1、解析方法不支持\n2、播放地址不存在\n3、可以尝试打开原页面去播放</string>
     <string name="join_ok">自己追的番就要好好看完哦 （&gt;▽&lt;）</string>
@@ -109,7 +108,7 @@
     <string name="check_update_text">检测更新中&#8230;</string>
     <string name="download">下载中,请等待</string>
     <string name="final_compile">最后编译</string>
-    <string name="final_compile_time">2019年6月21日12:13:51</string>
+    <string name="final_compile_time">2019年6月21日15:21:22</string>
     <string name="cache">缓存目录</string>
     <string name="cache_text">/SakuraAnime/\n卸载后自行删除此目录</string>
     <!-- 快捷方式文本 -->

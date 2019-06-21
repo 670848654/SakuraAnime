@@ -467,8 +467,10 @@ public class WebActivity extends BaseActivity implements VideoContract.View {
                 Sakura.getInstance().showToastMsg("该播放地址貌似应该使用网页播放！？");
                 startActivity(new Intent(WebActivity.this, DefaultWebActivity.class).putExtra("url", url));
             }
-        } else
-            Sakura.getInstance().showToastMsg(Utils.getString(R.string.cannot_load_msg));
+        }  else {
+            Sakura.getInstance().showToastMsg("注意：该播放地址可能无法正常播放！");
+            startActivity(new Intent(WebActivity.this, DefaultWebActivity.class).putExtra("url",String.format(Api.PARSE_API, url)));
+        }
     }
 
     /**

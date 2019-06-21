@@ -18,7 +18,7 @@
     <string name="home_setting_title">设置</string>
     <string name="home_setting_item_title">自定义</string>
     <string name="home_other_title">其他</string>
-    <string name="home_other_item_title">自定义</string>
+    <string name="home_other_item_title">关于</string>
     <string name="huaji">嘤嘤嘤嘤嘤 (。・∀・)ノ</string>
     <string name="search_hint">请输入动漫名</string>
     <!-- exit 文本 -->

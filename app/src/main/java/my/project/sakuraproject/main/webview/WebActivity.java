@@ -2,6 +2,7 @@ package my.project.sakuraproject.main.webview;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Build;
 import android.os.Bundle;
@@ -418,8 +419,8 @@ public class WebActivity extends BaseActivity implements VideoContract.View {
             mX5WebView.destroy();
         if (null != presenter)
             presenter.detachView();
-        Utils.deleteAllFiles(new File(android.os.Environment.getExternalStorageDirectory() + "/Android/data/anime.project.dilidili/cache"));
-        Utils.deleteAllFiles(new File(android.os.Environment.getExternalStorageDirectory() + "/Android/data/anime.project.dilidili/files/VideoCache/main"));
+        Utils.deleteAllFiles(new File(android.os.Environment.getExternalStorageDirectory() + "/Android/data/my.project.sakuraproject/cache"));
+        Utils.deleteAllFiles(new File(android.os.Environment.getExternalStorageDirectory() + "/Android/data/my.project.sakuraproject/files/VideoCache/main"));
         super.onDestroy();
     }
 
@@ -452,7 +453,7 @@ public class WebActivity extends BaseActivity implements VideoContract.View {
             if (animeUrl.contains("jx.618g.com")) {
                 url = animeUrl.replaceAll("http://jx.618g.com/\\?url=", "");
                 loadUrl();
-            } else {
+            } else if (animeUrl.contains(".mp4") || animeUrl.contains(".m3u8")) {
                 switch ((Integer) SharedPreferencesUtils.getParam(getApplicationContext(), "player", 0)) {
                     case 0:
                         //调用播放器
@@ -462,6 +463,9 @@ public class WebActivity extends BaseActivity implements VideoContract.View {
                         Utils.selectVideoPlayer(this, url);
                         break;
                 }
+            }else {
+                Sakura.getInstance().showToastMsg("该播放地址貌似应该使用网页播放！？");
+                startActivity(new Intent(WebActivity.this, DefaultWebActivity.class).putExtra("url", url));
             }
         } else
             Sakura.getInstance().showToastMsg(Utils.getString(R.string.cannot_load_msg));

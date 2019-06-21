@@ -56,6 +56,12 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <activity
+            android:name=".main.webview.DefaultWebActivity"
+            android:configChanges="screenLayout|orientation|screenSize|smallestScreenSize|keyboardHidden"
+            android:hardwareAccelerated="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+        <activity
             android:name=".main.tag.TagActivity"
             android:configChanges="screenLayout|orientation|screenSize|smallestScreenSize|keyboardHidden"
             android:screenOrientation="portrait"

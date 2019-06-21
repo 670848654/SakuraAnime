@@ -46,6 +46,7 @@ import my.project.sakuraproject.database.DatabaseUtil;
 import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.video.VideoContract;
 import my.project.sakuraproject.main.video.VideoPresenter;
+import my.project.sakuraproject.main.webview.DefaultWebActivity;
 import my.project.sakuraproject.util.SharedPreferencesUtils;
 import my.project.sakuraproject.util.StatusBarUtil;
 import my.project.sakuraproject.util.SwipeBackLayoutUtil;
@@ -228,7 +229,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
             if (animeUrl.contains("jx.618g.com")) {
                 animeUrl = animeUrl.replaceAll("http://jx.618g.com/\\?url=", "");
                 VideoUtils.openWebview(true, this, witchTitle, animeTitle, animeUrl, diliUrl, drama);
-            } else {
+            } else if (animeUrl.contains(".mp4") || animeUrl.contains(".m3u8")) {
                 switch ((Integer) SharedPreferencesUtils.getParam(getApplicationContext(), "player", 0)) {
                     case 0:
                         //调用播放器
@@ -238,6 +239,9 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
                         Utils.selectVideoPlayer(this, animeUrl);
                         break;
                 }
+            } else {
+                Sakura.getInstance().showToastMsg("该播放地址貌似应该使用网页播放！？");
+                startActivity(new Intent(DescActivity.this, DefaultWebActivity.class).putExtra("url", animeUrl));
             }
         } else Sakura.getInstance().showToastMsg(Utils.getString(R.string.cannot_load_msg));
     }

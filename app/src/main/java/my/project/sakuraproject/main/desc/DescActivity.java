@@ -156,6 +156,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
             switch (bean.getType()) {
                 case "play":
                     p = Utils.getProDialog(DescActivity.this, R.string.parsing);
+                    bean.setSelect(true);
                     Button v = (Button) adapter.getViewByPosition(mRecyclerView, position, R.id.tag_group);
                     v.setBackgroundResource(R.drawable.button_selected);
                     dramaUrl = VideoUtils.getUrl(bean.getUrl());

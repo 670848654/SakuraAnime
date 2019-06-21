@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/find_anime"
+            android:icon="@drawable/baseline_filter_white_48dp"
+            android:title="@string/home_tag_title" />
+        <item
+            android:id="@+id/anime_movie"
+            android:icon="@drawable/baseline_movie_white_48dp"
+            android:title="@string/home_movie_title" />
+        <item
+            android:id="@+id/anime_zt"
+            android:icon="@drawable/baseline_subscriptions_white_48dp"
+            android:title="@string/home_zt_title" />
+        <item
+            android:id="@+id/anime_jcb"
+            android:icon="@drawable/ic_ondemand_video_white_48dp"
+            android:title="@string/home_jcb_title" />
+    </group>
+    <item android:title="@string/home_my_title">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/favorite"
+                    android:icon="@drawable/ic_loyalty_white_48dp"
+                    android:title="@string/home_my_item_title" />
+            </group>
+        </menu>
+    </item>
+    <item android:title="@string/home_setting_title">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/setting"
+                    android:icon="@drawable/ic_settings_white_48dp"
+                    android:title="@string/home_setting_item_title" />
+            </group>
+        </menu>
+    </item>
+    <item android:title="@string/home_other_title">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/about"
+                    android:icon="@drawable/ic_bubble_chart_white_48dp"
+                    android:title="@string/home_other_item_title" />
+            </group>
+        </menu>
+    </item>
+
+</menu>

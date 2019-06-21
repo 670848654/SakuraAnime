@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/bg"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:background="@drawable/parsing_error_bg"
+        android:gravity="center"
+        android:lineSpacingExtra="10dp"
+        android:padding="10dp"
+        android:textColor="#333"
+        android:textSize="18sp" />
+</RelativeLayout>

@@ -2,8 +2,10 @@ package my.project.sakuraproject.main.setting.user;
 
 import java.util.List;
 
+import my.project.sakuraproject.R;
 import my.project.sakuraproject.bean.ApiBean;
 import my.project.sakuraproject.database.DatabaseUtil;
+import my.project.sakuraproject.util.Utils;
 
 public class ApiModel implements ApiContract.Model {
 
@@ -13,6 +15,6 @@ public class ApiModel implements ApiContract.Model {
         if (list.size() > 0)
             callback.success(list);
         else
-            callback.error("未自定义解析Api~");
+            callback.error(Utils.getString(R.string.no_api));
     }
 }

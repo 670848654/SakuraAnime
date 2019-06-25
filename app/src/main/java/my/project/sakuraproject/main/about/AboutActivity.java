@@ -74,7 +74,7 @@ public class AboutActivity extends BaseActivity {
     }
 
     public void initToolbar() {
-        toolbar.setTitle("关于");
+        toolbar.setTitle(Utils.getString(R.string.about));
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbar.setNavigationOnClickListener(view -> finish());
@@ -115,7 +115,7 @@ public class AboutActivity extends BaseActivity {
         new Handler().postDelayed(() -> new HttpGet(Api.CHECK_UPDATE, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                runOnUiThread(() -> application.showSnackbarMsg(toolbar, "连接服务器超时", "重试", view -> checkUpdate()));
+                runOnUiThread(() -> application.showSnackbarMsg(toolbar, Utils.getString(R.string.ck_network_error), Utils.getString(R.string.ck_retry), view -> checkUpdate()));
             }
 
             @Override
@@ -127,7 +127,7 @@ public class AboutActivity extends BaseActivity {
                     if (newVersion.equals(Utils.getASVersionName()))
                         runOnUiThread(() -> {
                             Utils.cancelProDialog(p);
-                            application.showToastMsg("没有新版本");
+                            application.showToastMsg(Utils.getString(R.string.no_new_version));
                         });
                     else {
                         downloadUrl = obj.getJSONArray("assets").getJSONObject(0).getString("browser_download_url");
@@ -139,7 +139,7 @@ public class AboutActivity extends BaseActivity {
                                     body,
                                     (dialog, which) -> {
                                         p = Utils.showProgressDialog(AboutActivity.this);
-                                        p.setButton(ProgressDialog.BUTTON_NEGATIVE, "取消", (dialog1, which1) -> {
+                                        p.setButton(ProgressDialog.BUTTON_NEGATIVE, Utils.getString(R.string.cancel), (dialog1, which1) -> {
                                             if (null != downCall)
                                                 downCall.cancel();
                                             dialog1.dismiss();
@@ -183,7 +183,7 @@ public class AboutActivity extends BaseActivity {
             public void onDownloadFailed() {
                 runOnUiThread(() -> {
                     Utils.cancelProDialog(p);
-                    application.showSnackbarMsg(toolbar, "下载失败~");
+                    application.showSnackbarMsg(toolbar, Utils.getString(R.string.download_error));
                 });
             }
         });

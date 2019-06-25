@@ -24,13 +24,16 @@ import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
+import com.bumptech.glide.request.transition.Transition;
 import com.google.android.material.snackbar.Snackbar;
 import com.r0adkll.slidr.model.SlidrConfig;
 import com.r0adkll.slidr.model.SlidrPosition;
@@ -38,19 +41,20 @@ import com.r0adkll.slidr.model.SlidrPosition;
 import java.io.File;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import androidx.annotation.ArrayRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AlertDialog;
 import androidx.browser.customtabs.CustomTabsIntent;
+import androidx.cardview.widget.CardView;
 import androidx.core.content.FileProvider;
+import androidx.palette.graphics.Palette;
 import my.project.sakuraproject.BuildConfig;
 import my.project.sakuraproject.R;
 
 public class Utils {
-    private final static Pattern IMAGE_PATTERN = Pattern.compile("http://(.*jpg|.*jpeg|.*png)");
     private static Context context;
 
     private Utils() {
@@ -171,6 +175,11 @@ public class Utils {
         }
     }
 
+    /**
+     * 通过浏览器打开
+     * @param context
+     * @param url
+     */
     public static void viewInChrome(Context context, String url) {
         CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
         //Sets the toolbar color.
@@ -182,6 +191,11 @@ public class Utils {
         customTabsIntent.launchUrl(context, Uri.parse(url));
     }
 
+    /**
+     * 获取string.xml文本
+     * @param id
+     * @return
+     */
     public static String getString(@StringRes int id) {
         return getContext().getResources().getString(id);
     }
@@ -217,7 +231,7 @@ public class Utils {
     }
 
     /**
-     * info
+     * 首次进入主页弹窗
      */
     public static void showX5Info(Context context) {
         AlertDialog alertDialog;
@@ -374,21 +388,6 @@ public class Utils {
     }
 
     /**
-     * 获取图片url
-     *
-     * @return
-     */
-    public static String getImageUrl(String style) {
-        String url = "";
-        Matcher m = IMAGE_PATTERN.matcher(style);
-        while (m.find()) {
-            url = m.group();
-            break;
-        }
-        return url;
-    }
-
-    /**
      * 设置默认图片
      *
      * @param url
@@ -405,6 +404,28 @@ public class Utils {
                 .transition(DrawableTransitionOptions.withCrossFade(drawableCrossFadeFactory))
                 .apply(options)
                 .into(imageView);
+    }
+
+    /**
+     * 设置Palette
+     * @param context
+     * @param url
+     * @param cardView
+     * @param textView
+     */
+    public static void setCardBg(Context context, String url, CardView cardView, TextView textView) {
+        Glide.with(context).asBitmap().load(url).into(new SimpleTarget<Bitmap>() {
+            @Override
+            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                Palette.from(resource).generate(palette -> {
+                    Palette.Swatch swatch = palette.getDarkVibrantSwatch();
+                    if (swatch != null) {
+                        cardView.setCardBackgroundColor(swatch.getRgb());
+                        textView.setTextColor(swatch.getBodyTextColor());
+                    }
+                });
+            }
+        });
     }
 
 
@@ -490,6 +511,14 @@ public class Utils {
         return true;
     }
 
+    /**
+     * 发现新版本弹窗
+     * @param context
+     * @param version
+     * @param body
+     * @param posListener
+     * @param negListener
+     */
     public static void findNewVersion(Context context,
                                       String version,
                                       String body,
@@ -498,9 +527,9 @@ public class Utils {
         AlertDialog alertDialog;
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setMessage(body);
-        builder.setTitle("发现新版本 " + version);
-        builder.setPositiveButton("马上更新", posListener);
-        builder.setNegativeButton("暂不更新", negListener);
+        builder.setTitle(getString(R.string.find_new_version) + version);
+        builder.setPositiveButton(getString(R.string.update_now), posListener);
+        builder.setNegativeButton(getString(R.string.update_after), negListener);
         builder.setCancelable(false);
         alertDialog = builder.create();
         alertDialog.show();

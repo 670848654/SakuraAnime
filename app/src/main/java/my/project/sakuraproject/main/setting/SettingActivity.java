@@ -38,7 +38,7 @@ public class SettingActivity extends BaseActivity {
     @BindView(R.id.api)
     TextView api;
     private String url;
-    private String[] playerItems = {"内置", "外置"};
+    private String[] playerItems = Utils.getArray(R.array.player);
 
     @Override
     protected Presenter createPresenter() {
@@ -156,7 +156,7 @@ public class SettingActivity extends BaseActivity {
 
     public void setDefaultPlayer() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("请选择视频播放器");
+        builder.setTitle(Utils.getString(R.string.select_player));
         builder.setSingleChoiceItems(playerItems, (Integer) SharedPreferencesUtils.getParam(getApplicationContext(), "player", 0), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {

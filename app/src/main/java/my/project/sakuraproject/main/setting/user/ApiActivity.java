@@ -95,13 +95,13 @@ public class ApiActivity extends BaseActivity<ApiContract.View, ApiPresenter> im
 
     public void delete(int position) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("删除后将无法恢复。\n是否删除？");
+        builder.setMessage(Utils.getString(R.string.delete_api_title));
         builder.setPositiveButton(Utils.getString(R.string.page_positive), (dialog, i) -> {
             DatabaseUtil.deleteApi(apiList.get(position).getId());
             adapter.remove(position);
             if (apiList.size() == 0) {
                 adapter.notifyDataSetChanged();
-                errorTitle.setText("未自定义");
+                errorTitle.setText(Utils.getString(R.string.no_api));
                 adapter.setEmptyView(errorView);
             }
         });

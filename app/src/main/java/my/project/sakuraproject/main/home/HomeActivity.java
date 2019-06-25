@@ -196,16 +196,16 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
                 startActivity(new Intent(this, TagActivity.class));
                 break;
             case R.id.anime_movie:
-                openAnimeListActivity("动漫电影", Sakura.MOVIE_API, true);
+                openAnimeListActivity(Utils.getString(R.string.home_movie_title), Sakura.MOVIE_API, true);
                 break;
             case R.id.anime_zt:
                 Bundle bundle = new Bundle();
-                bundle.putString("title", "动漫专题");
+                bundle.putString("title", Utils.getString(R.string.home_zt_title));
                 bundle.putString("url", Sakura.ZT_API);
                 startActivity(new Intent(this, AnimeTopicActivity.class).putExtras(bundle));
                 break;
             case R.id.anime_jcb:
-                openAnimeListActivity("剧场版动画", Sakura.JCB_API, false);
+                openAnimeListActivity(Utils.getString(R.string.home_jcb_title), Sakura.JCB_API, false);
                 break;
             case R.id.favorite:
                 startActivity(new Intent(this, FavoriteActivity.class));

@@ -80,7 +80,7 @@ public class DescModel implements DescContract.Model {
     }
 
     private void setPlayData(Elements els) {
-        AnimeHeaderBean animeHeaderBean = new AnimeHeaderBean("在线");
+        AnimeHeaderBean animeHeaderBean = new AnimeHeaderBean(Utils.getString(R.string.online));
         boolean select;
         for (int i = 0, size = els.size(); i < size; i++) {
             String name = els.get(i).select("a").text();
@@ -100,7 +100,7 @@ public class DescModel implements DescContract.Model {
     }
 
     private void setMulti(Elements els) {
-        AnimeHeaderBean animeHeaderBean = new AnimeHeaderBean("多季");
+        AnimeHeaderBean animeHeaderBean = new AnimeHeaderBean(Utils.getString(R.string.multi));
         for (int i = 0, size = els.size(); i < size; i++) {
             animeHeaderBean.addSubItem(
                     new AnimeDescBean(
@@ -114,7 +114,7 @@ public class DescModel implements DescContract.Model {
     }
 
     private void setRecommend(Elements els) {
-        AnimeHeaderBean animeHeaderBean = new AnimeHeaderBean("相关推荐");
+        AnimeHeaderBean animeHeaderBean = new AnimeHeaderBean(Utils.getString(R.string.recommend));
         for (int i = 0, size = els.size(); i < size; i++) {
             animeHeaderBean.addSubItem(
                     new AnimeDescBean(

@@ -9,7 +9,6 @@ import com.r0adkll.slidr.Slidr;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -28,7 +27,6 @@ import my.project.sakuraproject.util.Utils;
 import my.project.sakuraproject.util.VideoUtils;
 
 public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> implements TagContract.View {
-    private final static Pattern YEAR = Pattern.compile("([0-9])");
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.rv_list)

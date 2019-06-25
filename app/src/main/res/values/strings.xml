@@ -26,7 +26,7 @@
     <string name="exit">退出</string>
     <!-- 主页dialog文本 -->
     <string name="x5_info_title">注意事项</string>
-    <string name="x5_info">一些老番可能需要使用WebView播放(做了兼容但未测试，默认加载腾讯x5内核，首次可能会加载失败，尝试杀进程重启应用或卸载重装应用)。\n新番多数可以直接使用内置播放器或外部播放器播放~\n并不是所有番剧都能正常播放（多为网站本身原因）~</string>
+    <string name="x5_info">一些老番可能需要使用WebView播放(做了兼容但未测试，默认加载腾讯x5内核，首次可能会加载失败，尝试杀进程重启应用或卸载重装应用)。\n新番多数可以直接使用内置播放器或外部播放器播放(某些可能第一次播放失败，需多尝试几次)。\n注：并不是所有番剧都能正常播放（多为网站本身原因）~</string>
     <string name="x5_info_positive">OJBK</string>
     <!-- 空文本 -->
     <string name="empty">未能获取到任何信息!</string>
@@ -46,6 +46,8 @@
     <string name="load_error">加载失败</string>
     <string name="load_desc_info">请在番剧详情加载完毕后再进行操作</string>
     <!-- msg文本 -->
+    <string name="select_player">请选择视频播放器</string>
+    <string name="select_video_source">选择播放源</string>
     <string name="parsing">解析中，请稍后&#8230;</string>
     <string name="error_700">网络错误，请重试!</string>
     <string name="error_800">未能获取到播放地址\n1、解析方法不支持\n2、播放地址不存在\n3、可以尝试打开原页面去播放</string>
@@ -54,6 +56,13 @@
     <string name="parsing_error">OH~解析出错了\n代码无法解析该界面信息~\n</string>
     <string name="error_msg">抱歉，未找到相关信息~</string>
     <string name="no_playlist_error">该番剧暂无播放列表。</string>
+    <string name="get_drama_error">获取剧集信息出错</string>
+    <string name="should_be_used_web">该播放地址貌似应该使用网页播放！？</string>
+    <string name="maybe_can_not_play">注意：该播放地址可能无法正常播放！</string>
+    <!-- 详情界面文本 -->
+    <string name="online">在线</string>
+    <string name="multi">多季</string>
+    <string name="recommend">相关推荐</string>
     <!-- 播放地址未找到 -->
     <string name="play_not_found_title">解析失败</string>
     <string name="play_not_found_positive">访问原页面</string>
@@ -81,6 +90,8 @@
     <string name="anthology">选集</string>
     <!-- api -->
     <string name="api_title">自定义解析API</string>
+    <string name="delete_api_title">删除后将无法恢复。\n是否删除？</string>
+    <string name="no_api">未自定义解析Api~</string>
     <!-- menu通用文本 -->
     <string name="phone_model">手机版</string>
     <string name="pc_model">电脑版</string>
@@ -104,13 +115,25 @@
     <string name="test_model">测试</string>
     <string name="test_model_desc">OnePlus 7 Pro : Android 9</string>
     <string name="now_version">当前版本</string>
+    <string name="final_compile">最后编译</string>
+    <string name="final_compile_time">2019年6月24日17:09:43</string>
+    <string name="cache">缓存目录</string>
+    <string name="cache_text">/SakuraAnime/\n卸载后自行删除此目录</string>
+    <!-- 检测更新 -->
     <string name="check_update">检测更新</string>
     <string name="check_update_text">检测更新中&#8230;</string>
     <string name="download">下载中,请等待</string>
-    <string name="final_compile">最后编译</string>
-    <string name="final_compile_time">2019年6月21日15:21:22</string>
-    <string name="cache">缓存目录</string>
-    <string name="cache_text">/SakuraAnime/\n卸载后自行删除此目录</string>
+    <string name="ck_network_error">连接服务器超时</string>
+    <string name="ck_network_error_start">连接服务器超时，检测更新失败</string>
+    <string name="ck_retry">重试</string>
+    <string name="no_new_version">没有新版本</string>
+    <string name="cancel">取消</string>
+    <string name="download_error">下载失败~</string>
+    <string name="find_new_version">发现新版本</string>
+    <string name="update_now">现在更新</string>
+    <string name="update_after">暂不更新</string>
+    <!-- 开源相关 -->
+    <string name="os_title">开源相关</string>
     <!-- 快捷方式文本 -->
     <string name="disableMsg">不可用</string>
     <string name="searchShortName">搜索动漫</string>
@@ -131,5 +154,9 @@
     <string-array name="prefix">
         <item>http://</item>
         <item>https://</item>
+    </string-array>
+    <string-array name="player">
+        <item>内置</item>
+        <item>外置</item>
     </string-array>
 </resources>

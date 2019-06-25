@@ -26,7 +26,6 @@ import com.tencent.smtt.export.external.interfaces.IX5WebChromeClient;
 import com.tencent.smtt.sdk.WebChromeClient;
 import com.tencent.smtt.sdk.WebView;
 
-import java.io.File;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -53,6 +52,7 @@ import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.base.Presenter;
 import my.project.sakuraproject.main.video.VideoContract;
 import my.project.sakuraproject.main.video.VideoPresenter;
+import my.project.sakuraproject.services.ClearVideoCacheService;
 import my.project.sakuraproject.util.SharedPreferencesUtils;
 import my.project.sakuraproject.util.Utils;
 import my.project.sakuraproject.util.VideoUtils;
@@ -368,7 +368,7 @@ public class WebActivity extends BaseActivity implements VideoContract.View {
 
     @Override
     public void errorDramaView() {
-        runOnUiThread(() -> application.showToastMsg("获取剧集信息出错"));
+        runOnUiThread(() -> application.showToastMsg(Utils.getString(R.string.get_drama_error)));
     }
 
     /**
@@ -419,8 +419,7 @@ public class WebActivity extends BaseActivity implements VideoContract.View {
             mX5WebView.destroy();
         if (null != presenter)
             presenter.detachView();
-        Utils.deleteAllFiles(new File(android.os.Environment.getExternalStorageDirectory() + "/Android/data/my.project.sakuraproject/cache"));
-        Utils.deleteAllFiles(new File(android.os.Environment.getExternalStorageDirectory() + "/Android/data/my.project.sakuraproject/files/VideoCache/main"));
+        startService(new Intent(this, ClearVideoCacheService.class));
         super.onDestroy();
     }
 
@@ -464,11 +463,12 @@ public class WebActivity extends BaseActivity implements VideoContract.View {
                         break;
                 }
             }else {
-                Sakura.getInstance().showToastMsg("该播放地址貌似应该使用网页播放！？");
+                Sakura.getInstance().showToastMsg(Utils.getString(R.string.should_be_used_web));
                 startActivity(new Intent(WebActivity.this, DefaultWebActivity.class).putExtra("url", url));
+                this.finish();
             }
         }  else {
-            Sakura.getInstance().showToastMsg("注意：该播放地址可能无法正常播放！");
+            Sakura.getInstance().showToastMsg(Utils.getString(R.string.maybe_can_not_play));
             startActivity(new Intent(WebActivity.this, DefaultWebActivity.class).putExtra("url",String.format(Api.PARSE_API, url)));
         }
     }

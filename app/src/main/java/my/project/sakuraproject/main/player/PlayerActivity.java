@@ -154,6 +154,7 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
                     p = Utils.getProDialog(PlayerActivity.this, R.string.parsing);
                     Button v = (Button) adapter.getViewByPosition(recyclerView, position, R.id.tag_group);
                     v.setBackgroundResource(R.drawable.button_selected);
+                    bean.setSelect(true);
                     diliUrl = VideoUtils.getUrl(bean.getUrl());
                     witchTitle = animeTitle + " - " + bean.getTitle();
                     presenter = new VideoPresenter(animeTitle, diliUrl, PlayerActivity.this);
@@ -215,11 +216,12 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
                         break;
                 }
             }else {
-                Sakura.getInstance().showToastMsg("该播放地址貌似应该使用网页播放！？");
+                Sakura.getInstance().showToastMsg(Utils.getString(R.string.should_be_used_web));
                 startActivity(new Intent(PlayerActivity.this, DefaultWebActivity.class).putExtra("url", url));
+                this.finish();
             }
         }  else {
-            Sakura.getInstance().showToastMsg("注意：该播放地址可能无法正常播放！");
+            Sakura.getInstance().showToastMsg(Utils.getString(R.string.maybe_can_not_play));
             startActivity(new Intent(PlayerActivity.this, DefaultWebActivity.class).putExtra("url",String.format(Api.PARSE_API, url)));
         }
     }
@@ -336,7 +338,7 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
 
     @Override
     public void errorDramaView() {
-        runOnUiThread(() -> application.showToastMsg("获取剧集信息出错"));
+        runOnUiThread(() -> application.showToastMsg(Utils.getString(R.string.get_drama_error)));
     }
 
     @Override

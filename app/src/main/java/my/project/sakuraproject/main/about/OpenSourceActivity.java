@@ -61,7 +61,7 @@ public class OpenSourceActivity extends BaseActivity {
     }
 
     public void initToolbar() {
-        toolbar.setTitle("开源相关");
+        toolbar.setTitle(Utils.getString(R.string.os_title));
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbar.setNavigationOnClickListener(view -> supportFinishAfterTransition());

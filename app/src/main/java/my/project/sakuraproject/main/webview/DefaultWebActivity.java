@@ -1,6 +1,7 @@
 package my.project.sakuraproject.main.webview;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Build;
 import android.os.Bundle;
@@ -19,7 +20,6 @@ import com.tencent.smtt.sdk.WebChromeClient;
 import com.tencent.smtt.sdk.WebView;
 import com.tencent.smtt.sdk.WebViewClient;
 
-import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
@@ -28,8 +28,8 @@ import butterknife.BindView;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.base.Presenter;
+import my.project.sakuraproject.services.ClearVideoCacheService;
 import my.project.sakuraproject.util.StatusBarUtil;
-import my.project.sakuraproject.util.Utils;
 
 public class DefaultWebActivity extends BaseActivity {
     private String url;
@@ -245,8 +245,7 @@ public class DefaultWebActivity extends BaseActivity {
         //释放资源
         if (mX5WebView != null)
             mX5WebView.destroy();
-        Utils.deleteAllFiles(new File(android.os.Environment.getExternalStorageDirectory() + "/Android/data/my.project.sakuraproject/cache"));
-        Utils.deleteAllFiles(new File(android.os.Environment.getExternalStorageDirectory() + "/Android/data/my.project.sakuraproject/files/VideoCache/main"));
+        startService(new Intent(this, ClearVideoCacheService.class));
         super.onDestroy();
     }
 

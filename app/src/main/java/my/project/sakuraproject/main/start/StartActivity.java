@@ -67,7 +67,7 @@ public class StartActivity extends BaseActivity {
         new HttpGet(Api.CHECK_UPDATE, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                application.showToastMsg("网络连接超时，检测更新失败");
+                application.showToastMsg(Utils.getString(R.string.ck_network_error_start));
                 openMain();
             }
 
@@ -87,7 +87,7 @@ public class StartActivity extends BaseActivity {
                                 body,
                                 (dialog, which) -> {
                                     p = Utils.showProgressDialog(StartActivity.this);
-                                    p.setButton(ProgressDialog.BUTTON_NEGATIVE, "取消", (dialog1, which1) -> {
+                                    p.setButton(ProgressDialog.BUTTON_NEGATIVE, Utils.getString(R.string.cancel), (dialog1, which1) -> {
                                         if (null != downCall)
                                             downCall.cancel();
                                         dialog1.dismiss();
@@ -133,7 +133,7 @@ public class StartActivity extends BaseActivity {
             public void onDownloadFailed() {
                 runOnUiThread(() -> {
                     Utils.cancelProDialog(p);
-                    application.showToastMsg("下载失败~");
+                    application.showToastMsg(Utils.getString(R.string.download_error));
                     openMain();
                 });
             }

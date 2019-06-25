@@ -61,10 +61,10 @@ public class VideoUtils {
             items[i] = getVideoUrl(list.get(i));
         }
         androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(context);
-        builder.setTitle("选择播放源");
+        builder.setTitle(Utils.getString(R.string.select_video_source));
         builder.setCancelable(false);
         builder.setItems(items, listener);
-        builder.setNegativeButton("取消", (dialog, which) -> dialog.dismiss());
+        builder.setNegativeButton(Utils.getString(R.string.cancel), (dialog, which) -> dialog.dismiss());
         alertDialog = builder.create();
         alertDialog.show();
     }

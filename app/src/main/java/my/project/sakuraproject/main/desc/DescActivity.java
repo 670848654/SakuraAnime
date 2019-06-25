@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.util.Patterns;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,7 +23,6 @@ import com.r0adkll.slidr.Slidr;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -55,7 +53,6 @@ import my.project.sakuraproject.util.Utils;
 import my.project.sakuraproject.util.VideoUtils;
 
 public class DescActivity extends BaseActivity<DescContract.View, DescPresenter> implements DescContract.View, VideoContract.View {
-    private final static Pattern NUM_PATTERN = Pattern.compile("^[0-9]*$");
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.rv_list)
@@ -242,11 +239,11 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
                         break;
                 }
             } else {
-                Sakura.getInstance().showToastMsg("该播放地址貌似应该使用网页播放！？");
+                Sakura.getInstance().showToastMsg(Utils.getString(R.string.should_be_used_web));
                 startActivity(new Intent(DescActivity.this, DefaultWebActivity.class).putExtra("url", animeUrl));
             }
         } else {
-            Sakura.getInstance().showToastMsg("注意：该播放地址可能无法正常播放！");
+            Sakura.getInstance().showToastMsg(Utils.getString(R.string.maybe_can_not_play));
             startActivity(new Intent(DescActivity.this, DefaultWebActivity.class).putExtra("url",String.format(Api.PARSE_API, animeUrl)));
         }
     }

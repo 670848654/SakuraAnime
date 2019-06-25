@@ -106,7 +106,10 @@
             android:configChanges="screenLayout|orientation|screenSize|smallestScreenSize|keyboardHidden"
             android:screenOrientation="portrait"
             android:theme="@style/TranslucentTheme" />
-
+        <service
+            android:name=".services.ClearVideoCacheService"
+            android:enabled="true"
+            android:exported="true"/>
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="my.project.sakuraproject.fileProvider"

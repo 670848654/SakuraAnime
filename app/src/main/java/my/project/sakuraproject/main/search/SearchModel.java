@@ -23,7 +23,7 @@ public class SearchModel implements SearchContract.Model {
     @Override
     public void getData(String url, int page, boolean isMain, SearchContract.LoadDataCallback callback) {
         if (page != 1)
-            url = url.contains(Sakura.DOMAIN) ? url + page + ".html" : Sakura.DOMAIN + url + page + ".html";
+            url = url.contains(Sakura.DOMAIN) ? url + "/?page=" + page: Sakura.DOMAIN + url + "/?page=" + page;
         new HttpGet(url, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {

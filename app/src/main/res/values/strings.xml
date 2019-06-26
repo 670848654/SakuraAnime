@@ -116,7 +116,7 @@
     <string name="test_model_desc">OnePlus 7 Pro : Android 9</string>
     <string name="now_version">当前版本</string>
     <string name="final_compile">最后编译</string>
-    <string name="final_compile_time">2019年6月24日17:09:43</string>
+    <string name="final_compile_time">2019年6月26日21:17:58</string>
     <string name="cache">缓存目录</string>
     <string name="cache_text">/SakuraAnime/\n卸载后自行删除此目录</string>
     <!-- 检测更新 -->

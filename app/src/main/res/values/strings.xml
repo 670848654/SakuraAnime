@@ -113,10 +113,10 @@
     <string name="statement">声明</string>
     <string name="statement_desc">仅供学习交流\n禁止非法传播或用于商业用途</string>
     <string name="test_model">测试</string>
-    <string name="test_model_desc">OnePlus 7 Pro : Android 9</string>
+    <string name="test_model_desc">OnePlus 7 Pro : Android 10</string>
     <string name="now_version">当前版本</string>
     <string name="final_compile">最后编译</string>
-    <string name="final_compile_time">2019年6月26日21:17:58</string>
+    <string name="final_compile_time">2019年9月2日09:47:52</string>
     <string name="cache">缓存目录</string>
     <string name="cache_text">/SakuraAnime/\n卸载后自行删除此目录</string>
     <!-- 检测更新 -->

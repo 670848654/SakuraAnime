@@ -148,7 +148,7 @@ public class SearchActivity extends BaseActivity<SearchContract.View, SearchPres
         mSearchView = (SearchView) MenuItemCompat.getActionView(item);
         mSearchView.onActionViewExpanded();
         mSearchView.setQueryHint(Utils.getString(R.string.search_hint));
-        mSearchView.setMaxWidth(1000);
+        mSearchView.setMaxWidth(2000);
         if (!title.isEmpty()) {
             mSearchView.setQuery(title, false);
             mSearchView.clearFocus();

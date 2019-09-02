@@ -33,7 +33,7 @@
                     android:elevation="6dp"
                     app:contentInsetStartWithNavigation="0dp"
                     app:layout_scrollFlags="scroll|enterAlways"
-                    app:popupTheme="@style/AppTheme.PopupOverlay"></androidx.appcompat.widget.Toolbar>
+                    app:popupTheme="@style/AppTheme.PopupOverlay" />
 
                 <com.google.android.material.tabs.TabLayout
                     android:id="@+id/tab"
@@ -41,7 +41,7 @@
                     android:layout_height="wrap_content"
                     app:tabGravity="fill"
                     app:tabMaxWidth="0dp"
-                    app:tabMode="fixed"></com.google.android.material.tabs.TabLayout>
+                    app:tabMode="fixed" />
             </com.google.android.material.appbar.AppBarLayout>
 
             <my.project.sakuraproject.custom.VpSwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -55,7 +55,7 @@
                     android:id="@+id/viewpager"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:layout_behavior="@string/appbar_scrolling_view_behavior"></androidx.viewpager.widget.ViewPager>
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior" />
             </my.project.sakuraproject.custom.VpSwipeRefreshLayout>
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
     </LinearLayout>

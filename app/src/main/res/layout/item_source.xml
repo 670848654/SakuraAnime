@@ -10,9 +10,9 @@
     android:layout_marginBottom="1dp"
     android:foreground="?android:attr/selectableItemBackground"
     app:ignore="NamespaceTypo"
-    card_view:cardBackgroundColor="@color/night"
+    card_view:cardBackgroundColor="@color/window_bg"
     card_view:cardCornerRadius="0dp"
-    card_view:cardElevation="8dp"
+    card_view:cardElevation="4dp"
     card_view:cardUseCompatPadding="false">
 
     <LinearLayout
@@ -33,17 +33,17 @@
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
                 android:src="@drawable/github"
-                android:tint="@color/grey50" />
+                android:tint="@color/text_color_primary" />
 
             <TextView
                 android:id="@+id/title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_toRightOf="@+id/img"
+                android:layout_toEndOf="@+id/img"
                 android:maxEms="12"
                 android:padding="5dp"
-                android:textColor="@color/grey50"
+                android:textColor="@color/text_color_primary"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -54,7 +54,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:padding="5dp"
-                android:textColor="@color/grey50"
+                android:textColor="@color/text_color_primary"
                 android:textSize="16sp" />
         </RelativeLayout>
 
@@ -69,7 +69,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="5dp"
-            android:textColor="@color/grey50"
+            android:textColor="@color/text_color_primary"
             android:textSize="16sp" />
     </LinearLayout>
 

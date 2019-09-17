@@ -202,6 +202,8 @@ public class WebActivity extends BaseActivity implements VideoContract.View {
                     p = Utils.getProDialog(WebActivity.this, R.string.parsing);
                     Button v = (Button) adapter.getViewByPosition(dramaRecyclerView, position, R.id.tag_group);
                     v.setBackgroundResource(R.drawable.button_selected);
+                    v.setTextColor(getResources().getColor(R.color.item_selected_color));
+                    bean.setSelect(true);
                     diliUrl = VideoUtils.getUrl(bean.getUrl());
                     witchTitle = animeTitle + " - " + bean.getTitle();
                     presenter = new VideoPresenter(animeTitle, diliUrl, WebActivity.this);

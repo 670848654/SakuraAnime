@@ -10,5 +10,4 @@
     android:ellipsize="end"
     android:foreground="?android:attr/selectableItemBackground"
     android:maxLines="2"
-    android:padding="5dp"
-    android:textColor="@android:color/white" />
+    android:padding="5dp" />

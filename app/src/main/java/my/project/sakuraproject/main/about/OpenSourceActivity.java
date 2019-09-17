@@ -16,7 +16,6 @@ import my.project.sakuraproject.adapter.SourceAdapter;
 import my.project.sakuraproject.bean.SourceBean;
 import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.base.Presenter;
-import my.project.sakuraproject.util.StatusBarUtil;
 import my.project.sakuraproject.util.SwipeBackLayoutUtil;
 import my.project.sakuraproject.util.Utils;
 
@@ -47,7 +46,6 @@ public class OpenSourceActivity extends BaseActivity {
 
     @Override
     protected void init() {
-        StatusBarUtil.setColorForSwipeBack(OpenSourceActivity.this, getResources().getColor(R.color.night), 0);
         Slidr.attach(this, Utils.defaultInit());
         initToolbar();
         initSwipe();

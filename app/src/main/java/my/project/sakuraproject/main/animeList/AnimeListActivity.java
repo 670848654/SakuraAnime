@@ -24,7 +24,6 @@ import my.project.sakuraproject.bean.AnimeListBean;
 import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.desc.DescActivity;
 import my.project.sakuraproject.main.search.SearchActivity;
-import my.project.sakuraproject.util.StatusBarUtil;
 import my.project.sakuraproject.util.SwipeBackLayoutUtil;
 import my.project.sakuraproject.util.Utils;
 import my.project.sakuraproject.util.VideoUtils;
@@ -63,7 +62,6 @@ public class AnimeListActivity extends BaseActivity<AnimeListContract.View, Anim
 
     @Override
     protected void init() {
-        StatusBarUtil.setColorForSwipeBack(AnimeListActivity.this, getResources().getColor(R.color.night), 0);
         Slidr.attach(this, Utils.defaultInit());
         getBundle();
         initToolbar();

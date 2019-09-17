@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/night"
+    android:background="@color/window_bg"
     android:orientation="vertical">
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -14,7 +14,7 @@
 
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:clipToPadding="false"
             android:padding="10dp"
             android:scrollbars="none"
@@ -30,13 +30,15 @@
                     android:layout_height="wrap_content"
                     android:padding="5dp"
                     android:text="@string/source"
+                    android:textColor="@color/text_color_primary"
                     android:textSize="15sp" />
 
                 <androidx.cardview.widget.CardView
-                    android:id="@+id/dilidili"
+                    android:id="@+id/sakura"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
+                    app:cardElevation="4dp"
                     android:foreground="?android:attr/selectableItemBackground">
 
                     <TextView
@@ -45,6 +47,7 @@
                         android:layout_height="wrap_content"
                         android:layout_margin="10dp"
                         android:padding="5dp"
+                        android:textColor="@color/text_color_primary"
                         android:text="@string/app_name" />
                 </androidx.cardview.widget.CardView>
 
@@ -53,11 +56,13 @@
                     android:layout_height="wrap_content"
                     android:padding="5dp"
                     android:text="@string/statement"
+                    android:textColor="@color/text_color_primary"
                     android:textSize="15sp" />
 
                 <androidx.cardview.widget.CardView
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    app:cardElevation="4dp"
                     android:layout_margin="5dp">
 
                     <TextView
@@ -66,6 +71,7 @@
                         android:layout_margin="10dp"
                         android:lineSpacingExtra="3dp"
                         android:padding="5dp"
+                        android:textColor="@color/text_color_primary"
                         android:text="@string/statement_desc" />
                 </androidx.cardview.widget.CardView>
 
@@ -74,11 +80,13 @@
                     android:layout_height="wrap_content"
                     android:padding="5dp"
                     android:text="@string/now_version"
+                    android:textColor="@color/text_color_primary"
                     android:textSize="15sp" />
 
                 <androidx.cardview.widget.CardView
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    app:cardElevation="4dp"
                     android:layout_margin="5dp">
 
                     <RelativeLayout
@@ -91,6 +99,7 @@
                             android:layout_height="wrap_content"
                             android:layout_margin="10dp"
                             android:lineSpacingExtra="3dp"
+                            android:textColor="@color/text_color_primary"
                             android:padding="5dp" />
 
                     </RelativeLayout>
@@ -101,11 +110,13 @@
                     android:layout_height="wrap_content"
                     android:padding="5dp"
                     android:text="@string/final_compile"
+                    android:textColor="@color/text_color_primary"
                     android:textSize="15sp" />
 
                 <androidx.cardview.widget.CardView
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    app:cardElevation="4dp"
                     android:layout_margin="5dp">
 
                     <TextView
@@ -114,6 +125,7 @@
                         android:layout_margin="10dp"
                         android:lineSpacingExtra="3dp"
                         android:padding="5dp"
+                        android:textColor="@color/text_color_primary"
                         android:text="@string/final_compile_time" />
                 </androidx.cardview.widget.CardView>
 
@@ -122,11 +134,13 @@
                     android:layout_height="wrap_content"
                     android:padding="5dp"
                     android:text="@string/test_model"
+                    android:textColor="@color/text_color_primary"
                     android:textSize="15sp" />
 
                 <androidx.cardview.widget.CardView
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    app:cardElevation="4dp"
                     android:layout_margin="5dp">
 
                     <TextView
@@ -135,6 +149,7 @@
                         android:layout_margin="10dp"
                         android:lineSpacingExtra="3dp"
                         android:padding="5dp"
+                        android:textColor="@color/text_color_primary"
                         android:text="@string/test_model_desc" />
                 </androidx.cardview.widget.CardView>
 
@@ -143,11 +158,13 @@
                     android:layout_height="wrap_content"
                     android:padding="5dp"
                     android:text="@string/cache"
+                    android:textColor="@color/text_color_primary"
                     android:textSize="15sp" />
 
                 <androidx.cardview.widget.CardView
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    app:cardElevation="4dp"
                     android:layout_margin="5dp">
 
                     <TextView
@@ -156,6 +173,33 @@
                         android:layout_height="wrap_content"
                         android:layout_margin="10dp"
                         android:lineSpacingExtra="3dp"
+                        android:textColor="@color/text_color_primary"
+                        android:padding="5dp" />
+                </androidx.cardview.widget.CardView>
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp"
+                    android:text="@string/github"
+                    android:textColor="@color/text_color_primary"
+                    android:textSize="15sp" />
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/github"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    app:cardElevation="4dp"
+                    android:layout_margin="5dp"
+                    android:foreground="?android:attr/selectableItemBackground">
+
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:lineSpacingExtra="3dp"
+                        android:text="@string/github_url"
+                        android:textColor="@color/text_color_primary"
                         android:padding="5dp" />
                 </androidx.cardview.widget.CardView>
 
@@ -166,6 +210,7 @@
                     android:layout_margin="10dp"
                     android:gravity="center_horizontal"
                     android:padding="10dp"
+                    android:textColor="@color/text_color_primary"
                     android:text="@string/open_source_library"
                     android:textSize="15sp" />
             </LinearLayout>

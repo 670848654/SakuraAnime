@@ -16,6 +16,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 
 import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
 import butterknife.BindView;
 import butterknife.OnClick;
 import my.project.sakuraproject.R;
@@ -25,7 +26,7 @@ import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.base.Presenter;
 import my.project.sakuraproject.net.DownloadUtil;
 import my.project.sakuraproject.net.HttpGet;
-import my.project.sakuraproject.util.StatusBarUtil;
+import my.project.sakuraproject.util.SharedPreferencesUtils;
 import my.project.sakuraproject.util.SwipeBackLayoutUtil;
 import my.project.sakuraproject.util.Utils;
 import okhttp3.Call;
@@ -62,7 +63,6 @@ public class AboutActivity extends BaseActivity {
 
     @Override
     protected void init() {
-        StatusBarUtil.setColorForSwipeBack(AboutActivity.this, getResources().getColor(R.color.night), 0);
         Slidr.attach(this, Utils.defaultInit());
         initToolbar();
         initViews();
@@ -89,14 +89,24 @@ public class AboutActivity extends BaseActivity {
         });
     }
 
-    @OnClick(R.id.dilidili)
-    public void openDilidili() {
-        Utils.viewInChrome(this, Sakura.DOMAIN);
+    @OnClick({R.id.sakura,R.id.github})
+    public void openBrowser(CardView cardView) {
+        switch (cardView.getId()) {
+            case R.id.sakura:
+                Utils.viewInChrome(this, Sakura.DOMAIN);
+                break;
+            case R.id.github:
+                Utils.viewInChrome(this, Utils.getString(R.string.github_url));
+                break;
+        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.about_menu, menu);
+        MenuItem checkUpdateItem = menu.findItem(R.id.check_update);
+        if (!(Boolean) SharedPreferencesUtils.getParam(this, "darkTheme", false))
+            checkUpdateItem.setIcon(R.drawable.baseline_update_black_48dp);
         return true;
     }
 

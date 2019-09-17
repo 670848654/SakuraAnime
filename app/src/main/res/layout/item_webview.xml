@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="40dp"
     android:layout_margin="4dp"
-    android:background="@drawable/button_unpress"
+    android:background="@drawable/button_default"
     android:ellipsize="end"
     android:maxLines="2"
-    android:textColor="@color/grey1000" />
+    android:textColor="@color/text_color_primary" />

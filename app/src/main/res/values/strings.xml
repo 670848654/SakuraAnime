@@ -26,7 +26,7 @@
     <string name="exit">退出</string>
     <!-- 主页dialog文本 -->
     <string name="x5_info_title">注意事项</string>
-    <string name="x5_info">一些老番可能需要使用WebView播放(做了兼容但未测试，默认加载腾讯x5内核，首次可能会加载失败，尝试杀进程重启应用或卸载重装应用)。\n新番多数可以直接使用内置播放器或外部播放器播放(某些可能第一次播放失败，需多尝试几次)。\n注：并不是所有番剧都能正常播放（多为网站本身原因）~</string>
+    <string name="x5_info">一些老番可能需要使用WebView播放(做了兼容但未测试，默认加载腾讯x5内核，首次可能会加载失败，尝试杀进程重启应用或卸载重装应用，若是你使用的设备版本太高则需等待官方适配后才能加载成功)。\n新番多数可以直接使用内置播放器或外部播放器播放(某些可能第一次播放失败，需多尝试几次)。\n注：并不是所有番剧都能正常播放（多为网站本身原因）~</string>
     <string name="x5_info_positive">OJBK</string>
     <!-- 空文本 -->
     <string name="empty">未能获取到任何信息!</string>
@@ -85,6 +85,8 @@
     <string name="player_default">内置</string>
     <string name="domain">域名设置 (备用)</string>
     <string name="domain_url">http://www.yhdm.tv</string>
+    <string name="light">亮色主题</string>
+    <string name="dark">暗色主题</string>
     <!-- webViewDialog 文本 -->
     <string name="other_operation">操作</string>
     <string name="anthology">选集</string>
@@ -116,9 +118,11 @@
     <string name="test_model_desc">OnePlus 7 Pro : Android 10</string>
     <string name="now_version">当前版本</string>
     <string name="final_compile">最后编译</string>
-    <string name="final_compile_time">2019年9月9日11:24:38</string>
+    <string name="final_compile_time">2019年9月11日12:09:44</string>
     <string name="cache">缓存目录</string>
     <string name="cache_text">/SakuraAnime/\n卸载后自行删除此目录</string>
+    <string name="github">Github</string>
+    <string name="github_url">https://github.com/670848654/SakuraAnime</string>
     <!-- 检测更新 -->
     <string name="check_update">检测更新</string>
     <string name="check_update_text">检测更新中&#8230;</string>

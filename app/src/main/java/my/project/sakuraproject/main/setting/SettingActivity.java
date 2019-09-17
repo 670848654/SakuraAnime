@@ -24,7 +24,6 @@ import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.base.Presenter;
 import my.project.sakuraproject.main.setting.user.ApiActivity;
 import my.project.sakuraproject.util.SharedPreferencesUtils;
-import my.project.sakuraproject.util.StatusBarUtil;
 import my.project.sakuraproject.util.SwipeBackLayoutUtil;
 import my.project.sakuraproject.util.Utils;
 
@@ -57,7 +56,6 @@ public class SettingActivity extends BaseActivity {
 
     @Override
     protected void init() {
-        StatusBarUtil.setColorForSwipeBack(SettingActivity.this, getResources().getColor(R.color.night), 0);
         Slidr.attach(this, Utils.defaultInit());
         initToolbar();
         getUserCustomSet();

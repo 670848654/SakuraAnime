@@ -9,9 +9,9 @@
     android:layout_marginRight="4dp"
     android:layout_marginBottom="2dp"
     android:foreground="?android:attr/selectableItemBackground"
-    card_view:cardBackgroundColor="@color/grey800"
+    card_view:cardBackgroundColor="@color/window_bg"
     card_view:cardCornerRadius="4dp"
-    card_view:cardElevation="3dp"
+    card_view:cardElevation="4dp"
     card_view:cardUseCompatPadding="false">
 
     <RelativeLayout
@@ -38,7 +38,7 @@
             android:layout_alignParentBottom="true"
             android:gravity="center_vertical"
             android:padding="2dp"
-            android:textColor="@color/pinka200"
+            android:textColor="@color/colorAccent"
             android:textSize="12sp" />
 
     </RelativeLayout>

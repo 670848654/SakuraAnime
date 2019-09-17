@@ -97,7 +97,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
 
     @Override
     protected void init() {
-        StatusBarUtil.setColorForSwipeBack(DescActivity.this, getResources().getColor(R.color.night), 0);
+        StatusBarUtil.setColorForSwipeBack(this, getResources().getColor(R.color.colorPrimaryDark), 0);
         Slidr.attach(this, Utils.defaultInit());
         getBundle();
         initToolbar();
@@ -153,9 +153,10 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
             switch (bean.getType()) {
                 case "play":
                     p = Utils.getProDialog(DescActivity.this, R.string.parsing);
-                    bean.setSelect(true);
                     Button v = (Button) adapter.getViewByPosition(mRecyclerView, position, R.id.tag_group);
                     v.setBackgroundResource(R.drawable.button_selected);
+                    v.setTextColor(getResources().getColor(R.color.item_selected_color));
+                    bean.setSelect(true);
                     dramaUrl = VideoUtils.getUrl(bean.getUrl());
                     witchTitle = animeTitle + " - " + bean.getTitle();
                     videoPresenter = new VideoPresenter(animeListBean.getTitle(), dramaUrl, DescActivity.this);

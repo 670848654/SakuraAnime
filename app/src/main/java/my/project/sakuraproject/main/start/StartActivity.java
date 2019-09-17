@@ -20,7 +20,6 @@ import my.project.sakuraproject.main.home.HomeActivity;
 import my.project.sakuraproject.net.DownloadUtil;
 import my.project.sakuraproject.net.HttpGet;
 import my.project.sakuraproject.util.SharedPreferencesUtils;
-import my.project.sakuraproject.util.StatusBarUtil;
 import my.project.sakuraproject.util.Utils;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -49,7 +48,6 @@ public class StartActivity extends BaseActivity {
 
     @Override
     protected void init() {
-        StatusBarUtil.setColor(StartActivity.this, getResources().getColor(R.color.night), 0);
         SharedPreferencesUtils.setParam(this, "initX5", "init");
         Handler handler = new Handler();
         handler.postDelayed(() -> {

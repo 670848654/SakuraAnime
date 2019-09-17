@@ -21,7 +21,6 @@ import my.project.sakuraproject.adapter.TagAdapter;
 import my.project.sakuraproject.bean.TagBean;
 import my.project.sakuraproject.main.animeList.AnimeListActivity;
 import my.project.sakuraproject.main.base.BaseActivity;
-import my.project.sakuraproject.util.StatusBarUtil;
 import my.project.sakuraproject.util.SwipeBackLayoutUtil;
 import my.project.sakuraproject.util.Utils;
 import my.project.sakuraproject.util.VideoUtils;
@@ -53,7 +52,6 @@ public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> im
 
     @Override
     protected void init() {
-        StatusBarUtil.setColorForSwipeBack(this, getResources().getColor(R.color.night), 0);
         Slidr.attach(this, Utils.defaultInit());
         initToolbar();
         initSwipe();

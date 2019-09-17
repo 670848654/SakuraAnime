@@ -4,26 +4,32 @@ import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 
 import org.json.JSONObject;
 
+import java.lang.reflect.Field;
 import java.util.Date;
 import java.util.LinkedHashMap;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 import my.project.sakuraproject.R;
@@ -53,10 +59,14 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
     @BindView(R.id.mSwipe)
     VpSwipeRefreshLayout mSwipe;
     private ImageView imageView;
+    LinearLayout setTheme;
+    private ImageView theme;
+    private TextView themeTitle;
     @BindView(R.id.tab)
     TabLayout tab;
     @BindView(R.id.viewpager)
     ViewPager viewpager;
+    private WeekAdapter adapter;
     private int week;
     private SearchView mSearchView;
     private String[] tabs = Utils.getArray(R.array.week_array);
@@ -95,7 +105,13 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
     }
 
     public void initDrawer() {
-        StatusBarUtil.setColorForDrawerLayout(this, drawer, getResources().getColor(R.color.night), 0);
+        if (gtSdk23()) {
+            StatusBarUtil.setColorForDrawerLayout(this, drawer, getColor(R.color.colorPrimary), 0);
+            if (!(Boolean) SharedPreferencesUtils.getParam(this, "darkTheme", false))
+                this.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+        }
+        else
+            StatusBarUtil.setColorForDrawerLayout(this, drawer, getResources().getColor(R.color.colorPrimaryDark), 0);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
@@ -104,8 +120,8 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
                 new int[]{-android.R.attr.state_checked},
                 new int[]{android.R.attr.state_checked}
         };
-        int[] colors = new int[]{getResources().getColor(R.color.grey50),
-                getResources().getColor(R.color.pinka200)
+        int[] colors = new int[]{getResources().getColor(R.color.tabTextColor),
+                getResources().getColor(R.color.tabSelectedTextColor)
         };
         ColorStateList csl = new ColorStateList(states, colors);
         navigationView.setItemTextColor(csl);
@@ -119,7 +135,32 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
             animator.setDuration(1000);
             animator.start();
         });
-        navigationView.getBackground().mutate().setAlpha(150);//0~255透明度值
+        setTheme = view.findViewById(R.id.set_theme);
+        setTheme.setOnClickListener(view2 -> {
+            if ((Boolean) SharedPreferencesUtils.getParam(this, "darkTheme", false))
+            {
+                SharedPreferencesUtils.setParam(getApplicationContext(),"darkTheme",false);
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+            }
+            else
+            {
+                SharedPreferencesUtils.setParam(getApplicationContext(),"darkTheme",true);
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+            }
+            drawer.closeDrawer(GravityCompat.START);
+            HomeActivity.this.getWindow().setWindowAnimations(R.style.WindowAnimationFadeInOut);
+            new Handler().postDelayed(this::recreate, 500);
+        });
+        theme = view.findViewById(R.id.theme);
+        themeTitle = view.findViewById(R.id.theme_title);
+        if ((Boolean) SharedPreferencesUtils.getParam(this, "darkTheme", false)) {
+            theme.setImageDrawable(getDrawable(R.drawable.ic_night));
+            themeTitle.setText(Utils.getString(R.string.dark));
+        } else {
+            theme.setImageDrawable(getDrawable(R.drawable.ic_sun));
+            themeTitle.setText(Utils.getString(R.string.light));
+        }
+//        navigationView.getBackground().mutate().setAlpha(150);//0~255透明度值
         navigationView.setNavigationItemSelectedListener(this);
     }
 
@@ -141,6 +182,7 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
         for (int i = 0; i < tabs.length; i++) {
             tab.getTabAt(i).setText(tabs[i]);
         }
+        tab.getTabAt(week).select();
         tab.setSelectedTabIndicatorColor(getResources().getColor(R.color.pinka200));
         if (Boolean.parseBoolean(SharedPreferencesUtils.getParam(Sakura.getInstance(), "show_x5_info", true).toString()))
             Utils.showX5Info(this);
@@ -159,7 +201,10 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
         mSearchView.setQueryHint(Utils.getString(R.string.search_hint));
         mSearchView.setMaxWidth(2000);
         SearchView.SearchAutoComplete textView = mSearchView.findViewById(R.id.search_src_text);
-        textView.setTextColor(getResources().getColor(R.color.grey50));
+        mSearchView.findViewById(R.id.search_plate).setBackground(null);
+        mSearchView.findViewById(R.id.submit_area).setBackground(null);
+        textView.setTextColor(getResources().getColor(R.color.text_color_primary));
+        textView.setHintTextColor(getResources().getColor(R.color.text_color_primary));
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -269,9 +314,16 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
     }
 
     public void setWeekAdapter() {
-        WeekAdapter adapter = new WeekAdapter(getSupportFragmentManager(), tab.getTabCount());
+        adapter = new WeekAdapter(getSupportFragmentManager(), tab.getTabCount());
+        try {
+            Field field = ViewPager.class.getDeclaredField("mRestoredCurItem");
+            field.setAccessible(true);
+            field.set(viewpager, week);
+        } catch (Exception e) {
+            viewpager.setCurrentItem(week);
+            e.printStackTrace();
+        }
         viewpager.setAdapter(adapter);
-        viewpager.setCurrentItem(week);
         for (int i = 0; i < tabs.length; i++) {
             tab.getTabAt(i).setText(tabs[i]);
         }
@@ -281,5 +333,18 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
     protected void onDestroy() {
         super.onDestroy();
         DatabaseUtil.closeDB();
+    }
+
+    @Override
+    public void recreate() {
+        try {//避免重启太快恢复
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            for (int i = 0; i < 7 ; i++) {
+                fragmentTransaction.remove(adapter.getItem(i));
+            }
+            fragmentTransaction.commitAllowingStateLoss();
+        } catch (Exception e) {
+        }
+        super.recreate();
     }
 }

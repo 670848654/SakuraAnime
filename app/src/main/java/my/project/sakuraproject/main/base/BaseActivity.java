@@ -17,6 +17,8 @@ import butterknife.Unbinder;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.database.DatabaseUtil;
+import my.project.sakuraproject.util.SharedPreferencesUtils;
+import my.project.sakuraproject.util.StatusBarUtil;
 import my.project.sakuraproject.util.Utils;
 import pub.devrel.easypermissions.EasyPermissions;
 
@@ -43,6 +45,7 @@ public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatA
             Utils.creatFile();
             DatabaseUtil.CREATE_TABLES();
             init();
+            setStatusBarColor();
             initCustomViews();
             mPresenter = createPresenter();
             loadData();
@@ -125,5 +128,30 @@ public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatA
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+    }
+
+    public boolean gtSdk23() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
+    }
+
+    private String getRunningActivityName() {
+        String contextString = this.toString();
+        return contextString.substring(contextString.lastIndexOf(".") + 1,
+                contextString.indexOf("@"));
+    }
+
+    public void setStatusBarColor() {
+        if (!getRunningActivityName().equals("HomeActivity") &&
+                !getRunningActivityName().equals("DescActivity") &&
+                !getRunningActivityName().equals("PlayerActivity") &&
+                !getRunningActivityName().equals("DefaultWebActivity") &&
+                !getRunningActivityName().equals("WebActivity")) {
+            if (gtSdk23()) {
+                StatusBarUtil.setColorForSwipeBack(this, getColor(R.color.colorPrimary), 0);
+                if (!(Boolean) SharedPreferencesUtils.getParam(this, "darkTheme", false))
+                    this.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            } else
+                StatusBarUtil.setColorForSwipeBack(this, getResources().getColor(R.color.colorPrimaryDark), 0);
+        }
     }
 }

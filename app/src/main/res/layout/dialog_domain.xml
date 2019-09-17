@@ -18,7 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        app:met_baseColor="@android:color/white"
+        app:met_baseColor="@color/text_color_primary"
         app:met_errorColor="#FF0000"
-        app:met_primaryColor="@color/pinka200" />
+        app:met_primaryColor="@color/colorAccent" />
 </LinearLayout>

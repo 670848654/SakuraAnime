@@ -23,12 +23,14 @@ public class WebviewAdapter extends BaseQuickAdapter<WebviewBean, BaseViewHolder
     protected void convert(BaseViewHolder helper, WebviewBean item) {
         Button button = helper.getView(R.id.btn);
         helper.setText(R.id.btn, item.getTitle());
-        button.setTextColor(context.getResources().getColor(R.color.grey1000));
-        button.setBackgroundResource(R.drawable.button_unpress);
-        if (item.isSelect()) {
-            button.setTextColor(context.getResources().getColor(R.color.grey50));
-            button.setBackgroundResource(R.drawable.button_onpress);
-        } else
-            button.setBackgroundResource(R.drawable.button_unpress);
+        button.setTextColor(context.getResources().getColor(R.color.text_color_primary));
+        button.setBackgroundResource(R.drawable.button_default);
+        if (item.isSelect()){
+            button.setTextColor(context.getResources().getColor(R.color.item_selected_color));
+            button.setBackgroundResource(R.drawable.button_selected);
+        } else {
+            button.setTextColor(context.getResources().getColor(R.color.text_color_primary));
+            button.setBackgroundResource(R.drawable.button_default);
+        }
     }
 }

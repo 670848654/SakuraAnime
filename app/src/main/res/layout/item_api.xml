@@ -11,7 +11,7 @@
     android:layout_marginRight="8dp"
     android:foreground="?android:attr/selectableItemBackground"
     app:ignore="NamespaceTypo"
-    card_view:cardBackgroundColor="@color/night"
+    card_view:cardBackgroundColor="@color/window_bg"
     card_view:cardCornerRadius="0dp"
     card_view:cardElevation="4dp"
     card_view:cardUseCompatPadding="false">
@@ -35,7 +35,7 @@
                 android:layout_weight="9"
                 android:padding="5dp"
                 android:text="白玉阁免费解析"
-                android:textColor="@color/grey50"
+                android:textColor="@color/text_color_primary"
                 android:textSize="16sp" />
 
             <ImageView
@@ -45,6 +45,7 @@
                 android:layout_gravity="center"
                 android:layout_weight="1"
                 android:padding="5dp"
+                android:tint="@color/text_color_primary"
                 android:src="@drawable/baseline_close_white_48dp" />
         </LinearLayout>
 
@@ -60,7 +61,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:padding="5dp"
-            android:textColor="@color/grey50"
+            android:tint="@color/text_color_primary"
             android:textSize="16sp" />
 
     </LinearLayout>

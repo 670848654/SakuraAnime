@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/night"
+    android:background="@color/window_bg"
     android:orientation="vertical">
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -29,6 +29,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:padding="5dp"
+                    android:textColor="@color/text_color_primary"
                     android:text="@string/domain"
                     android:textSize="15sp" />
 
@@ -54,6 +55,7 @@
                             android:layout_centerVertical="true"
                             android:layout_margin="10dp"
                             android:padding="5dp"
+                            android:textColor="@color/text_color_primary"
                             android:text="@string/domain_url"
                             android:textSize="16sp" />
                     </RelativeLayout>
@@ -64,6 +66,7 @@
                     android:layout_height="wrap_content"
                     android:padding="5dp"
                     android:text="@string/player"
+                    android:textColor="@color/text_color_primary"
                     android:textSize="15sp" />
 
                 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
@@ -88,6 +91,7 @@
                             android:layout_centerVertical="true"
                             android:layout_margin="10dp"
                             android:padding="5dp"
+                            android:textColor="@color/text_color_primary"
                             android:text="@string/player_default"
                             android:textSize="16sp" />
                     </RelativeLayout>
@@ -98,6 +102,7 @@
                     android:layout_height="wrap_content"
                     android:padding="5dp"
                     android:text="@string/set_api"
+                    android:textColor="@color/text_color_primary"
                     android:textSize="15sp" />
 
                 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
@@ -122,6 +127,7 @@
                             android:layout_centerVertical="true"
                             android:layout_margin="10dp"
                             android:padding="5dp"
+                            android:textColor="@color/text_color_primary"
                             android:text="@string/api"
                             android:textSize="16sp" />
                     </RelativeLayout>

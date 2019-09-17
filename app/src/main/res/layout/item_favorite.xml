@@ -6,15 +6,15 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
-    android:layout_marginLeft="4dp"
     android:layout_marginTop="6dp"
+    android:layout_marginLeft="4dp"
     android:layout_marginRight="4dp"
     android:layout_marginBottom="2dp"
     android:foreground="?android:attr/selectableItemBackground"
     app:ignore="NamespaceTypo"
-    card_view:cardBackgroundColor="@color/bold"
+    card_view:cardBackgroundColor="@color/window_bg"
     card_view:cardCornerRadius="4dp"
-    card_view:cardElevation="2dp"
+    card_view:cardElevation="4dp"
     card_view:cardUseCompatPadding="false">
 
     <LinearLayout
@@ -28,15 +28,14 @@
             android:layout_height="184dp"
             android:scaleType="centerCrop"
             android:transitionName="sharedImg" />
-
         <TextView
             android:id="@+id/title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:maxLines="2"
             android:padding="5dp"
-            android:textColor="@color/grey400"
-            android:textSize="14sp" />
+            android:textSize="14sp"
+            android:textColor="@color/text_color_primary"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>

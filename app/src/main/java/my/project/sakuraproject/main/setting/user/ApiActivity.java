@@ -24,7 +24,6 @@ import my.project.sakuraproject.adapter.ApiAdapter;
 import my.project.sakuraproject.bean.ApiBean;
 import my.project.sakuraproject.database.DatabaseUtil;
 import my.project.sakuraproject.main.base.BaseActivity;
-import my.project.sakuraproject.util.StatusBarUtil;
 import my.project.sakuraproject.util.SwipeBackLayoutUtil;
 import my.project.sakuraproject.util.Utils;
 
@@ -56,7 +55,6 @@ public class ApiActivity extends BaseActivity<ApiContract.View, ApiPresenter> im
 
     @Override
     protected void init() {
-        StatusBarUtil.setColorForSwipeBack(this, getResources().getColor(R.color.night), 0);
         Slidr.attach(this, Utils.defaultInit());
         initToolbar();
         initSwipe();
@@ -157,11 +155,14 @@ public class ApiActivity extends BaseActivity<ApiContract.View, ApiPresenter> im
                     DatabaseUtil.updateApi(adapter.getData().get(position).getId(), name, api);
                     adapter.getData().get(position).setTitle(name);
                     adapter.getData().get(position).setUrl(api);
+                    apiList.get(position).setTitle(name);
+                    apiList.get(position).setUrl(api);
                     adapter.notifyDataSetChanged();
                 } else {
                     ApiBean bean = new ApiBean(UUID.randomUUID().toString(), name, api);
                     DatabaseUtil.addApi(bean);
                     adapter.addData(0, bean);
+                    apiList.add(bean);
                 }
                 alertDialog.dismiss();
             }

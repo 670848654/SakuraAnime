@@ -2,8 +2,6 @@ package my.project.sakuraproject.main.player;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -38,15 +36,8 @@ public class JZPlayer extends JzvdStd {
         super.setUp(jzDataSource, screen);
         batteryTimeLayout.setVisibility(GONE);
         Glide.with(context).load(R.drawable.baseline_view_module_white_48dp).into(fullscreenButton);
-        Glide.with(context).load(R.drawable.baseline_close_white_48dp).apply(new RequestOptions().fitCenter()).into(backButton);
-        backButton.setPadding(0, 0, 15, 0);
-        changeButtonSize(backButton, 70);
-    }
-
-    public void changeButtonSize(View view, int size) {
-        ViewGroup.LayoutParams lp = view.getLayoutParams();
-        lp.height = size;
-        lp.width = size;
+        Glide.with(context).load(R.drawable.ic_close_white_48dp).apply(new RequestOptions().fitCenter()).into(backButton);
+        backButton.setPadding(0, 0, 20, 0);
     }
 
     public void startPIP() {

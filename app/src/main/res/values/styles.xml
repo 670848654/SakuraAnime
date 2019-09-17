@@ -1,13 +1,19 @@
 <resources>
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/night</item>
-        <item name="colorPrimaryDark">@color/night</item>
-        <item name="colorAccent">@color/pinka200</item>
-        <item name="android:navigationBarColor">#DE000000</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textColorPrimary">@color/text_color_primary</item>
+        <item name="android:navigationBarColor">@color/colorPrimary</item>
         <!--<item name="android:windowAnimationStyle">@style/AnimationActivity</item>-->
         <!-- MaterialDrawer specific values -->
+    </style>
+
+    <style name="startTheme" parent="AppTheme">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowIsTranslucent">true</item>
     </style>
 
     <style name="TranslucentTheme" parent="AppTheme">
@@ -27,7 +33,7 @@
         <!--<item name="android:windowAnimationStyle">@style/AnimationActivity</item>-->
     </style>
 
-    <style name="AppTheme.NoActionBar">
+    <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.DayNight">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
@@ -55,6 +61,16 @@
         <item name="contentInsetStartWithNavigation">0dp</item>
     </style>
 
+    <style name="ThemeToolbar" parent="Theme.AppCompat.Light">
+        <item name="colorPrimary">@color/toolbar_color</item>
+        <item name="colorPrimaryDark">@color/toolbar_color</item>
+        <item name="android:textColorPrimary">@color/toolbar_color</item>
+        <!-- navigation icon color -->
+        <item name="colorControlNormal">@color/toolbar_color</item>
+        <!-- color of the menu overflow icon -->
+        <item name="android:textColorSecondary">@color/toolbar_color</item>
+    </style>
+
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
@@ -62,5 +78,10 @@
     <style name="CustomTitleTextAppearance">
         <item name="android:textSize">12sp</item>
         <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="WindowAnimationFadeInOut">
+        <item name="android:windowEnterAnimation">@anim/fade_in</item>
+        <item name="android:windowExitAnimation">@anim/fade_out</item>
     </style>
 </resources>

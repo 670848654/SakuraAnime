@@ -29,7 +29,6 @@ import my.project.sakuraproject.R;
 import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.base.Presenter;
 import my.project.sakuraproject.services.ClearVideoCacheService;
-import my.project.sakuraproject.util.StatusBarUtil;
 
 public class DefaultWebActivity extends BaseActivity {
     private String url;
@@ -71,7 +70,6 @@ public class DefaultWebActivity extends BaseActivity {
 
     @Override
     protected void initBeforeView() {
-        StatusBarUtil.setTranslucent(this, 0);
     }
 
     public void getBundle() {

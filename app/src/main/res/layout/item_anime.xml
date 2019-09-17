@@ -12,9 +12,9 @@
     android:layout_marginBottom="2dp"
     android:foreground="?android:attr/selectableItemBackground"
     app:ignore="NamespaceTypo"
-    card_view:cardBackgroundColor="@color/bold"
+    card_view:cardBackgroundColor="@color/window_bg"
     card_view:cardCornerRadius="4dp"
-    card_view:cardElevation="2dp"
+    card_view:cardElevation="4dp"
     card_view:cardUseCompatPadding="false">
 
     <LinearLayout
@@ -36,7 +36,7 @@
             android:ellipsize="end"
             android:maxLines="2"
             android:padding="5dp"
-            android:textColor="@color/grey400"
+            android:textColor="@color/text_color_primary"
             android:textSize="14sp" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>

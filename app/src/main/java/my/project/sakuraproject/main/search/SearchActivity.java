@@ -24,7 +24,6 @@ import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.bean.AnimeListBean;
 import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.desc.DescActivity;
-import my.project.sakuraproject.util.StatusBarUtil;
 import my.project.sakuraproject.util.SwipeBackLayoutUtil;
 import my.project.sakuraproject.util.Utils;
 import my.project.sakuraproject.util.VideoUtils;
@@ -62,7 +61,6 @@ public class SearchActivity extends BaseActivity<SearchContract.View, SearchPres
 
     @Override
     protected void init() {
-        StatusBarUtil.setColorForSwipeBack(SearchActivity.this, getResources().getColor(R.color.night), 0);
         Slidr.attach(this, Utils.defaultInit());
         getBundle();
         initToolbar();
@@ -82,7 +80,7 @@ public class SearchActivity extends BaseActivity<SearchContract.View, SearchPres
     }
 
     public void initToolbar() {
-        toolbar.setTitle(title);
+        toolbar.setTitle("");
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbar.setNavigationOnClickListener(view -> finish());
@@ -155,7 +153,10 @@ public class SearchActivity extends BaseActivity<SearchContract.View, SearchPres
             Utils.hideKeyboard(mSearchView);
         }
         SearchView.SearchAutoComplete textView = mSearchView.findViewById(R.id.search_src_text);
-        textView.setTextColor(getResources().getColor(R.color.grey50));
+        mSearchView.findViewById(R.id.search_plate).setBackground(null);
+        mSearchView.findViewById(R.id.submit_area).setBackground(null);
+        textView.setTextColor(getResources().getColor(R.color.text_color_primary));
+        textView.setHintTextColor(getResources().getColor(R.color.text_color_primary));
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {

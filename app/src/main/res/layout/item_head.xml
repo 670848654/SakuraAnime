@@ -6,7 +6,7 @@
     android:layout_gravity="center"
     android:layout_marginTop="4dp"
     android:foreground="?android:attr/selectableItemBackground"
-    card_view:cardBackgroundColor="@color/night"
+    card_view:cardBackgroundColor="@color/window_bg"
     card_view:cardCornerRadius="0dp"
     card_view:cardElevation="2dp"
     card_view:cardUseCompatPadding="false">
@@ -20,6 +20,7 @@
         <ImageView
             android:id="@+id/arrow"
             android:layout_width="0dp"
+            android:tint="@color/jd_bg"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:paddingRight="10dp"
@@ -34,7 +35,7 @@
             android:gravity="left|center"
             android:maxLines="1"
             android:paddingLeft="10dp"
-            android:textColor="@android:color/white"
+            android:textColor="@color/text_color_primary"
             android:textSize="16sp" />
         <!--android:textStyle="bold"-->
 

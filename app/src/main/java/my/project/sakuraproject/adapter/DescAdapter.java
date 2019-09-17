@@ -1,6 +1,7 @@
 package my.project.sakuraproject.adapter;
 
 import android.content.Context;
+import android.widget.Button;
 
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -44,14 +45,18 @@ public class DescAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity, Base
             case AnimeType.TYPE_LEVEL_1:
                 final AnimeDescBean animeDescBean = (AnimeDescBean) item;
                 String title = animeDescBean.getTitle();
+                Button btn = helper.getView(R.id.tag_group);
                 if (animeDescBean.getType().equals("play"))
                     helper.setText(R.id.tag_group, title.replaceAll("第", "").replaceAll("集", ""));
                 else
                     helper.setText(R.id.tag_group, title);
-                if (animeDescBean.isSelect())
-                    helper.getView(R.id.tag_group).setBackground(context.getResources().getDrawable(R.drawable.button_selected, null));
-                else
-                    helper.getView(R.id.tag_group).setBackground(context.getResources().getDrawable(R.drawable.button_default, null));
+                if (animeDescBean.isSelect()) {
+                    helper.getView(R.id.tag_group).setBackgroundResource(R.drawable.button_selected);
+                    btn.setTextColor(context.getResources().getColor(R.color.item_selected_color));
+                }else {
+                    helper.getView(R.id.tag_group).setBackgroundResource(R.drawable.button_default);
+                    btn.setTextColor(context.getResources().getColor(R.color.text_color_primary));
+                }
                 break;
             case AnimeType.TYPE_LEVEL_2:
                 final AnimeDescBean bean = (AnimeDescBean) item;

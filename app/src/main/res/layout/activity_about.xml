@@ -213,6 +213,13 @@
                     android:textColor="@color/text_color_primary"
                     android:text="@string/open_source_library"
                     android:textSize="15sp" />
+
+                <LinearLayout
+                    android:id="@+id/footer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/window_bg"
+                    android:orientation="vertical" />
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

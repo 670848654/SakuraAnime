@@ -104,6 +104,7 @@ public class FavoriteActivity extends BaseActivity<FavoriteContract.View, Favori
             popupMenu.show();
             return true;
         });
+        if (Utils.checkHasNavigationBar(this)) mRecyclerView.setPadding(0,0,0, Utils.getNavigationBarHeight(this) - 5);
         mRecyclerView.setAdapter(adapter);
     }
 
@@ -113,7 +114,8 @@ public class FavoriteActivity extends BaseActivity<FavoriteContract.View, Favori
     private void removeFavorite(int position) {
         DatabaseUtil.deleteFavorite(favoriteList.get(position).getTitle());
         adapter.remove(position);
-        Utils.showSnackbar(toolbar, Utils.getString(R.string.join_error));
+        application.showCustomToastMsg(Utils.getString(R.string.join_error),
+                R.drawable.ic_remove_favorite_48dp, R.color.red300);
         if (favoriteList.size() <= 0) {
             errorTitle.setText(Utils.getString(R.string.empty_favorite));
             adapter.setEmptyView(errorView);

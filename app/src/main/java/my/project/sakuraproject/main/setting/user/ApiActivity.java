@@ -3,9 +3,11 @@ package my.project.sakuraproject.main.setting.user;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.r0adkll.slidr.Slidr;
 
 import java.util.ArrayList;
@@ -37,7 +39,8 @@ public class ApiActivity extends BaseActivity<ApiContract.View, ApiPresenter> im
     private ApiAdapter adapter;
     private List<ApiBean> apiList = new ArrayList<>();
     private AlertDialog alertDialog;
-
+    @BindView(R.id.add)
+    FloatingActionButton add;
     @Override
     protected ApiPresenter createPresenter() {
         return new ApiPresenter(this);
@@ -57,6 +60,7 @@ public class ApiActivity extends BaseActivity<ApiContract.View, ApiPresenter> im
     protected void init() {
         Slidr.attach(this, Utils.defaultInit());
         initToolbar();
+        initFab();
         initSwipe();
         initAdapter();
     }
@@ -71,6 +75,17 @@ public class ApiActivity extends BaseActivity<ApiContract.View, ApiPresenter> im
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbar.setNavigationOnClickListener(view -> finish());
+    }
+
+    public void initFab() {
+        if (Utils.checkHasNavigationBar(this)) {
+            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) add.getLayoutParams();
+            params.setMargins(Utils.dpToPx(this, 16),
+                    Utils.dpToPx(this, 16),
+                    Utils.dpToPx(this, 16),
+                    Utils.getNavigationBarHeight(this));
+            add.setLayoutParams(params);
+        }
     }
 
     public void initSwipe() {
@@ -88,6 +103,7 @@ public class ApiActivity extends BaseActivity<ApiContract.View, ApiPresenter> im
         adapter.setOnItemChildClickListener((adapter, view, position) -> {
             if (Utils.isFastClick()) delete(position);
         });
+        if (Utils.checkHasNavigationBar(this)) mRecyclerView.setPadding(0,0,0, Utils.getNavigationBarHeight(this) - 5);
         mRecyclerView.setAdapter(adapter);
     }
 

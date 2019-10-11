@@ -6,8 +6,8 @@ android {
         applicationId "my.project.sakuraproject"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 7
-        versionName "1.7"
+        versionCode 8
+        versionName "1.8"
         ndk{abiFilters "armeabi", "armeabi-v7a", "x86"}
         resConfigs"zh"
     }
@@ -52,5 +52,6 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
     implementation 'com.android.support:customtabs:29.0.0'
     implementation 'com.tencent.tbs.tbssdk:sdk:43697'
+    implementation 'com.github.GrenderG:Toasty:1.4.2'
 }
 

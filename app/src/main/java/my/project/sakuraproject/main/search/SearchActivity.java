@@ -22,6 +22,7 @@ import my.project.sakuraproject.R;
 import my.project.sakuraproject.adapter.AnimeListAdapter;
 import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.bean.AnimeListBean;
+import my.project.sakuraproject.custom.CustomLoadMoreView;
 import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.desc.DescActivity;
 import my.project.sakuraproject.util.SwipeBackLayoutUtil;
@@ -42,6 +43,7 @@ public class SearchActivity extends BaseActivity<SearchContract.View, SearchPres
     private int pageCount = 1;
     private boolean isErr = true;
     private SearchView mSearchView;
+    private boolean isSearch = false;
 
     @Override
     protected SearchPresenter createPresenter() {
@@ -103,10 +105,14 @@ public class SearchActivity extends BaseActivity<SearchContract.View, SearchPres
             String title = bean.getTitle();
             openAnimeDesc(title, url);
         });
+        adapter.setLoadMoreView(new CustomLoadMoreView());
         adapter.setOnLoadMoreListener(() -> mRecyclerView.postDelayed(() -> {
+            isSearch = true;
             if (page >= pageCount) {
                 //数据全部加载完毕
                 adapter.loadMoreEnd();
+                isSearch = false;
+                application.showSuccessToastMsg(Utils.getString(R.string.no_more));
             } else {
                 if (isErr) {
                     //成功获取更多数据
@@ -120,6 +126,7 @@ public class SearchActivity extends BaseActivity<SearchContract.View, SearchPres
                 }
             }
         }, 500), mRecyclerView);
+        if (Utils.checkHasNavigationBar(this)) mRecyclerView.setPadding(0,0,0, Utils.getNavigationBarHeight(this) - 5);
         mRecyclerView.setAdapter(adapter);
     }
 
@@ -160,15 +167,19 @@ public class SearchActivity extends BaseActivity<SearchContract.View, SearchPres
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                title = query.replaceAll(" ", "");
-                if (!title.isEmpty()) {
-                    page = 1;
-                    pageCount = 1;
-                    mPresenter = createPresenter();
-                    mPresenter.loadData(true);
-                    toolbar.setTitle(title);
-                    mSearchView.clearFocus();
-                    Utils.hideKeyboard(mSearchView);
+                if (isSearch) {
+                    application.showToastMsg("正在执行搜索操作，请稍后再试！");
+                }else {
+                    title = query.replaceAll(" ", "");
+                    if (!title.isEmpty()) {
+                        page = 1;
+                        pageCount = 1;
+                        mPresenter = createPresenter();
+                        mPresenter.loadData(true);
+                        toolbar.setTitle(title);
+                        mSearchView.clearFocus();
+                        Utils.hideKeyboard(mSearchView);
+                    }
                 }
                 return true;
             }
@@ -188,6 +199,7 @@ public class SearchActivity extends BaseActivity<SearchContract.View, SearchPres
 
     @Override
     public void showLoadingView() {
+        isSearch = true;
         searchList.clear();
         adapter.setNewData(searchList);
         mSwipe.setRefreshing(true);
@@ -206,6 +218,7 @@ public class SearchActivity extends BaseActivity<SearchContract.View, SearchPres
     @Override
     public void showSuccessView(boolean isMain, List<AnimeListBean> list) {
         runOnUiThread(() -> {
+            isSearch = false;
             if (!mActivityFinish) {
                 if (isMain) {
                     mSwipe.setRefreshing(false);
@@ -222,6 +235,7 @@ public class SearchActivity extends BaseActivity<SearchContract.View, SearchPres
     @Override
     public void showErrorView(boolean isMain, String msg) {
         runOnUiThread(() -> {
+            isSearch = false;
             if (!mActivityFinish) {
                 if (isMain) {
                     mSwipe.setRefreshing(false);
@@ -229,7 +243,7 @@ public class SearchActivity extends BaseActivity<SearchContract.View, SearchPres
                     adapter.setEmptyView(errorView);
                 } else {
                     setLoadState(false);
-                    application.showToastMsg(msg);
+                    application.showErrorToastMsg(msg);
                 }
             }
         });

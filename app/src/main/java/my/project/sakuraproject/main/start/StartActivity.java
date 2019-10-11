@@ -65,8 +65,10 @@ public class StartActivity extends BaseActivity {
         new HttpGet(Api.CHECK_UPDATE, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                application.showToastMsg(Utils.getString(R.string.ck_network_error_start));
-                openMain();
+                runOnUiThread(() -> {
+                    application.showErrorToastMsg(Utils.getString(R.string.ck_network_error_start));
+                    openMain();
+                });
             }
 
             @Override
@@ -131,7 +133,7 @@ public class StartActivity extends BaseActivity {
             public void onDownloadFailed() {
                 runOnUiThread(() -> {
                     Utils.cancelProDialog(p);
-                    application.showToastMsg(Utils.getString(R.string.download_error));
+                    application.showErrorToastMsg(Utils.getString(R.string.download_error));
                     openMain();
                 });
             }

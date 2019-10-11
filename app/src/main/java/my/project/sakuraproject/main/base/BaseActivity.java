@@ -1,6 +1,7 @@
 package my.project.sakuraproject.main.base;
 
 import android.Manifest;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -33,8 +34,19 @@ public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatA
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (!getRunningActivityName().equals("StartActivity") && !getRunningActivityName().equals("HomeActivity")) overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         initBeforeView();
         setContentView(setLayoutRes());
+        if (Utils.checkHasNavigationBar(this)) {
+            getWindow().setFlags(
+                    WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+                    WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+            );
+            getWindow().setNavigationBarColor(Color.TRANSPARENT);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                getWindow().setNavigationBarDividerColor(Color.TRANSPARENT);
+            }
+        }
         mUnBinder = ButterKnife.bind(this);
         if (application == null) {
             application = (Sakura) getApplication();
@@ -120,7 +132,7 @@ public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatA
 
     @Override
     public void onPermissionsDenied(int requestCode, List<String> perms) {
-        application.showToastMsg(Utils.getString(R.string.permissions_error));
+        application.showErrorToastMsg(Utils.getString(R.string.permissions_error));
         application.removeALLActivity();
     }
 
@@ -153,5 +165,11 @@ public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatA
             } else
                 StatusBarUtil.setColorForSwipeBack(this, getResources().getColor(R.color.colorPrimaryDark), 0);
         }
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        if (!getRunningActivityName().equals("StartActivity") && !getRunningActivityName().equals("HomeActivity")) overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 }

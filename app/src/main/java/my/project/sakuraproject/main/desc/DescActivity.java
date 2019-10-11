@@ -98,6 +98,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     @Override
     protected void init() {
         StatusBarUtil.setColorForSwipeBack(this, getResources().getColor(R.color.colorPrimaryDark), 0);
+        StatusBarUtil.setTranslucentForImageView(this, 0, toolbar);
         Slidr.attach(this, Utils.defaultInit());
         getBundle();
         initToolbar();
@@ -176,6 +177,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
                     break;
             }
         });
+        if (Utils.checkHasNavigationBar(this)) mRecyclerView.setPadding(0,0,0, Utils.getNavigationBarHeight(this) - 5);
         mRecyclerView.setAdapter(adapter);
         adapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
     }
@@ -277,10 +279,12 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         isFavorite = DatabaseUtil.favorite(animeListBean);
         if (isFavorite) {
             Glide.with(DescActivity.this).load(R.drawable.baseline_favorite_white_48dp).into(favorite);
-            Utils.showSnackbar(toolbar, Utils.getString(R.string.join_ok));
+            application.showCustomToastMsg(Utils.getString(R.string.join_ok),
+                    R.drawable.ic_add_favorite_48dp, R.color.green300);
         } else {
             Glide.with(DescActivity.this).load(R.drawable.baseline_favorite_border_white_48dp).into(favorite);
-            Utils.showSnackbar(toolbar, Utils.getString(R.string.join_error));
+            application.showCustomToastMsg(Utils.getString(R.string.join_error),
+                    R.drawable.ic_remove_favorite_48dp, R.color.red300);
         }
     }
 
@@ -429,7 +433,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
 
     @Override
     public void getVideoError() {
-        runOnUiThread(() -> application.showToastMsg(Utils.getString(R.string.error_700)));
+        runOnUiThread(() -> application.showErrorToastMsg(Utils.getString(R.string.error_700)));
     }
 
     @Override

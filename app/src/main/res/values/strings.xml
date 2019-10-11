@@ -6,7 +6,7 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <!-- 权限文本 -->
     <string name="permissions">为了正常使用，需要以下权限!</string>
-    <string name="permissions_error">未能获取到相关权限!</string>
+    <string name="permissions_error">未能获取到相关权限</string>
     <!-- drawer Title -->
     <string name="home_title">新番时间表</string>
     <string name="home_tag_title">动漫分类</string>
@@ -19,17 +19,15 @@
     <string name="home_setting_item_title">自定义</string>
     <string name="home_other_title">其他</string>
     <string name="home_other_item_title">关于</string>
-    <string name="huaji">嘤嘤嘤嘤嘤 (。・∀・)ノ</string>
     <string name="search_hint">请输入动漫名</string>
     <!-- exit 文本 -->
-    <string name="exit_app">是否退出应用?</string>
-    <string name="exit">退出</string>
+    <string name="exit_app">再按一次退出程序</string>
     <!-- 主页dialog文本 -->
     <string name="x5_info_title">注意事项</string>
     <string name="x5_info">一些老番可能需要使用WebView播放(做了兼容但未测试，默认加载腾讯x5内核，首次可能会加载失败，尝试杀进程重启应用或卸载重装应用，若是你使用的设备版本太高则需等待官方适配后才能加载成功)。\n新番多数可以直接使用内置播放器或外部播放器播放(某些可能第一次播放失败，需多尝试几次)。\n注：并不是所有番剧都能正常播放（多为网站本身原因）~</string>
     <string name="x5_info_positive">OJBK</string>
     <!-- 空文本 -->
-    <string name="empty">未能获取到任何信息!</string>
+    <string name="empty">未能获取到任何信息</string>
     <!-- 解析相关文本 -->
     <string name="source_title">选择解析线路</string>
     <string name="source_1">线路①</string>
@@ -45,20 +43,21 @@
     <string name="loading">加载中</string>
     <string name="load_error">加载失败</string>
     <string name="load_desc_info">请在番剧详情加载完毕后再进行操作</string>
+    <string name="no_more">数据全部加载完毕</string>
     <!-- msg文本 -->
     <string name="select_player">请选择视频播放器</string>
     <string name="select_video_source">选择播放源</string>
     <string name="parsing">解析中，请稍后&#8230;</string>
-    <string name="error_700">网络错误，请重试!</string>
+    <string name="error_700">网络错误，请重试</string>
     <string name="error_800">未能获取到播放地址\n1、解析方法不支持\n2、播放地址不存在\n3、可以尝试打开原页面去播放</string>
-    <string name="join_ok">自己追的番就要好好看完哦 （&gt;▽&lt;）</string>
-    <string name="join_error">哼！竟然真的抛弃了人家（＝。＝）</string>
+    <string name="join_ok">自己追的番就要好好看完哦</string>
+    <string name="join_error">哼！竟然真的抛弃了人家</string>
     <string name="parsing_error">OH~解析出错了\n代码无法解析该界面信息~\n</string>
     <string name="error_msg">抱歉，未找到相关信息~</string>
     <string name="no_playlist_error">该番剧暂无播放列表。</string>
     <string name="get_drama_error">获取剧集信息出错</string>
-    <string name="should_be_used_web">该播放地址貌似应该使用网页播放！？</string>
-    <string name="maybe_can_not_play">注意：该播放地址可能无法正常播放！</string>
+    <string name="should_be_used_web">该播放地址貌似应该使用网页播放</string>
+    <string name="maybe_can_not_play">该播放地址可能无法正常播放</string>
     <!-- 详情界面文本 -->
     <string name="online">在线</string>
     <string name="multi">多季</string>
@@ -117,22 +116,22 @@
     <string name="test_model">测试</string>
     <string name="test_model_desc">OnePlus 7 Pro : Android 10</string>
     <string name="now_version">当前版本</string>
-    <string name="final_compile">最后编译</string>
-    <string name="final_compile_time">2019年9月11日12:09:44</string>
+    <string name="final_compile">最后编译日期</string>
+    <string name="final_compile_time">2019年10月11日</string>
     <string name="cache">缓存目录</string>
     <string name="cache_text">/SakuraAnime/\n卸载后自行删除此目录</string>
     <string name="github">Github</string>
     <string name="github_url">https://github.com/670848654/SakuraAnime</string>
     <!-- 检测更新 -->
+    <string name="update_log">更新日志</string>
     <string name="check_update">检测更新</string>
     <string name="check_update_text">检测更新中&#8230;</string>
     <string name="download">下载中,请等待</string>
-    <string name="ck_network_error">连接服务器超时</string>
+    <string name="ck_network_error">连接服务器超时，请重试</string>
     <string name="ck_network_error_start">连接服务器超时，检测更新失败</string>
-    <string name="ck_retry">重试</string>
     <string name="no_new_version">没有新版本</string>
     <string name="cancel">取消</string>
-    <string name="download_error">下载失败~</string>
+    <string name="download_error">下载失败</string>
     <string name="find_new_version">发现新版本</string>
     <string name="update_now">现在更新</string>
     <string name="update_after">暂不更新</string>

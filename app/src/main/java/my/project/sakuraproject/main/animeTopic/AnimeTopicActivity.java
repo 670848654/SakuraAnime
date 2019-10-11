@@ -4,6 +4,9 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -21,6 +24,7 @@ import butterknife.OnClick;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.adapter.AnimeListAdapter;
 import my.project.sakuraproject.bean.AnimeListBean;
+import my.project.sakuraproject.custom.CustomLoadMoreView;
 import my.project.sakuraproject.main.animeList.AnimeListActivity;
 import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.search.SearchActivity;
@@ -91,6 +95,14 @@ public class AnimeTopicActivity extends BaseActivity<AnimeTopicContract.View, An
 
     @SuppressLint("RestrictedApi")
     public void initFab() {
+        if (Utils.checkHasNavigationBar(this)) {
+            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) query.getLayoutParams();
+            params.setMargins(Utils.dpToPx(this, 16),
+                    Utils.dpToPx(this, 16),
+                    Utils.dpToPx(this, 16),
+                    Utils.getNavigationBarHeight(this));
+            query.setLayoutParams(params);
+        }
         query.setVisibility(View.VISIBLE);
     }
 
@@ -101,6 +113,7 @@ public class AnimeTopicActivity extends BaseActivity<AnimeTopicContract.View, An
             adapter.setNewData(list);
             nowPage = 1;
             pageCount = 1;
+            mPresenter = createPresenter();
             mPresenter.loadData(true);
         });
     }
@@ -119,10 +132,13 @@ public class AnimeTopicActivity extends BaseActivity<AnimeTopicContract.View, An
             bundle.putBoolean("isMovie", false);
             startActivity(new Intent(this, AnimeListActivity.class).putExtras(bundle));
         });
+        if (Utils.checkHasNavigationBar(this)) mRecyclerView.setPadding(0,0,0, Utils.getNavigationBarHeight(this) - 5);
+        adapter.setLoadMoreView(new CustomLoadMoreView());
         adapter.setOnLoadMoreListener(() -> mRecyclerView.postDelayed(() -> {
             if (nowPage >= pageCount) {
                 //数据全部加载完毕
                 adapter.loadMoreEnd();
+                application.showSuccessToastMsg(Utils.getString(R.string.no_more));
             } else {
                 if (isErr) {
                     //成功获取更多数据
@@ -180,7 +196,7 @@ public class AnimeTopicActivity extends BaseActivity<AnimeTopicContract.View, An
                     adapter.setEmptyView(errorView);
                 } else {
                     setLoadState(false);
-                    application.showToastMsg(msg);
+                    application.showErrorToastMsg(msg);
                 }
             }
         });

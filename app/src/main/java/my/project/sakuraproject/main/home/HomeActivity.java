@@ -70,6 +70,7 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
     private int week;
     private SearchView mSearchView;
     private String[] tabs = Utils.getArray(R.array.week_array);
+    private long exitTime = 0;
 
     @Override
     protected HomePresenter createPresenter() {
@@ -129,7 +130,6 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
         View view = navigationView.getHeaderView(0);
         imageView = view.findViewById(R.id.imageView);
         imageView.setOnClickListener(view1 -> {
-            Utils.showSnackbar(imageView, Utils.getString(R.string.huaji));
             final ObjectAnimator animator = Utils.tada(imageView);
             animator.setRepeatCount(0);
             animator.setDuration(1000);
@@ -168,6 +168,7 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
         mSwipe.setColorSchemeResources(R.color.pink500, R.color.blue500, R.color.purple500);
         mSwipe.setOnRefreshListener(() -> {
             viewpager.removeAllViews();
+            removeFragmentTransaction();
             mPresenter.loadData(true);
         });
     }
@@ -227,10 +228,12 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
     @Override
     public void onBackPressed() {
         if (drawer.isDrawerOpen(GravityCompat.START)) drawer.closeDrawer(GravityCompat.START);
-        else application.showSnackbarMsg(toolbar,
-                Utils.getString(R.string.exit_app),
-                Utils.getString(R.string.exit),
-                v -> application.removeALLActivity());
+        else if ((System.currentTimeMillis() - exitTime) > 2000) {
+            application.showToastMsg(Utils.getString(R.string.exit_app));
+            exitTime = System.currentTimeMillis();
+        } else {
+            application.removeALLActivity();
+        }
     }
 
     @Override
@@ -292,7 +295,7 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
     public void showLoadErrorView(String msg) {
         runOnUiThread(() -> {
             mSwipe.setRefreshing(false);
-            application.showToastMsg(msg);
+            application.showErrorToastMsg(msg);
             application.error = msg;
             application.week = new JSONObject();
             setWeekAdapter();
@@ -306,10 +309,12 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
     @Override
     public void showLoadSuccess(LinkedHashMap map) {
         runOnUiThread(() -> {
-            mSwipe.setRefreshing(false);
-            application.error = "";
-            application.week = map.get("week") == null ? new JSONObject() : (JSONObject) map.get("week");
-            setWeekAdapter();
+            if (!getSupportFragmentManager().isDestroyed()) {
+                mSwipe.setRefreshing(false);
+                application.error = "";
+                application.week = map.get("week") == null ? new JSONObject() : (JSONObject) map.get("week");
+                setWeekAdapter();
+            }
         });
     }
 
@@ -329,14 +334,7 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        DatabaseUtil.closeDB();
-    }
-
-    @Override
-    public void recreate() {
+    public void removeFragmentTransaction() {
         try {//避免重启太快恢复
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             for (int i = 0; i < 7 ; i++) {
@@ -345,6 +343,17 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
             fragmentTransaction.commitAllowingStateLoss();
         } catch (Exception e) {
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        DatabaseUtil.closeDB();
+    }
+
+    @Override
+    public void recreate() {
+        removeFragmentTransaction();
         super.recreate();
     }
 }

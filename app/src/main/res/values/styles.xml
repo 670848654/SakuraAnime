@@ -61,7 +61,7 @@
         <item name="contentInsetStartWithNavigation">0dp</item>
     </style>
 
-    <style name="ThemeToolbar" parent="Theme.AppCompat.Light">
+    <style name="ThemeToolbar" parent="Theme.AppCompat">
         <item name="colorPrimary">@color/toolbar_color</item>
         <item name="colorPrimaryDark">@color/toolbar_color</item>
         <item name="android:textColorPrimary">@color/toolbar_color</item>

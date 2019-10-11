@@ -22,8 +22,7 @@ public class AnimeHeaderBean extends AbstractExpandableItem<AnimeDescBean> imple
         this.title = title;
     }
 
-    public AnimeHeaderBean() {
-    }
+    public AnimeHeaderBean() {}
 
     @Override
     public int getLevel() {

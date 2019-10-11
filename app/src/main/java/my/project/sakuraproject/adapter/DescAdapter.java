@@ -1,6 +1,7 @@
 package my.project.sakuraproject.adapter;
 
 import android.content.Context;
+import android.view.View;
 import android.widget.Button;
 
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
@@ -32,6 +33,7 @@ public class DescAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity, Base
         switch (helper.getItemViewType()) {
             case AnimeType.TYPE_LEVEL_0:
                 final AnimeHeaderBean mainHeaderBean = (AnimeHeaderBean) item;
+                helper.itemView.setVisibility(View.VISIBLE);
                 helper.setText(R.id.header, mainHeaderBean.getTitle()).setImageResource(R.id.arrow, mainHeaderBean.isExpanded() ? R.drawable.ic_keyboard_arrow_down_white_48dp : R.drawable.baseline_keyboard_arrow_right_white_48dp);
                 helper.itemView.setOnClickListener(v -> {
                     int pos = helper.getAdapterPosition();

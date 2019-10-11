@@ -2,11 +2,9 @@ package my.project.sakuraproject.application;
 
 import android.app.Activity;
 import android.app.Application;
-import android.view.View;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.google.android.material.snackbar.Snackbar;
 import com.tencent.smtt.sdk.QbSdk;
 
 import org.json.JSONObject;
@@ -17,8 +15,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import androidx.annotation.ColorRes;
+import androidx.annotation.DrawableRes;
 import androidx.appcompat.app.AppCompatDelegate;
 import cn.jzvd.JzvdStd;
+import es.dmoral.toasty.Toasty;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.main.player.JZExoPlayer;
 import my.project.sakuraproject.util.SharedPreferencesUtils;
@@ -82,8 +83,8 @@ public class Sakura extends Application {
         QbSdk.PreInitCallback cb = new QbSdk.PreInitCallback() {
             @Override
             public void onViewInitFinished(boolean arg0) {
-                if (arg0) showToastMsg("X5内核加载成功");
-                else showToastMsg("X5内核加载失败,切换到系统内核");
+                if (arg0) showSuccessToastMsg("X5内核加载成功");
+                else showErrorToastMsg("X5内核加载失败");
             }
 
             @Override
@@ -94,16 +95,21 @@ public class Sakura extends Application {
         QbSdk.initX5Environment(getApplicationContext(), cb);
     }
 
-    public void showToastMsg(String msg) {
-        Toast.makeText(appContext, msg, Toast.LENGTH_SHORT).show();
+    public void showToastMsg(String msg){
+        Toasty.warning(getApplicationContext(), msg, Toast.LENGTH_LONG, true).show();
     }
 
-    public void showSnackbarMsg(View view, String msg) {
-        Snackbar.make(view, msg, Snackbar.LENGTH_LONG).show();
+    public void showSuccessToastMsg(String msg){
+        Toasty.success(getApplicationContext(), msg, Toast.LENGTH_LONG, true).show();
     }
 
-    public void showSnackbarMsg(View view, String msg, String actionName, View.OnClickListener listener) {
-        Snackbar.make(view, msg, Snackbar.LENGTH_LONG).setAction(actionName, listener).show();
+    public void showErrorToastMsg(String msg){
+        Toasty.error(getApplicationContext(), msg, Toast.LENGTH_LONG, true).show();
+    }
+
+    public void showCustomToastMsg(String msg, @DrawableRes int iconRes, @ColorRes int color){
+        Toasty.custom(this, msg,
+                iconRes, color, Toast.LENGTH_LONG, true, true).show();
     }
 
     public void addActivity(Activity activity) {

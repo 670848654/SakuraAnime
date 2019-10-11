@@ -92,6 +92,7 @@ public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> im
             bundle.putBoolean("isMovie", false);
             startActivity(new Intent(TagActivity.this, AnimeListActivity.class).putExtras(bundle));
         });
+        if (Utils.checkHasNavigationBar(this)) mRecyclerView.setPadding(0,0,0, Utils.getNavigationBarHeight(this) - 5);
         mRecyclerView.setAdapter(adapter);
     }
 

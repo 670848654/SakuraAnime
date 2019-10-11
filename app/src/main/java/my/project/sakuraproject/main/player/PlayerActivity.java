@@ -77,6 +77,7 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
 
     @Override
     protected void init() {
+        StatusBarUtil.setTranslucent(this, 0);
         Sakura.addDestoryActivity(this, "player");
         drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         hideGap();
@@ -325,7 +326,7 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
         //网络出错
         runOnUiThread(() -> {
             hideNavBar();
-            application.showToastMsg(Utils.getString(R.string.error_700));
+            application.showErrorToastMsg(Utils.getString(R.string.error_700));
         });
     }
 
@@ -338,7 +339,7 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
 
     @Override
     public void errorDramaView() {
-        runOnUiThread(() -> application.showToastMsg(Utils.getString(R.string.get_drama_error)));
+        runOnUiThread(() -> application.showErrorToastMsg(Utils.getString(R.string.get_drama_error)));
     }
 
     @Override
@@ -349,7 +350,7 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
 
     @Override
     public void complete() {
-        application.showToastMsg("播放完毕");
+        application.showSuccessToastMsg("播放完毕");
         if (!drawerLayout.isDrawerOpen(GravityCompat.END))
             drawerLayout.openDrawer(GravityCompat.END);
     }

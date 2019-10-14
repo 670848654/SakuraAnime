@@ -164,6 +164,7 @@ public class AboutActivity extends BaseActivity {
 
     public List createUpdateLogList() {
         List logsList = new ArrayList();
+        logsList.add(new LogBean("版本：1.8.1","修复某些设备导航栏的显示问题"));
         logsList.add(new LogBean("版本：1.8","修复一些Bugs\n修正部分界面布局\n适配沉浸式导航栏《仅支持原生导航栏，第三方魔改UI无效》（Test）"));
         logsList.add(new LogBean("版本：1.7","修复一些Bugs\n修正部分界面布局\n新增亮色主题（Test）"));
         logsList.add(new LogBean("版本：1.6","修复更新SDK后导致崩溃的严重问题"));

@@ -1,40 +1,30 @@
-package my.project.sakuraproject.main.webview;
+package my.project.sakuraproject.main.webview.normal;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
+import android.webkit.WebView;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-
-import com.tencent.smtt.export.external.interfaces.IX5WebChromeClient;
-import com.tencent.smtt.sdk.WebChromeClient;
-import com.tencent.smtt.sdk.WebView;
-import com.tencent.smtt.sdk.WebViewClient;
-
-import java.lang.reflect.Method;
-import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.base.Presenter;
-import my.project.sakuraproject.services.ClearVideoCacheService;
 import my.project.sakuraproject.util.Utils;
 
-public class DefaultWebActivity extends BaseActivity {
+public class DefaultNormalWebActivity extends BaseActivity {
     private String url;
-    @BindView(R.id.x5_webview)
-    X5WebView mX5WebView;
+    @BindView(R.id.webview)
+    NormalWebView normalWebView;
     @BindView(R.id.progressBar)
     ProgressBar pg;
     /**
@@ -43,7 +33,7 @@ public class DefaultWebActivity extends BaseActivity {
     protected static final FrameLayout.LayoutParams COVER_SCREEN_PARAMS = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
     private View customView;
     private FrameLayout fullscreenContainer;
-    private IX5WebChromeClient.CustomViewCallback customViewCallback;
+    private WebChromeClient.CustomViewCallback customViewCallback;
     private Boolean isFullscreen = false;
     @BindView(R.id.activity_main)
     LinearLayout linearLayout;
@@ -58,7 +48,7 @@ public class DefaultWebActivity extends BaseActivity {
 
     @Override
     protected int setLayoutRes() {
-        return R.layout.activity_default_webview;
+        return R.layout.activity_default_webview_normal;
     }
 
     @Override
@@ -80,6 +70,7 @@ public class DefaultWebActivity extends BaseActivity {
     }
 
     public void initWebView() {
+        normalWebView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
         if (Utils.checkHasNavigationBar(this)) {
             ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) linearLayout.getLayoutParams();
             params.setMargins(0,
@@ -88,41 +79,10 @@ public class DefaultWebActivity extends BaseActivity {
                     Utils.getNavigationBarHeight(this));
             linearLayout.setLayoutParams(params);
         }
-        getWindow().getDecorView().addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
-            ArrayList<View> outView = new ArrayList<>();
-            getWindow().getDecorView().findViewsWithText(outView, "下载该视频", View.FIND_VIEWS_WITH_TEXT);
-            if (outView != null && outView.size() > 0) {
-                outView.get(0).setVisibility(View.GONE);
-            }
-        });
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            mX5WebView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
-        }
-        //需要升级complieversion为21以上，不升级的话，用反射的方式来实现，如下代码所示
-        try {
-            Method m = WebSettings.class.getMethod("setMixedContentMode", int.class);
-            if (m == null) {
-                Log.e("WebSettings", "Error getting setMixedContentMode method");
-            } else {
-                m.invoke(mX5WebView.getSettings(), 2); // 2 = MIXED_CONTENT_COMPATIBILITY_MODE
-                Log.i("WebSettings", "Successfully set MIXED_CONTENT_COMPATIBILITY_MODE");
-            }
-        } catch (Exception ex) {
-            Log.e("WebSettings", "Error calling setMixedContentMode: " + ex.getMessage(), ex);
-        }
-        mX5WebView.loadUrl(url);
+
+        normalWebView.loadUrl(url);
         initHardwareAccelerate();
-        if (null != mX5WebView.getX5WebViewExtension()) {
-            Bundle data = new Bundle();
-            data.putBoolean("standardFullScreen", false);
-            //true表示标准全屏，false表示X5全屏；不设置默认false，
-            data.putBoolean("supportLiteWnd", false);
-            //false：关闭小窗；true：开启小窗；不设置默认true，
-            data.putInt("DefaultVideoScreen", 2);
-            //1：以页面内开始播放，2：以全屏开始播放；不设置默认：1
-            mX5WebView.getX5WebViewExtension().invokeMiscMethod("setVideoParams", data);
-        } else application.showErrorToastMsg("X5内核加载失败");
-        mX5WebView.setWebChromeClient(new WebChromeClient() {
+        normalWebView.setWebChromeClient(new WebChromeClient() {
             @Override
             public void onProgressChanged(WebView view, int newProgress) {
                 if (newProgress == 100) {
@@ -136,13 +96,13 @@ public class DefaultWebActivity extends BaseActivity {
             //*** 视频播放相关的方法 **//*
             @Override
             public View getVideoLoadingProgressView() {
-                FrameLayout frameLayout = new FrameLayout(DefaultWebActivity.this);
+                FrameLayout frameLayout = new FrameLayout(DefaultNormalWebActivity.this);
                 frameLayout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
                 return frameLayout;
             }
 
             @Override
-            public void onShowCustomView(View view, IX5WebChromeClient.CustomViewCallback callback) {
+            public void onShowCustomView(View view, CustomViewCallback callback) {
                 showCustomView(view, callback);
             }
 
@@ -151,26 +111,20 @@ public class DefaultWebActivity extends BaseActivity {
                 hideCustomView();
             }
         });
-        mX5WebView.setWebViewClient(new WebViewClient() {
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                super.onPageFinished(view, url);
-            }
-        });
     }
 
     /**
      * 视频播放全屏
      **/
-    private void showCustomView(View view, IX5WebChromeClient.CustomViewCallback callback) {
+    private void showCustomView(View view, WebChromeClient.CustomViewCallback callback) {
         // if a view already exists then immediately terminate the new one
         if (customView != null) {
             callback.onCustomViewHidden();
             return;
         }
-        DefaultWebActivity.this.getWindow().getDecorView();
+        DefaultNormalWebActivity.this.getWindow().getDecorView();
         FrameLayout decor = (FrameLayout) getWindow().getDecorView();
-        fullscreenContainer = new DefaultWebActivity.FullscreenHolder(DefaultWebActivity.this);
+        fullscreenContainer = new DefaultNormalWebActivity.FullscreenHolder(DefaultNormalWebActivity.this);
         fullscreenContainer.addView(view, COVER_SCREEN_PARAMS);
         decor.addView(fullscreenContainer, COVER_SCREEN_PARAMS);
         customView = view;
@@ -178,7 +132,7 @@ public class DefaultWebActivity extends BaseActivity {
         hideNavBar();
         customViewCallback = callback;
         // 设置横屏
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
     }
 
     /**
@@ -195,7 +149,7 @@ public class DefaultWebActivity extends BaseActivity {
         fullscreenContainer = null;
         customView = null;
         customViewCallback.onCustomViewHidden();
-        mX5WebView.setVisibility(View.VISIBLE);
+        normalWebView.setVisibility(View.VISIBLE);
         // 设置竖屏
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     }
@@ -230,7 +184,8 @@ public class DefaultWebActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        finish();
+        if (isFullscreen) hideCustomView();
+        else finish();
     }
 
     //销毁Webview
@@ -238,9 +193,8 @@ public class DefaultWebActivity extends BaseActivity {
     protected void onDestroy() {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         //释放资源
-        if (mX5WebView != null)
-            mX5WebView.destroy();
-        startService(new Intent(this, ClearVideoCacheService.class));
+        if (normalWebView != null)
+            normalWebView.destroy();
         super.onDestroy();
     }
 

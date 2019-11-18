@@ -50,8 +50,8 @@
         android:progressDrawable="@drawable/pg"
         android:visibility="gone" />
 
-    <my.project.sakuraproject.main.webview.X5WebView
-        android:id="@+id/x5_webview"
+    <my.project.sakuraproject.main.webview.normal.NormalWebView
+        android:id="@+id/webview"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" />
 

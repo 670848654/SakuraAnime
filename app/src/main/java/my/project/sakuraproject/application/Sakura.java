@@ -83,10 +83,9 @@ public class Sakura extends Application {
         QbSdk.PreInitCallback cb = new QbSdk.PreInitCallback() {
             @Override
             public void onViewInitFinished(boolean arg0) {
-                if (arg0) showSuccessToastMsg("X5内核加载成功");
-                else showErrorToastMsg("X5内核加载失败");
+//                if (arg0) showSuccessToastMsg("X5内核加载成功");
+//                else showErrorToastMsg("X5内核加载失败");
             }
-
             @Override
             public void onCoreInitFinished() {
             }

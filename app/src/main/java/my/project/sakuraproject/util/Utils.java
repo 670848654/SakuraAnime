@@ -576,4 +576,12 @@ public class Utils {
         float scale = context.getResources().getDisplayMetrics().density;
         return (int) ((dp * scale) + 0.5f);
     }
+
+    /**
+     * 是否启用x5内核
+     * @return
+     */
+    public static boolean loadX5() {
+        return (boolean) SharedPreferencesUtils.getParam(getContext(), "loadX5", false);
+    }
 }

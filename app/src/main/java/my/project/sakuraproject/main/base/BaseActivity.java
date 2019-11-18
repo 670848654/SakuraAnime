@@ -13,6 +13,9 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.tencent.smtt.sdk.TbsVideo;
+
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import my.project.sakuraproject.R;
@@ -37,6 +40,7 @@ public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatA
         if (!getRunningActivityName().equals("StartActivity") && !getRunningActivityName().equals("HomeActivity")) overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         initBeforeView();
         setContentView(setLayoutRes());
+        if (TbsVideo.canUseTbsPlayer(this)) SharedPreferencesUtils.setParam(getApplicationContext(),"loadX5",false);
         if (Utils.checkHasNavigationBar(this)) {
             getWindow().setFlags(
                     WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
@@ -156,8 +160,10 @@ public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatA
         if (!getRunningActivityName().equals("HomeActivity") &&
                 !getRunningActivityName().equals("DescActivity") &&
                 !getRunningActivityName().equals("PlayerActivity") &&
-                !getRunningActivityName().equals("DefaultWebActivity") &&
-                !getRunningActivityName().equals("WebActivity")) {
+                !getRunningActivityName().equals("DefaultX5WebActivity") &&
+                !getRunningActivityName().equals("X5WebActivity") &&
+                !getRunningActivityName().equals("DefaultNormalWebActivity") &&
+                !getRunningActivityName().equals("NormalWebActivity")) {
             if (gtSdk23()) {
                 StatusBarUtil.setColorForSwipeBack(this, getColor(R.color.colorPrimary), 0);
                 if (!(Boolean) SharedPreferencesUtils.getParam(this, "darkTheme", false))

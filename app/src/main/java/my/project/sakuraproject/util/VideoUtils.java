@@ -17,7 +17,8 @@ import my.project.sakuraproject.R;
 import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.bean.AnimeDescBean;
 import my.project.sakuraproject.main.player.PlayerActivity;
-import my.project.sakuraproject.main.webview.WebActivity;
+import my.project.sakuraproject.main.webview.normal.NormalWebActivity;
+import my.project.sakuraproject.main.webview.x5.X5WebActivity;
 
 public class VideoUtils {
     private static AlertDialog alertDialog;
@@ -40,7 +41,7 @@ public class VideoUtils {
         alertDialog.show();
         alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
             alertDialog.dismiss();
-//            context.startActivity(new Intent(context, DefaultWebActivity.class).putExtra("url", HTML_url));
+//            context.startActivity(new Intent(context, DefaultNormalWebActivity.class).putExtra("url", HTML_url));
             Utils.viewInChrome(context, HTML_url);
         });
         alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(v -> alertDialog.dismiss());
@@ -130,9 +131,15 @@ public class VideoUtils {
         bundle.putString("dili", diliUrl);
         bundle.putSerializable("list", (Serializable) list);
         if (isDescActivity)
-            activity.startActivityForResult(new Intent(activity, WebActivity.class).putExtras(bundle), 0x10);
+            if (Utils.loadX5())
+                activity.startActivityForResult(new Intent(activity, X5WebActivity.class).putExtras(bundle), 0x10);
+            else
+                activity.startActivityForResult(new Intent(activity, NormalWebActivity.class).putExtras(bundle), 0x10);
         else {
-            activity.startActivity(new Intent(activity, WebActivity.class).putExtras(bundle));
+            if (Utils.loadX5())
+                activity.startActivity(new Intent(activity, X5WebActivity.class).putExtras(bundle));
+            else
+                activity.startActivity(new Intent(activity, NormalWebActivity.class).putExtras(bundle));
             activity.finish();
         }
     }

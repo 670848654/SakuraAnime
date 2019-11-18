@@ -56,7 +56,7 @@
                 android:visibility="gone" />
 
             <!--显示网页区域-->
-            <my.project.sakuraproject.main.webview.X5WebView
+            <my.project.sakuraproject.main.webview.x5.X5WebView
                 android:id="@+id/x5_webview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />

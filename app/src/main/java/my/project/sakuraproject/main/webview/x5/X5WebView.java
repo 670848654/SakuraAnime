@@ -1,4 +1,4 @@
-package my.project.sakuraproject.main.webview;
+package my.project.sakuraproject.main.webview.x5;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -9,7 +9,8 @@ import com.tencent.smtt.sdk.WebView;
 import com.tencent.smtt.sdk.WebViewClient;
 
 public class X5WebView extends WebView {
-
+    public final static String PC_USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.134 Safari/537.36";
+    public final static String PHONE_USER_AGENT = "Mozilla/5.0 (Linux; Android 9; ONEPLUS A6010 Build/PKQ1.180716.001; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/66.0.3359.158 Mobile Safari/537.36";
     private WebViewClient client = new WebViewClient() {
         // 防止加载网页时调起系统浏览器
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
@@ -31,7 +32,7 @@ public class X5WebView extends WebView {
         // this.setWebChromeClient(chromeClient);
         // WebStorage webStorage = WebStorage.getInstance();
         initWebViewSettings();
-        this.getView().setClickable(true);
+        this.setClickable(true);
     }
 
     private void initWebViewSettings() {
@@ -56,6 +57,7 @@ public class X5WebView extends WebView {
         webSetting.setPluginState(WebSettings.PluginState.ON_DEMAND);
         // webSetting.setRenderPriority(WebSettings.RenderPriority.HIGH);
         webSetting.setCacheMode(WebSettings.LOAD_NO_CACHE);
+        webSetting.setUserAgent(PC_USER_AGENT);
     }
 
 }

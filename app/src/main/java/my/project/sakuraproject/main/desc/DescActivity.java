@@ -45,7 +45,8 @@ import my.project.sakuraproject.database.DatabaseUtil;
 import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.video.VideoContract;
 import my.project.sakuraproject.main.video.VideoPresenter;
-import my.project.sakuraproject.main.webview.DefaultWebActivity;
+import my.project.sakuraproject.main.webview.normal.DefaultNormalWebActivity;
+import my.project.sakuraproject.main.webview.x5.DefaultX5WebActivity;
 import my.project.sakuraproject.util.SharedPreferencesUtils;
 import my.project.sakuraproject.util.StatusBarUtil;
 import my.project.sakuraproject.util.SwipeBackLayoutUtil;
@@ -243,11 +244,17 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
                 }
             } else {
                 Sakura.getInstance().showToastMsg(Utils.getString(R.string.should_be_used_web));
-                startActivity(new Intent(DescActivity.this, DefaultWebActivity.class).putExtra("url", animeUrl));
+                if (Utils.loadX5())
+                    startActivity(new Intent(DescActivity.this, DefaultX5WebActivity.class).putExtra("url", animeUrl));
+                else
+                    startActivity(new Intent(DescActivity.this, DefaultNormalWebActivity.class).putExtra("url", animeUrl));
             }
         } else {
             Sakura.getInstance().showToastMsg(Utils.getString(R.string.maybe_can_not_play));
-            startActivity(new Intent(DescActivity.this, DefaultWebActivity.class).putExtra("url",String.format(Api.PARSE_API, animeUrl)));
+            if (Utils.loadX5())
+                startActivity(new Intent(DescActivity.this, DefaultX5WebActivity.class).putExtra("url",String.format(Api.PARSE_API, animeUrl)));
+            else
+                startActivity(new Intent(DescActivity.this, DefaultNormalWebActivity.class).putExtra("url",String.format(Api.PARSE_API, animeUrl)));
         }
     }
 

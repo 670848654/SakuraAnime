@@ -1,12 +1,10 @@
-package my.project.sakuraproject.main.webview;
+package my.project.sakuraproject.main.webview.normal;
 
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -15,28 +13,27 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
+import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.r0adkll.slidr.Slidr;
-import com.tencent.smtt.export.external.interfaces.IX5WebChromeClient;
-import com.tencent.smtt.sdk.WebChromeClient;
-import com.tencent.smtt.sdk.WebView;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.OnClick;
 import my.project.sakuraproject.R;
@@ -52,14 +49,12 @@ import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.base.Presenter;
 import my.project.sakuraproject.main.video.VideoContract;
 import my.project.sakuraproject.main.video.VideoPresenter;
-import my.project.sakuraproject.services.ClearVideoCacheService;
+import my.project.sakuraproject.main.webview.x5.DefaultX5WebActivity;
 import my.project.sakuraproject.util.SharedPreferencesUtils;
 import my.project.sakuraproject.util.Utils;
 import my.project.sakuraproject.util.VideoUtils;
 
-public class WebActivity extends BaseActivity implements VideoContract.View {
-    private final static String PC_USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.134 Safari/537.36";
-    private final static String PHONE_USER_AGENT = "Mozilla/5.0 (Linux; Android 9; ONEPLUS A6010 Build/PKQ1.180716.001; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/66.0.3359.158 Mobile Safari/537.36";
+public class NormalWebActivity extends BaseActivity implements VideoContract.View {
     private final static String REFERER = "referer";
     private List<WebviewBean> list = new ArrayList<>();
     private String url = "", diliUrl = "";
@@ -67,8 +62,8 @@ public class WebActivity extends BaseActivity implements VideoContract.View {
     private String witchTitle;
     private String api = Api.SOURCE_1_API;
     private String newUrl = "";
-    @BindView(R.id.x5_webview)
-    X5WebView mX5WebView;
+    @BindView(R.id.webview)
+    NormalWebView normalWebView;
     private ProgressBar pg;
     private List<AnimeDescBean> dramaList = new ArrayList<>();
     private DramaAdapter dramaAdapter;
@@ -84,10 +79,10 @@ public class WebActivity extends BaseActivity implements VideoContract.View {
     protected static final FrameLayout.LayoutParams COVER_SCREEN_PARAMS = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
     private View customView;
     private FrameLayout fullscreenContainer;
-    private IX5WebChromeClient.CustomViewCallback customViewCallback;
+    private WebChromeClient.CustomViewCallback customViewCallback;
     private VideoPresenter presenter;
     private List<ApiBean> apiList;
-    private com.tencent.smtt.sdk.WebSettings webSettings;
+    private WebSettings webSettings;
     private boolean mModel = false;
     private MenuItem menuItem;
     private Boolean isFullscreen = false;
@@ -106,7 +101,7 @@ public class WebActivity extends BaseActivity implements VideoContract.View {
 
     @Override
     protected int setLayoutRes() {
-        return R.layout.activity_webview;
+        return R.layout.activity_webview_normal;
     }
 
     @Override
@@ -184,9 +179,9 @@ public class WebActivity extends BaseActivity implements VideoContract.View {
         WebviewAdapter webviewAdapter = new WebviewAdapter(this, list);
         webviewAdapter.setOnItemClickListener((adapter, view, position) -> {
             if (list.get(position).isOriginalPage()) {
-                Utils.viewInChrome(WebActivity.this, diliUrl);
+                Utils.viewInChrome(NormalWebActivity.this, diliUrl);
             } else if (list.get(position).isOriginalAddress()) {
-                Utils.viewInChrome(WebActivity.this, url);
+                Utils.viewInChrome(NormalWebActivity.this, url);
             } else {
                 mBottomSheetDialog.dismiss();
                 for (int i = 0; i < list.size(); i++) {
@@ -198,7 +193,7 @@ public class WebActivity extends BaseActivity implements VideoContract.View {
                 map.put(REFERER, diliUrl);
                 api = list.get(position).getUrl();
                 newUrl = api + url;
-                mX5WebView.loadUrl(newUrl, map);
+                normalWebView.loadUrl(newUrl, map);
             }
         });
         lineRecyclerView.setAdapter(webviewAdapter);
@@ -215,14 +210,14 @@ public class WebActivity extends BaseActivity implements VideoContract.View {
             final AnimeDescBean bean = (AnimeDescBean) adapter.getItem(position);
             switch (bean.getType()) {
                 case "play":
-                    p = Utils.getProDialog(WebActivity.this, R.string.parsing);
+                    p = Utils.getProDialog(NormalWebActivity.this, R.string.parsing);
                     Button v = (Button) adapter.getViewByPosition(dramaRecyclerView, position, R.id.tag_group);
                     v.setBackgroundResource(R.drawable.button_selected);
                     v.setTextColor(getResources().getColor(R.color.item_selected_color));
                     bean.setSelect(true);
                     diliUrl = VideoUtils.getUrl(bean.getUrl());
                     witchTitle = animeTitle + " - " + bean.getTitle();
-                    presenter = new VideoPresenter(animeTitle, diliUrl, WebActivity.this);
+                    presenter = new VideoPresenter(animeTitle, diliUrl, NormalWebActivity.this);
                     presenter.loadData(true);
                     break;
             }
@@ -239,8 +234,8 @@ public class WebActivity extends BaseActivity implements VideoContract.View {
     }
 
     public void initWebView() {
-        webSettings = mX5WebView.getSettings();
-        webSettings.setUserAgentString(PHONE_USER_AGENT);
+        webSettings = normalWebView.getSettings();
+//        webSettings.setUserAgentString(PHONE_USER_AGENT);
         getWindow().getDecorView().addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
             ArrayList<View> outView = new ArrayList<>();
             getWindow().getDecorView().findViewsWithText(outView, "下载该视频", View.FIND_VIEWS_WITH_TEXT);
@@ -248,21 +243,7 @@ public class WebActivity extends BaseActivity implements VideoContract.View {
                 outView.get(0).setVisibility(View.GONE);
             }
         });
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            mX5WebView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
-        }
-        //需要升级complieversion为21以上，不升级的话，用反射的方式来实现，如下代码所示
-        try {
-            Method m = WebSettings.class.getMethod("setMixedContentMode", int.class);
-            if (m == null) {
-                Log.e("WebSettings", "Error getting setMixedContentMode method");
-            } else {
-                m.invoke(mX5WebView.getSettings(), 2); // 2 = MIXED_CONTENT_COMPATIBILITY_MODE
-                Log.i("WebSettings", "Successfully set MIXED_CONTENT_COMPATIBILITY_MODE");
-            }
-        } catch (Exception ex) {
-            Log.e("WebSettings", "Error calling setMixedContentMode: " + ex.getMessage(), ex);
-        }
+        normalWebView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
         //视频源地址
 //        URL urlHost;
 //        try {
@@ -271,19 +252,9 @@ public class WebActivity extends BaseActivity implements VideoContract.View {
 //            e.printStackTrace();
 //        }
         newUrl = Api.SOURCE_1_API + url;
-        mX5WebView.loadUrl(newUrl);
+        normalWebView.loadUrl(newUrl);
         initHardwareAccelerate();
-        if (null != mX5WebView.getX5WebViewExtension()) {
-            Bundle data = new Bundle();
-            data.putBoolean("standardFullScreen", false);
-            //true表示标准全屏，false表示X5全屏；不设置默认false，
-            data.putBoolean("supportLiteWnd", false);
-            //false：关闭小窗；true：开启小窗；不设置默认true，
-            data.putInt("DefaultVideoScreen", 2);
-            //1：以页面内开始播放，2：以全屏开始播放；不设置默认：1
-            mX5WebView.getX5WebViewExtension().invokeMiscMethod("setVideoParams", data);
-        } else application.showErrorToastMsg("X5内核加载失败");
-        mX5WebView.setWebChromeClient(new WebChromeClient() {
+        normalWebView.setWebChromeClient(new WebChromeClient() {
             @Override
             public void onProgressChanged(WebView view, int newProgress) {
                 if (newProgress == 100) {
@@ -297,13 +268,13 @@ public class WebActivity extends BaseActivity implements VideoContract.View {
             /** 视频播放相关的方法 **/
             @Override
             public View getVideoLoadingProgressView() {
-                FrameLayout frameLayout = new FrameLayout(WebActivity.this);
+                FrameLayout frameLayout = new FrameLayout(NormalWebActivity.this);
                 frameLayout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
                 return frameLayout;
             }
 
             @Override
-            public void onShowCustomView(View view, IX5WebChromeClient.CustomViewCallback callback) {
+            public void onShowCustomView(View view, CustomViewCallback callback) {
                 showCustomView(view, callback);
             }
 
@@ -317,15 +288,15 @@ public class WebActivity extends BaseActivity implements VideoContract.View {
     /**
      * 视频播放全屏
      **/
-    private void showCustomView(View view, IX5WebChromeClient.CustomViewCallback callback) {
+    private void showCustomView(View view, WebChromeClient.CustomViewCallback callback) {
         // if a view already exists then immediately terminate the new one
         if (customView != null) {
             callback.onCustomViewHidden();
             return;
         }
-        WebActivity.this.getWindow().getDecorView();
+        NormalWebActivity.this.getWindow().getDecorView();
         FrameLayout decor = (FrameLayout) getWindow().getDecorView();
-        fullscreenContainer = new FullscreenHolder(WebActivity.this);
+        fullscreenContainer = new FullscreenHolder(NormalWebActivity.this);
         fullscreenContainer.addView(view, COVER_SCREEN_PARAMS);
         decor.addView(fullscreenContainer, COVER_SCREEN_PARAMS);
         customView = view;
@@ -333,7 +304,7 @@ public class WebActivity extends BaseActivity implements VideoContract.View {
         hideNavBar();
         customViewCallback = callback;
         // 设置横屏
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
     }
 
     /**
@@ -350,7 +321,7 @@ public class WebActivity extends BaseActivity implements VideoContract.View {
         fullscreenContainer = null;
         customView = null;
         customViewCallback.onCustomViewHidden();
-        mX5WebView.setVisibility(View.VISIBLE);
+        normalWebView.setVisibility(View.VISIBLE);
         // 设置竖屏
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     }
@@ -368,7 +339,7 @@ public class WebActivity extends BaseActivity implements VideoContract.View {
 
     @Override
     public void getVideoEmpty() {
-        runOnUiThread(() -> VideoUtils.showErrorInfo(WebActivity.this, diliUrl));
+        runOnUiThread(() -> VideoUtils.showErrorInfo(NormalWebActivity.this, diliUrl));
     }
 
     @Override
@@ -418,8 +389,13 @@ public class WebActivity extends BaseActivity implements VideoContract.View {
 
     @Override
     public void onBackPressed() {
-        if (mX5WebView.canGoBack()) mX5WebView.goBack();//返回上个页面
-        else finish();
+        if (isFullscreen){
+            hideFullCustomView();
+        }else {
+            if (normalWebView.canGoBack()) normalWebView.goBack();//返回上个页面
+            else finish();
+        }
+
     }
 
     @Override
@@ -432,11 +408,10 @@ public class WebActivity extends BaseActivity implements VideoContract.View {
     @Override
     protected void onDestroy() {
         //销毁Webview
-        if (mX5WebView != null)
-            mX5WebView.destroy();
+        if (normalWebView != null)
+            normalWebView.destroy();
         if (null != presenter)
             presenter.detachView();
-        startService(new Intent(this, ClearVideoCacheService.class));
         super.onDestroy();
     }
 
@@ -473,7 +448,7 @@ public class WebActivity extends BaseActivity implements VideoContract.View {
                 switch ((Integer) SharedPreferencesUtils.getParam(getApplicationContext(), "player", 0)) {
                     case 0:
                         //调用播放器
-                        VideoUtils.openPlayer(false, WebActivity.this, witchTitle, url, animeTitle, diliUrl, dramaList);
+                        VideoUtils.openPlayer(false, NormalWebActivity.this, witchTitle, url, animeTitle, diliUrl, dramaList);
                         break;
                     case 1:
                         Utils.selectVideoPlayer(this, url);
@@ -481,12 +456,18 @@ public class WebActivity extends BaseActivity implements VideoContract.View {
                 }
             }else {
                 Sakura.getInstance().showToastMsg(Utils.getString(R.string.should_be_used_web));
-                startActivity(new Intent(WebActivity.this, DefaultWebActivity.class).putExtra("url", url));
+                if (Utils.loadX5())
+                    startActivity(new Intent(NormalWebActivity.this, DefaultX5WebActivity.class).putExtra("url", url));
+                else
+                    startActivity(new Intent(NormalWebActivity.this, DefaultNormalWebActivity.class).putExtra("url", url));
                 this.finish();
             }
         }  else {
             Sakura.getInstance().showToastMsg(Utils.getString(R.string.maybe_can_not_play));
-            startActivity(new Intent(WebActivity.this, DefaultWebActivity.class).putExtra("url",String.format(Api.PARSE_API, url)));
+            if (Utils.loadX5())
+                startActivity(new Intent(NormalWebActivity.this, DefaultX5WebActivity.class).putExtra("url",String.format(Api.PARSE_API, url)));
+            else
+                startActivity(new Intent(NormalWebActivity.this, DefaultNormalWebActivity.class).putExtra("url",String.format(Api.PARSE_API, url)));
         }
     }
 
@@ -505,7 +486,7 @@ public class WebActivity extends BaseActivity implements VideoContract.View {
 //        }
         title.setText(witchTitle);
         newUrl = api + url;
-        mX5WebView.loadUrl(newUrl);
+        normalWebView.loadUrl(newUrl);
     }
 
     @Override
@@ -527,21 +508,21 @@ public class WebActivity extends BaseActivity implements VideoContract.View {
                 if (mModel) {
                     //切换成手机版
                     mModel = false;
-                    webSettings.setUserAgent(PHONE_USER_AGENT);
+                    webSettings.setUserAgentString(NormalWebView.PHONE_USER_AGENT);
                     menuItem.setIcon(R.drawable.baseline_stay_primary_portrait_white_48dp);
                     menuItem.setTitle(Utils.getString(R.string.phone_model));
                     application.showToastMsg("已切换成手机版");
                 } else {
                     //切换成电脑版
                     mModel = true;
-                    webSettings.setUserAgent(PC_USER_AGENT);
+                    webSettings.setUserAgentString(NormalWebView.PC_USER_AGENT);
                     menuItem.setIcon(R.drawable.baseline_language_white_48dp);
                     menuItem.setTitle(Utils.getString(R.string.pc_model));
                     application.showToastMsg("已切换成电脑版");
                 }
                 Map<String, String> map = new HashMap<>();
                 map.put(REFERER, diliUrl);
-                mX5WebView.loadUrl(newUrl, map);
+                normalWebView.loadUrl(newUrl, map);
                 break;
         }
         return super.onOptionsItemSelected(item);

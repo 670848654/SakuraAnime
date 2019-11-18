@@ -13,6 +13,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.r0adkll.slidr.Slidr;
+import com.tencent.smtt.sdk.TbsVideo;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
@@ -37,10 +38,13 @@ public class SettingActivity extends BaseActivity {
     TextView player_default;
     @BindView(R.id.api)
     TextView api;
+    @BindView(R.id.x5_state)
+    TextView x5_state;
     @BindView(R.id.footer)
     LinearLayout footer;
     private String url;
     private String[] playerItems = Utils.getArray(R.array.player);
+    private String [] x5Items = {"启用","禁用"};
 
     @Override
     protected Presenter createPresenter() {
@@ -92,10 +96,12 @@ public class SettingActivity extends BaseActivity {
                 player_default.setText(playerItems[1]);
                 break;
         }
+        if (Utils.loadX5()) x5_state.setText(x5Items[0]);
+        else x5_state.setText(x5Items[1]);
         domain_default.setText(Sakura.DOMAIN);
     }
 
-    @OnClick({R.id.set_domain, R.id.set_player, R.id.set_api_source})
+    @OnClick({R.id.set_domain, R.id.set_player, R.id.set_api_source,R.id.set_x5})
     public void onClick(RelativeLayout layout) {
         switch (layout.getId()) {
             case R.id.set_domain:
@@ -106,6 +112,9 @@ public class SettingActivity extends BaseActivity {
                 break;
             case R.id.set_api_source:
                 startActivity(new Intent(this, ApiActivity.class));
+                break;
+            case R.id.set_x5:
+                setX5State();
                 break;
         }
     }
@@ -163,21 +172,41 @@ public class SettingActivity extends BaseActivity {
     public void setDefaultPlayer() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(Utils.getString(R.string.select_player));
-        builder.setSingleChoiceItems(playerItems, (Integer) SharedPreferencesUtils.getParam(getApplicationContext(), "player", 0), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                switch (which) {
-                    case 0:
-                        SharedPreferencesUtils.setParam(getApplicationContext(), "player", 0);
-                        player_default.setText(playerItems[0]);
-                        break;
-                    case 1:
-                        SharedPreferencesUtils.setParam(getApplicationContext(), "player", 1);
-                        player_default.setText(playerItems[1]);
-                        break;
-                }
-                dialog.dismiss();
+        builder.setSingleChoiceItems(playerItems, (Integer) SharedPreferencesUtils.getParam(getApplicationContext(), "player", 0), (dialog, which) -> {
+            switch (which) {
+                case 0:
+                    SharedPreferencesUtils.setParam(getApplicationContext(), "player", 0);
+                    player_default.setText(playerItems[0]);
+                    break;
+                case 1:
+                    SharedPreferencesUtils.setParam(getApplicationContext(), "player", 1);
+                    player_default.setText(playerItems[1]);
+                    break;
             }
+            dialog.dismiss();
+        });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    public void setX5State() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("请选择");
+        builder.setSingleChoiceItems(x5Items, Utils.loadX5() ? 0 : 1, (dialog, which) -> {
+            switch (which){
+                case 0:
+                    if (TbsVideo.canUseTbsPlayer(SettingActivity.this)) {
+                        SharedPreferencesUtils.setParam(getApplicationContext(),"loadX5",true);
+                        x5_state.setText(x5Items[0]);
+                    }else
+                        application.showErrorToastMsg("X5内核未能加载成功，无法启用");
+                    break;
+                case 1:
+                    SharedPreferencesUtils.setParam(getApplicationContext(),"loadX5",false);
+                    x5_state.setText(x5Items[1]);
+                    break;
+            }
+            dialog.dismiss();
         });
         AlertDialog alertDialog = builder.create();
         alertDialog.show();

@@ -35,7 +35,8 @@ import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.base.Presenter;
 import my.project.sakuraproject.main.video.VideoContract;
 import my.project.sakuraproject.main.video.VideoPresenter;
-import my.project.sakuraproject.main.webview.DefaultWebActivity;
+import my.project.sakuraproject.main.webview.normal.DefaultNormalWebActivity;
+import my.project.sakuraproject.main.webview.x5.DefaultX5WebActivity;
 import my.project.sakuraproject.util.SharedPreferencesUtils;
 import my.project.sakuraproject.util.StatusBarUtil;
 import my.project.sakuraproject.util.Utils;
@@ -218,12 +219,18 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
                 }
             }else {
                 Sakura.getInstance().showToastMsg(Utils.getString(R.string.should_be_used_web));
-                startActivity(new Intent(PlayerActivity.this, DefaultWebActivity.class).putExtra("url", url));
+                if (Utils.loadX5())
+                    startActivity(new Intent(PlayerActivity.this, DefaultX5WebActivity.class).putExtra("url", url));
+                else
+                    startActivity(new Intent(PlayerActivity.this, DefaultNormalWebActivity.class).putExtra("url", url));
                 this.finish();
             }
         }  else {
             Sakura.getInstance().showToastMsg(Utils.getString(R.string.maybe_can_not_play));
-            startActivity(new Intent(PlayerActivity.this, DefaultWebActivity.class).putExtra("url",String.format(Api.PARSE_API, url)));
+            if (Utils.loadX5())
+                startActivity(new Intent(PlayerActivity.this, DefaultX5WebActivity.class).putExtra("url",String.format(Api.PARSE_API, url)));
+            else
+                startActivity(new Intent(PlayerActivity.this, DefaultNormalWebActivity.class).putExtra("url",String.format(Api.PARSE_API, url)));
         }
     }
 

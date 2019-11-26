@@ -61,12 +61,14 @@ public class DescAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity, Base
                 }
                 break;
             case AnimeType.TYPE_LEVEL_2:
+                Utils.setCardDefaultBg(context, helper.getView(R.id.card_view), helper.getView(R.id.title));
                 final AnimeDescBean bean = (AnimeDescBean) item;
                 helper.setText(R.id.title, bean.getTitle());
                 Utils.setDefaultImage(context, bean.getImg(), helper.getView(R.id.img));
                 Utils.setCardBg(context, bean.getImg(), helper.getView(R.id.card_view), helper.getView(R.id.title));
                 break;
             case AnimeType.TYPE_LEVEL_3:
+                Utils.setCardDefaultBg(context, helper.getView(R.id.card_view), helper.getView(R.id.title));
                 final AnimeDescBean ova = (AnimeDescBean) item;
                 helper.setText(R.id.title, ova.getTitle());
                 Utils.setDefaultImage(context, ova.getImg(), helper.getView(R.id.img));

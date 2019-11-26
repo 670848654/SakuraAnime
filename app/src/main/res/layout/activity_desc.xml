@@ -4,14 +4,12 @@
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/window_bg"
-    android:fitsSystemWindows="true">
+    android:background="@color/window_bg">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="280dp"
-        android:fitsSystemWindows="true"
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
@@ -19,7 +17,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/window_bg"
-            android:fitsSystemWindows="true"
             app:contentScrim="@color/toolbar_layout_bg"
             app:expandedTitleMarginBottom="16dp"
             app:expandedTitleMarginStart="24dp"

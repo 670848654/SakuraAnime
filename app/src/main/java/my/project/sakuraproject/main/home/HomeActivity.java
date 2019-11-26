@@ -281,6 +281,7 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 0x10 && resultCode == 0x20) {
             viewpager.removeAllViews();
+            removeFragmentTransaction();
             mPresenter.loadData(true);
         }
     }

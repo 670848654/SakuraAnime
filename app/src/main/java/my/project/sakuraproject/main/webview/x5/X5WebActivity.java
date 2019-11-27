@@ -2,7 +2,6 @@ package my.project.sakuraproject.main.webview.x5;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.util.Patterns;
@@ -23,6 +22,9 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.fanchen.sniffing.SniffingUICallback;
+import com.fanchen.sniffing.SniffingVideo;
+import com.fanchen.sniffing.web.SniffingUtil;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.r0adkll.slidr.Slidr;
@@ -50,14 +52,13 @@ import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.base.Presenter;
 import my.project.sakuraproject.main.video.VideoContract;
 import my.project.sakuraproject.main.video.VideoPresenter;
-import my.project.sakuraproject.main.webview.normal.DefaultNormalWebActivity;
 import my.project.sakuraproject.util.SharedPreferencesUtils;
 import my.project.sakuraproject.util.Utils;
 import my.project.sakuraproject.util.VideoUtils;
 
 ;
 
-public class X5WebActivity extends BaseActivity implements VideoContract.View {
+public class X5WebActivity extends BaseActivity implements VideoContract.View, SniffingUICallback {
     private final static String REFERER = "referer";
     private List<WebviewBean> list = new ArrayList<>();
     private String url = "", diliUrl = "";
@@ -91,6 +92,8 @@ public class X5WebActivity extends BaseActivity implements VideoContract.View {
     private Boolean isFullscreen = false;
     @BindView(R.id.activity_main)
     CoordinatorLayout coordinatorLayout;
+    //播放网址
+    private String webUrl;
 
     @Override
     protected Presenter createPresenter() {
@@ -373,6 +376,37 @@ public class X5WebActivity extends BaseActivity implements VideoContract.View {
         runOnUiThread(() -> application.showToastMsg(Utils.getString(R.string.get_drama_error)));
     }
 
+    @Override
+    public void onSniffingStart(View webView, String url) {
+
+    }
+
+    @Override
+    public void onSniffingFinish(View webView, String url) {
+
+    }
+
+    @Override
+    public void onSniffingSuccess(View webView, String url, List<SniffingVideo> videos) {
+        List<String> urls = new ArrayList<>();
+        for (SniffingVideo video : videos) {
+            urls.add(video.getUrl());
+        }
+        VideoUtils.showMultipleVideoSources(this,
+                urls,
+                (dialog, index) -> playAnime(urls.get(index)), (dialog, which) -> {
+                    cancelDialog();
+                    dialog.dismiss();
+                }, 1);
+    }
+
+    @Override
+    public void onSniffingError(View webView, String url, int errorCode) {
+        Sakura.getInstance().showToastMsg(Utils.getString(R.string.open_web_view));
+        VideoUtils.openDefaultWebview(this, webUrl);
+        this.finish();
+    }
+
     /**
      * 全屏容器界面
      */
@@ -448,7 +482,10 @@ public class X5WebActivity extends BaseActivity implements VideoContract.View {
         VideoUtils.showMultipleVideoSources(this,
                 list,
                 (dialog, index) ->
-                        playAnime(VideoUtils.getVideoUrl(list.get(index)))
+                        playAnime(VideoUtils.getVideoUrl(list.get(index))), (dialog, which) -> {
+                    cancelDialog();
+                    dialog.dismiss();
+                }, 0
         );
     }
 
@@ -456,9 +493,11 @@ public class X5WebActivity extends BaseActivity implements VideoContract.View {
         url = animeUrl;
         if (Patterns.WEB_URL.matcher(animeUrl.replace(" ", "")).matches()) {
             if (animeUrl.contains("jx.618g.com")) {
+                cancelDialog();
                 url = animeUrl.replaceAll("http://jx.618g.com/\\?url=", "");
                 loadUrl();
             } else if (animeUrl.contains(".mp4") || animeUrl.contains(".m3u8")) {
+                cancelDialog();
                 switch ((Integer) SharedPreferencesUtils.getParam(getApplicationContext(), "player", 0)) {
                     case 0:
                         //调用播放器
@@ -469,19 +508,14 @@ public class X5WebActivity extends BaseActivity implements VideoContract.View {
                         break;
                 }
             }else {
+                webUrl = animeUrl;
                 Sakura.getInstance().showToastMsg(Utils.getString(R.string.should_be_used_web));
-                if (Utils.loadX5())
-                    startActivity(new Intent(X5WebActivity.this, DefaultX5WebActivity.class).putExtra("url", url));
-                else
-                    startActivity(new Intent(X5WebActivity.this, DefaultNormalWebActivity.class).putExtra("url", url));
-                this.finish();
+                SniffingUtil.get().activity(this).referer(url).callback(this).url(url).start();
             }
         }  else {
+            webUrl = String.format(Api.PARSE_API, animeUrl);
             Sakura.getInstance().showToastMsg(Utils.getString(R.string.maybe_can_not_play));
-            if (Utils.loadX5())
-                startActivity(new Intent(X5WebActivity.this, DefaultX5WebActivity.class).putExtra("url",String.format(Api.PARSE_API, url)));
-            else
-                startActivity(new Intent(X5WebActivity.this, DefaultNormalWebActivity.class).putExtra("url",String.format(Api.PARSE_API, url)));
+            SniffingUtil.get().activity(this).referer(webUrl).callback(this).url(webUrl).start();
         }
     }
 

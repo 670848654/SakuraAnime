@@ -4,6 +4,10 @@ import android.app.Activity;
 import android.app.Application;
 import android.widget.Toast;
 
+import androidx.annotation.ColorRes;
+import androidx.annotation.DrawableRes;
+import androidx.appcompat.app.AppCompatDelegate;
+
 import com.bumptech.glide.Glide;
 import com.tencent.smtt.sdk.QbSdk;
 
@@ -15,9 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import androidx.annotation.ColorRes;
-import androidx.annotation.DrawableRes;
-import androidx.appcompat.app.AppCompatDelegate;
 import cn.jzvd.JzvdStd;
 import es.dmoral.toasty.Toasty;
 import my.project.sakuraproject.R;

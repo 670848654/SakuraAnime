@@ -2,7 +2,6 @@ package my.project.sakuraproject.main.player;
 
 import android.app.PictureInPictureParams;
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Build;
@@ -14,14 +13,19 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import androidx.annotation.RequiresApi;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.fanchen.sniffing.SniffingUICallback;
+import com.fanchen.sniffing.SniffingVideo;
+import com.fanchen.sniffing.web.SniffingUtil;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.jzvd.Jzvd;
@@ -35,14 +39,12 @@ import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.base.Presenter;
 import my.project.sakuraproject.main.video.VideoContract;
 import my.project.sakuraproject.main.video.VideoPresenter;
-import my.project.sakuraproject.main.webview.normal.DefaultNormalWebActivity;
-import my.project.sakuraproject.main.webview.x5.DefaultX5WebActivity;
 import my.project.sakuraproject.util.SharedPreferencesUtils;
 import my.project.sakuraproject.util.StatusBarUtil;
 import my.project.sakuraproject.util.Utils;
 import my.project.sakuraproject.util.VideoUtils;
 
-public class PlayerActivity extends BaseActivity implements VideoContract.View, JZPlayer.CompleteListener {
+public class PlayerActivity extends BaseActivity implements VideoContract.View, JZPlayer.CompleteListener, SniffingUICallback {
     @BindView(R.id.player)
     JZPlayer player;
     private String witchTitle, url, diliUrl;
@@ -61,6 +63,8 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
     @BindView(R.id.pic)
     TextView pic;
     private VideoPresenter presenter;
+    //播放网址
+    private String webUrl;
 
     @Override
     protected Presenter createPresenter() {
@@ -78,7 +82,6 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
 
     @Override
     protected void init() {
-        StatusBarUtil.setTranslucent(this, 0);
         Sakura.addDestoryActivity(this, "player");
         drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         hideGap();
@@ -152,6 +155,7 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
             final AnimeDescBean bean = (AnimeDescBean) adapter.getItem(position);
             switch (bean.getType()) {
                 case "play":
+                    player.onPrepared();
                     p = Utils.getProDialog(PlayerActivity.this, R.string.parsing);
                     Button v = (Button) adapter.getViewByPosition(recyclerView, position, R.id.tag_group);
                     v.setBackgroundResource(R.drawable.button_selected);
@@ -195,16 +199,21 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
                 (dialog, index) -> {
                     hideNavBar();
                     playAnime(VideoUtils.getVideoUrl(list.get(index)));
-                });
+                }, (dialog, which) -> {
+                    cancelDialog();
+                    dialog.dismiss();
+                }, 0);
     }
 
     private void playAnime(String animeUrl) {
         url = animeUrl;
         if (Patterns.WEB_URL.matcher(animeUrl.replace(" ", "")).matches()) {
             if (animeUrl.contains("jx.618g.com")) {
+                cancelDialog();
                 url = animeUrl.replaceAll("http://jx.618g.com/\\?url=", "");
                 VideoUtils.openWebview(false, this, witchTitle, animeTitle, url, diliUrl, this.list);
             } else if (url.contains(".mp4") || url.contains(".m3u8")) {
+                cancelDialog();
                 switch ((Integer) SharedPreferencesUtils.getParam(getApplicationContext(), "player", 0)) {
                     case 0:
                         //调用播放器
@@ -218,19 +227,14 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
                         break;
                 }
             }else {
+                webUrl = animeUrl;
                 Sakura.getInstance().showToastMsg(Utils.getString(R.string.should_be_used_web));
-                if (Utils.loadX5())
-                    startActivity(new Intent(PlayerActivity.this, DefaultX5WebActivity.class).putExtra("url", url));
-                else
-                    startActivity(new Intent(PlayerActivity.this, DefaultNormalWebActivity.class).putExtra("url", url));
-                this.finish();
+                SniffingUtil.get().activity(this).referer(url).callback(this).url(url).start();
             }
         }  else {
+            webUrl = String.format(Api.PARSE_API, animeUrl);
             Sakura.getInstance().showToastMsg(Utils.getString(R.string.maybe_can_not_play));
-            if (Utils.loadX5())
-                startActivity(new Intent(PlayerActivity.this, DefaultX5WebActivity.class).putExtra("url",String.format(Api.PARSE_API, url)));
-            else
-                startActivity(new Intent(PlayerActivity.this, DefaultNormalWebActivity.class).putExtra("url",String.format(Api.PARSE_API, url)));
+            SniffingUtil.get().activity(this).referer(webUrl).callback(this).url(webUrl).start();
         }
     }
 
@@ -360,5 +364,36 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
         application.showSuccessToastMsg("播放完毕");
         if (!drawerLayout.isDrawerOpen(GravityCompat.END))
             drawerLayout.openDrawer(GravityCompat.END);
+    }
+
+    @Override
+    public void onSniffingStart(View webView, String url) {
+
+    }
+
+    @Override
+    public void onSniffingFinish(View webView, String url) {
+        cancelDialog();
+    }
+
+    @Override
+    public void onSniffingSuccess(View webView, String url, List<SniffingVideo> videos) {
+        List<String> urls = new ArrayList<>();
+        for (SniffingVideo video : videos) {
+            urls.add(video.getUrl());
+        }
+        VideoUtils.showMultipleVideoSources(this,
+                urls,
+                (dialog, index) -> playAnime(urls.get(index)), (dialog, which) -> {
+                    cancelDialog();
+                    dialog.dismiss();
+                }, 1);
+    }
+
+    @Override
+    public void onSniffingError(View webView, String url, int errorCode) {
+        Sakura.getInstance().showToastMsg(Utils.getString(R.string.open_web_view));
+        VideoUtils.openDefaultWebview(this, webUrl);
+        this.finish();
     }
 }

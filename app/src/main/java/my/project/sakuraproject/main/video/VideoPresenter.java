@@ -27,7 +27,6 @@ public class VideoPresenter extends Presenter<VideoContract.View> implements Bas
 
     @Override
     public void success(List<String> list) {
-        view.cancelDialog();
         view.getVideoSuccess(list);
     }
 

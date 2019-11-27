@@ -5,18 +5,19 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.r0adkll.slidr.Slidr;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.MenuItemCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.r0adkll.slidr.Slidr;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import butterknife.BindView;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.adapter.AnimeListAdapter;

@@ -13,17 +13,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.transition.Transition;
-import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.entity.MultiItemEntity;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.r0adkll.slidr.Slidr;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatTextView;
@@ -32,6 +21,21 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.entity.MultiItemEntity;
+import com.fanchen.sniffing.SniffingUICallback;
+import com.fanchen.sniffing.SniffingVideo;
+import com.fanchen.sniffing.web.SniffingUtil;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.r0adkll.slidr.Slidr;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import butterknife.BindView;
 import jp.wasabeef.blurry.Blurry;
 import my.project.sakuraproject.R;
@@ -45,15 +49,13 @@ import my.project.sakuraproject.database.DatabaseUtil;
 import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.video.VideoContract;
 import my.project.sakuraproject.main.video.VideoPresenter;
-import my.project.sakuraproject.main.webview.normal.DefaultNormalWebActivity;
-import my.project.sakuraproject.main.webview.x5.DefaultX5WebActivity;
 import my.project.sakuraproject.util.SharedPreferencesUtils;
 import my.project.sakuraproject.util.StatusBarUtil;
 import my.project.sakuraproject.util.SwipeBackLayoutUtil;
 import my.project.sakuraproject.util.Utils;
 import my.project.sakuraproject.util.VideoUtils;
 
-public class DescActivity extends BaseActivity<DescContract.View, DescPresenter> implements DescContract.View, VideoContract.View {
+public class DescActivity extends BaseActivity<DescContract.View, DescPresenter> implements DescContract.View, VideoContract.View, SniffingUICallback {
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.rv_list)
@@ -69,7 +71,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     private List<AnimeDescBean> drama = new ArrayList<>();
     @BindView(R.id.title_img)
     ImageView imageView;
-    private String url, diliUrl, dramaUrl;
+    private String diliUrl, dramaUrl;
     private String animeTitle;
     private String witchTitle;
     private ProgressDialog p;
@@ -80,6 +82,8 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     private AnimeListBean animeListBean = new AnimeListBean();
     private List<String> animeUrlList = new ArrayList();
     private boolean mIsLoad = false;
+    //播放网址
+    private String webUrl;
 
     @Override
     protected DescPresenter createPresenter() {
@@ -223,16 +227,21 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         VideoUtils.showMultipleVideoSources(this,
                 list,
                 (dialog, index) ->
-                        playAnime(VideoUtils.getVideoUrl(list.get(index)))
+                        playAnime(VideoUtils.getVideoUrl(list.get(index))), (dialog, which) -> {
+                            cancelDialog();
+                            dialog.dismiss();
+                        }, 0
         );
     }
 
     private void playAnime(String animeUrl) {
         if (Patterns.WEB_URL.matcher(animeUrl.replace(" ", "")).matches()) {
             if (animeUrl.contains("jx.618g.com")) {
+                cancelDialog();
                 animeUrl = animeUrl.replaceAll("http://jx.618g.com/\\?url=", "");
                 VideoUtils.openWebview(true, this, witchTitle, animeTitle, animeUrl, diliUrl, drama);
             } else if (animeUrl.contains(".mp4") || animeUrl.contains(".m3u8")) {
+                cancelDialog();
                 switch ((Integer) SharedPreferencesUtils.getParam(getApplicationContext(), "player", 0)) {
                     case 0:
                         //调用播放器
@@ -243,18 +252,14 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
                         break;
                 }
             } else {
+                webUrl = animeUrl;
                 Sakura.getInstance().showToastMsg(Utils.getString(R.string.should_be_used_web));
-                if (Utils.loadX5())
-                    startActivity(new Intent(DescActivity.this, DefaultX5WebActivity.class).putExtra("url", animeUrl));
-                else
-                    startActivity(new Intent(DescActivity.this, DefaultNormalWebActivity.class).putExtra("url", animeUrl));
+                SniffingUtil.get().activity(this).referer(webUrl).callback(this).url(webUrl).start();
             }
         } else {
+            webUrl = String.format(Api.PARSE_API, animeUrl);
             Sakura.getInstance().showToastMsg(Utils.getString(R.string.maybe_can_not_play));
-            if (Utils.loadX5())
-                startActivity(new Intent(DescActivity.this, DefaultX5WebActivity.class).putExtra("url",String.format(Api.PARSE_API, animeUrl)));
-            else
-                startActivity(new Intent(DescActivity.this, DefaultNormalWebActivity.class).putExtra("url",String.format(Api.PARSE_API, animeUrl)));
+            SniffingUtil.get().activity(this).referer(webUrl).callback(this).url(webUrl).start();
         }
     }
 
@@ -451,5 +456,35 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     @Override
     public void errorDramaView() {
 
+    }
+
+    @Override
+    public void onSniffingStart(View webView, String url) {
+
+    }
+
+    @Override
+    public void onSniffingFinish(View webView, String url) {
+        cancelDialog();
+    }
+
+    @Override
+    public void onSniffingSuccess(View webView, String url, List<SniffingVideo> videos) {
+        List<String> urls = new ArrayList<>();
+        for (SniffingVideo video : videos) {
+            urls.add(video.getUrl());
+        }
+        VideoUtils.showMultipleVideoSources(this,
+                urls,
+                (dialog, index) -> playAnime(urls.get(index)), (dialog, which) -> {
+                    cancelDialog();
+                    dialog.dismiss();
+                }, 1);
+    }
+
+    @Override
+    public void onSniffingError(View webView, String url, int errorCode) {
+        Sakura.getInstance().showToastMsg(Utils.getString(R.string.open_web_view));
+        VideoUtils.openDefaultWebview(this, webUrl);
     }
 }

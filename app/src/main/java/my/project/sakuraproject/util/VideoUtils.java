@@ -7,17 +7,20 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Patterns;
 
+import androidx.appcompat.app.AlertDialog;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import androidx.appcompat.app.AlertDialog;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.bean.AnimeDescBean;
 import my.project.sakuraproject.main.player.PlayerActivity;
+import my.project.sakuraproject.main.webview.normal.DefaultNormalWebActivity;
 import my.project.sakuraproject.main.webview.normal.NormalWebActivity;
+import my.project.sakuraproject.main.webview.x5.DefaultX5WebActivity;
 import my.project.sakuraproject.main.webview.x5.X5WebActivity;
 
 public class VideoUtils {
@@ -53,26 +56,28 @@ public class VideoUtils {
      * @param context
      * @param list
      * @param listener
+     * @param type 0 old 1 new
      */
     public static void showMultipleVideoSources(Context context,
                                                 List<String> list,
-                                                DialogInterface.OnClickListener listener) {
+                                                DialogInterface.OnClickListener listener, DialogInterface.OnClickListener listener2, int type) {
         String[] items = new String[list.size()];
         for (int i = 0, size = list.size(); i < size; i++) {
-            items[i] = getVideoUrl(list.get(i));
+            if (type == 0) items[i] = getVideoUrl(list.get(i));
+            else items[i] = list.get(i);
         }
         androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(context);
         builder.setTitle(Utils.getString(R.string.select_video_source));
         builder.setCancelable(false);
         builder.setItems(items, listener);
-        builder.setNegativeButton(Utils.getString(R.string.cancel), (dialog, which) -> dialog.dismiss());
+        builder.setNegativeButton(Utils.getString(R.string.cancel), listener2);
         alertDialog = builder.create();
         alertDialog.show();
     }
 
     public static String getVideoUrl(String url) {
         String playStr = "";
-        url = url.substring(12, url.length());
+        url = url.substring(12);
         url = url.substring(0, url.length() - 3);
         //如果网址
         if (Patterns.WEB_URL.matcher(url.replace(" ", "")).matches()) {
@@ -144,6 +149,18 @@ public class VideoUtils {
         }
     }
 
+    /**
+     * 打开常规webview
+     *
+     * @param activity
+     * @param url
+     */
+    public static void openDefaultWebview(Activity activity, String url) {
+        if (Utils.loadX5())
+            activity.startActivity(new Intent(activity, DefaultX5WebActivity.class).putExtra("url",url));
+        else
+            activity.startActivity(new Intent(activity, DefaultNormalWebActivity.class).putExtra("url",url));
+    }
 
     public static String getUrl(String url) {
         return url.contains(Sakura.DOMAIN) ? url : Sakura.DOMAIN + url;

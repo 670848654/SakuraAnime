@@ -8,13 +8,13 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 
-import java.util.List;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.tencent.smtt.sdk.TbsVideo;
+
+import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;

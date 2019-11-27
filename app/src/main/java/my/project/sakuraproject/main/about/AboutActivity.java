@@ -13,6 +13,12 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.r0adkll.slidr.Slidr;
 
 import org.json.JSONException;
@@ -22,11 +28,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.Toolbar;
-import androidx.cardview.widget.CardView;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.OnClick;
 import my.project.sakuraproject.R;
@@ -164,6 +165,7 @@ public class AboutActivity extends BaseActivity {
 
     public List createUpdateLogList() {
         List logsList = new ArrayList();
+        logsList.add(new LogBean("版本：1.8.3","修复视频播放器白额头的Bug\n增加新的解析方案，尽量减少使用webView（Test）"));
         logsList.add(new LogBean("版本：1.8.3","修复一些Bug"));
         logsList.add(new LogBean("版本：1.8.2","默认禁用X5内核，X5内核更新后会导致应用闪退（Android 10)，你可以在自定义设置中打开，若发生闪退则关闭该选项"));
         logsList.add(new LogBean("版本：1.8.1","修复某些设备导航栏的显示问题"));

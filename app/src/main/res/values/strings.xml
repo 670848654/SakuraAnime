@@ -56,8 +56,9 @@
     <string name="error_msg">抱歉，未找到相关信息~</string>
     <string name="no_playlist_error">该番剧暂无播放列表。</string>
     <string name="get_drama_error">获取剧集信息出错</string>
-    <string name="should_be_used_web">该播放地址貌似应该使用网页播放</string>
-    <string name="maybe_can_not_play">该播放地址可能无法正常播放</string>
+    <string name="should_be_used_web">该播放地址貌似应该使用网页播放,尝试获取播放地址</string>
+    <string name="maybe_can_not_play">该播放地址可能无法正常播放,尝试获取播放地址</string>
+    <string name="open_web_view">解析视频地址失败，尝试使用webView打开</string>
     <!-- 详情界面文本 -->
     <string name="online">在线</string>
     <string name="multi">多季</string>
@@ -120,7 +121,7 @@
     <string name="test_model_desc">OnePlus 7 Pro : Android 10</string>
     <string name="now_version">当前版本</string>
     <string name="final_compile">最后编译日期</string>
-    <string name="final_compile_time">2019年11月26日</string>
+    <string name="final_compile_time">2019年11月27日</string>
     <string name="cache">缓存目录</string>
     <string name="cache_text">/SakuraAnime/\n卸载后自行删除此目录</string>
     <string name="github">Github</string>

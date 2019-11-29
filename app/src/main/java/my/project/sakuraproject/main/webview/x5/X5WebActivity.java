@@ -383,7 +383,8 @@ public class X5WebActivity extends BaseActivity implements VideoContract.View, S
 
     @Override
     public void onSniffingFinish(View webView, String url) {
-
+        SniffingUtil.get().releaseWebView();
+        cancelDialog();
     }
 
     @Override

@@ -369,6 +369,7 @@ public class NormalWebActivity extends BaseActivity implements VideoContract.Vie
 
     @Override
     public void onSniffingFinish(View webView, String url) {
+        SniffingUtil.get().releaseWebView();
         cancelDialog();
     }
 

@@ -373,6 +373,7 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
 
     @Override
     public void onSniffingFinish(View webView, String url) {
+        SniffingUtil.get().releaseWebView();
         cancelDialog();
     }
 

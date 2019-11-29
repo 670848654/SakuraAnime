@@ -465,6 +465,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
 
     @Override
     public void onSniffingFinish(View webView, String url) {
+        SniffingUtil.get().releaseWebView();
         cancelDialog();
     }
 

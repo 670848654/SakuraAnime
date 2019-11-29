@@ -165,7 +165,8 @@ public class AboutActivity extends BaseActivity {
 
     public List createUpdateLogList() {
         List logsList = new ArrayList();
-        logsList.add(new LogBean("版本：1.8.3","修复视频播放器白额头的Bug\n增加新的解析方案，尽量减少使用webView（Test）"));
+        logsList.add(new LogBean("版本：1.8.5","修复新解析方案资源未释放导致视频声音外放的Bug"));
+        logsList.add(new LogBean("版本：1.8.4","修复视频播放器白额头的Bug\n增加新的解析方案，尽量减少使用webView（Test）"));
         logsList.add(new LogBean("版本：1.8.3","修复一些Bug"));
         logsList.add(new LogBean("版本：1.8.2","默认禁用X5内核，X5内核更新后会导致应用闪退（Android 10)，你可以在自定义设置中打开，若发生闪退则关闭该选项"));
         logsList.add(new LogBean("版本：1.8.1","修复某些设备导航栏的显示问题"));

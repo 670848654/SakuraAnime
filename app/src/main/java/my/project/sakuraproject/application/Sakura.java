@@ -19,10 +19,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import cn.jzvd.JzvdStd;
 import es.dmoral.toasty.Toasty;
 import my.project.sakuraproject.R;
-import my.project.sakuraproject.main.player.JZExoPlayer;
 import my.project.sakuraproject.util.SharedPreferencesUtils;
 import my.project.sakuraproject.util.Utils;
 
@@ -46,7 +44,6 @@ public class Sakura extends Application {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         else
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-        JzvdStd.setMediaInterface(new JZExoPlayer());
         oList = new ArrayList<>();
         appContext = this;
         Utils.init(this);
@@ -84,8 +81,8 @@ public class Sakura extends Application {
         QbSdk.PreInitCallback cb = new QbSdk.PreInitCallback() {
             @Override
             public void onViewInitFinished(boolean arg0) {
-//                if (arg0) showSuccessToastMsg("X5内核加载成功");
-//                else showErrorToastMsg("X5内核加载失败");
+                if (arg0) SharedPreferencesUtils.setParam(appContext, "X5State", true);
+                else SharedPreferencesUtils.setParam(appContext, "X5State", false);
             }
             @Override
             public void onCoreInitFinished() {

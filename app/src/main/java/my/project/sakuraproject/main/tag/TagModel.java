@@ -14,17 +14,22 @@ import my.project.sakuraproject.R;
 import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.bean.TagBean;
 import my.project.sakuraproject.bean.TagHeaderBean;
+import my.project.sakuraproject.main.base.BaseModel;
 import my.project.sakuraproject.net.HttpGet;
 import my.project.sakuraproject.util.Utils;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
-public class TagModel implements TagContract.Model {
+public class TagModel extends BaseModel implements TagContract.Model {
     private List<MultiItemEntity> list = new ArrayList<>();
 
     @Override
     public void getData(TagContract.LoadDataCallback callback) {
+        getHtml(callback);
+    }
+
+    private void getHtml(TagContract.LoadDataCallback callback) {
         new HttpGet(Sakura.TAG_API, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -35,20 +40,23 @@ public class TagModel implements TagContract.Model {
             public void onResponse(Call call, Response response) {
                 try {
                     Document doc = Jsoup.parse(response.body().string());
-                    Elements tagList = doc.select("div.ters > p");
-                    if (tagList.size() > 0) {
-                        //字母索引
-                        setData("字母索引", tagList.get(0).select("a"));
-                        //年份
-                        setYearData("年份", tagList.get(1).select("a"));
-                        //地区
-                        setRegionData();
-                        //语言
-                        setLanguageData();
-                        //类型
-                        setData("动漫类型", tagList.get(2).select("a"));
-                        callback.success(list);
-                    } else callback.error(Utils.getString(R.string.parsing_error));
+                    if (hasRefresh(doc)) getHtml(callback);
+                    else {
+                        Elements tagList = doc.select("div.ters > p");
+                        if (tagList.size() > 0) {
+                            //字母索引
+                            setData("字母索引", tagList.get(0).select("a"));
+                            //年份
+                            setYearData("年份", tagList.get(1).select("a"));
+                            //地区
+                            setRegionData();
+                            //语言
+                            setLanguageData();
+                            //类型
+                            setData("动漫类型", tagList.get(2).select("a"));
+                            callback.success(list);
+                        } else callback.error(Utils.getString(R.string.parsing_error));
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                     callback.error(e.getMessage());

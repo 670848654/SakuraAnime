@@ -11,17 +11,21 @@ import java.util.List;
 import my.project.sakuraproject.bean.AnimeDescBean;
 import my.project.sakuraproject.config.AnimeType;
 import my.project.sakuraproject.database.DatabaseUtil;
+import my.project.sakuraproject.main.base.BaseModel;
 import my.project.sakuraproject.net.HttpGet;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
-public class VideoModel implements VideoContract.Model {
+public class VideoModel extends BaseModel implements VideoContract.Model {
     private List<String> videoUrlList = new ArrayList<>();
 
     @Override
     public void getData(String title, String HTML_url, VideoContract.LoadDataCallback callback) {
+        getHtml(title, HTML_url, callback);
+    }
 
+    private void getHtml(String title, String HTML_url, VideoContract.LoadDataCallback callback) {
         new HttpGet(HTML_url, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -31,23 +35,26 @@ public class VideoModel implements VideoContract.Model {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 Document doc = Jsoup.parse(response.body().string());
-                String fid = DatabaseUtil.getAnimeID(title);
-                DatabaseUtil.addIndex(fid, HTML_url);
-                callback.successDrama(getAllDrama(fid, doc.select("div.movurls > ul > li")));
-                Elements playList = doc.select("div.playbo > a");
-                if (playList.size() > 0) {
-                    for (int i = 0, size = playList.size(); i < size; i++) {
-                        videoUrlList.add(playList.get(i).attr("onClick"));
+                if (hasRefresh(doc)) getHtml(title, HTML_url, callback);
+                else {
+                    String fid = DatabaseUtil.getAnimeID(title);
+                    DatabaseUtil.addIndex(fid, HTML_url);
+                    callback.successDrama(getAllDrama(fid, doc.select("div.movurls > ul > li")));
+                    Elements playList = doc.select("div.playbo > a");
+                    if (playList.size() > 0) {
+                        for (int i = 0, size = playList.size(); i < size; i++) {
+                            videoUrlList.add(playList.get(i).attr("onClick"));
+                        }
+                        callback.success(videoUrlList);
+                    } else {
+                        callback.empty();
                     }
-                    callback.success(videoUrlList);
-                } else {
-                    callback.empty();
                 }
             }
         });
     }
 
-    private static List<AnimeDescBean> getAllDrama(String fid, Elements dramaList) {
+    private List<AnimeDescBean> getAllDrama(String fid, Elements dramaList) {
         List<AnimeDescBean> list = new ArrayList<>();
         try {
             String dataBaseDrama = DatabaseUtil.queryAllIndex(fid);

@@ -583,6 +583,14 @@ public class Utils {
     }
 
     /**
+     * X5内核加载状态
+     * @return
+     */
+    public static boolean getX5State() {
+        return (boolean) SharedPreferencesUtils.getParam(getContext(), "X5State", false);
+    }
+
+    /**
      * 是否启用x5内核
      * @return
      */

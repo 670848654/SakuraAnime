@@ -1,8 +1,10 @@
 package my.project.sakuraproject.main.player;
 
 import android.content.Context;
+import android.graphics.SurfaceTexture;
 import android.net.Uri;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.util.Log;
 import android.view.Surface;
 
@@ -35,18 +37,18 @@ import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.video.VideoListener;
 
 import cn.jzvd.JZMediaInterface;
-import cn.jzvd.JZMediaManager;
-import cn.jzvd.JzvdMgr;
+import cn.jzvd.Jzvd;
 import my.project.sakuraproject.R;
 
 public class JZExoPlayer extends JZMediaInterface implements Player.EventListener, VideoListener {
     private SimpleExoPlayer simpleExoPlayer;
-    private Handler mainHandler;
     private Runnable callback;
-    private String TAG = "JZExoPlayer";
-    private MediaSource videoSource;
+    private String TAG = "JZMediaExo";
     private long previousSeek = 0;
 
+    public JZExoPlayer(Jzvd jzvd) {
+        super(jzvd);
+    }
 
     @Override
     public void start() {
@@ -56,78 +58,70 @@ public class JZExoPlayer extends JZMediaInterface implements Player.EventListene
     @Override
     public void prepare() {
         Log.e(TAG, "prepare");
-        mainHandler = new Handler();
-        Context context = JzvdMgr.getCurrentJzvd().getContext();
+        Context context = jzvd.getContext();
 
-        BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
-        TrackSelection.Factory videoTrackSelectionFactory =
-                new AdaptiveTrackSelection.Factory(bandwidthMeter);
-        TrackSelector trackSelector =
-                new DefaultTrackSelector(videoTrackSelectionFactory);
+        release();
+        mMediaHandlerThread = new HandlerThread("JZVD");
+        mMediaHandlerThread.start();
+        mMediaHandler = new Handler(mMediaHandlerThread.getLooper());//主线程还是非主线程，就在这里
+        handler = new Handler();
+        mMediaHandler.post(() -> {
+            BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
+            TrackSelection.Factory videoTrackSelectionFactory =
+                    new AdaptiveTrackSelection.Factory(bandwidthMeter);
+            TrackSelector trackSelector =
+                    new DefaultTrackSelector(videoTrackSelectionFactory);
 
-        LoadControl loadControl = new DefaultLoadControl(new DefaultAllocator(true, C.DEFAULT_BUFFER_SEGMENT_SIZE),
-                360000, 600000, 1000, 5000,
-                C.LENGTH_UNSET,
-                false);
+            LoadControl loadControl = new DefaultLoadControl(new DefaultAllocator(true, C.DEFAULT_BUFFER_SEGMENT_SIZE),
+                    360000, 600000, 1000, 5000,
+                    C.LENGTH_UNSET,
+                    false);
 
-        // 2. Create the player
+            // 2. Create the player
 
-        RenderersFactory renderersFactory = new DefaultRenderersFactory(context);
-        simpleExoPlayer = ExoPlayerFactory.newSimpleInstance(renderersFactory, trackSelector, loadControl);
-        // Produces DataSource instances through which media data is loaded.
-        DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(context,
-                Util.getUserAgent(context, context.getResources().getString(R.string.app_name)));
+            RenderersFactory renderersFactory = new DefaultRenderersFactory(context);
+            simpleExoPlayer = ExoPlayerFactory.newSimpleInstance(context, renderersFactory, trackSelector, loadControl);
+            // Produces DataSource instances through which media data is loaded.
+            DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(context,
+                    Util.getUserAgent(context, context.getResources().getString(R.string.app_name)));
 
-        String currUrl = jzDataSource.getCurrentUrl().toString();
-        if (currUrl.contains(".m3u8")) {
-            videoSource = new HlsMediaSource.Factory(dataSourceFactory)
-                    .createMediaSource(Uri.parse(currUrl), mainHandler, null);
-        } else {
-            videoSource = new ExtractorMediaSource.Factory(dataSourceFactory)
-                    .createMediaSource(Uri.parse(currUrl));
-        }
-        simpleExoPlayer.addVideoListener(this);
+            String currUrl = jzvd.jzDataSource.getCurrentUrl().toString();
+            MediaSource videoSource;
+            if (currUrl.contains(".m3u8")) {
+                videoSource = new HlsMediaSource.Factory(dataSourceFactory)
+                        .createMediaSource(Uri.parse(currUrl), handler, null);
+            } else {
+                videoSource = new ExtractorMediaSource.Factory(dataSourceFactory)
+                        .createMediaSource(Uri.parse(currUrl));
+            }
+            simpleExoPlayer.addVideoListener(this);
 
-        Log.e(TAG, "URL Link = " + currUrl);
+            Log.e(TAG, "URL Link = " + currUrl);
 
-        simpleExoPlayer.addListener(this);
+            simpleExoPlayer.addListener(this);
+            Boolean isLoop = jzvd.jzDataSource.looping;
+            if (isLoop) {
+                simpleExoPlayer.setRepeatMode(Player.REPEAT_MODE_ONE);
+            } else {
+                simpleExoPlayer.setRepeatMode(Player.REPEAT_MODE_OFF);
+            }
+            simpleExoPlayer.prepare(videoSource);
+            simpleExoPlayer.setPlayWhenReady(true);
+            callback = new onBufferingUpdate();
 
-        simpleExoPlayer.prepare(videoSource);
-        simpleExoPlayer.setPlayWhenReady(true);
-        callback = new onBufferingUpdate();
+            simpleExoPlayer.setVideoSurface(new Surface(jzvd.textureView.getSurfaceTexture()));
+        });
+
     }
 
     @Override
     public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
-        JZMediaManager.instance().currentVideoWidth = width;
-        JZMediaManager.instance().currentVideoHeight = height;
-        JZMediaManager.instance().mainThreadHandler.post(() -> {
-            if (JzvdMgr.getCurrentJzvd() != null) {
-                JzvdMgr.getCurrentJzvd().onVideoSizeChanged();
-            }
-        });
+        handler.post(() -> jzvd.onVideoSizeChanged(width, height));
     }
 
     @Override
     public void onRenderedFirstFrame() {
         Log.e(TAG, "onRenderedFirstFrame");
-    }
-
-    private class onBufferingUpdate implements Runnable {
-        @Override
-        public void run() {
-            final int percent = simpleExoPlayer.getBufferedPercentage();
-            JZMediaManager.instance().mainThreadHandler.post(() -> {
-                if (JzvdMgr.getCurrentJzvd() != null) {
-                    JzvdMgr.getCurrentJzvd().setBufferProgress(percent);
-                }
-            });
-            if (percent < 100) {
-                mainHandler.postDelayed(callback, 300);
-            } else {
-                mainHandler.removeCallbacks(callback);
-            }
-        }
     }
 
     @Override
@@ -145,17 +139,23 @@ public class JZExoPlayer extends JZMediaInterface implements Player.EventListene
         if (time != previousSeek) {
             simpleExoPlayer.seekTo(time);
             previousSeek = time;
-            JzvdMgr.getCurrentJzvd().seekToInAdvance = time;
+            jzvd.seekToInAdvance = time;
         }
     }
 
     @Override
     public void release() {
-        if (simpleExoPlayer != null) {
-            simpleExoPlayer.release();
+        if (mMediaHandler != null && mMediaHandlerThread != null && simpleExoPlayer != null) {//不知道有没有妖孽
+            HandlerThread tmpHandlerThread = mMediaHandlerThread;
+            SimpleExoPlayer tmpMediaPlayer = simpleExoPlayer;
+            JZMediaInterface.SAVED_SURFACE = null;
+
+            mMediaHandler.post(() -> {
+                tmpMediaPlayer.release();//release就不能放到主线程里，界面会卡顿
+                tmpHandlerThread.quit();
+            });
+            simpleExoPlayer = null;
         }
-        if (mainHandler != null)
-            mainHandler.removeCallbacks(callback);
     }
 
     @Override
@@ -173,12 +173,6 @@ public class JZExoPlayer extends JZMediaInterface implements Player.EventListene
     }
 
     @Override
-    public void setSurface(Surface surface) {
-        simpleExoPlayer.setVideoSurface(surface);
-        Log.e(TAG, "setSurface");
-    }
-
-    @Override
     public void setVolume(float leftVolume, float rightVolume) {
         simpleExoPlayer.setVolume(leftVolume);
         simpleExoPlayer.setVolume(rightVolume);
@@ -193,7 +187,7 @@ public class JZExoPlayer extends JZMediaInterface implements Player.EventListene
     @Override
     public void onTimelineChanged(final Timeline timeline, Object manifest, final int reason) {
         Log.e(TAG, "onTimelineChanged");
-//        JZMediaManager.instance().mainThreadHandler.post(() -> {
+//        JZMediaPlayer.instance().mainThreadHandler.post(() -> {
 //                if (reason == 0) {
 //
 //                    JzvdMgr.getCurrentJzvd().onInfo(reason, timeline.getPeriodCount());
@@ -214,28 +208,26 @@ public class JZExoPlayer extends JZMediaInterface implements Player.EventListene
     @Override
     public void onPlayerStateChanged(final boolean playWhenReady, final int playbackState) {
         Log.e(TAG, "onPlayerStateChanged" + playbackState + "/ready=" + String.valueOf(playWhenReady));
-        JZMediaManager.instance().mainThreadHandler.post(() -> {
-            if (JzvdMgr.getCurrentJzvd() != null) {
-                switch (playbackState) {
-                    case Player.STATE_IDLE: {
-                    }
-                    break;
-                    case Player.STATE_BUFFERING: {
-                        mainHandler.post(callback);
-                    }
-                    break;
-                    case Player.STATE_READY: {
-                        if (playWhenReady) {
-                            JzvdMgr.getCurrentJzvd().onPrepared();
-                        } else {
-                        }
-                    }
-                    break;
-                    case Player.STATE_ENDED: {
-                        JzvdMgr.getCurrentJzvd().onAutoCompletion();
-                    }
-                    break;
+        handler.post(() -> {
+            switch (playbackState) {
+                case Player.STATE_IDLE: {
                 }
+                break;
+                case Player.STATE_BUFFERING: {
+                    handler.post(callback);
+                }
+                break;
+                case Player.STATE_READY: {
+                    if (playWhenReady) {
+                        jzvd.onStatePlaying();
+                    } else {
+                    }
+                }
+                break;
+                case Player.STATE_ENDED: {
+                    jzvd.onAutoCompletion();
+                }
+                break;
             }
         });
     }
@@ -253,11 +245,7 @@ public class JZExoPlayer extends JZMediaInterface implements Player.EventListene
     @Override
     public void onPlayerError(ExoPlaybackException error) {
         Log.e(TAG, "onPlayerError" + error.toString());
-        JZMediaManager.instance().mainThreadHandler.post(() -> {
-            if (JzvdMgr.getCurrentJzvd() != null) {
-                JzvdMgr.getCurrentJzvd().onError(1000, 1000);
-            }
-        });
+        handler.post(() -> jzvd.onError(1000, 1000));
     }
 
     @Override
@@ -272,11 +260,51 @@ public class JZExoPlayer extends JZMediaInterface implements Player.EventListene
 
     @Override
     public void onSeekProcessed() {
-        JZMediaManager.instance().mainThreadHandler.post(() -> {
-            if (JzvdMgr.getCurrentJzvd() != null) {
-                JzvdMgr.getCurrentJzvd().onSeekComplete();
-            }
-        });
+        handler.post(() -> jzvd.onSeekComplete());
     }
 
+    @Override
+    public void setSurface(Surface surface) {
+        simpleExoPlayer.setVideoSurface(surface);
+    }
+
+    @Override
+    public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
+        if (SAVED_SURFACE == null) {
+            SAVED_SURFACE = surface;
+            prepare();
+        } else {
+            jzvd.textureView.setSurfaceTexture(SAVED_SURFACE);
+        }
+    }
+
+    @Override
+    public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
+
+    }
+
+    @Override
+    public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
+        return false;
+    }
+
+    @Override
+    public void onSurfaceTextureUpdated(SurfaceTexture surface) {
+
+    }
+
+    private class onBufferingUpdate implements Runnable {
+        @Override
+        public void run() {
+            if (simpleExoPlayer != null) {
+                final int percent = simpleExoPlayer.getBufferedPercentage();
+                handler.post(() -> jzvd.setBufferProgress(percent));
+                if (percent < 100) {
+                    handler.postDelayed(callback, 300);
+                } else {
+                    handler.removeCallbacks(callback);
+                }
+            }
+        }
+    }
 }

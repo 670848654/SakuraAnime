@@ -44,7 +44,7 @@ import my.project.sakuraproject.util.StatusBarUtil;
 import my.project.sakuraproject.util.Utils;
 import my.project.sakuraproject.util.VideoUtils;
 
-public class PlayerActivity extends BaseActivity implements VideoContract.View, JZPlayer.CompleteListener, SniffingUICallback {
+public class PlayerActivity extends BaseActivity implements VideoContract.View, JZPlayer.CompleteListener, JZPlayer.TouchListener, SniffingUICallback {
     @BindView(R.id.player)
     JZPlayer player;
     private String witchTitle, url, diliUrl;
@@ -113,7 +113,7 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
         });
         linearLayout.getBackground().mutate().setAlpha(150);
         drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-        player.setListener(this, this);
+        player.setListener(this, this, this);
         player.backButton.setOnClickListener(v -> finish());
 //        if (Utils.isPad()) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
@@ -123,7 +123,7 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
         }
 //        } else
 //            pic.setVisibility(View.GONE);
-        player.setUp(url, witchTitle, Jzvd.SCREEN_WINDOW_FULLSCREEN);
+        player.setUp(url, witchTitle, Jzvd.SCREEN_FULLSCREEN, JZExoPlayer.class);
         player.fullscreenButton.setOnClickListener(view -> {
             if (!Utils.isFastClick()) return;
             if (drawerLayout.isDrawerOpen(GravityCompat.END))
@@ -218,7 +218,7 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
                     case 0:
                         //调用播放器
                         Jzvd.releaseAllVideos();
-                        player.setUp(url, witchTitle, Jzvd.SCREEN_WINDOW_FULLSCREEN);
+                        player.setUp(url, witchTitle, Jzvd.SCREEN_FULLSCREEN, JZExoPlayer.class);
                         player.startVideo();
                         break;
                     case 1:
@@ -268,12 +268,6 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
         super.onResume();
         hideNavBar();
         if (!inMultiWindow()) JzvdStd.goOnPlayOnResume();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        JzvdStd.releaseAllVideos();
     }
 
     /**
@@ -356,6 +350,7 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
     @Override
     protected void onDestroy() {
         if (null != presenter) presenter.detachView();
+        JzvdStd.releaseAllVideos();
         super.onDestroy();
     }
 
@@ -396,5 +391,10 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
         Sakura.getInstance().showToastMsg(Utils.getString(R.string.open_web_view));
         VideoUtils.openDefaultWebview(this, webUrl);
         this.finish();
+    }
+
+    @Override
+    public void touch() {
+        hideNavBar();
     }
 }

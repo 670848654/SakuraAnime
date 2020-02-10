@@ -447,3 +447,11 @@
 -keep class tv.danmaku.ijk.media.player.** {*;}
 -keep class tv.danmaku.ijk.media.player.IjkMediaPlayer{*;}
 -keep class tv.danmaku.ijk.media.player.ffmpeg.FFmpegApi{*;}
+-dontwarn tv.danmaku.ijk.media.player.*
+-keep interface tv.danmaku.ijk.media.player.** { *; }
+
+-keep public class cn.jzvd.JZMediaSystem {*; }
+-keep public class cn.jzvd.demo.CustomMedia.CustomMedia {*; }
+-keep public class cn.jzvd.demo.CustomMedia.JZMediaIjk {*; }
+-keep public class cn.jzvd.demo.CustomMedia.JZMediaSystemAssertFolder {*; }
+

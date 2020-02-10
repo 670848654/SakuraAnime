@@ -16,7 +16,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 
 import com.r0adkll.slidr.Slidr;
-import com.tencent.smtt.sdk.TbsVideo;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -99,13 +98,14 @@ public class SettingActivity extends BaseActivity {
                 player_default.setText(playerItems[1]);
                 break;
         }
-        if (Utils.loadX5()) {
+        if (Utils.getX5State())
             x5_state_title.append(Html.fromHtml("<font color=\"#259b24\">加载成功</font>"));
-            x5_state.setText(x5Items[0]);
-        } else {
+        else
             x5_state_title.append(Html.fromHtml("<font color=\"#e51c23\">加载失败</font>"));
+        if (Utils.loadX5())
+            x5_state.setText(x5Items[0]);
+        else
             x5_state.setText(x5Items[1]);
-        }
         domain_default.setText(Sakura.DOMAIN);
     }
 
@@ -122,7 +122,10 @@ public class SettingActivity extends BaseActivity {
                 startActivity(new Intent(this, ApiActivity.class));
                 break;
             case R.id.set_x5:
-                setX5State();
+                if (Utils.getX5State())
+                    setX5State();
+                else
+                    application.showErrorToastMsg("X5内核未能加载成功，无法设置");
                 break;
         }
     }
@@ -203,11 +206,8 @@ public class SettingActivity extends BaseActivity {
         builder.setSingleChoiceItems(x5Items, Utils.loadX5() ? 0 : 1, (dialog, which) -> {
             switch (which){
                 case 0:
-                    if (TbsVideo.canUseTbsPlayer(SettingActivity.this)) {
-                        SharedPreferencesUtils.setParam(getApplicationContext(),"loadX5",true);
-                        x5_state.setText(x5Items[0]);
-                    }else
-                        application.showErrorToastMsg("X5内核未能加载成功，无法启用");
+                    SharedPreferencesUtils.setParam(getApplicationContext(),"loadX5",true);
+                    x5_state.setText(x5Items[0]);
                     break;
                 case 1:
                     SharedPreferencesUtils.setParam(getApplicationContext(),"loadX5",false);

@@ -12,8 +12,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.tencent.smtt.sdk.TbsVideo;
-
 import java.util.List;
 
 import butterknife.ButterKnife;
@@ -40,7 +38,6 @@ public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatA
         if (!getRunningActivityName().equals("StartActivity") && !getRunningActivityName().equals("HomeActivity")) overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         initBeforeView();
         setContentView(setLayoutRes());
-        if (TbsVideo.canUseTbsPlayer(this)) SharedPreferencesUtils.setParam(getApplicationContext(),"loadX5",true);
         if (Utils.checkHasNavigationBar(this)) {
             getWindow().setFlags(
                     WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,

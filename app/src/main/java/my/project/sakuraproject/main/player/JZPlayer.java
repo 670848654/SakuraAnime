@@ -62,7 +62,7 @@ public class JZPlayer extends JzvdStd {
 
     @Override
     public void onAutoCompletion() {
-        super.onAutoCompletion();
+        onStateAutoComplete();
         listener.complete();
     }
 

@@ -165,6 +165,7 @@ public class AboutActivity extends BaseActivity {
 
     public List createUpdateLogList() {
         List logsList = new ArrayList();
+        logsList.add(new LogBean("版本：1.8.6_b","修复内置播放器播放完毕后程序崩溃的问题"));
         logsList.add(new LogBean("版本：1.8.6_a","修复内置播放器使用Exo内核无限加载的问题"));
         logsList.add(new LogBean("版本：1.8.6","修复一些错误\n修复内置视频播放器存在的一些问题"));
         logsList.add(new LogBean("版本：1.8.5","修复新解析方案资源未释放导致视频声音外放的Bug"));

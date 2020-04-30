@@ -2,7 +2,7 @@ package my.project.sakuraproject.main.video;
 
 import java.util.List;
 
-import my.project.sakuraproject.bean.AnimeDescBean;
+import my.project.sakuraproject.bean.AnimeDescDetailsBean;
 import my.project.sakuraproject.main.base.BaseLoadDataCallback;
 
 public interface VideoContract {
@@ -19,7 +19,7 @@ public interface VideoContract {
 
         void getVideoError();
 
-        void showSuccessDramaView(List<AnimeDescBean> list);
+        void showSuccessDramaView(List<AnimeDescDetailsBean> list);
 
         void errorDramaView();
     }
@@ -31,6 +31,6 @@ public interface VideoContract {
 
         void empty();
 
-        void successDrama(List<AnimeDescBean> list);
+        void successDrama(List<AnimeDescDetailsBean> list);
     }
 }

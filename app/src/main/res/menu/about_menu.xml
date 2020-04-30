@@ -2,15 +2,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/update_log"
+        android:id="@+id/open_source"
         android:orderInCategory="60"
-        android:icon="@drawable/baseline_log_white_48dp"
-        android:title="@string/update_log"
+        android:icon="@drawable/baseline_all_inclusive_white_48dp"
+        android:title="@string/open_source_library"
         app:showAsAction="ifRoom"/>
     <item
-        android:id="@+id/check_update"
+        android:id="@+id/update_log"
         android:orderInCategory="60"
-        android:icon="@drawable/baseline_update_white_48dp"
-        android:title="@string/check_update"
+        android:icon="@drawable/baseline_insert_chart_outlined_white_48dp"
+        android:title="@string/update_log"
         app:showAsAction="ifRoom"/>
 </menu>

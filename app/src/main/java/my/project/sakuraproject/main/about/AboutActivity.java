@@ -11,11 +11,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
-import androidx.cardview.widget.CardView;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -51,8 +52,6 @@ public class AboutActivity extends BaseActivity {
     Toolbar toolbar;
     @BindView(R.id.cache)
     TextView cache;
-    @BindView(R.id.open_source)
-    TextView open_source;
     @BindView(R.id.version)
     TextView version;
     private ProgressDialog p;
@@ -60,6 +59,8 @@ public class AboutActivity extends BaseActivity {
     private Call downCall;
     @BindView(R.id.footer)
     LinearLayout footer;
+    @BindView(R.id.show)
+    CoordinatorLayout show;
 
     @Override
     protected Presenter createPresenter() {
@@ -97,22 +98,24 @@ public class AboutActivity extends BaseActivity {
     private void initViews() {
         LinearLayout.LayoutParams Params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Utils.getNavigationBarHeight(this));
         footer.findViewById(R.id.footer).setLayoutParams(Params);
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) show.getLayoutParams();
+        params.setMargins(0, 0, 0, Utils.getNavigationBarHeight(this) - 5);
+        show.setLayoutParams(params);
         version.setText(Utils.getASVersionName());
         cache.setText(Environment.getExternalStorageDirectory() + Utils.getString(R.string.cache_text));
-        open_source.setOnClickListener(v -> {
-            if (Utils.isFastClick())
-                startActivity(new Intent(AboutActivity.this, OpenSourceActivity.class));
-        });
     }
 
-    @OnClick({R.id.sakura,R.id.github})
-    public void openBrowser(CardView cardView) {
-        switch (cardView.getId()) {
+    @OnClick({R.id.sakura,R.id.github, R.id.check_update})
+    public void openBrowser(RelativeLayout relativeLayout) {
+        switch (relativeLayout.getId()) {
             case R.id.sakura:
                 Utils.viewInChrome(this, Sakura.DOMAIN);
                 break;
             case R.id.github:
                 Utils.viewInChrome(this, Utils.getString(R.string.github_url));
+                break;
+            case R.id.check_update:
+                if (Utils.isFastClick()) checkUpdate();
                 break;
         }
     }
@@ -120,11 +123,11 @@ public class AboutActivity extends BaseActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.about_menu, menu);
-        MenuItem checkUpdateItem = menu.findItem(R.id.check_update);
         MenuItem updateLogItem = menu.findItem(R.id.update_log);
+        MenuItem openSourceItem = menu.findItem(R.id.open_source);
         if (!(Boolean) SharedPreferencesUtils.getParam(this, "darkTheme", false)) {
-            checkUpdateItem.setIcon(R.drawable.baseline_update_black_48dp);
-            updateLogItem.setIcon(R.drawable.baseline_log_black_48dp);
+            updateLogItem.setIcon(R.drawable.baseline_insert_chart_outlined_black_48dp);
+            openSourceItem.setIcon(R.drawable.baseline_all_inclusive_black_48dp);
         }
         return true;
     }
@@ -135,8 +138,8 @@ public class AboutActivity extends BaseActivity {
             case R.id.update_log:
                 showUpdateLogs();
                 break;
-            case R.id.check_update:
-                if (Utils.isFastClick()) checkUpdate();
+            case R.id.open_source:
+                if (Utils.isFastClick()) startActivity(new Intent(AboutActivity.this,OpenSourceActivity.class));
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -165,6 +168,7 @@ public class AboutActivity extends BaseActivity {
 
     public List createUpdateLogList() {
         List logsList = new ArrayList();
+        logsList.add(new LogBean("版本：1.8.7","部分界面UI改动\n修复番剧详情界面显示问题"));
         logsList.add(new LogBean("版本：1.8.6_b","修复内置播放器播放完毕后程序崩溃的问题"));
         logsList.add(new LogBean("版本：1.8.6_a","修复内置播放器使用Exo内核无限加载的问题"));
         logsList.add(new LogBean("版本：1.8.6","修复一些错误\n修复内置视频播放器存在的一些问题"));
@@ -192,7 +196,7 @@ public class AboutActivity extends BaseActivity {
             public void onFailure(Call call, IOException e) {
                 runOnUiThread(() -> {
                     Utils.cancelProDialog(p);
-                    application.showErrorToastMsg( Utils.getString(R.string.ck_network_error));
+                    application.showSnackbarMsgAction(show, Utils.getString(R.string.ck_network_error_start), Utils.getString(R.string.try_again), v -> checkUpdate());
                 });
             }
 
@@ -205,7 +209,7 @@ public class AboutActivity extends BaseActivity {
                     if (newVersion.equals(Utils.getASVersionName()))
                         runOnUiThread(() -> {
                             Utils.cancelProDialog(p);
-                            application.showSuccessToastMsg(Utils.getString(R.string.no_new_version));
+                            application.showSnackbarMsg(show, Utils.getString(R.string.no_new_version));
                         });
                     else {
                         downloadUrl = obj.getJSONArray("assets").getJSONObject(0).getString("browser_download_url");
@@ -215,19 +219,9 @@ public class AboutActivity extends BaseActivity {
                             Utils.findNewVersion(AboutActivity.this,
                                     newVersion,
                                     body,
-                                    (dialog, which) -> {
-                                        p = Utils.showProgressDialog(AboutActivity.this);
-                                        p.setButton(ProgressDialog.BUTTON_NEGATIVE, Utils.getString(R.string.cancel), (dialog1, which1) -> {
-                                            if (null != downCall)
-                                                downCall.cancel();
-                                            dialog1.dismiss();
-                                        });
-                                        p.show();
-                                        downNewVersion(downloadUrl);
-                                    },
-                                    (dialog, which) -> {
-                                        dialog.dismiss();
-                                    });
+                                    (dialog, which) -> download(),
+                                    (dialog, which) -> dialog.dismiss()
+                            );
                         });
                     }
                 } catch (JSONException e) {
@@ -235,6 +229,17 @@ public class AboutActivity extends BaseActivity {
                 }
             }
         }), 1000);
+    }
+
+    public void download() {
+        p = Utils.showProgressDialog(AboutActivity.this);
+        p.setButton(ProgressDialog.BUTTON_NEGATIVE, Utils.getString(R.string.page_negative), (dialog1, which1) -> {
+            if (null != downCall)
+                downCall.cancel();
+            dialog1.dismiss();
+        });
+        p.show();
+        downNewVersion(downloadUrl);
     }
 
     /**
@@ -261,7 +266,7 @@ public class AboutActivity extends BaseActivity {
             public void onDownloadFailed() {
                 runOnUiThread(() -> {
                     Utils.cancelProDialog(p);
-                    application.showErrorToastMsg(Utils.getString(R.string.download_error));
+                    application.showSnackbarMsgAction(show, Utils.getString(R.string.download_error), Utils.getString(R.string.try_again), v -> download());
                 });
             }
         });

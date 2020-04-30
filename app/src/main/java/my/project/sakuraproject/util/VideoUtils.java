@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.application.Sakura;
-import my.project.sakuraproject.bean.AnimeDescBean;
+import my.project.sakuraproject.bean.AnimeDescDetailsBean;
 import my.project.sakuraproject.main.player.PlayerActivity;
 import my.project.sakuraproject.main.webview.normal.DefaultNormalWebActivity;
 import my.project.sakuraproject.main.webview.normal.NormalWebActivity;
@@ -101,7 +101,7 @@ public class VideoUtils {
      * @param diliUrl
      * @param list
      */
-    public static void openPlayer(boolean isDescActivity, Activity activity, String witchTitle, String url, String animeTitle, String diliUrl, List<AnimeDescBean> list) {
+    public static void openPlayer(boolean isDescActivity, Activity activity, String witchTitle, String url, String animeTitle, String diliUrl, List<AnimeDescDetailsBean> list) {
         Bundle bundle = new Bundle();
         bundle.putString("title", witchTitle);
         bundle.putString("url", url);
@@ -128,7 +128,7 @@ public class VideoUtils {
      * @param diliUrl
      * @param list
      */
-    public static void openWebview(boolean isDescActivity, Activity activity, String witchTitle, String animeTitle, String url, String diliUrl, List<AnimeDescBean> list) {
+    public static void openWebview(boolean isDescActivity, Activity activity, String witchTitle, String animeTitle, String url, String diliUrl, List<AnimeDescDetailsBean> list) {
         Bundle bundle = new Bundle();
         bundle.putString("witchTitle", witchTitle);
         bundle.putString("title", animeTitle);

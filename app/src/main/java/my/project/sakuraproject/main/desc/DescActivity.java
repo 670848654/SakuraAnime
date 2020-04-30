@@ -5,18 +5,22 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Patterns;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,10 +30,10 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.fanchen.sniffing.SniffingUICallback;
 import com.fanchen.sniffing.SniffingVideo;
 import com.fanchen.sniffing.web.SniffingUtil;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.r0adkll.slidr.Slidr;
 
@@ -37,14 +41,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 import jp.wasabeef.blurry.Blurry;
 import my.project.sakuraproject.R;
-import my.project.sakuraproject.adapter.DescAdapter;
+import my.project.sakuraproject.adapter.AnimeDescDetailsAdapter;
+import my.project.sakuraproject.adapter.AnimeDescDramaAdapter;
+import my.project.sakuraproject.adapter.AnimeDescRecommendAdapter;
 import my.project.sakuraproject.api.Api;
 import my.project.sakuraproject.application.Sakura;
-import my.project.sakuraproject.bean.AnimeDescBean;
+import my.project.sakuraproject.bean.AnimeDescDetailsBean;
+import my.project.sakuraproject.bean.AnimeDescListBean;
+import my.project.sakuraproject.bean.AnimeDescRecommendBean;
 import my.project.sakuraproject.bean.AnimeListBean;
-import my.project.sakuraproject.config.AnimeType;
 import my.project.sakuraproject.database.DatabaseUtil;
 import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.video.VideoContract;
@@ -58,17 +66,12 @@ import my.project.sakuraproject.util.VideoUtils;
 public class DescActivity extends BaseActivity<DescContract.View, DescPresenter> implements DescContract.View, VideoContract.View, SniffingUICallback {
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-    @BindView(R.id.rv_list)
-    RecyclerView mRecyclerView;
     @BindView(R.id.anime_img)
     ImageView animeImg;
     @BindView(R.id.desc)
     AppCompatTextView desc;
-    private DescAdapter adapter;
     @BindView(R.id.mSwipe)
     SwipeRefreshLayout mSwipe;
-    private List<MultiItemEntity> multiItemList = new ArrayList<>();
-    private List<AnimeDescBean> drama = new ArrayList<>();
     @BindView(R.id.title_img)
     ImageView imageView;
     private String diliUrl, dramaUrl;
@@ -82,8 +85,34 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     private AnimeListBean animeListBean = new AnimeListBean();
     private List<String> animeUrlList = new ArrayList();
     private boolean mIsLoad = false;
-    //播放网址
-    private String webUrl;
+    @BindView(R.id.details_list)
+    RecyclerView detailsRv;
+    @BindView(R.id.multi_list)
+    RecyclerView multiRv;
+    @BindView(R.id.recommend_list)
+    RecyclerView recommendRv;
+    @BindView(R.id.error_bg)
+    RelativeLayout errorBg;
+    @BindView(R.id.open_drama)
+    RelativeLayout openDrama;
+    @BindView(R.id.play_layout)
+    LinearLayout playLinearLayout;
+    @BindView(R.id.multi_layout)
+    LinearLayout multiLinearLayout;
+    @BindView(R.id.recommend_layout)
+    LinearLayout recommendLinearLayout;
+    @BindView(R.id.error_msg)
+    TextView error_msg;
+    @BindView(R.id.msg)
+    CoordinatorLayout msg;
+    private RecyclerView lineRecyclerView;
+    private AnimeDescDetailsAdapter animeDescDetailsAdapter;
+    private AnimeDescRecommendAdapter animeDescRecommendAdapter;
+    private AnimeDescRecommendAdapter animeDescMultiAdapter;
+    private AnimeDescListBean animeDescListBean = new AnimeDescListBean();
+    private ImageView closeDrama;
+    private BottomSheetDialog mBottomSheetDialog;
+    private AnimeDescDramaAdapter animeDescDramaAdapter;
 
     @Override
     protected DescPresenter createPresenter() {
@@ -105,6 +134,9 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         StatusBarUtil.setColorForSwipeBack(this, getResources().getColor(R.color.colorPrimaryDark), 0);
         StatusBarUtil.setTranslucentForImageView(this, 0, toolbar);
         Slidr.attach(this, Utils.defaultInit());
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) msg.getLayoutParams();
+        params.setMargins(0, 0, 0, Utils.getNavigationBarHeight(this) - 5);
+        msg.setLayoutParams(params);
         getBundle();
         initToolbar();
         initFab();
@@ -142,8 +174,6 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     public void initSwipe() {
         mSwipe.setColorSchemeResources(R.color.pink500, R.color.blue500, R.color.purple500);
         mSwipe.setOnRefreshListener(() -> {
-            multiItemList.clear();
-            adapter.setNewData(multiItemList);
             mPresenter.loadData(true);
         });
         mSwipe.setRefreshing(true);
@@ -151,40 +181,66 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
 
     @SuppressLint("RestrictedApi")
     public void initAdapter() {
-        adapter = new DescAdapter(this, multiItemList);
-        adapter.openLoadAnimation();
-        adapter.setOnItemClickListener((adapter, view, position) -> {
+        animeDescDetailsAdapter = new AnimeDescDetailsAdapter(this, animeDescListBean.getAnimeDescDetailsBeans());
+        animeDescDetailsAdapter.setOnItemClickListener((adapter, view, position) -> {
             if (!Utils.isFastClick()) return;
-            final AnimeDescBean bean = (AnimeDescBean) adapter.getItem(position);
-            switch (bean.getType()) {
-                case "play":
-                    p = Utils.getProDialog(DescActivity.this, R.string.parsing);
-                    Button v = (Button) adapter.getViewByPosition(mRecyclerView, position, R.id.tag_group);
-                    v.setBackgroundResource(R.drawable.button_selected);
-                    v.setTextColor(getResources().getColor(R.color.item_selected_color));
-                    bean.setSelect(true);
-                    dramaUrl = VideoUtils.getUrl(bean.getUrl());
-                    witchTitle = animeTitle + " - " + bean.getTitle();
-                    videoPresenter = new VideoPresenter(animeListBean.getTitle(), dramaUrl, DescActivity.this);
-                    videoPresenter.loadData(true);
-                    break;
-                case "multi":
-                    animeTitle = bean.getTitle();
-                    diliUrl = VideoUtils.getUrl(bean.getUrl());
-                    animeUrlList.add(diliUrl);
-                    openAnimeDesc();
-                    break;
-                case "recommend":
-                    animeTitle = bean.getTitle();
-                    diliUrl = VideoUtils.getUrl(bean.getUrl());
-                    animeUrlList.add(diliUrl);
-                    openAnimeDesc();
-                    break;
-            }
+            AnimeDescDetailsBean bean = (AnimeDescDetailsBean) adapter.getItem(position);
+            playVideo(adapter, position, bean, detailsRv);
         });
-        if (Utils.checkHasNavigationBar(this)) mRecyclerView.setPadding(0,0,0, Utils.getNavigationBarHeight(this) - 5);
-        mRecyclerView.setAdapter(adapter);
-        adapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
+        detailsRv.setLayoutManager(getLinearLayoutManager());
+        detailsRv.setAdapter(animeDescDetailsAdapter);
+        detailsRv.setNestedScrollingEnabled(false);
+
+        animeDescMultiAdapter = new AnimeDescRecommendAdapter(this, animeDescListBean.getAnimeDescMultiBeans());
+        animeDescMultiAdapter.setOnItemClickListener((adapter, view, position) -> {
+            AnimeDescRecommendBean bean = (AnimeDescRecommendBean) adapter.getItem(position);
+            animeTitle = bean.getTitle();
+            diliUrl = VideoUtils.getUrl(bean.getUrl());
+            animeUrlList.add(diliUrl);
+            openAnimeDesc();
+        });
+        multiRv.setLayoutManager(getLinearLayoutManager());
+        multiRv.setAdapter(animeDescMultiAdapter);
+        multiRv.setNestedScrollingEnabled(false);
+
+        animeDescRecommendAdapter = new AnimeDescRecommendAdapter(this, animeDescListBean.getAnimeDescRecommendBeans());
+        animeDescRecommendAdapter.setOnItemClickListener((adapter, view, position) -> {
+            AnimeDescRecommendBean bean = (AnimeDescRecommendBean) adapter.getItem(position);
+            animeTitle = bean.getTitle();
+            diliUrl = VideoUtils.getUrl(bean.getUrl());
+            animeUrlList.add(diliUrl);
+            openAnimeDesc();
+        });
+        recommendRv.setLayoutManager(getLinearLayoutManager());
+        recommendRv.setAdapter(animeDescRecommendAdapter);
+        recommendRv.setNestedScrollingEnabled(false);
+
+        View dramaView = LayoutInflater.from(this).inflate(R.layout.dialog_drama, null);
+        lineRecyclerView = dramaView.findViewById(R.id.drama_list);
+        lineRecyclerView.setLayoutManager(new GridLayoutManager(this, 5));
+        animeDescDramaAdapter = new AnimeDescDramaAdapter(this, animeDescListBean.getAnimeDescDetailsBeans());
+        animeDescDramaAdapter.setOnItemClickListener((adapter, view, position) -> {
+            if (!Utils.isFastClick()) return;
+            mBottomSheetDialog.dismiss();
+            AnimeDescDetailsBean bean = (AnimeDescDetailsBean) adapter.getItem(position);
+            playVideo(adapter, position, bean, lineRecyclerView);
+        });
+        lineRecyclerView.setAdapter(animeDescDramaAdapter);
+        mBottomSheetDialog = new BottomSheetDialog(this);
+        mBottomSheetDialog.setContentView(dramaView);
+        closeDrama = dramaView.findViewById(R.id.close_drama);
+        closeDrama.setOnClickListener(v-> mBottomSheetDialog.dismiss());
+    }
+
+    private LinearLayoutManager getLinearLayoutManager() {
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        linearLayoutManager.setOrientation(RecyclerView.HORIZONTAL);
+        return linearLayoutManager;
+    }
+
+    @OnClick(R.id.open_drama)
+    public void dramaClick() {
+        if (!mBottomSheetDialog.isShowing()) mBottomSheetDialog.show();
     }
 
     @SuppressLint("RestrictedApi")
@@ -194,71 +250,54 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         desc.setText("");
         mSwipe.setRefreshing(true);
         imageView.setImageDrawable(null);
-        animeListBean = new AnimeListBean();
+        animeDescListBean = new AnimeDescListBean();
         favorite.setVisibility(View.GONE);
         mPresenter = new DescPresenter(diliUrl, this);
-        multiItemList.clear();
-        adapter.setNewData(multiItemList);
         mPresenter.loadData(true);
     }
 
-    public void goToPlay(List<String> list) {
-        new Handler().postDelayed(() -> {
-            if (list.size() == 1) oneSource(list);
-            else multipleSource(list);
-        }, 200);
+    public void playVideo(BaseQuickAdapter adapter, int position, AnimeDescDetailsBean bean, RecyclerView recyclerView) {
+        p = Utils.getProDialog(DescActivity.this, R.string.parsing);
+        Button v = (Button) adapter.getViewByPosition(recyclerView, position, R.id.tag_group);
+        v.setBackgroundResource(R.drawable.button_selected);
+        v.setTextColor(getResources().getColor(R.color.item_selected_color));
+        bean.setSelected(true);
+        dramaUrl = VideoUtils.getUrl(bean.getUrl());
+        witchTitle = animeTitle + " - " + bean.getTitle();
+        animeDescDetailsAdapter.notifyDataSetChanged();
+        animeDescDramaAdapter.notifyDataSetChanged();
+        videoPresenter = new VideoPresenter(animeTitle, dramaUrl, DescActivity.this);
+        videoPresenter.loadData(true);
     }
 
     /**
-     * 只有一个播放地址
+     * 播放视频
      *
-     * @param list
+     * @param animeUrl
      */
-    private void oneSource(List<String> list) {
-        playAnime(VideoUtils.getVideoUrl(list.get(0)));
-    }
-
-    /**
-     * 多个播放地址
-     *
-     * @param list
-     */
-    private void multipleSource(List<String> list) {
-        VideoUtils.showMultipleVideoSources(this,
-                list,
-                (dialog, index) ->
-                        playAnime(VideoUtils.getVideoUrl(list.get(index))), (dialog, which) -> {
-                            cancelDialog();
-                            dialog.dismiss();
-                        }, 0
-        );
-    }
-
     private void playAnime(String animeUrl) {
         if (Patterns.WEB_URL.matcher(animeUrl.replace(" ", "")).matches()) {
             if (animeUrl.contains("jx.618g.com")) {
                 cancelDialog();
-                animeUrl = animeUrl.replaceAll("http://jx.618g.com/\\?url=", "");
-                VideoUtils.openWebview(true, this, witchTitle, animeTitle, animeUrl, diliUrl, drama);
+                VideoUtils.openWebview(false, this, witchTitle, animeTitle, animeUrl.replaceAll("http://jx.618g.com/\\?url=", ""), diliUrl, animeDescListBean.getAnimeDescDetailsBeans());
             } else if (animeUrl.contains(".mp4") || animeUrl.contains(".m3u8")) {
                 cancelDialog();
                 switch ((Integer) SharedPreferencesUtils.getParam(getApplicationContext(), "player", 0)) {
                     case 0:
                         //调用播放器
-                        VideoUtils.openPlayer(true, this, witchTitle, animeUrl, animeTitle, diliUrl, drama);
+                        VideoUtils.openPlayer(true, this, witchTitle, animeUrl, animeTitle, diliUrl, animeDescListBean.getAnimeDescDetailsBeans());
                         break;
                     case 1:
                         Utils.selectVideoPlayer(this, animeUrl);
                         break;
                 }
-            } else {
-                webUrl = animeUrl;
-                Sakura.getInstance().showToastMsg(Utils.getString(R.string.should_be_used_web));
-                SniffingUtil.get().activity(this).referer(webUrl).callback(this).url(webUrl).start();
+            }else {
+                application.showToastMsg(Utils.getString(R.string.should_be_used_web));
+                SniffingUtil.get().activity(this).referer(animeUrl).callback(this).url(animeUrl).start();
             }
-        } else {
-            webUrl = String.format(Api.PARSE_API, animeUrl);
-            Sakura.getInstance().showToastMsg(Utils.getString(R.string.maybe_can_not_play));
+        }  else {
+            String webUrl = String.format(Api.PARSE_API, animeUrl);
+            application.showToastMsg(Utils.getString(R.string.should_be_used_web));
             SniffingUtil.get().activity(this).referer(webUrl).callback(this).url(webUrl).start();
         }
     }
@@ -268,8 +307,6 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 0x10 && resultCode == 0x20) {
             mSwipe.setRefreshing(true);
-            multiItemList = new ArrayList<>();
-            adapter.notifyDataSetChanged();
             mPresenter.loadData(true);
         }
     }
@@ -291,12 +328,10 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         isFavorite = DatabaseUtil.favorite(animeListBean);
         if (isFavorite) {
             Glide.with(DescActivity.this).load(R.drawable.baseline_favorite_white_48dp).into(favorite);
-            application.showCustomToastMsg(Utils.getString(R.string.join_ok),
-                    R.drawable.ic_add_favorite_48dp, R.color.green300);
+            application.showSnackbarMsg(msg, Utils.getString(R.string.join_ok));
         } else {
             Glide.with(DescActivity.this).load(R.drawable.baseline_favorite_border_white_48dp).into(favorite);
-            application.showCustomToastMsg(Utils.getString(R.string.join_error),
-                    R.drawable.ic_remove_favorite_48dp, R.color.red300);
+            application.showSnackbarMsg(msg, Utils.getString(R.string.join_error));
         }
     }
 
@@ -321,6 +356,9 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     public void showLoadingView() {
         mIsLoad = true;
         showEmptyVIew();
+        detailsRv.scrollToPosition(0);
+        multiRv.scrollToPosition(0);
+        recommendRv.scrollToPosition(0);
     }
 
     @Override
@@ -330,9 +368,11 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
                 mIsLoad = false;
                 mSwipe.setRefreshing(false);
                 setCollapsingToolbar();
-                mRecyclerView.setLayoutManager(new LinearLayoutManager(DescActivity.this));
-                errorTitle.setText(msg);
-                adapter.setEmptyView(errorView);
+                playLinearLayout.setVisibility(View.GONE);
+                multiLinearLayout.setVisibility(View.GONE);
+                recommendLinearLayout.setVisibility(View.GONE);
+                error_msg.setText(msg);
+                errorBg.setVisibility(View.VISIBLE);
             }
         });
     }
@@ -340,45 +380,10 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     @Override
     public void showEmptyVIew() {
         mSwipe.setRefreshing(true);
-        adapter.setEmptyView(emptyView);
-    }
-
-    @Override
-    public void showSuccessMainView(List<MultiItemEntity> list) {
-        runOnUiThread(() -> {
-            if (!mActivityFinish) {
-                mIsLoad = false;
-                final GridLayoutManager manager = new GridLayoutManager(DescActivity.this, 15);
-                manager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-                    @Override
-                    public int getSpanSize(int position) {
-                        int index = 0;
-                        switch (adapter.getItemViewType(position)) {
-                            case AnimeType.TYPE_LEVEL_0:
-                                index = manager.getSpanCount();
-                                break;
-                            case AnimeType.TYPE_LEVEL_1:
-                                index = 3;
-                                break;
-                            case AnimeType.TYPE_LEVEL_2:
-                                index = 5;
-                                break;
-                            case AnimeType.TYPE_LEVEL_3:
-                                index = 5;
-                                break;
-                        }
-                        return index;
-                    }
-                });
-                // important! setLayoutManager should be called after setAdapter
-                mRecyclerView.setLayoutManager(manager);
-                multiItemList = list;
-                mSwipe.setRefreshing(false);
-                setCollapsingToolbar();
-                adapter.setNewData(multiItemList);
-                adapter.expand(0);
-            }
-        });
+        playLinearLayout.setVisibility(View.GONE);
+        multiLinearLayout.setVisibility(View.GONE);
+        recommendLinearLayout.setVisibility(View.GONE);
+        errorBg.setVisibility(View.GONE);
     }
 
     @Override
@@ -396,6 +401,34 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         getMenuInflater().inflate(R.menu.desc_menu, menu);
         return true;
     }
+
+    @Override
+    public void showSuccessMainView(AnimeDescListBean bean) {
+        runOnUiThread(() -> {
+            if (!mActivityFinish) {
+                mIsLoad = false;
+                setCollapsingToolbar();
+                mSwipe.setRefreshing(false);
+                this.animeDescListBean = bean;
+                animeDescDetailsAdapter.setNewData(bean.getAnimeDescDetailsBeans());
+                if (bean.getAnimeDescMultiBeans().size() > 0)
+                    multiLinearLayout.setVisibility(View.VISIBLE);
+                else
+                    multiLinearLayout.setVisibility(View.GONE);
+                animeDescMultiAdapter.setNewData(bean.getAnimeDescMultiBeans());
+                animeDescRecommendAdapter.setNewData(bean.getAnimeDescRecommendBeans());
+                if (bean.getAnimeDescDetailsBeans().size() > 4)
+                    openDrama.setVisibility(View.VISIBLE);
+                else
+                    openDrama.setVisibility(View.GONE);
+                animeDescDramaAdapter.setNewData(bean.getAnimeDescDetailsBeans());
+                playLinearLayout.setVisibility(View.VISIBLE);
+                recommendLinearLayout.setVisibility(View.VISIBLE);
+            }
+        });
+    }
+
+
 
     @Override
     public void showSuccessDescView(AnimeListBean bean) {
@@ -435,12 +468,25 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
 
     @Override
     public void getVideoSuccess(List<String> list) {
-        runOnUiThread(() -> goToPlay(list));
+        runOnUiThread(() -> {
+            if (list.size() == 1)
+                playAnime(list.get(0));
+            else
+                VideoUtils.showMultipleVideoSources(this,
+                        list,
+                        (dialog, index) -> playAnime(list.get(index)), (dialog, which) -> {
+                            cancelDialog();
+                            dialog.dismiss();
+                        }, 1);
+        });
     }
 
     @Override
     public void getVideoEmpty() {
-        runOnUiThread(() -> VideoUtils.showErrorInfo(DescActivity.this, dramaUrl));
+        runOnUiThread(() -> {
+            application.showToastMsg(Utils.getString(R.string.open_web_view));
+            VideoUtils.openDefaultWebview(this, dramaUrl);
+        });
     }
 
     @Override
@@ -449,8 +495,8 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     }
 
     @Override
-    public void showSuccessDramaView(List<AnimeDescBean> list) {
-        drama = list;
+    public void showSuccessDramaView(List<AnimeDescDetailsBean> list) {
+
     }
 
     @Override
@@ -486,6 +532,6 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     @Override
     public void onSniffingError(View webView, String url, int errorCode) {
         Sakura.getInstance().showToastMsg(Utils.getString(R.string.open_web_view));
-        VideoUtils.openDefaultWebview(this, webUrl);
+        VideoUtils.openDefaultWebview(this, url);
     }
 }

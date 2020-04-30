@@ -1,180 +1,198 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:background="@color/window_bg"
+android:orientation="vertical">
+
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/window_bg"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
+    <include layout="@layout/toolbar" />
+
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:scrollbars="none"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <include layout="@layout/toolbar" />
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="vertical">
 
-        <androidx.core.widget.NestedScrollView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="false"
-            android:padding="10.0dip"
-            android:scrollbars="none"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+            <RelativeLayout
+                android:id="@+id/set_domain"
+                android:layout_marginTop="8dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:layout_width="match_parent"
+                android:layout_height="65dp">
 
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="5dp"
-                    android:textColor="@color/text_color_primary"
-                    android:text="@string/domain"
-                    android:textSize="15sp" />
-
-                <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-                    xmlns:card_view="http://schemas.android.com/apk/res-auto"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    card_view:cardElevation="4dp"
-                    card_view:cardUseCompatPadding="true">
-
-                    <RelativeLayout
-                        android:id="@+id/set_domain"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="?android:attr/selectableItemBackground"
-                        android:clickable="true"
-                        android:onClick="onClick">
-
-                        <TextView
-                            android:id="@+id/domain_default"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:layout_margin="10dp"
-                            android:padding="5dp"
-                            android:textColor="@color/text_color_primary"
-                            android:text="@string/domain_url"
-                            android:textSize="16sp" />
-                    </RelativeLayout>
-                </androidx.cardview.widget.CardView>
-
-                <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="5dp"
-                    android:text="@string/player"
-                    android:textColor="@color/text_color_primary"
-                    android:textSize="15sp" />
-
-                <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-                    xmlns:card_view="http://schemas.android.com/apk/res-auto"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    card_view:cardElevation="4dp"
-                    card_view:cardUseCompatPadding="true">
-
-                    <RelativeLayout
-                        android:id="@+id/set_player"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="?android:attr/selectableItemBackground"
-                        android:clickable="true"
-                        android:onClick="onClick">
-
-                        <TextView
-                            android:id="@+id/player_default"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:layout_margin="10dp"
-                            android:padding="5dp"
-                            android:textColor="@color/text_color_primary"
-                            android:text="@string/player_default"
-                            android:textSize="16sp" />
-                    </RelativeLayout>
-                </androidx.cardview.widget.CardView>
-
-                <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="5dp"
-                    android:text="@string/set_api"
-                    android:textColor="@color/text_color_primary"
-                    android:textSize="15sp" />
-
-                <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-                    xmlns:card_view="http://schemas.android.com/apk/res-auto"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    card_view:cardElevation="4dp"
-                    card_view:cardUseCompatPadding="true">
-
-                    <RelativeLayout
-                        android:id="@+id/set_api_source"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="?android:attr/selectableItemBackground"
-                        android:clickable="true"
-                        android:onClick="onClick">
-
-                        <TextView
-                            android:id="@+id/api"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:layout_margin="10dp"
-                            android:padding="5dp"
-                            android:textColor="@color/text_color_primary"
-                            android:text="@string/api"
-                            android:textSize="16sp" />
-                    </RelativeLayout>
-                </androidx.cardview.widget.CardView>
-
-                <TextView
-                    android:id="@+id/x5_state_title"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="5dp"
-                    android:text="@string/x5"
-                    android:textColor="@color/text_color_primary"
-                    android:textSize="15sp" />
-
-                <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-                    xmlns:card_view="http://schemas.android.com/apk/res-auto"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    card_view:cardElevation="4dp"
-                    card_view:cardUseCompatPadding="true">
-                    <RelativeLayout
-                        android:id="@+id/set_x5"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="?android:attr/selectableItemBackground"
-                        android:clickable="true"
-                        android:onClick="onClick">
-                        <TextView
-                            android:id="@+id/x5_state"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:layout_margin="10dp"
-                            android:padding="5dp"
-                            android:text="@string/x5_down"
-                            android:textColor="@color/text_color_primary"
-                            android:textSize="16sp" />
-                    </RelativeLayout>
-                </androidx.cardview.widget.CardView>
+                <ImageView
+                    android:id="@+id/icon1"
+                    android:src="@drawable/baseline_explore_white_48dp"
+                    android:tint="@color/text_color_primary"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp" />
 
                 <LinearLayout
-                    android:id="@+id/footer"
+                    android:layout_toRightOf="@+id/icon1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/window_bg"
-                    android:orientation="vertical" />
-            </LinearLayout>
-        </androidx.core.widget.NestedScrollView>
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+                    android:layout_centerVertical="true"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:text="@string/domain"
+                        android:textColor="@color/text_color_primary"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:id="@+id/domain_default"
+                        android:text="@string/domain_url"
+                        android:textColor="#8C8C8C"
+                        android:textSize="12sp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/set_player"
+                android:background="?android:attr/selectableItemBackground"
+                android:layout_width="match_parent"
+                android:layout_height="65dp">
+
+                <ImageView
+                    android:id="@+id/icon2"
+                    android:src="@drawable/baseline_play_circle_filled_white_48dp"
+                    android:tint="@color/text_color_primary"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp" />
+
+                <LinearLayout
+                    android:layout_toRightOf="@+id/icon2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:text="@string/player"
+                        android:textColor="@color/text_color_primary"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:id="@+id/player_default"
+                        android:text="@string/player_default"
+                        android:textColor="#8C8C8C"
+                        android:textSize="12sp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/set_api_source"
+                android:background="?android:attr/selectableItemBackground"
+                android:layout_width="match_parent"
+                android:layout_height="65dp">
+
+                <ImageView
+                    android:id="@+id/icon3"
+                    android:src="@drawable/baseline_trending_up_white_48dp"
+                    android:tint="@color/text_color_primary"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp" />
+
+                <LinearLayout
+                    android:layout_toRightOf="@+id/icon3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:text="@string/set_api"
+                        android:textColor="@color/text_color_primary"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:id="@+id/api"
+                        android:textColor="#8C8C8C"
+                        android:textSize="12sp"
+                        android:text="@string/api"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/set_x5"
+                android:background="?android:attr/selectableItemBackground"
+                android:layout_width="match_parent"
+                android:layout_height="65dp">
+
+                <ImageView
+                    android:id="@+id/icon4"
+                    android:src="@drawable/baseline_adb_white_48dp"
+                    android:tint="@color/text_color_primary"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp" />
+
+                <LinearLayout
+                    android:layout_toRightOf="@+id/icon4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/x5_state_title"
+                        android:text="@string/x5"
+                        android:textColor="@color/text_color_primary"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:id="@+id/x5_state"
+                        android:text="@string/x5_down"
+                        android:textColor="#8C8C8C"
+                        android:textSize="12sp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/footer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/window_bg"
+                android:orientation="vertical" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
 </LinearLayout>

@@ -1,9 +1,6 @@
 package my.project.sakuraproject.main.desc;
 
-import com.chad.library.adapter.base.entity.MultiItemEntity;
-
-import java.util.List;
-
+import my.project.sakuraproject.bean.AnimeDescListBean;
 import my.project.sakuraproject.bean.AnimeListBean;
 import my.project.sakuraproject.main.base.BaseLoadDataCallback;
 import my.project.sakuraproject.main.base.BaseView;
@@ -15,7 +12,7 @@ public interface DescContract {
     }
 
     interface View extends BaseView {
-        void showSuccessMainView(List<MultiItemEntity> list);
+        void showSuccessMainView(AnimeDescListBean bean);
 
         void showSuccessDescView(AnimeListBean bean);
 
@@ -23,7 +20,7 @@ public interface DescContract {
     }
 
     interface LoadDataCallback extends BaseLoadDataCallback {
-        void successMain(List<MultiItemEntity> list);
+        void successMain(AnimeDescListBean bean);
 
         void successDesc(AnimeListBean bean);
 

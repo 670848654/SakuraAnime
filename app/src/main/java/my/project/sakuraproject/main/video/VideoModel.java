@@ -8,11 +8,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import my.project.sakuraproject.bean.AnimeDescBean;
-import my.project.sakuraproject.config.AnimeType;
+import my.project.sakuraproject.bean.AnimeDescDetailsBean;
 import my.project.sakuraproject.database.DatabaseUtil;
 import my.project.sakuraproject.main.base.BaseModel;
 import my.project.sakuraproject.net.HttpGet;
+import my.project.sakuraproject.util.VideoUtils;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
@@ -43,7 +43,7 @@ public class VideoModel extends BaseModel implements VideoContract.Model {
                     Elements playList = doc.select("div.playbo > a");
                     if (playList.size() > 0) {
                         for (int i = 0, size = playList.size(); i < size; i++) {
-                            videoUrlList.add(playList.get(i).attr("onClick"));
+                            videoUrlList.add(VideoUtils.getVideoUrl(playList.get(i).attr("onClick")));
                         }
                         callback.success(videoUrlList);
                     } else {
@@ -54,8 +54,8 @@ public class VideoModel extends BaseModel implements VideoContract.Model {
         });
     }
 
-    private List<AnimeDescBean> getAllDrama(String fid, Elements dramaList) {
-        List<AnimeDescBean> list = new ArrayList<>();
+    private List<AnimeDescDetailsBean> getAllDrama(String fid, Elements dramaList) {
+        List<AnimeDescDetailsBean> list = new ArrayList<>();
         try {
             String dataBaseDrama = DatabaseUtil.queryAllIndex(fid);
             String dramaTitle;
@@ -64,9 +64,9 @@ public class VideoModel extends BaseModel implements VideoContract.Model {
                 dramaUrl = dramaList.get(i).select("a").attr("href");
                 dramaTitle = dramaList.get(i).select("a").text();
                 if (dataBaseDrama.contains(dramaUrl))
-                    list.add(new AnimeDescBean(AnimeType.TYPE_LEVEL_1, true, dramaTitle, dramaUrl, "play"));
+                    list.add(new AnimeDescDetailsBean(dramaTitle, dramaUrl, true));
                 else
-                    list.add(new AnimeDescBean(AnimeType.TYPE_LEVEL_1, false, dramaTitle, dramaUrl, "play"));
+                    list.add(new AnimeDescDetailsBean(dramaTitle, dramaUrl, false));
             }
         } catch (Exception e) {
             e.printStackTrace();

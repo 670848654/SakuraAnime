@@ -44,7 +44,7 @@ import my.project.sakuraproject.adapter.DramaAdapter;
 import my.project.sakuraproject.adapter.WebviewAdapter;
 import my.project.sakuraproject.api.Api;
 import my.project.sakuraproject.application.Sakura;
-import my.project.sakuraproject.bean.AnimeDescBean;
+import my.project.sakuraproject.bean.AnimeDescDetailsBean;
 import my.project.sakuraproject.bean.ApiBean;
 import my.project.sakuraproject.bean.WebviewBean;
 import my.project.sakuraproject.database.DatabaseUtil;
@@ -69,7 +69,7 @@ public class X5WebActivity extends BaseActivity implements VideoContract.View, S
     @BindView(R.id.x5_webview)
     X5WebView x5WebView;
     private ProgressBar pg;
-    private List<AnimeDescBean> dramaList = new ArrayList<>();
+    private List<AnimeDescDetailsBean> dramaList = new ArrayList<>();
     private DramaAdapter dramaAdapter;
     private BottomSheetDialog mBottomSheetDialog;
     private ProgressDialog p;
@@ -144,7 +144,7 @@ public class X5WebActivity extends BaseActivity implements VideoContract.View, S
             animeTitle = bundle.getString("title");
             url = bundle.getString("url");
             diliUrl = bundle.getString("dili");
-            dramaList = (List<AnimeDescBean>) bundle.getSerializable("list");
+            dramaList = (List<AnimeDescDetailsBean>) bundle.getSerializable("list");
         }
     }
 
@@ -213,21 +213,15 @@ public class X5WebActivity extends BaseActivity implements VideoContract.View, S
             if (!Utils.isFastClick()) return;
             setResult(0x20);
             mBottomSheetDialog.dismiss();
-            final AnimeDescBean bean = (AnimeDescBean) adapter.getItem(position);
-            switch (bean.getType()) {
-                case "play":
-                    p = Utils.getProDialog(X5WebActivity.this, R.string.parsing);
-                    Button v = (Button) adapter.getViewByPosition(dramaRecyclerView, position, R.id.tag_group);
-                    v.setBackgroundResource(R.drawable.button_selected);
-                    v.setTextColor(getResources().getColor(R.color.item_selected_color));
-                    bean.setSelect(true);
-                    diliUrl = VideoUtils.getUrl(bean.getUrl());
-                    witchTitle = animeTitle + " - " + bean.getTitle();
-                    presenter = new VideoPresenter(animeTitle, diliUrl, X5WebActivity.this);
-                    presenter.loadData(true);
-                    break;
-            }
-
+            AnimeDescDetailsBean bean = (AnimeDescDetailsBean) adapter.getItem(position);
+            Button v = (Button) adapter.getViewByPosition(dramaRecyclerView, position, R.id.tag_group);
+            v.setBackgroundResource(R.drawable.button_selected);
+            v.setTextColor(getResources().getColor(R.color.tabSelectedTextColor));
+            bean.setSelected(true);
+            diliUrl = VideoUtils.getUrl(bean.getUrl());
+            witchTitle = animeTitle + " - " + bean.getTitle();
+            presenter = new VideoPresenter(animeTitle, diliUrl, X5WebActivity.this);
+            presenter.loadData(true);
         });
         dramaRecyclerView.setAdapter(dramaAdapter);
         mBottomSheetDialog = new BottomSheetDialog(this);
@@ -366,7 +360,7 @@ public class X5WebActivity extends BaseActivity implements VideoContract.View, S
     }
 
     @Override
-    public void showSuccessDramaView(List<AnimeDescBean> list) {
+    public void showSuccessDramaView(List<AnimeDescDetailsBean> list) {
         dramaList = list;
         runOnUiThread(() -> dramaAdapter.setNewData(dramaList));
     }
@@ -515,7 +509,7 @@ public class X5WebActivity extends BaseActivity implements VideoContract.View, S
             }
         }  else {
             webUrl = String.format(Api.PARSE_API, animeUrl);
-            Sakura.getInstance().showToastMsg(Utils.getString(R.string.maybe_can_not_play));
+            Sakura.getInstance().showToastMsg(Utils.getString(R.string.should_be_used_web));
             SniffingUtil.get().activity(this).referer(webUrl).callback(this).url(webUrl).start();
         }
     }

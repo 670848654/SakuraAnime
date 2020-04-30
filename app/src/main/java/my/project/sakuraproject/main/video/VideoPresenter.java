@@ -2,7 +2,7 @@ package my.project.sakuraproject.main.video;
 
 import java.util.List;
 
-import my.project.sakuraproject.bean.AnimeDescBean;
+import my.project.sakuraproject.bean.AnimeDescDetailsBean;
 import my.project.sakuraproject.main.base.BasePresenter;
 import my.project.sakuraproject.main.base.Presenter;
 
@@ -43,7 +43,7 @@ public class VideoPresenter extends Presenter<VideoContract.View> implements Bas
     }
 
     @Override
-    public void successDrama(List<AnimeDescBean> list) {
+    public void successDrama(List<AnimeDescDetailsBean> list) {
         if (list.size() > 0)
             view.showSuccessDramaView(list);
         else

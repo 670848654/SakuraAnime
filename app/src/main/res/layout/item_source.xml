@@ -1,19 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/tools"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+<androidx.cardview.widget.CardView
     android:id="@+id/videos_card_view"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
-    android:layout_marginTop="4dp"
-    android:layout_marginBottom="1dp"
     android:foreground="?android:attr/selectableItemBackground"
-    app:ignore="NamespaceTypo"
     card_view:cardBackgroundColor="@color/window_bg"
-    card_view:cardCornerRadius="0dp"
+    card_view:cardCornerRadius="4dp"
     card_view:cardElevation="4dp"
-    card_view:cardUseCompatPadding="false">
+    android:layout_marginTop="8dp"
+    android:layout_marginLeft="8dp"
+    android:layout_marginRight="8dp"
+    card_view:cardUseCompatPadding="false"
+    xmlns:app="http://schemas.android.com/tools"
+    app:ignore="NamespaceTypo">
 
     <LinearLayout
         android:layout_width="match_parent"

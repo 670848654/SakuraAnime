@@ -43,7 +43,7 @@ import my.project.sakuraproject.adapter.DramaAdapter;
 import my.project.sakuraproject.adapter.WebviewAdapter;
 import my.project.sakuraproject.api.Api;
 import my.project.sakuraproject.application.Sakura;
-import my.project.sakuraproject.bean.AnimeDescBean;
+import my.project.sakuraproject.bean.AnimeDescDetailsBean;
 import my.project.sakuraproject.bean.ApiBean;
 import my.project.sakuraproject.bean.WebviewBean;
 import my.project.sakuraproject.database.DatabaseUtil;
@@ -66,7 +66,7 @@ public class NormalWebActivity extends BaseActivity implements VideoContract.Vie
     @BindView(R.id.webview)
     NormalWebView normalWebView;
     private ProgressBar pg;
-    private List<AnimeDescBean> dramaList = new ArrayList<>();
+    private List<AnimeDescDetailsBean> dramaList = new ArrayList<>();
     private DramaAdapter dramaAdapter;
     private BottomSheetDialog mBottomSheetDialog;
     private ProgressDialog p;
@@ -141,7 +141,7 @@ public class NormalWebActivity extends BaseActivity implements VideoContract.Vie
             animeTitle = bundle.getString("title");
             url = bundle.getString("url");
             diliUrl = bundle.getString("dili");
-            dramaList = (List<AnimeDescBean>) bundle.getSerializable("list");
+            dramaList = (List<AnimeDescDetailsBean>) bundle.getSerializable("list");
         }
     }
 
@@ -210,21 +210,16 @@ public class NormalWebActivity extends BaseActivity implements VideoContract.Vie
             if (!Utils.isFastClick()) return;
             setResult(0x20);
             mBottomSheetDialog.dismiss();
-            final AnimeDescBean bean = (AnimeDescBean) adapter.getItem(position);
-            switch (bean.getType()) {
-                case "play":
-                    p = Utils.getProDialog(NormalWebActivity.this, R.string.parsing);
-                    Button v = (Button) adapter.getViewByPosition(dramaRecyclerView, position, R.id.tag_group);
-                    v.setBackgroundResource(R.drawable.button_selected);
-                    v.setTextColor(getResources().getColor(R.color.item_selected_color));
-                    bean.setSelect(true);
-                    diliUrl = VideoUtils.getUrl(bean.getUrl());
-                    witchTitle = animeTitle + " - " + bean.getTitle();
-                    presenter = new VideoPresenter(animeTitle, diliUrl, NormalWebActivity.this);
-                    presenter.loadData(true);
-                    break;
-            }
-
+            AnimeDescDetailsBean bean = (AnimeDescDetailsBean) adapter.getItem(position);
+            p = Utils.getProDialog(NormalWebActivity.this, R.string.parsing);
+            Button v = (Button) adapter.getViewByPosition(dramaRecyclerView, position, R.id.tag_group);
+            v.setBackgroundResource(R.drawable.button_selected);
+            v.setTextColor(getResources().getColor(R.color.tabSelectedTextColor));
+            bean.setSelected(true);
+            diliUrl = VideoUtils.getUrl(bean.getUrl());
+            witchTitle = animeTitle + " - " + bean.getTitle();
+            presenter = new VideoPresenter(animeTitle, diliUrl, NormalWebActivity.this);
+            presenter.loadData(true);
         });
         dramaRecyclerView.setAdapter(dramaAdapter);
         mBottomSheetDialog = new BottomSheetDialog(this);
@@ -352,7 +347,7 @@ public class NormalWebActivity extends BaseActivity implements VideoContract.Vie
     }
 
     @Override
-    public void showSuccessDramaView(List<AnimeDescBean> list) {
+    public void showSuccessDramaView(List<AnimeDescDetailsBean> list) {
         dramaList = list;
         runOnUiThread(() -> dramaAdapter.setNewData(dramaList));
     }
@@ -501,7 +496,7 @@ public class NormalWebActivity extends BaseActivity implements VideoContract.Vie
             }
         }  else {
             webUrl = String.format(Api.PARSE_API, animeUrl);
-            Sakura.getInstance().showToastMsg(Utils.getString(R.string.maybe_can_not_play));
+            Sakura.getInstance().showToastMsg(Utils.getString(R.string.should_be_used_web));
             SniffingUtil.get().activity(this).referer(webUrl).callback(this).url(webUrl).start();
         }
     }

@@ -2,6 +2,7 @@ package my.project.sakuraproject.application;
 
 import android.app.Activity;
 import android.app.Application;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.ColorRes;
@@ -9,6 +10,7 @@ import androidx.annotation.DrawableRes;
 import androidx.appcompat.app.AppCompatDelegate;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.snackbar.Snackbar;
 import com.tencent.smtt.sdk.QbSdk;
 
 import org.json.JSONObject;
@@ -107,6 +109,14 @@ public class Sakura extends Application {
     public void showCustomToastMsg(String msg, @DrawableRes int iconRes, @ColorRes int color){
         Toasty.custom(this, msg,
                 iconRes, color, Toast.LENGTH_LONG, true, true).show();
+    }
+
+    public void showSnackbarMsgAction(View view, String msg, String actionMsg, View.OnClickListener listener) {
+        Snackbar.make(view, msg, Snackbar.LENGTH_LONG).setAction(actionMsg, listener).show();
+    }
+
+    public void showSnackbarMsg(View view, String msg) {
+        Snackbar.make(view, msg, Snackbar.LENGTH_LONG).show();
     }
 
     public void addActivity(Activity activity) {

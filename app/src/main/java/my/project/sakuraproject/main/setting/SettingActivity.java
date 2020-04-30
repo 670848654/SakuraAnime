@@ -202,7 +202,7 @@ public class SettingActivity extends BaseActivity {
 
     public void setX5State() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("请选择");
+        builder.setTitle("请选择内核状态");
         builder.setSingleChoiceItems(x5Items, Utils.loadX5() ? 0 : 1, (dialog, which) -> {
             switch (which){
                 case 0:

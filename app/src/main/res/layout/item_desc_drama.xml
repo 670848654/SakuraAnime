@@ -1,0 +1,13 @@
+<Button xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tag_group"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:layout_centerInParent="true"
+    android:layout_marginLeft="4dp"
+    android:layout_marginTop="4dp"
+    android:layout_marginRight="2dp"
+    android:background="@drawable/button_default"
+    android:ellipsize="end"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:maxLines="2"
+    android:padding="5dp" />

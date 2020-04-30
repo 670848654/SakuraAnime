@@ -1,7 +1,5 @@
 package my.project.sakuraproject.main.desc;
 
-import com.chad.library.adapter.base.entity.MultiItemEntity;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -11,10 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import my.project.sakuraproject.R;
-import my.project.sakuraproject.bean.AnimeDescBean;
-import my.project.sakuraproject.bean.AnimeHeaderBean;
+import my.project.sakuraproject.bean.AnimeDescDetailsBean;
+import my.project.sakuraproject.bean.AnimeDescListBean;
+import my.project.sakuraproject.bean.AnimeDescRecommendBean;
 import my.project.sakuraproject.bean.AnimeListBean;
-import my.project.sakuraproject.config.AnimeType;
 import my.project.sakuraproject.database.DatabaseUtil;
 import my.project.sakuraproject.main.base.BaseModel;
 import my.project.sakuraproject.net.HttpGet;
@@ -25,8 +23,8 @@ import okhttp3.Response;
 
 public class DescModel extends BaseModel implements DescContract.Model {
     private String fid;
-    private List<MultiItemEntity> list;
     private String dramaStr;
+    private AnimeDescListBean animeDescListBean = new AnimeDescListBean();
 
     @Override
     public void getData(String url, DescContract.LoadDataCallback callback) {
@@ -46,7 +44,6 @@ public class DescModel extends BaseModel implements DescContract.Model {
                     Document doc = Jsoup.parse(response.body().string());
                     if (hasRefresh(doc)) getHtml(url, callback);
                     else {
-                        list = new ArrayList<>();
                         String animeTitle = doc.select("h1").text();
                         //是否收藏
                         callback.isFavorite(DatabaseUtil.checkFavorite(animeTitle));
@@ -74,7 +71,7 @@ public class DescModel extends BaseModel implements DescContract.Model {
                             setPlayData(detail);
                             if (multi.size() > 0) setMulti(multi);
                             if (recommend.size() > 0) setRecommend(recommend);
-                            callback.successMain(list);
+                            callback.successMain(animeDescListBean);
                         } else {
                             callback.error(Utils.getString(R.string.no_playlist_error));
                         }
@@ -88,50 +85,37 @@ public class DescModel extends BaseModel implements DescContract.Model {
     }
 
     private void setPlayData(Elements els) {
-        AnimeHeaderBean animeHeaderBean = new AnimeHeaderBean(Utils.getString(R.string.online));
+        List<AnimeDescDetailsBean> animeDescDetailsBeans = new ArrayList<>();
         boolean select;
         for (int i = 0, size = els.size(); i < size; i++) {
             String name = els.get(i).select("a").text();
             String watchUrl = els.get(i).select("a").attr("href");
             if (dramaStr.contains(watchUrl)) select = true;
             else select = false;
-            animeHeaderBean.addSubItem(
-                    new AnimeDescBean(
-                            AnimeType.TYPE_LEVEL_1,
-                            select,
-                            name,
-                            watchUrl,
-                            "play")
-            );
+            animeDescDetailsBeans.add(new AnimeDescDetailsBean(name, watchUrl, select));
         }
-        list.add(animeHeaderBean);
+        animeDescListBean.setAnimeDescDetailsBeans(animeDescDetailsBeans);
     }
 
     private void setMulti(Elements els) {
-        AnimeHeaderBean animeHeaderBean = new AnimeHeaderBean(Utils.getString(R.string.multi));
+        List<AnimeDescRecommendBean> animeDescMultiBeans = new ArrayList<>();
         for (int i = 0, size = els.size(); i < size; i++) {
-            animeHeaderBean.addSubItem(
-                    new AnimeDescBean(
-                            AnimeType.TYPE_LEVEL_3,
-                            els.get(i).select("p.tname > a").text(),
-                            els.get(i).select("p.tname > a").attr("href"),
-                            els.get(i).select("img").attr("src"),
-                            "multi"));
+            String title = els.get(i).select("p.tname > a").text();
+            String img = els.get(i).select("img").attr("src");
+            String url = els.get(i).select("p.tname > a").attr("href");
+            animeDescMultiBeans.add(new AnimeDescRecommendBean(title, img, url));
         }
-        list.add(animeHeaderBean);
+        animeDescListBean.setAnimeDescMultiBeans(animeDescMultiBeans);
     }
 
     private void setRecommend(Elements els) {
-        AnimeHeaderBean animeHeaderBean = new AnimeHeaderBean(Utils.getString(R.string.recommend));
+        List<AnimeDescRecommendBean> animeDescRecommendBeans = new ArrayList<>();
         for (int i = 0, size = els.size(); i < size; i++) {
-            animeHeaderBean.addSubItem(
-                    new AnimeDescBean(
-                            AnimeType.TYPE_LEVEL_2,
-                            els.get(i).select("h2 > a").text(),
-                            els.get(i).select("h2 > a").attr("href"),
-                            els.get(i).select("img").attr("src"),
-                            "recommend"));
+            String title = els.get(i).select("h2 > a").text();
+            String img = els.get(i).select("img").attr("src");
+            String url = els.get(i).select("h2 > a").attr("href");
+            animeDescRecommendBeans.add(new AnimeDescRecommendBean(title, img, url));
         }
-        list.add(animeHeaderBean);
+        animeDescListBean.setAnimeDescRecommendBeans(animeDescRecommendBeans);
     }
 }

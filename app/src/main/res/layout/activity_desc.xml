@@ -110,17 +110,159 @@
         app:layout_anchor="@id/appBarLayout"
         app:layout_anchorGravity="bottom|right" />
 
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    <my.project.sakuraproject.custom.MySwipeRefreshLayout
         android:id="@+id/mSwipe"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_list"
+        <androidx.core.widget.NestedScrollView
+            android:focusableInTouchMode="true"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clipToPadding="false"
-            android:fadingEdge="none" />
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+            android:layout_height="match_parent">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <!-- 剧集视图 -->
+                <LinearLayout
+                    android:id="@+id/play_layout"
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:textColor="@color/text_color_primary"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="5dp"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:text="选集">
+                    </androidx.appcompat.widget.AppCompatTextView>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/details_list"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fillViewport="true"
+                        android:clipToPadding="false"
+                        android:paddingBottom="5dp"
+                        android:fadingEdge="none" />
+
+                    <RelativeLayout
+                        android:id="@+id/open_drama"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right"
+                        android:layout_marginTop="4dp"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="5dp">
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/drama"
+                            android:textColor="@color/colorAccent"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textStyle="bold"
+                            android:textSize="14sp"
+                            android:text="展开全部" />
+                        <ImageView
+                            android:id="@+id/down_img"
+                            android:layout_marginLeft="2dp"
+                            android:layout_toRightOf="@id/drama"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_keyboard_arrow_down_white_48dp"
+                            android:tint="@color/jd_bg"
+                            android:scaleType="centerInside" />
+                    </RelativeLayout>
+                </LinearLayout>
+                <!-- 多季 -->
+                <LinearLayout
+                    android:id="@+id/multi_layout"
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:textColor="@color/text_color_primary"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="5dp"
+                        android:paddingLeft="5dp"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:text="多季">
+                    </androidx.appcompat.widget.AppCompatTextView>
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/multi_list"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fillViewport="true"
+                        android:clipToPadding="false"
+                        android:paddingBottom="5dp"
+                        android:fadingEdge="none" />
+                </LinearLayout>
+                <!-- 推荐视图 -->
+                <LinearLayout
+                    android:id="@+id/recommend_layout"
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:textColor="@color/text_color_primary"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="5dp"
+                        android:paddingLeft="5dp"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:text="相关推荐">
+                    </androidx.appcompat.widget.AppCompatTextView>
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recommend_list"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fillViewport="true"
+                        android:clipToPadding="false"
+                        android:paddingBottom="5dp"
+                        android:fadingEdge="none" />
+                </LinearLayout>
+
+                <!-- 错误视图 -->
+                <RelativeLayout
+                    android:id="@+id/error_bg"
+                    style="@style/bg"
+                    android:visibility="gone"
+                    android:background="@color/window_bg"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/error_msg"
+                        android:layout_margin="8dp"
+                        android:background="@drawable/parsing_error_bg"
+                        android:padding="10dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="18sp"
+                        android:gravity="center"
+                        android:lineSpacingExtra="10dp"
+                        android:textColor="#333"/>
+                    <!--android:background="#f4f5f7"-->
+                </RelativeLayout>
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+
+    </my.project.sakuraproject.custom.MySwipeRefreshLayout>
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        app:layout_anchor="@id/mSwipe"
+        app:layout_anchorGravity="bottom"
+        android:background="@color/translucent"
+        android:id="@+id/msg">
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

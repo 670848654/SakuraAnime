@@ -7,6 +7,7 @@ import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
@@ -34,7 +35,7 @@ import my.project.sakuraproject.R;
 import my.project.sakuraproject.adapter.DramaAdapter;
 import my.project.sakuraproject.api.Api;
 import my.project.sakuraproject.application.Sakura;
-import my.project.sakuraproject.bean.AnimeDescBean;
+import my.project.sakuraproject.bean.AnimeDescDetailsBean;
 import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.base.Presenter;
 import my.project.sakuraproject.main.video.VideoContract;
@@ -50,7 +51,7 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
     private String witchTitle, url, diliUrl;
     @BindView(R.id.rv_list)
     RecyclerView recyclerView;
-    private List<AnimeDescBean> list = new ArrayList<>();
+    private List<AnimeDescDetailsBean> list = new ArrayList<>();
     private DramaAdapter dramaAdapter;
     private ProgressDialog p;
     private String animeTitle;
@@ -106,7 +107,7 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
         //源地址
         diliUrl = bundle.getString("dili");
         //剧集list
-        list = (List<AnimeDescBean>) bundle.getSerializable("list");
+        list = (List<AnimeDescDetailsBean>) bundle.getSerializable("list");
         //禁止冒泡
         linearLayout.setOnClickListener(view -> {
             return;
@@ -152,57 +153,18 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
             if (!Utils.isFastClick()) return;
             setResult(0x20);
             drawerLayout.closeDrawer(GravityCompat.END);
-            final AnimeDescBean bean = (AnimeDescBean) adapter.getItem(position);
-            switch (bean.getType()) {
-                case "play":
-                    player.onPrepared();
-                    p = Utils.getProDialog(PlayerActivity.this, R.string.parsing);
-                    Button v = (Button) adapter.getViewByPosition(recyclerView, position, R.id.tag_group);
-                    v.setBackgroundResource(R.drawable.button_selected);
-                    v.setTextColor(getResources().getColor(R.color.item_selected_color));
-                    bean.setSelect(true);
-                    diliUrl = VideoUtils.getUrl(bean.getUrl());
-                    witchTitle = animeTitle + " - " + bean.getTitle();
-                    presenter = new VideoPresenter(animeTitle, diliUrl, PlayerActivity.this);
-                    presenter.loadData(true);
-                    break;
-            }
-
+            AnimeDescDetailsBean bean = (AnimeDescDetailsBean) adapter.getItem(position);
+            player.onPrepared();
+            p = Utils.getProDialog(PlayerActivity.this, R.string.parsing);
+            Button v = (Button) adapter.getViewByPosition(recyclerView, position, R.id.tag_group);
+            v.setBackgroundResource(R.drawable.button_selected);
+            v.setTextColor(getResources().getColor(R.color.tabSelectedTextColor));
+            bean.setSelected(true);
+            diliUrl = VideoUtils.getUrl(bean.getUrl());
+            witchTitle = animeTitle + " - " + bean.getTitle();
+            presenter = new VideoPresenter(animeTitle, diliUrl, PlayerActivity.this);
+            presenter.loadData(true);
         });
-    }
-
-    public void goToPlay(List<String> list) {
-        new Handler().postDelayed(() -> {
-            if (list.size() == 1) oneSource(list);
-            else multipleSource(list);
-        }, 200);
-    }
-
-    /**
-     * 只有一个播放地址
-     *
-     * @param list
-     */
-    private void oneSource(List<String> list) {
-        hideNavBar();
-        playAnime(VideoUtils.getVideoUrl(list.get(0)));
-    }
-
-    /**
-     * 多个播放地址
-     *
-     * @param list
-     */
-    private void multipleSource(List<String> list) {
-        VideoUtils.showMultipleVideoSources(this,
-                list,
-                (dialog, index) -> {
-                    hideNavBar();
-                    playAnime(VideoUtils.getVideoUrl(list.get(index)));
-                }, (dialog, which) -> {
-                    cancelDialog();
-                    dialog.dismiss();
-                }, 0);
     }
 
     private void playAnime(String animeUrl) {
@@ -233,7 +195,7 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
             }
         }  else {
             webUrl = String.format(Api.PARSE_API, animeUrl);
-            Sakura.getInstance().showToastMsg(Utils.getString(R.string.maybe_can_not_play));
+            application.showToastMsg(Utils.getString(R.string.should_be_used_web));
             SniffingUtil.get().activity(this).referer(webUrl).callback(this).url(webUrl).start();
         }
     }
@@ -313,7 +275,16 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
     public void getVideoSuccess(List<String> list) {
         runOnUiThread(() -> {
             hideNavBar();
-            goToPlay(list);
+            Log.e("playUrl", list.toString());
+            if (list.size() == 1)
+                playAnime(list.get(0));
+            else
+                VideoUtils.showMultipleVideoSources(this,
+                        list,
+                        (dialog, index) -> playAnime(list.get(index)), (dialog, which) -> {
+                            cancelDialog();
+                            dialog.dismiss();
+                        }, 1);
         });
     }
 
@@ -336,7 +307,7 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
     }
 
     @Override
-    public void showSuccessDramaView(List<AnimeDescBean> dramaList) {
+    public void showSuccessDramaView(List<AnimeDescDetailsBean> dramaList) {
         list = dramaList;
         runOnUiThread(() -> dramaAdapter.setNewData(list));
 

@@ -5,17 +5,17 @@
 
     <ProgressBar
         android:id="@+id/loading"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
+        android:paddingBottom="80dp"
         android:layout_centerVertical="true"
-        android:paddingBottom="80dp" />
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
-        android:fadingEdge="none" />
+        android:fadingEdge="none"/>
 
 </RelativeLayout>

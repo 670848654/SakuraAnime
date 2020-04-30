@@ -1,9 +1,6 @@
 package my.project.sakuraproject.main.desc;
 
-import com.chad.library.adapter.base.entity.MultiItemEntity;
-
-import java.util.List;
-
+import my.project.sakuraproject.bean.AnimeDescListBean;
 import my.project.sakuraproject.bean.AnimeListBean;
 import my.project.sakuraproject.main.base.BasePresenter;
 import my.project.sakuraproject.main.base.Presenter;
@@ -29,8 +26,8 @@ public class DescPresenter extends Presenter<DescContract.View> implements BaseP
     }
 
     @Override
-    public void successMain(List<MultiItemEntity> list) {
-        view.showSuccessMainView(list);
+    public void successMain(AnimeDescListBean bean) {
+        view.showSuccessMainView(bean);
     }
 
     @Override

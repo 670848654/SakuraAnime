@@ -12,7 +12,7 @@
     android:foreground="?android:attr/selectableItemBackground"
     app:ignore="NamespaceTypo"
     card_view:cardBackgroundColor="@color/window_bg"
-    card_view:cardCornerRadius="0dp"
+    card_view:cardCornerRadius="4dp"
     card_view:cardElevation="4dp"
     card_view:cardUseCompatPadding="false">
 
@@ -33,8 +33,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_weight="9"
-                android:padding="5dp"
-                android:text="白玉阁免费解析"
+                android:padding="15dp"
                 android:textColor="@color/text_color_primary"
                 android:textSize="16sp" />
 
@@ -60,7 +59,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:padding="5dp"
+            android:padding="15dp"
             android:tint="@color/text_color_primary"
             android:textSize="16sp" />
 

@@ -14,36 +14,34 @@
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
+            android:layout_centerVertical="true"
             android:text="@string/anthology"
-            android:textColor="@color/text_color_primary"
-            android:textSize="16sp"
-            android:textStyle="bold"/>
+            android:textColor="@color/text_color_primary" />
 
         <ImageView
             android:id="@+id/close_drama"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:src="@drawable/baseline_close_white_48dp"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_keyboard_arrow_down_white_48dp"
             android:tint="@color/jd_bg"
             android:layout_alignParentRight="true"
             />
     </RelativeLayout>
 
-        <LinearLayout
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
+    <LinearLayout
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/drama_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/drama_list"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:clipToPadding="false"
-                android:paddingBottom="10dp"/>
-        </LinearLayout>
+            android:clipToPadding="false"
+            android:paddingBottom="10dp"/>
+    </LinearLayout>
 
 </LinearLayout>

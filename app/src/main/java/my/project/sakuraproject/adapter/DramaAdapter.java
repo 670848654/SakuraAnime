@@ -27,7 +27,7 @@ public class DramaAdapter extends BaseQuickAdapter<AnimeDescDetailsBean, BaseVie
         helper.setText(R.id.tag_group, item.getTitle().replaceAll("第", "").replaceAll("集", ""));
         if (item.isSelected()) {
             helper.getView(R.id.tag_group).setBackgroundResource(R.drawable.button_selected);
-            btn.setTextColor(context.getResources().getColor(R.color.item_selected_color));
+            btn.setTextColor(context.getResources().getColor(R.color.tabSelectedTextColor));
         }
         else {
             helper.getView(R.id.tag_group).setBackgroundResource(R.drawable.button_default);

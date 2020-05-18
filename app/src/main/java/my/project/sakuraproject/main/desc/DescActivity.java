@@ -33,6 +33,8 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.fanchen.sniffing.SniffingUICallback;
 import com.fanchen.sniffing.SniffingVideo;
 import com.fanchen.sniffing.web.SniffingUtil;
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.r0adkll.slidr.Slidr;
@@ -113,6 +115,10 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     private ImageView closeDrama;
     private BottomSheetDialog mBottomSheetDialog;
     private AnimeDescDramaAdapter animeDescDramaAdapter;
+    @BindView(R.id.appBarLayout)
+    AppBarLayout appBarLayout;
+    @BindView(R.id.desc_view)
+    LinearLayout desc_view;
 
     @Override
     protected DescPresenter createPresenter() {
@@ -136,13 +142,21 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         Slidr.attach(this, Utils.defaultInit());
         CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) msg.getLayoutParams();
         params.setMargins(0, 0, 0, Utils.getNavigationBarHeight(this) - 5);
-        msg.setLayoutParams(params);
+        setCollapsingToolbarLayoutHeight();
         getBundle();
         initToolbar();
         initFab();
         initSwipe();
         initAdapter();
     }
+
+    private void setCollapsingToolbarLayoutHeight() {
+        appBarLayout.setLayoutParams(new CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.MATCH_PARENT, Utils.getActionBarHeight() + Utils.getStatusBarHeight() + Utils.dpToPx(this,200)));
+        CollapsingToolbarLayout.LayoutParams params2 = (CollapsingToolbarLayout.LayoutParams) desc_view.getLayoutParams();
+        int marginSize = Utils.dpToPx(this, 10);
+        params2.setMargins(marginSize, Utils.getActionBarHeight() + Utils.getStatusBarHeight() + marginSize, marginSize, marginSize);
+    }
+
 
     @Override
     protected void initBeforeView() {

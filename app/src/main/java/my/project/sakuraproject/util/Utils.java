@@ -21,6 +21,7 @@ import android.os.Environment;
 import android.provider.Settings;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
@@ -580,6 +581,32 @@ public class Utils {
     public static int dpToPx(Context context, float dp) {
         float scale = context.getResources().getDisplayMetrics().density;
         return (int) ((dp * scale) + 0.5f);
+    }
+
+    /**
+     * 获取状态栏高度
+     * @return
+     */
+    public static int getStatusBarHeight() {
+        int statusBarHeight = 20;
+        int resourceId = getContext().getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            statusBarHeight = getContext().getResources().getDimensionPixelSize(resourceId);
+        }
+        return statusBarHeight;
+    }
+
+    /**
+     * 获取ActionBar 高度
+     * @return
+     */
+    public static int getActionBarHeight(){
+        TypedValue tv = new TypedValue();
+        if (getContext().getTheme().resolveAttribute(android.R.attr.actionBarSize,tv,true)){
+            return  TypedValue.complexToDimensionPixelSize(tv.data,
+                    getContext().getResources().getDisplayMetrics());
+        }
+        return 0;
     }
 
     /**

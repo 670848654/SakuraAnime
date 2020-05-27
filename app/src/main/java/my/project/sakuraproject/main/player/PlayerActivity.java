@@ -168,14 +168,13 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
     }
 
     private void playAnime(String animeUrl) {
+        cancelDialog();
         url = animeUrl;
         if (Patterns.WEB_URL.matcher(animeUrl.replace(" ", "")).matches()) {
             if (animeUrl.contains("jx.618g.com")) {
-                cancelDialog();
                 url = animeUrl.replaceAll("http://jx.618g.com/\\?url=", "");
                 VideoUtils.openWebview(false, this, witchTitle, animeTitle, url, diliUrl, this.list);
             } else if (url.contains(".mp4") || url.contains(".m3u8")) {
-                cancelDialog();
                 switch ((Integer) SharedPreferencesUtils.getParam(getApplicationContext(), "player", 0)) {
                     case 0:
                         //调用播放器
@@ -190,11 +189,13 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
                 }
             }else {
                 webUrl = animeUrl;
+                p = Utils.getProDialog(PlayerActivity.this, R.string.parsing);
                 Sakura.getInstance().showToastMsg(Utils.getString(R.string.should_be_used_web));
                 SniffingUtil.get().activity(this).referer(url).callback(this).url(url).start();
             }
         }  else {
             webUrl = String.format(Api.PARSE_API, animeUrl);
+            p = Utils.getProDialog(PlayerActivity.this, R.string.parsing);
             application.showToastMsg(Utils.getString(R.string.should_be_used_web));
             SniffingUtil.get().activity(this).referer(webUrl).callback(this).url(webUrl).start();
         }
@@ -352,7 +353,6 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
         VideoUtils.showMultipleVideoSources(this,
                 urls,
                 (dialog, index) -> playAnime(urls.get(index)), (dialog, which) -> {
-                    cancelDialog();
                     dialog.dismiss();
                 }, 1);
     }

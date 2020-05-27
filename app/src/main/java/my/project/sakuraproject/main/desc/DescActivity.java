@@ -290,9 +290,9 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
      * @param animeUrl
      */
     private void playAnime(String animeUrl) {
+        cancelDialog();
         if (Patterns.WEB_URL.matcher(animeUrl.replace(" ", "")).matches()) {
             if (animeUrl.contains("jx.618g.com")) {
-                cancelDialog();
                 VideoUtils.openWebview(false, this, witchTitle, animeTitle, animeUrl.replaceAll("http://jx.618g.com/\\?url=", ""), diliUrl, animeDescListBean.getAnimeDescDetailsBeans());
             } else if (animeUrl.contains(".mp4") || animeUrl.contains(".m3u8")) {
                 cancelDialog();
@@ -306,10 +306,12 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
                         break;
                 }
             }else {
+                p = Utils.getProDialog(DescActivity.this, R.string.parsing);
                 application.showToastMsg(Utils.getString(R.string.should_be_used_web));
                 SniffingUtil.get().activity(this).referer(animeUrl).callback(this).url(animeUrl).start();
             }
         }  else {
+            p = Utils.getProDialog(DescActivity.this, R.string.parsing);
             String webUrl = String.format(Api.PARSE_API, animeUrl);
             application.showToastMsg(Utils.getString(R.string.should_be_used_web));
             SniffingUtil.get().activity(this).referer(webUrl).callback(this).url(webUrl).start();
@@ -538,7 +540,6 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         VideoUtils.showMultipleVideoSources(this,
                 urls,
                 (dialog, index) -> playAnime(urls.get(index)), (dialog, which) -> {
-                    cancelDialog();
                     dialog.dismiss();
                 }, 1);
     }

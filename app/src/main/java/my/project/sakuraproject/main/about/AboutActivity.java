@@ -168,6 +168,7 @@ public class AboutActivity extends BaseActivity {
 
     public List createUpdateLogList() {
         List logsList = new ArrayList();
+        logsList.add(new LogBean("版本：1.8.9","修复解析时弹窗不关闭的问题"));
         logsList.add(new LogBean("版本：1.8.8","修复已知问题"));
         logsList.add(new LogBean("版本：1.8.7","部分界面UI改动\n修复番剧详情界面显示问题"));
         logsList.add(new LogBean("版本：1.8.6_b","修复内置播放器播放完毕后程序崩溃的问题"));

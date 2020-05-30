@@ -1,111 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/activity_main"
+    android:background="@color/window_bg"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/window_bg">
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/bg"
+        android:src="@drawable/default_bg"
+        android:scaleType="centerCrop"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/desc_gradient"
+        android:fitsSystemWindows="true" />
 
     <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:background="@color/translucent"
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:elevation="0dp">
 
-        <com.google.android.material.appbar.CollapsingToolbarLayout
-            android:id="@+id/collaps_toolbar_layout"
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            style="@style/ToolbarStyle"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/window_bg"
-            app:contentScrim="@color/toolbar_layout_bg"
-            app:expandedTitleMarginBottom="16dp"
-            app:expandedTitleMarginStart="24dp"
-            app:expandedTitleTextAppearance="?android:attr/textAppearanceMedium"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed"
-            app:statusBarScrim="@color/toolbar_layout_bg"
-            app:titleEnabled="false">
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/translucent"
+            android:theme="@style/DescToolbarTheme"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
 
-            <ImageView
-                android:id="@+id/title_img"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:fitsSystemWindows="true"
-                android:scaleType="centerCrop"
-                android:transitionName="sharedImg"
-                app:layout_collapseMode="parallax"
-                app:layout_collapseParallaxMultiplier="0.7" />
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/list_selector"
-                android:fitsSystemWindows="true"
-                app:layout_anchor="@id/appBarLayout" />
-
-            <LinearLayout
-                android:id="@+id/desc_view"
-                android:layout_width="match_parent"
-                android:layout_height="180dp"
-                android:orientation="horizontal"
-                app:layout_anchor="@id/appBarLayout"
-                app:layout_collapseMode="parallax"
-                app:layout_collapseParallaxMultiplier="0.7">
-
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/card_view"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    app:cardBackgroundColor="@color/toolbar_layout_bg"
-                    app:cardCornerRadius="4dp"
-                    app:cardElevation="4dp">
-
-                    <ImageView
-                        android:id="@+id/anime_img"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@drawable/loading"
-                        android:scaleType="centerCrop" />
-
-                </androidx.cardview.widget.CardView>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="10dp"
-                    android:layout_weight="2"
-                    android:orientation="vertical">
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/desc"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:ellipsize="end"
-                        android:maxLines="9"
-                        android:maxEms="11"
-                        android:textColor="@android:color/white" />
-                </LinearLayout>
-            </LinearLayout>
-
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:minHeight="?attr/actionBarSize"
-                style="@style/ToolbarStyle"
-                app:layout_collapseMode="pin" />
-        </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/favorite"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/baseline_favorite_border_white_48dp"
-        android:visibility="gone"
-        app:layout_anchor="@id/appBarLayout"
-        app:layout_anchorGravity="bottom|right" />
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/msg"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:background="@color/translucent"
+        app:layout_anchor="@id/mSwipe"
+        app:layout_anchorGravity="bottom" />
 
     <my.project.sakuraproject.custom.MySwipeRefreshLayout
         android:id="@+id/mSwipe"
@@ -114,65 +53,155 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <androidx.core.widget.NestedScrollView
-            android:focusableInTouchMode="true"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:focusableInTouchMode="true">
+
             <LinearLayout
+                android:clipChildren="false"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/desc_view"
+                    android:layout_width="match_parent"
+                    android:clipChildren="false"
+                    android:layout_height="270dp"
+                    android:orientation="horizontal">
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/card_view"
+                        android:layout_width="0dp"
+                        android:layout_height="250dp"
+                        android:layout_margin="10dp"
+                        android:layout_weight="4"
+                        app:cardBackgroundColor="@color/toolbar_layout_bg"
+                        app:cardCornerRadius="4dp"
+                        app:cardElevation="4dp">
+
+                        <ImageView
+                            android:id="@+id/anime_img"
+                            android:layout_width="match_parent"
+                            android:layout_height="250dp"
+                            android:background="@drawable/loading"
+                            android:scaleType="centerCrop" />
+
+                    </androidx.cardview.widget.CardView>
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="250dp"
+                        android:clipChildren="false"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:layout_weight="6">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical">
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/sy"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/white"
+                                android:textSize="14sp" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/dq"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/white"
+                                android:textSize="14sp" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/lx"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:maxLines="1"
+                                android:ellipsize="end"
+                                android:textColor="@color/white"
+                                android:textSize="14sp" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/bq"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/white"
+                                android:textSize="14sp" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/desc"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:maxLines="10"
+                                android:ellipsize="end"
+                                android:textColor="@color/white"
+                                android:textSize="14sp" />
+                        </LinearLayout>
+                    </RelativeLayout>
+
+                </LinearLayout>
+
                 <!-- 剧集视图 -->
                 <LinearLayout
                     android:id="@+id/play_layout"
-                    android:visibility="gone"
-                    android:padding="5dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:padding="5dp"
+                    android:visibility="gone">
 
                     <androidx.appcompat.widget.AppCompatTextView
-                        android:textColor="@color/text_color_primary"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginLeft="8dp"
                         android:layout_marginBottom="8dp"
-                        android:text="选集">
-                    </androidx.appcompat.widget.AppCompatTextView>
+                        android:text="选集"
+                        android:textSize="16sp"
+                        android:textColor="@color/white"
+                        android:textStyle="bold"/>
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/details_list"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:fillViewport="true"
                         android:clipToPadding="false"
-                        android:paddingBottom="5dp"
-                        android:fadingEdge="none" />
+                        android:fadingEdge="none"
+                        android:fillViewport="true"
+                        android:paddingBottom="5dp" />
 
                     <RelativeLayout
                         android:id="@+id/open_drama"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
                         android:layout_gravity="right"
                         android:layout_marginTop="4dp"
-                        android:layout_centerVertical="true"
-                        android:layout_marginRight="5dp">
+                        android:layout_marginRight="4dp">
+
+                        <ImageView
+                            android:id="@+id/down_img"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_marginLeft="2dp"
+                            android:layout_toRightOf="@id/drama"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/ic_keyboard_arrow_down_white_48dp"
+                            android:tint="@color/white" />
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/drama"
-                            android:textColor="@color/colorAccent"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="展开全部" />
-                        <ImageView
-                            android:id="@+id/down_img"
-                            android:layout_marginLeft="2dp"
-                            android:layout_toRightOf="@id/drama"
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:src="@drawable/ic_keyboard_arrow_down_white_48dp"
-                            android:tint="@color/jd_bg"
-                            android:scaleType="centerInside" />
+                            android:text="展开全部"
+                            android:textStyle="bold"
+                            android:textColor="@color/colorAccent" />
                     </RelativeLayout>
+
                 </LinearLayout>
                 <!-- 多季 -->
                 <LinearLayout
@@ -183,12 +212,14 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
                     <androidx.appcompat.widget.AppCompatTextView
-                        android:textColor="@color/text_color_primary"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginLeft="8dp"
                         android:layout_marginBottom="8dp"
-                        android:text="多季">
+                        android:text="多季"
+                        android:textSize="16sp"
+                        android:textColor="@color/white"
+                        android:textStyle="bold">
                     </androidx.appcompat.widget.AppCompatTextView>
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/multi_list"
@@ -202,60 +233,55 @@
                 <!-- 推荐视图 -->
                 <LinearLayout
                     android:id="@+id/recommend_layout"
-                    android:visibility="gone"
-                    android:padding="5dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:padding="5dp"
+                    android:visibility="gone">
+
                     <androidx.appcompat.widget.AppCompatTextView
-                        android:textColor="@color/text_color_primary"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginLeft="8dp"
                         android:layout_marginBottom="8dp"
-                        android:text="相关推荐">
-                    </androidx.appcompat.widget.AppCompatTextView>
+                        android:text="相关推荐"
+                        android:textSize="16sp"
+                        android:textColor="@color/white"
+                        android:textStyle="bold"/>
+
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/recommend_list"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:fillViewport="true"
                         android:clipToPadding="false"
-                        android:paddingBottom="5dp"
-                        android:fadingEdge="none" />
+                        android:fadingEdge="none"
+                        android:fillViewport="true"
+                        android:paddingBottom="5dp" />
                 </LinearLayout>
 
                 <!-- 错误视图 -->
                 <RelativeLayout
                     android:id="@+id/error_bg"
-                    style="@style/bg"
-                    android:visibility="gone"
-                    android:background="@color/window_bg"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="match_parent"
+                    android:background="@color/translucent"
+                    android:visibility="gone">
+
                     <TextView
                         android:id="@+id/error_msg"
-                        android:layout_margin="8dp"
-                        android:background="@drawable/parsing_error_bg"
-                        android:padding="10dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textSize="18sp"
+                        android:layout_margin="8dp"
+                        android:background="@drawable/parsing_error_bg"
                         android:gravity="center"
                         android:lineSpacingExtra="10dp"
-                        android:textColor="#333"/>
+                        android:padding="10dp"
+                        android:textColor="#333"
+                        android:textSize="16sp" />
                     <!--android:background="#f4f5f7"-->
                 </RelativeLayout>
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
-
     </my.project.sakuraproject.custom.MySwipeRefreshLayout>
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
-        android:layout_width="match_parent"
-        android:layout_height="300dp"
-        app:layout_anchor="@id/mSwipe"
-        app:layout_anchorGravity="bottom"
-        android:background="@color/translucent"
-        android:id="@+id/msg">
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
+

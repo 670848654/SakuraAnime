@@ -31,16 +31,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.ArrayRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
-import androidx.appcompat.app.AlertDialog;
-import androidx.browser.customtabs.CustomTabsIntent;
-import androidx.cardview.widget.CardView;
-import androidx.core.content.FileProvider;
-import androidx.palette.graphics.Palette;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
@@ -55,6 +45,15 @@ import java.io.File;
 import java.util.Calendar;
 import java.util.Date;
 
+import androidx.annotation.ArrayRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.appcompat.app.AlertDialog;
+import androidx.browser.customtabs.CustomTabsIntent;
+import androidx.cardview.widget.CardView;
+import androidx.core.content.FileProvider;
+import androidx.palette.graphics.Palette;
 import my.project.sakuraproject.BuildConfig;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.application.Sakura;
@@ -560,7 +559,7 @@ public class Utils {
     }
 
     /**
-     * 获得NavigationBar的高度
+     * 获得NavigationBar的高度 +15
      */
     public static int getNavigationBarHeight(Activity activity) {
         int result = 0;
@@ -569,7 +568,7 @@ public class Utils {
         if (resourceId > 0 && checkHasNavigationBar(activity)) {
             result = resources.getDimensionPixelSize(resourceId);
         }
-        return result + 5;
+        return result + 15;
     }
 
     /**
@@ -623,5 +622,14 @@ public class Utils {
      */
     public static boolean loadX5() {
         return (boolean) SharedPreferencesUtils.getParam(getContext(), "loadX5", false);
+    }
+
+    public static int getPixelHeight(Activity activity) {
+        DisplayMetrics outMetrics = new DisplayMetrics();
+        activity.getWindowManager().getDefaultDisplay().getMetrics(outMetrics);
+        int widthPixels = outMetrics.widthPixels;
+        int heightPixels = outMetrics.heightPixels;
+        Log.i("Pixel", "widthPixels = " + widthPixels + ",heightPixels = " + heightPixels);
+        return heightPixels;
     }
 }

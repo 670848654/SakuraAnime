@@ -56,6 +56,10 @@ public class DescModel extends BaseModel implements DescContract.Model {
                         bean.setTitle(animeTitle);
                         //番剧简介
                         bean.setDesc(doc.select("div.info").text());
+                        bean.setSy(doc.select("div.sinfo > span").get(0).text());
+                        bean.setDq(doc.select("div.sinfo > span").get(1).text());
+                        bean.setLx(doc.select("div.sinfo > span").get(2).text());
+                        bean.setBq(doc.select("div.sinfo > span").get(4).text());
                         //番剧图片
                         bean.setImg(doc.select("div.thumb > img").attr("src"));
                         //番剧地址

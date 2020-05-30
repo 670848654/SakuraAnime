@@ -14,12 +14,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.annotation.RequiresApi;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.fanchen.sniffing.SniffingUICallback;
 import com.fanchen.sniffing.SniffingVideo;
 import com.fanchen.sniffing.web.SniffingUtil;
@@ -27,6 +21,11 @@ import com.fanchen.sniffing.web.SniffingUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.RequiresApi;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.jzvd.Jzvd;
@@ -66,6 +65,7 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
     private VideoPresenter presenter;
     //播放网址
     private String webUrl;
+    private boolean isPip = false;
 
     @Override
     protected Presenter createPresenter() {
@@ -116,14 +116,11 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
         drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         player.setListener(this, this, this);
         player.backButton.setOnClickListener(v -> finish());
-//        if (Utils.isPad()) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             pic.setVisibility(View.GONE);
         } else {
             pic.setVisibility(View.VISIBLE);
         }
-//        } else
-//            pic.setVisibility(View.GONE);
         player.setUp(url, witchTitle, Jzvd.SCREEN_FULLSCREEN, JZExoPlayer.class);
         player.fullscreenButton.setOnClickListener(view -> {
             if (!Utils.isFastClick()) return;
@@ -233,6 +230,12 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
         if (!inMultiWindow()) JzvdStd.goOnPlayOnResume();
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (isPip) finish();
+    }
+
     /**
      * 是否为分屏模式
      *
@@ -263,8 +266,10 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
     @Override
     public void onPictureInPictureModeChanged(boolean isInPictureInPictureMode, Configuration newConfig) {
         super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig);
-        if (isInPictureInPictureMode) player.startPIP();
-        else player.exitPIP();
+        if (isInPictureInPictureMode) {
+            player.startPIP();
+            isPip = true;
+        } else isPip = false;
     }
 
     @Override
@@ -294,7 +299,6 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
         runOnUiThread(() -> {
             hideNavBar();
             VideoUtils.showErrorInfo(PlayerActivity.this, diliUrl);
-
         });
     }
 
@@ -361,11 +365,18 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
     public void onSniffingError(View webView, String url, int errorCode) {
         Sakura.getInstance().showToastMsg(Utils.getString(R.string.open_web_view));
         VideoUtils.openDefaultWebview(this, webUrl);
-        this.finish();
+        finish();
     }
 
     @Override
     public void touch() {
         hideNavBar();
+    }
+
+    @Override
+    public void finish() {
+        if (null != presenter) presenter.detachView();
+        JzvdStd.releaseAllVideos();
+        super.finish();
     }
 }

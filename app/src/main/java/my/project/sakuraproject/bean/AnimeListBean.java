@@ -4,16 +4,13 @@ public class AnimeListBean {
     private String title;
     private String url;
     private String desc;
+    private String sy;
+    private String dq;
+    private String lx;
+    private String bq;
     private String img;
 
     public AnimeListBean() {
-    }
-
-    public AnimeListBean(String title, String url, String desc, String img) {
-        this.title = title;
-        this.url = url;
-        this.desc = desc;
-        this.img = img;
     }
 
     public String getTitle() {
@@ -46,5 +43,37 @@ public class AnimeListBean {
 
     public void setImg(String img) {
         this.img = img;
+    }
+
+    public String getSy() {
+        return sy;
+    }
+
+    public void setSy(String sy) {
+        this.sy = sy;
+    }
+
+    public String getDq() {
+        return dq;
+    }
+
+    public void setDq(String dq) {
+        this.dq = dq;
+    }
+
+    public String getLx() {
+        return lx;
+    }
+
+    public void setLx(String lx) {
+        this.lx = lx;
+    }
+
+    public String getBq() {
+        return bq;
+    }
+
+    public void setBq(String bq) {
+        this.bq = bq;
     }
 }

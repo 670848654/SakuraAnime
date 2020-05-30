@@ -48,8 +48,10 @@
             android:name=".main.player.PlayerActivity"
             android:configChanges="screenLayout|orientation|screenSize|smallestScreenSize|keyboardHidden|uiMode"
             android:excludeFromRecents="true"
-            android:screenOrientation="sensorLandscape"
+            android:resizeableActivity="true"
+            android:launchMode="singleTask"
             android:supportsPictureInPicture="true"
+            android:screenOrientation="sensorLandscape"
             android:theme="@style/AppTheme.FullScreenTheme" />
         <activity
             android:name=".main.webview.normal.NormalWebActivity"

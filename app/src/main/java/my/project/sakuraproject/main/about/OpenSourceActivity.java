@@ -1,16 +1,15 @@
 package my.project.sakuraproject.main.about;
 
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.r0adkll.slidr.Slidr;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.adapter.SourceAdapter;
@@ -78,7 +77,7 @@ public class OpenSourceActivity extends BaseActivity {
         list.add(new SourceBean("MaterialEditText", "rengwuxian", "EditText in Material Design", "https://github.com/rengwuxian/MaterialEditText"));
         list.add(new SourceBean("JiaoZiVideoPlayer", "lipangit", "Android VideoPlayer MediaPlayer VideoView MediaView Float View And Fullscreen", "https://github.com/lipangit/JiaoZiVideoPlayer"));
         list.add(new SourceBean("ExoPlayer", "google", "An extensible media player for Android", "https://github.com/google/ExoPlayer"));
-        list.add(new SourceBean("Blurry", "wasabeef", "Blurry is an easy blur library for Android", "https://github.com/wasabeef/Blurry"));
+        list.add(new SourceBean("EasyBlur","pinguo-zhouwei","A Library for Android Image blur","https://github.com/pinguo-zhouwei/EasyBlur"));
         list.add(new SourceBean("Slidr", "r0adkll", "Easily add slide to dismiss functionality to an Activity", "https://github.com/r0adkll/Slidr"));
         list.add(new SourceBean("butterknife", "JakeWharton", "Bind Android views and callbacks to fields and methods.", "https://github.com/JakeWharton/butterknife"));
         list.add(new SourceBean("okhttp", "square", "An HTTP+HTTP/2 client for Android and Java applications.", "https://github.com/square/okhttp"));
@@ -95,7 +94,7 @@ public class OpenSourceActivity extends BaseActivity {
         adapter.setOnItemClickListener((adapter, view, position) -> {
             if (Utils.isFastClick()) Utils.viewInChrome(this, list.get(position).getUrl());
         });
-        if (Utils.checkHasNavigationBar(this)) recyclerView.setPadding(0,0,0, Utils.getNavigationBarHeight(this) - 5);
+        if (Utils.checkHasNavigationBar(this)) recyclerView.setPadding(0,0,0, Utils.getNavigationBarHeight(this));
         recyclerView.setAdapter(adapter);
     }
 }

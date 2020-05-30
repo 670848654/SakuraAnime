@@ -8,7 +8,6 @@
         <item name="android:textColorPrimary">@color/text_color_primary</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowTranslucentNavigation">true</item>
-
     </style>
 
     <style name="startTheme" parent="AppTheme">
@@ -69,6 +68,16 @@
         <item name="colorControlNormal">@color/toolbar_color</item>
         <!-- color of the menu overflow icon -->
         <item name="android:textColorSecondary">@color/toolbar_color</item>
+    </style>
+
+    <style name="DescToolbarTheme" parent="AppTheme">
+        <item name="colorPrimary">@color/white</item>
+        <item name="colorPrimaryDark">@color/white</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <!-- navigation icon color -->
+        <item name="colorControlNormal">@color/white</item>
+        <!-- color of the menu overflow icon -->
+        <item name="android:textColorSecondary">@color/white</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />

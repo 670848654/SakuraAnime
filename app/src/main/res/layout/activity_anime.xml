@@ -23,5 +23,13 @@
             android:visibility="gone"
             app:layout_behavior="my.project.sakuraproject.custom.ScrollAwareBehavior"
             app:srcCompat="@drawable/baseline_search_white_48dp" />
+
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:id="@+id/msg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_anchor="@id/mSwipe"
+            app:layout_anchorGravity="bottom" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
 </LinearLayout>

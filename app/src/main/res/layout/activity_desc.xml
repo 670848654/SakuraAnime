@@ -41,10 +41,9 @@
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/msg"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:background="@color/translucent"
-        app:layout_anchor="@id/mSwipe"
-        app:layout_anchorGravity="bottom" />
+        android:layout_height="wrap_content"
+        app:layout_anchor="@id/toolbar"
+        app:layout_anchorGravity="center" />
 
     <my.project.sakuraproject.custom.MySwipeRefreshLayout
         android:id="@+id/mSwipe"

@@ -12,10 +12,11 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.r0adkll.slidr.Slidr;
-
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
+
+import com.r0adkll.slidr.Slidr;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import my.project.sakuraproject.R;

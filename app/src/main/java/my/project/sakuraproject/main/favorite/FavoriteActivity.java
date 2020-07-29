@@ -4,17 +4,19 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
+import androidx.appcompat.widget.PopupMenu;
+import androidx.appcompat.widget.Toolbar;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.r0adkll.slidr.Slidr;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.appcompat.widget.PopupMenu;
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.adapter.FavoriteListAdapter;
@@ -35,6 +37,8 @@ public class FavoriteActivity extends BaseActivity<FavoriteContract.View, Favori
     @BindView(R.id.mSwipe)
     SwipeRefreshLayout mSwipe;
     private List<AnimeListBean> favoriteList = new ArrayList<>();
+    @BindView(R.id.msg)
+    CoordinatorLayout msg;
 
     @Override
     protected FavoritePresenter createPresenter() {
@@ -54,6 +58,8 @@ public class FavoriteActivity extends BaseActivity<FavoriteContract.View, Favori
     @Override
     protected void init() {
         Slidr.attach(this, Utils.defaultInit());
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) msg.getLayoutParams();
+        params.setMargins(10, 0, 10, Utils.getNavigationBarHeight(this) - 5);
         initToolbar();
         initSwipe();
         initAdapter();
@@ -114,8 +120,7 @@ public class FavoriteActivity extends BaseActivity<FavoriteContract.View, Favori
     private void removeFavorite(int position) {
         DatabaseUtil.deleteFavorite(favoriteList.get(position).getTitle());
         adapter.remove(position);
-        application.showCustomToastMsg(Utils.getString(R.string.join_error),
-                R.drawable.ic_remove_favorite_48dp, R.color.red300);
+        application.showSnackbarMsg(msg, Utils.getString(R.string.join_error));
         if (favoriteList.size() <= 0) {
             errorTitle.setText(Utils.getString(R.string.empty_favorite));
             adapter.setEmptyView(errorView);

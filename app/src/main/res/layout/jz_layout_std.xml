@@ -78,7 +78,7 @@
             android:paddingLeft="14dp"
             android:paddingRight="14dp"
             android:scaleType="centerInside"
-            android:src="@drawable/baseline_view_module_white_48dp" />
+            android:src="@drawable/baseline_view_selections_white_48dp" />
     </LinearLayout>
 
     <ProgressBar

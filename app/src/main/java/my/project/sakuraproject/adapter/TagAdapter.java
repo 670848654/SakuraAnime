@@ -37,7 +37,7 @@ public class TagAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity, BaseV
                 break;
             case TYPE_LEVEL_1:
                 TagBean homeBean = (TagBean) item;
-                helper.setText(R.id.tag_group, homeBean.getTitle());
+                helper.setText(R.id.tag_group, homeBean.getItemTitle());
                 break;
         }
     }

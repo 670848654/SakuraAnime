@@ -69,7 +69,7 @@ public class Sakura extends Application {
     }
 
     public static void setApi() {
-        TAG_API = Sakura.DOMAIN + "/2019/";
+        TAG_API = Sakura.DOMAIN + "/sitemap/";
         MOVIE_API = Sakura.DOMAIN + "/movie/";
         ZT_API = Sakura.DOMAIN + "/topic/";
         JCB_API = Sakura.DOMAIN + "/37/";
@@ -77,20 +77,23 @@ public class Sakura extends Application {
     }
 
     private void initTBS() {
-        //搜集本地tbs内核信息并上报服务器，服务器返回结果决定使用哪个内核。
-        QbSdk.setDownloadWithoutWifi(true);//非wifi条件下允许下载X5内核
-        QbSdk.PreInitCallback cb = new QbSdk.PreInitCallback() {
-            @Override
-            public void onViewInitFinished(boolean arg0) {
-                if (arg0) SharedPreferencesUtils.setParam(appContext, "X5State", true);
-                else SharedPreferencesUtils.setParam(appContext, "X5State", false);
-            }
-            @Override
-            public void onCoreInitFinished() {
-            }
-        };
-        //x5内核初始化接口
-        QbSdk.initX5Environment(getApplicationContext(), cb);
+        if (!android.os.Build.MODEL.contains("Pixel C")) {
+            //搜集本地tbs内核信息并上报服务器，服务器返回结果决定使用哪个内核。
+            QbSdk.setDownloadWithoutWifi(true);//非wifi条件下允许下载X5内核
+            QbSdk.PreInitCallback cb = new QbSdk.PreInitCallback() {
+                @Override
+                public void onViewInitFinished(boolean arg0) {
+                    if (arg0) SharedPreferencesUtils.setParam(appContext, "X5State", true);
+                    else SharedPreferencesUtils.setParam(appContext, "X5State", false);
+                }
+
+                @Override
+                public void onCoreInitFinished() {
+                }
+            };
+            //x5内核初始化接口
+            QbSdk.initX5Environment(getApplicationContext(), cb);
+        }
     }
 
     public void showToastMsg(String msg){
@@ -115,7 +118,9 @@ public class Sakura extends Application {
     }
 
     public void showSnackbarMsg(View view, String msg) {
-        Snackbar.make(view, msg, Snackbar.LENGTH_LONG).show();
+        Snackbar snackbar = Snackbar.make(view, msg, Snackbar.LENGTH_LONG);
+        snackbar.getView().setBackgroundColor(getResources().getColor(R.color.logo_bg));
+        snackbar.show();
     }
 
     public void addActivity(Activity activity) {

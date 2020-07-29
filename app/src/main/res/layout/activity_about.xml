@@ -317,7 +317,7 @@
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:background="@color/translucent"
         android:id="@+id/show">

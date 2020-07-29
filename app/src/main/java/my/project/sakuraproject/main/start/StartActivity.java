@@ -20,6 +20,7 @@ import my.project.sakuraproject.main.home.HomeActivity;
 import my.project.sakuraproject.net.DownloadUtil;
 import my.project.sakuraproject.net.HttpGet;
 import my.project.sakuraproject.util.SharedPreferencesUtils;
+import my.project.sakuraproject.util.StatusBarUtil;
 import my.project.sakuraproject.util.Utils;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -58,7 +59,7 @@ public class StartActivity extends BaseActivity {
 
     @Override
     protected void initBeforeView() {
-
+        StatusBarUtil.setTranslucentForCoordinatorLayout(this, getResources().getColor(R.color.logo_bg));
     }
 
     private void checkUpdate() {

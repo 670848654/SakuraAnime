@@ -1,17 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/window_bg">
+    android:background="@color/logo_bg">
+
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <ImageView
         android:id="@+id/logo"
-        android:layout_width="180dp"
-        android:layout_height="70dp"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:src="@drawable/logo"
-        android:tint="@color/pinka200" />
+        android:src="@drawable/logo" />
 
     <LinearLayout
         android:id="@+id/check_update"
@@ -25,13 +29,15 @@
         <ProgressBar
             android:id="@+id/progressBar"
             android:layout_width="20dp"
-            android:layout_height="20dp" />
+            android:layout_height="20dp"
+            android:indeterminateTint="@color/white"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
-            android:textColor="@color/text_color_primary"
+            android:textColor="@color/white"
             android:text="检测更新中" />
     </LinearLayout>
 </RelativeLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

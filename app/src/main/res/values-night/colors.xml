@@ -293,4 +293,5 @@
     <color name="item_selected_color">#FFF</color>
     <color name="jd_bg">#FFF</color>
     <color name="white">#FFF</color>
+    <color name="logo_bg">#e55578</color>
 </resources>

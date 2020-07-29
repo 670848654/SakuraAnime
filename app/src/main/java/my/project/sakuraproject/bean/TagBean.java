@@ -6,44 +6,9 @@ import my.project.sakuraproject.adapter.TagAdapter;
 
 public class TagBean implements MultiItemEntity {
     private String title;
-    private String url;
-    private String type;
-    private String desc;
-    private boolean select;
-    private String witchTitle;
-    private String witchUrl;
+    private String itemTitle;
+    private String itemUrl;
 
-    public String getWitchTitle() {
-        return witchTitle;
-    }
-
-    public void setWitchTitle(String witchTitle) {
-        this.witchTitle = witchTitle;
-    }
-
-    public String getWitchUrl() {
-        return witchUrl;
-    }
-
-    public void setWitchUrl(String witchUrl) {
-        this.witchUrl = witchUrl;
-    }
-
-    public boolean isSelect() {
-        return select;
-    }
-
-    public void setSelect(boolean select) {
-        this.select = select;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
 
     public String getTitle() {
         return title;
@@ -53,40 +18,26 @@ public class TagBean implements MultiItemEntity {
         this.title = title;
     }
 
-    public String getUrl() {
-        return url;
+    public String getItemTitle() {
+        return itemTitle;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setItemTitle(String itemTitle) {
+        this.itemTitle = itemTitle;
     }
 
-    public String getDesc() {
-        return desc;
+    public String getItemUrl() {
+        return itemUrl;
     }
 
-    public void setDesc(String desc) {
-        this.desc = desc;
+    public void setItemUrl(String itemUrl) {
+        this.itemUrl = itemUrl;
     }
 
-    public TagBean(String title, String url, String witchTitle, String witchUrl) {
+    public TagBean(String title, String itemTitle, String itemUrl) {
         this.title = title;
-        this.url = url;
-        this.witchTitle = witchTitle;
-        this.witchUrl = witchUrl;
-    }
-
-    public TagBean(String title, String url, String desc, boolean state) {
-        this.title = title;
-        this.url = url;
-        this.desc = desc;
-    }
-
-    public TagBean(boolean select, String title, String url, String type) {
-        this.select = select;
-        this.title = title;
-        this.url = url;
-        this.type = type;
+        this.itemTitle = itemTitle;
+        this.itemUrl = itemUrl;
     }
 
     @Override

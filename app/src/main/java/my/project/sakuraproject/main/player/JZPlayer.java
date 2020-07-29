@@ -174,7 +174,7 @@ public class JZPlayer extends JzvdStd {
     @Override
     public void setScreenFullscreen() {
         super.setScreenFullscreen();
-        fullscreenButton.setImageResource(R.drawable.baseline_view_module_white_48dp);
+        fullscreenButton.setImageResource(R.drawable.baseline_view_selections_white_48dp);
     }
 
     public interface  CompleteListener{

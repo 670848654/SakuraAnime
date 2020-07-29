@@ -1,5 +1,7 @@
 package my.project.sakuraproject.main.tag;
 
+import android.util.Log;
+
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 
 import org.jsoup.Jsoup;
@@ -42,18 +44,12 @@ public class TagModel extends BaseModel implements TagContract.Model {
                     Document doc = Jsoup.parse(response.body().string());
                     if (hasRefresh(doc)) getHtml(callback);
                     else {
-                        Elements tagList = doc.select("div.ters > p");
-                        if (tagList.size() > 0) {
-                            //字母索引
-                            setData("字母索引", tagList.get(0).select("a"));
-                            //年份
-                            setYearData("年份", tagList.get(1).select("a"));
-                            //地区
-                            setRegionData();
-                            //语言
-                            setLanguageData();
-                            //类型
-                            setData("动漫类型", tagList.get(2).select("a"));
+                        Elements tagTitles = doc.select("div.dtit");
+                        Elements tagItems = doc.select("div.link");
+                        Log.e("size1", tagTitles.size()+"");
+                        Log.e("size2", tagItems.size()+"");
+                        if (tagTitles.size() == tagItems.size()) {
+                            setTagData(tagTitles, tagItems);
                             callback.success(list);
                         } else callback.error(Utils.getString(R.string.parsing_error));
                     }
@@ -66,52 +62,20 @@ public class TagModel extends BaseModel implements TagContract.Model {
         });
     }
 
-    private void setData(String title, Elements tag) {
-        TagHeaderBean tagHeaderBean = new TagHeaderBean(title);
-        for (int i = 0; i < tag.size(); i++) {
-            tagHeaderBean.addSubItem(
-                    new TagBean(
-                            tag.get(i).text(),
-                            tag.get(i).attr("href"),
-                            title + " - ",
-                            true));
-        }
-        list.add(tagHeaderBean);
-    }
-
-    private void setYearData(String title, Elements year) {
-        TagHeaderBean tagHeaderBean = new TagHeaderBean(title);
-        for (int i = 0; i < year.size(); i++) {
-            if (year.get(i).text().startsWith("2")) {
+    private void setTagData(Elements tagTitles, Elements tagItems) {
+        for (int i = 1, tagSize = tagTitles.size(); i < tagSize ; i++) {
+            TagHeaderBean tagHeaderBean = new TagHeaderBean(tagTitles.get(i).text());
+            Elements itemElements = tagItems.get(i).select("a");
+            for (int j = 0, itemSize = itemElements.size(); j < itemSize; j++) {
                 tagHeaderBean.addSubItem(
                         new TagBean(
-                                year.get(i).text(),
-                                year.get(i).attr("href"),
-                                title + " - ",
-                                true));
+                                tagHeaderBean.getTitle() + " - " + itemElements.get(j).text(),
+                                itemElements.get(j).text(),
+                                itemElements.get(j).attr("href")
+                        )
+                );
             }
+            list.add(tagHeaderBean);
         }
-        list.add(tagHeaderBean);
-    }
-
-    private void setRegionData() {
-        TagHeaderBean tagHeaderBean = new TagHeaderBean("地区");
-        tagHeaderBean.addSubItem(new TagBean("日本", "/japan/", "地区 - ", true));
-        tagHeaderBean.addSubItem(new TagBean("大陆", "/china/", "地区 - ", true));
-        tagHeaderBean.addSubItem(new TagBean("美国", "/american/", "地区 - ", true));
-        tagHeaderBean.addSubItem(new TagBean("英国", "/england/", "地区 - ", true));
-        tagHeaderBean.addSubItem(new TagBean("韩国", "/korea/", "地区 - ", true));
-        list.add(tagHeaderBean);
-    }
-
-    private void setLanguageData() {
-        TagHeaderBean tagHeaderBean = new TagHeaderBean("语言");
-        tagHeaderBean.addSubItem(new TagBean("日语", "/29/", "地区 - ", true));
-        tagHeaderBean.addSubItem(new TagBean("国语", "/30/", "地区 - ", true));
-        tagHeaderBean.addSubItem(new TagBean("粤语", "/31/", "地区 - ", true));
-        tagHeaderBean.addSubItem(new TagBean("英语", "/32/", "地区 - ", true));
-        tagHeaderBean.addSubItem(new TagBean("韩语", "/33/", "地区 - ", true));
-        tagHeaderBean.addSubItem(new TagBean("方言", "/34/", "地区 - ", true));
-        list.add(tagHeaderBean);
     }
 }

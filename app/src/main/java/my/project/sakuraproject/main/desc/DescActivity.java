@@ -6,11 +6,14 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -47,6 +50,8 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import co.lujun.androidtagview.TagContainerLayout;
+import co.lujun.androidtagview.TagView;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.adapter.AnimeDescDetailsAdapter;
 import my.project.sakuraproject.adapter.AnimeDescDramaAdapter;
@@ -57,7 +62,10 @@ import my.project.sakuraproject.bean.AnimeDescDetailsBean;
 import my.project.sakuraproject.bean.AnimeDescListBean;
 import my.project.sakuraproject.bean.AnimeDescRecommendBean;
 import my.project.sakuraproject.bean.AnimeListBean;
+import my.project.sakuraproject.custom.InsideScrollView;
+import my.project.sakuraproject.custom.MyTextView;
 import my.project.sakuraproject.database.DatabaseUtil;
+import my.project.sakuraproject.main.animeList.AnimeListActivity;
 import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.video.VideoContract;
 import my.project.sakuraproject.main.video.VideoPresenter;
@@ -72,14 +80,6 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     Toolbar toolbar;
     @BindView(R.id.anime_img)
     ImageView animeImg;
-    @BindView(R.id.sy)
-    AppCompatTextView sy;
-    @BindView(R.id.dq)
-    AppCompatTextView dq;
-    @BindView(R.id.lx)
-    AppCompatTextView lx;
-    @BindView(R.id.bq)
-    AppCompatTextView bq;
     @BindView(R.id.desc)
     AppCompatTextView desc;
     @BindView(R.id.mSwipe)
@@ -126,6 +126,14 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     @BindView(R.id.bg)
     ImageView bg;
     private MenuItem favorite;
+    @BindView(R.id.tag_view)
+    TagContainerLayout tagContainerLayout;
+    @BindView(R.id.update_time)
+    MyTextView update_time;
+    @BindView(R.id.score_view)
+    AppCompatTextView score_view;
+    @BindView(R.id.inside_view)
+    InsideScrollView scrollView;
 
     @Override
     protected DescPresenter createPresenter() {
@@ -150,10 +158,12 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         Slidr.attach(this, Utils.defaultInit());
         CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) msg.getLayoutParams();
         params.setMargins(10, 0, 10, 0);
+        scrollView.getViewTreeObserver().addOnScrollChangedListener(() -> mSwipe.setEnabled(scrollView.getScrollY() == 0));
         getBundle();
         initToolbar();
         initSwipe();
         initAdapter();
+        initTagClick();
     }
 
     @Override
@@ -245,6 +255,34 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         return linearLayoutManager;
     }
 
+    private void initTagClick() {
+        tagContainerLayout.setOnTagClickListener(new TagView.OnTagClickListener() {
+            @Override
+            public void onTagClick(int position, String text) {
+                Bundle bundle = new Bundle();
+                bundle.putString("title", animeListBean.getTagTitles().get(position));
+                bundle.putString("url", VideoUtils.getUrl(animeListBean.getTagUrls().get(position)));
+                bundle.putBoolean("isMovie", animeListBean.getTagUrls().get(position).contains("movie") ? true : false);
+                startActivity(new Intent(DescActivity.this, AnimeListActivity.class).putExtras(bundle));
+            }
+
+            @Override
+            public void onTagLongClick(int position, String text) {
+
+            }
+
+            @Override
+            public void onSelectedTagDrag(int position, String text) {
+
+            }
+
+            @Override
+            public void onTagCrossClick(int position) {
+
+            }
+        });
+    }
+
     @OnClick(R.id.open_drama)
     public void dramaClick() {
         if (!mBottomSheetDialog.isShowing()) {
@@ -257,10 +295,10 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     public void openAnimeDesc() {
         toolbar.setTitle(Utils.getString(R.string.loading));
         animeImg.setImageDrawable(getDrawable(R.drawable.loading));
-        setTextviewEmpty(sy);
-        setTextviewEmpty(dq);
-        setTextviewEmpty(lx);
-        setTextviewEmpty(bq);
+        tagContainerLayout.setVisibility(View.GONE);
+        tagContainerLayout.setTags("");
+        update_time.setText("");
+        score_view.setVisibility(View.GONE);
         setTextviewEmpty(desc);
         mSwipe.setRefreshing(true);
         animeDescListBean = new AnimeDescListBean();
@@ -383,11 +421,12 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         });
         Utils.setDefaultImage(this, animeListBean.getImg(), animeImg);
         toolbar.setTitle(animeListBean.getTitle());
-        sy.setText(animeListBean.getSy());
-        dq.setText(animeListBean.getDq());
-        lx.setText(animeListBean.getLx());
-        bq.setText(animeListBean.getBq());
+        tagContainerLayout.setTags(animeListBean.getTagTitles());
+        tagContainerLayout.setVisibility(View.VISIBLE);
         desc.setText(animeListBean.getDesc());
+        update_time.setText(animeListBean.getUpdateTime());
+        score_view.setText(animeListBean.getScore()+"分");
+        score_view.setVisibility(View.VISIBLE);
     }
 
     @Override

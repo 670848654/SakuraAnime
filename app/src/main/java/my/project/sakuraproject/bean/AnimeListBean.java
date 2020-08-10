@@ -1,5 +1,7 @@
 package my.project.sakuraproject.bean;
 
+import java.util.List;
+
 public class AnimeListBean {
     private String title;
     private String url;
@@ -9,6 +11,42 @@ public class AnimeListBean {
     private String lx;
     private String bq;
     private String img;
+    private List<String> tagTitles;
+    private List<String> tagUrls;
+    private String score;
+    private String updateTime;
+
+    public String getScore() {
+        return score;
+    }
+
+    public void setScore(String score) {
+        this.score = score;
+    }
+
+    public String getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(String updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    public List<String> getTagTitles() {
+        return tagTitles;
+    }
+
+    public void setTagTitles(List<String> tagTitles) {
+        this.tagTitles = tagTitles;
+    }
+
+    public List<String> getTagUrls() {
+        return tagUrls;
+    }
+
+    public void setTagUrls(List<String> tagUrls) {
+        this.tagUrls = tagUrls;
+    }
 
     public AnimeListBean() {
     }

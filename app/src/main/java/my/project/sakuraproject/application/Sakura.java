@@ -119,7 +119,7 @@ public class Sakura extends Application {
 
     public void showSnackbarMsg(View view, String msg) {
         Snackbar snackbar = Snackbar.make(view, msg, Snackbar.LENGTH_LONG);
-        snackbar.getView().setBackgroundColor(getResources().getColor(R.color.logo_bg));
+        snackbar.getView().setBackgroundColor(getResources().getColor(R.color.colorAccent));
         snackbar.show();
     }
 

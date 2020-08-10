@@ -62,6 +62,7 @@
     <string name="online">在线</string>
     <string name="multi">多季</string>
     <string name="recommend">相关推荐</string>
+    <string name="no_update">暂无更新</string>
     <!-- 播放地址未找到 -->
     <string name="play_not_found_title">解析失败</string>
     <string name="play_not_found_positive">访问原页面</string>
@@ -121,7 +122,7 @@
     <string name="test_model_desc">OnePlus 7 Pro\nAndroid 10</string>
     <string name="now_version">当前版本</string>
     <string name="final_compile">最后编译日期</string>
-    <string name="final_compile_time">2020年7月29日</string>
+    <string name="final_compile_time">2020年8月10日</string>
     <string name="cache">缓存目录</string>
     <string name="cache_text">/SakuraAnime/\n卸载后自行删除此目录</string>
     <string name="github">Github</string>

@@ -12,6 +12,7 @@
         android:scaleType="centerCrop"
         android:src="@drawable/header" />
 
+    <!--
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/nav_header_height"
@@ -25,6 +26,7 @@
             android:layout_marginLeft="10dp"
             android:src="@drawable/huaji" />
     </RelativeLayout>
+    -->
 
     <LinearLayout
         android:id="@+id/set_theme"
@@ -36,13 +38,14 @@
         android:orientation="horizontal">
         <ImageView
             android:id="@+id/theme"
+            android:tint="@color/night"
             android:layout_width="15dp"
             android:layout_height="15dp"
             android:layout_gravity="center"
             android:layout_margin="5dp" />
         <TextView
             android:id="@+id/theme_title"
-            android:textColor="@color/white"
+            android:textColor="@color/night"
             android:layout_gravity="center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />

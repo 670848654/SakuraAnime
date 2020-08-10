@@ -168,6 +168,7 @@ public class AboutActivity extends BaseActivity {
 
     public List createUpdateLogList() {
         List logsList = new ArrayList();
+        logsList.add(new LogBean("版本：1.9.2", "番剧详情界面布局修改"));
         logsList.add(new LogBean("版本：1.9.1", "修正动漫分类列表"));
         logsList.add(new LogBean("版本：1.9.0", "修复一些Bug\n优化番剧详情界面\n内置播放器新增屏幕锁定、快进、后退操作"));
         logsList.add(new LogBean("版本：1.8.9","修复解析时弹窗不关闭的问题"));

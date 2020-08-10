@@ -6,8 +6,8 @@ android {
         applicationId "my.project.sakuraproject"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 21
-        versionName "1.9.1"
+        versionCode 22
+        versionName "1.9.2"
         ndk{abiFilters "armeabi"}
         resConfigs"zh"
     }
@@ -53,5 +53,6 @@ dependencies {
     implementation 'com.github.fanchen001:Sniffing:1.0.1'
     implementation 'com.github.GrenderG:Toasty:1.4.2'
     implementation 'com.github.pinguo-zhouwei:EasyBlur:v1.0.0'
+    implementation 'co.lujun:androidtagview:1.1.7'
 }
 

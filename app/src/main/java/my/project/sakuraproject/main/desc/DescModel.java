@@ -2,6 +2,7 @@ package my.project.sakuraproject.main.desc;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
@@ -25,6 +26,7 @@ public class DescModel extends BaseModel implements DescContract.Model {
     private String fid;
     private String dramaStr;
     private AnimeDescListBean animeDescListBean = new AnimeDescListBean();
+    private AnimeListBean animeListBean = new AnimeListBean();
 
     @Override
     public void getData(String url, DescContract.LoadDataCallback callback) {
@@ -51,20 +53,26 @@ public class DescModel extends BaseModel implements DescContract.Model {
                         DatabaseUtil.addAnime(animeTitle);
                         fid = DatabaseUtil.getAnimeID(animeTitle);
                         dramaStr = DatabaseUtil.queryAllIndex(fid);
-                        AnimeListBean bean = new AnimeListBean();
                         //番剧名称
-                        bean.setTitle(animeTitle);
+                        animeListBean.setTitle(animeTitle);
                         //番剧简介
-                        bean.setDesc(doc.select("div.info").text());
-                        bean.setSy(doc.select("div.sinfo > span").get(0).text().replaceAll("上映:", "上映: "));
-                        bean.setDq(doc.select("div.sinfo > span").get(1).text().replaceAll("地区:", "地区: "));
-                        bean.setLx(doc.select("div.sinfo > span").get(2).text());
-                        bean.setBq(doc.select("div.sinfo > span").get(4).text());
+                        animeListBean.setDesc(doc.select("div.info").text());
+                        Elements descElements = new Elements();
+                        descElements.addAll(doc.select("div.sinfo > span").get(0).select("a"));
+                        descElements.addAll(doc.select("div.sinfo > span").get(1).select("a"));
+                        descElements.addAll(doc.select("div.sinfo > span").get(2).select("a"));
+                        descElements.addAll(doc.select("div.sinfo > span").get(4).select("a"));
+                        setTags(descElements);
+                        animeListBean.setScore(doc.select("div.score > em").text());
+                        if (doc.select("div.sinfo > p").size() > 1)
+                            animeListBean.setUpdateTime(doc.select("div.sinfo > p").get(1).text().isEmpty() ? Utils.getString(R.string.no_update) : doc.select("div.sinfo > p").get(1).text());
+                         else
+                            animeListBean.setUpdateTime(doc.select("div.sinfo > p").get(0).text().isEmpty() ? Utils.getString(R.string.no_update) : doc.select("div.sinfo > p").get(0).text());
                         //番剧图片
-                        bean.setImg(doc.select("div.thumb > img").attr("src"));
+                        animeListBean.setImg(doc.select("div.thumb > img").attr("src"));
                         //番剧地址
-                        bean.setUrl(url);
-                        callback.successDesc(bean);
+                        animeListBean.setUrl(url);
+                        callback.successDesc(animeListBean);
                         //剧集列表
                         Elements detail = doc.select("div.movurl > ul > li");
                         //多季
@@ -86,6 +94,17 @@ public class DescModel extends BaseModel implements DescContract.Model {
                 }
             }
         });
+    }
+
+    private void setTags(Elements elements) {
+        List<String> tagTitles = new ArrayList<>();
+        List<String> tagUrls = new ArrayList<>();
+        for (int i = 0, size = elements.size(); i < size; i++) {
+            tagTitles.add(elements.get(i).text().toUpperCase());
+            tagUrls.add(elements.get(i).attr("href"));
+        }
+        animeListBean.setTagTitles(tagTitles);
+        animeListBean.setTagUrls(tagUrls);
     }
 
     private void setPlayData(Elements els) {

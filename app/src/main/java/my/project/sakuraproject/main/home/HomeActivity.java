@@ -59,7 +59,7 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
     Toolbar toolbar;
     @BindView(R.id.mSwipe)
     VpSwipeRefreshLayout mSwipe;
-    private ImageView imageView;
+//    private ImageView imageView;
     LinearLayout setTheme;
     private ImageView theme;
     private TextView themeTitle;
@@ -129,13 +129,13 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
         navigationView.setItemTextColor(csl);
         navigationView.setItemIconTintList(csl);
         View view = navigationView.getHeaderView(0);
-        imageView = view.findViewById(R.id.imageView);
-        imageView.setOnClickListener(view1 -> {
-            final ObjectAnimator animator = Utils.tada(imageView);
-            animator.setRepeatCount(0);
-            animator.setDuration(1000);
-            animator.start();
-        });
+//        imageView = view.findViewById(R.id.imageView);
+//        imageView.setOnClickListener(view1 -> {
+//            final ObjectAnimator animator = Utils.tada(imageView);
+//            animator.setRepeatCount(0);
+//            animator.setDuration(1000);
+//            animator.start();
+//        });
         setTheme = view.findViewById(R.id.set_theme);
         setTheme.setOnClickListener(view2 -> {
             if ((Boolean) SharedPreferencesUtils.getParam(this, "darkTheme", false))

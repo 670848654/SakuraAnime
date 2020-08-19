@@ -421,8 +421,11 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         });
         Utils.setDefaultImage(this, animeListBean.getImg(), animeImg);
         toolbar.setTitle(animeListBean.getTitle());
-        tagContainerLayout.setTags(animeListBean.getTagTitles());
-        tagContainerLayout.setVisibility(View.VISIBLE);
+        if (animeListBean.getTagTitles() != null) {
+            tagContainerLayout.setTags(animeListBean.getTagTitles());
+            tagContainerLayout.setVisibility(View.VISIBLE);
+        }else
+            tagContainerLayout.setVisibility(View.GONE);
         desc.setText(animeListBean.getDesc());
         update_time.setText(animeListBean.getUpdateTime());
         score_view.setText(animeListBean.getScore()+"分");

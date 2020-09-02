@@ -43,7 +43,7 @@ public class HomeModel extends BaseModel implements HomeContract.Model {
                     JSONObject weekObj = new JSONObject();
                     Document body = Jsoup.parse(response.body().string());
                     if (body.html().contains("You have verified successfully")) {
-                        Sakura.REDIRECTED = body.select("a").attr("href");
+                        Sakura.REDIRECTED = body.select("a").attr("href").replaceAll("/","");
                         getHtml(callback);
                         return;
                     } else {

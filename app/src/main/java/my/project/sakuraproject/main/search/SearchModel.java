@@ -24,7 +24,7 @@ public class SearchModel extends BaseModel implements SearchContract.Model {
     @Override
     public void getData(String url, int page, boolean isMain, SearchContract.LoadDataCallback callback) {
         if (page != 1)
-            url = url.contains(Sakura.DOMAIN) ? url + "/?page=" + page: Sakura.DOMAIN + url + "/?page=" + page + Sakura.REDIRECTED.replace("/?", "&");
+            url = url.contains(Sakura.DOMAIN) ? url + "/?page=" + page: Sakura.DOMAIN + url + "/?page=" + page + Sakura.REDIRECTED.replace("?", "&");
         else
             url =  url.contains(Sakura.DOMAIN) ? url +  Sakura.REDIRECTED : Sakura.DOMAIN + url +  Sakura.REDIRECTED;
         getHtml(url, isMain, callback);

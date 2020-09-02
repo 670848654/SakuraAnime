@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.bean.AnimeDescDetailsBean;
 import my.project.sakuraproject.database.DatabaseUtil;
 import my.project.sakuraproject.main.base.BaseModel;
@@ -22,7 +23,7 @@ public class VideoModel extends BaseModel implements VideoContract.Model {
 
     @Override
     public void getData(String title, String HTML_url, VideoContract.LoadDataCallback callback) {
-        getHtml(title, HTML_url, callback);
+        getHtml(title, HTML_url + Sakura.REDIRECTED, callback);
     }
 
     private void getHtml(String title, String HTML_url, VideoContract.LoadDataCallback callback) {

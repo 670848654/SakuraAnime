@@ -30,7 +30,7 @@ public class HomeModel extends BaseModel implements HomeContract.Model {
     }
 
     private void getHtml(HomeContract.LoadDataCallback callback) {
-        new HttpGet(Sakura.DOMAIN, new Callback() {
+        new HttpGet(Sakura.DOMAIN + Sakura.REDIRECTED, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 callback.error(e.getMessage());
@@ -42,9 +42,15 @@ public class HomeModel extends BaseModel implements HomeContract.Model {
                     LinkedHashMap map = new LinkedHashMap();
                     JSONObject weekObj = new JSONObject();
                     Document body = Jsoup.parse(response.body().string());
-                    if (hasRefresh(body)) getHtml(callback);
-                    else {
-                        setData(body.select("div.tlist > ul"), weekObj, map, callback);
+                    if (body.html().contains("You have verified successfully")) {
+                        Sakura.REDIRECTED = body.select("a").attr("href");
+                        getHtml(callback);
+                        return;
+                    } else {
+                        if (hasRefresh(body)) getHtml(callback);
+                        else {
+                            setData(body.select("div.tlist > ul"), weekObj, map, callback);
+                        }
                     }
                 } catch (Exception e) {
                     e.printStackTrace();

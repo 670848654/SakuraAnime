@@ -24,7 +24,7 @@ public class AnimeTopicModel extends BaseModel implements AnimeTopicContract.Mod
     @Override
     public void getData(String url, int page, boolean isMain, AnimeTopicContract.LoadDataCallback callback) {
         if (page != 1)
-            url = url.contains(Sakura.DOMAIN) ? url + page + ".html" : Sakura.DOMAIN + url + page + ".html";
+            url = url.contains(Sakura.DOMAIN) ? url + page + ".html" : Sakura.DOMAIN + url + page + ".html" + Sakura.REDIRECTED;
         getHtml(url, isMain, callback);
     }
 

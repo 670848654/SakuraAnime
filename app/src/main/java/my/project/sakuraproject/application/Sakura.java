@@ -30,7 +30,7 @@ public class Sakura extends Application {
     private List<Activity> oList;
     private static Map<String, Activity> destoryMap = new HashMap<>();
     public static String DOMAIN;
-    public static String TAG_API, MOVIE_API, ZT_API, JCB_API, SEARCH_API;
+    public static String TAG_API, MOVIE_API, ZT_API, JCB_API, SEARCH_API,REDIRECTED = "";
     public String error;
     public JSONObject week = new JSONObject();
 

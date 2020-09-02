@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import my.project.sakuraproject.R;
+import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.bean.AnimeDescDetailsBean;
 import my.project.sakuraproject.bean.AnimeDescListBean;
 import my.project.sakuraproject.bean.AnimeDescRecommendBean;
@@ -30,7 +31,7 @@ public class DescModel extends BaseModel implements DescContract.Model {
 
     @Override
     public void getData(String url, DescContract.LoadDataCallback callback) {
-        getHtml(url, callback);
+        getHtml(url + Sakura.REDIRECTED, callback);
     }
 
     private void getHtml(String url, DescContract.LoadDataCallback callback) {

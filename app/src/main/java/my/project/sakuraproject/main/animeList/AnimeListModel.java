@@ -24,7 +24,7 @@ public class AnimeListModel extends BaseModel implements AnimeListContract.Model
     @Override
     public void getData(String url, int page, boolean isMain, boolean isMovie, AnimeListContract.LoadDataCallback callback) {
         if (page != 1)
-            url = url.contains(Sakura.DOMAIN) ? url + page + ".html" : Sakura.DOMAIN + url + page + ".html";
+            url = url.contains(Sakura.DOMAIN) ? url + page + ".html" : Sakura.DOMAIN + url + page + ".html" + Sakura.REDIRECTED;
         getHtml(url, isMain, isMovie, callback);
     }
 

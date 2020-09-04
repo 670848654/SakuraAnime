@@ -203,6 +203,11 @@ public class ApiActivity extends BaseActivity<ApiContract.View, ApiPresenter> im
     }
 
     @Override
+    public void showLog(String url) {
+
+    }
+
+    @Override
     public void showSuccess(List<ApiBean> list) {
         apiList = list;
         adapter.setNewData(apiList);

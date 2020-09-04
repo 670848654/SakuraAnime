@@ -54,4 +54,9 @@ public class VideoPresenter extends Presenter<VideoContract.View> implements Bas
     public void error(String msg) {
 
     }
+
+    @Override
+    public void log(String url) {
+        view.showLog(url);
+    }
 }

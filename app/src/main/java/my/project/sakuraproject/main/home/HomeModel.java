@@ -26,11 +26,12 @@ public class HomeModel extends BaseModel implements HomeContract.Model {
 
     @Override
     public void getData(HomeContract.LoadDataCallback callback) {
-        getHtml(callback);
+        getHtml(callback, "");
     }
 
-    private void getHtml(HomeContract.LoadDataCallback callback) {
-        new HttpGet(Sakura.DOMAIN + Sakura.REDIRECTED, new Callback() {
+    private void getHtml(HomeContract.LoadDataCallback callback, String RedirectedStr) {
+        callback.log(Sakura.DOMAIN + RedirectedStr);
+        new HttpGet(Sakura.DOMAIN + RedirectedStr, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 callback.error(e.getMessage());
@@ -42,12 +43,12 @@ public class HomeModel extends BaseModel implements HomeContract.Model {
                     LinkedHashMap map = new LinkedHashMap();
                     JSONObject weekObj = new JSONObject();
                     Document body = Jsoup.parse(response.body().string());
-                    if (body.html().contains("You have verified successfully")) {
-                        Sakura.REDIRECTED = body.select("a").attr("href").replaceAll("/","");
-                        getHtml(callback);
+                    if (hasRedirected(body)) {
+                        // 如果有重定向
+                        getHtml(callback, getRedirectedStr(body));
                         return;
                     } else {
-                        if (hasRefresh(body)) getHtml(callback);
+                        if (hasRefresh(body)) getHtml(callback, "");
                         else {
                             setData(body.select("div.tlist > ul"), weekObj, map, callback);
                         }

@@ -34,4 +34,9 @@ public class ApiPresenter extends Presenter<ApiContract.View> implements BasePre
     public void error(String msg) {
         view.showLoadErrorView(msg);
     }
+
+    @Override
+    public void log(String url) {
+        
+    }
 }

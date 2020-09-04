@@ -7,4 +7,6 @@ public interface BaseView {
     void showLoadErrorView(String msg);
     //空布局
     void showEmptyVIew();
+
+    void showLog(String url);
 }

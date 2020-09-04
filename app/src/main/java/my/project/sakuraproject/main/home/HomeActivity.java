@@ -309,6 +309,11 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
     }
 
     @Override
+    public void showLog(String url) {
+        runOnUiThread(() -> application.showToastShortMsg(url));
+    }
+
+    @Override
     public void showLoadSuccess(LinkedHashMap map) {
         runOnUiThread(() -> {
             if (!getSupportFragmentManager().isDestroyed()) {

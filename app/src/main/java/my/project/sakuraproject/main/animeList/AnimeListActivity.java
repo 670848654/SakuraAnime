@@ -216,4 +216,9 @@ public class AnimeListActivity extends BaseActivity<AnimeListContract.View, Anim
     public void showEmptyVIew() {
         adapter.setEmptyView(emptyView);
     }
+
+    @Override
+    public void showLog(String url) {
+        runOnUiThread(() -> application.showToastShortMsg(url));
+    }
 }

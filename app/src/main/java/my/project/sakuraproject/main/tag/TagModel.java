@@ -28,11 +28,12 @@ public class TagModel extends BaseModel implements TagContract.Model {
 
     @Override
     public void getData(TagContract.LoadDataCallback callback) {
-        getHtml(callback);
+        getHtml(callback, "");
     }
 
-    private void getHtml(TagContract.LoadDataCallback callback) {
-        new HttpGet(Sakura.TAG_API, new Callback() {
+    private void getHtml(TagContract.LoadDataCallback callback, String RedirectedStr) {
+        callback.log(Sakura.TAG_API + RedirectedStr);
+        new HttpGet(Sakura.TAG_API + RedirectedStr, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 callback.error(e.getMessage());
@@ -42,7 +43,9 @@ public class TagModel extends BaseModel implements TagContract.Model {
             public void onResponse(Call call, Response response) {
                 try {
                     Document doc = Jsoup.parse(response.body().string());
-                    if (hasRefresh(doc)) getHtml(callback);
+                    if (hasRedirected(doc))
+                        getHtml(callback, getRedirectedStr(doc));
+                    else if (hasRefresh(doc)) getHtml(callback, "");
                     else {
                         Elements tagTitles = doc.select("div.dtit");
                         Elements tagItems = doc.select("div.link");

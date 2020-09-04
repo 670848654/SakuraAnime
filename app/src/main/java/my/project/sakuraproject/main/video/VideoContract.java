@@ -4,13 +4,14 @@ import java.util.List;
 
 import my.project.sakuraproject.bean.AnimeDescDetailsBean;
 import my.project.sakuraproject.main.base.BaseLoadDataCallback;
+import my.project.sakuraproject.main.base.BaseView;
 
 public interface VideoContract {
     interface Model {
         void getData(String title, String url, LoadDataCallback callback);
     }
 
-    interface View {
+    interface View extends BaseView {
         void cancelDialog();
 
         void getVideoSuccess(List<String> list);

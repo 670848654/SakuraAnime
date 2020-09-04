@@ -8,4 +8,15 @@ public class BaseModel {
         Element meta = body.select("meta[http-equiv=refresh]").first();
         return meta != null;
     }
+
+    public static boolean hasRedirected(Document body) {
+        if (body.html().contains("You have verified successfully"))
+            return true;
+        else
+            return false;
+    }
+
+    public static String getRedirectedStr(Document body) {
+        return body.select("a").attr("href");
+    }
 }

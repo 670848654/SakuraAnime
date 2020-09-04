@@ -30,7 +30,7 @@ public class Sakura extends Application {
     private List<Activity> oList;
     private static Map<String, Activity> destoryMap = new HashMap<>();
     public static String DOMAIN;
-    public static String TAG_API, MOVIE_API, ZT_API, JCB_API, SEARCH_API,REDIRECTED = "";
+    public static String TAG_API, MOVIE_API, ZT_API, JCB_API, SEARCH_API;
     public String error;
     public JSONObject week = new JSONObject();
 
@@ -69,7 +69,7 @@ public class Sakura extends Application {
     }
 
     public static void setApi() {
-        TAG_API = Sakura.DOMAIN + "/sitemap/";
+        TAG_API = Sakura.DOMAIN + "/sitemap";
         MOVIE_API = Sakura.DOMAIN + "/movie/";
         ZT_API = Sakura.DOMAIN + "/topic/";
         JCB_API = Sakura.DOMAIN + "/37/";
@@ -94,6 +94,10 @@ public class Sakura extends Application {
             //x5内核初始化接口
             QbSdk.initX5Environment(getApplicationContext(), cb);
         }
+    }
+
+    public void showToastShortMsg(String msg) {
+        Toasty.warning(getApplicationContext(), "Load data url\n" + msg, Toast.LENGTH_SHORT, true).show();
     }
 
     public void showToastMsg(String msg){

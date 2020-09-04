@@ -153,6 +153,11 @@ public class FavoriteActivity extends BaseActivity<FavoriteContract.View, Favori
     }
 
     @Override
+    public void showLog(String url) {
+
+    }
+
+    @Override
     public void showSuccessView(List<AnimeListBean> list) {
         favoriteList = list;
         adapter.setNewData(favoriteList);

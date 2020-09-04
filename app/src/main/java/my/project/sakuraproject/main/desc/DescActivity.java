@@ -489,6 +489,11 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     }
 
     @Override
+    public void showLog(String url) {
+        runOnUiThread(() -> application.showToastShortMsg(url));
+    }
+
+    @Override
     public void showSuccessMainView(AnimeDescListBean bean) {
         runOnUiThread(() -> {
             if (!mActivityFinish) {

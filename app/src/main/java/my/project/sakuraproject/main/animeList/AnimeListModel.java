@@ -24,11 +24,12 @@ public class AnimeListModel extends BaseModel implements AnimeListContract.Model
     @Override
     public void getData(String url, int page, boolean isMain, boolean isMovie, AnimeListContract.LoadDataCallback callback) {
         if (page != 1)
-            url = url.contains(Sakura.DOMAIN) ? url + page + ".html" : Sakura.DOMAIN + url + page + ".html" + Sakura.REDIRECTED;
+            url = url.contains(Sakura.DOMAIN) ? url + page + ".html" : Sakura.DOMAIN + url + page + ".html";
         getHtml(url, isMain, isMovie, callback);
     }
 
     private void getHtml(String url,boolean isMain, boolean isMovie, AnimeListContract.LoadDataCallback callback) {
+        callback.log(url);
         new HttpGet(url, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -39,7 +40,9 @@ public class AnimeListModel extends BaseModel implements AnimeListContract.Model
             public void onResponse(Call call, Response response) {
                 try {
                     Document doc = Jsoup.parse(response.body().string());
-                    if (hasRefresh(doc)) getHtml(url, isMain, isMovie, callback);
+                    if (hasRedirected(doc))
+                        getHtml(Sakura.DOMAIN + getRedirectedStr(doc), isMain, isMovie, callback);
+                    else if (hasRefresh(doc)) getHtml(url, isMain, isMovie, callback);
                     else {
                         Elements animeList = doc.select("div.lpic > ul > li");
                         Elements movieList = doc.select("div.imgs > ul > li");

@@ -24,13 +24,14 @@ public class SearchModel extends BaseModel implements SearchContract.Model {
     @Override
     public void getData(String url, int page, boolean isMain, SearchContract.LoadDataCallback callback) {
         if (page != 1)
-            url = url.contains(Sakura.DOMAIN) ? url + "/?page=" + page: Sakura.DOMAIN + url + "/?page=" + page + Sakura.REDIRECTED.replace("?", "&");
+            url = url.contains(Sakura.DOMAIN) ? url + "?page=" + page: Sakura.DOMAIN + url + "?page=" + page ;
         else
-            url =  url.contains(Sakura.DOMAIN) ? url +  Sakura.REDIRECTED : Sakura.DOMAIN + url +  Sakura.REDIRECTED;
+            url =  url.contains(Sakura.DOMAIN) ? url : Sakura.DOMAIN + url;
         getHtml(url, isMain, callback);
     }
 
     private void getHtml(String url, boolean isMain, SearchContract.LoadDataCallback callback) {
+        callback.log(url);
         new HttpGet(url, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -41,7 +42,9 @@ public class SearchModel extends BaseModel implements SearchContract.Model {
             public void onResponse(Call call, Response response) {
                 try {
                     Document doc = Jsoup.parse(response.body().string());
-                    if (hasRefresh(doc)) getHtml(url, isMain, callback);
+                    if (hasRedirected(doc))
+                        getHtml(Sakura.DOMAIN + getRedirectedStr(doc), isMain, callback);
+                    else if (hasRefresh(doc)) getHtml(url, isMain, callback);
                     else {
                         Elements animeList = doc.select("div.lpic > ul > li");
                         if (isMain) {

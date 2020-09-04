@@ -22,12 +22,13 @@ public class VideoModel extends BaseModel implements VideoContract.Model {
     private List<String> videoUrlList = new ArrayList<>();
 
     @Override
-    public void getData(String title, String HTML_url, VideoContract.LoadDataCallback callback) {
-        getHtml(title, HTML_url + Sakura.REDIRECTED, callback);
+    public void getData(String title, String url, VideoContract.LoadDataCallback callback) {
+        getHtml(title, url, callback);
     }
 
-    private void getHtml(String title, String HTML_url, VideoContract.LoadDataCallback callback) {
-        new HttpGet(HTML_url, new Callback() {
+    private void getHtml(String title, String url, VideoContract.LoadDataCallback callback) {
+        callback.log(url);
+        new HttpGet(url, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 callback.error();
@@ -36,10 +37,12 @@ public class VideoModel extends BaseModel implements VideoContract.Model {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 Document doc = Jsoup.parse(response.body().string());
-                if (hasRefresh(doc)) getHtml(title, HTML_url, callback);
+                if (hasRedirected(doc))
+                    getHtml(title, Sakura.DOMAIN + getRedirectedStr(doc), callback);
+                else if (hasRefresh(doc)) getHtml(title, url, callback);
                 else {
                     String fid = DatabaseUtil.getAnimeID(title);
-                    DatabaseUtil.addIndex(fid, HTML_url);
+                    DatabaseUtil.addIndex(fid, url);
                     callback.successDrama(getAllDrama(fid, doc.select("div.movurls > ul > li")));
                     Elements playList = doc.select("div.playbo > a");
                     if (playList.size() > 0) {

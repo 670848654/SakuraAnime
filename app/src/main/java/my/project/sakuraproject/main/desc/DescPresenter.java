@@ -44,4 +44,9 @@ public class DescPresenter extends Presenter<DescContract.View> implements BaseP
     public void error(String msg) {
         view.showLoadErrorView(msg);
     }
+
+    @Override
+    public void log(String url) {
+        view.showLog(url);
+    }
 }

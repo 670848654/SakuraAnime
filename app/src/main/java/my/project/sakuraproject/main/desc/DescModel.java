@@ -31,10 +31,11 @@ public class DescModel extends BaseModel implements DescContract.Model {
 
     @Override
     public void getData(String url, DescContract.LoadDataCallback callback) {
-        getHtml(url + Sakura.REDIRECTED, callback);
+        getHtml(url, callback);
     }
 
     private void getHtml(String url, DescContract.LoadDataCallback callback) {
+        callback.log(url);
         new HttpGet(url, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -45,7 +46,9 @@ public class DescModel extends BaseModel implements DescContract.Model {
             public void onResponse(Call call, Response response) {
                 try {
                     Document doc = Jsoup.parse(response.body().string());
-                    if (hasRefresh(doc)) getHtml(url, callback);
+                    if (hasRedirected(doc))
+                        getHtml(Sakura.DOMAIN + getRedirectedStr(doc), callback);
+                    else if (hasRefresh(doc)) getHtml(url, callback);
                     else {
                         String animeTitle = doc.select("h1").text();
                         //是否收藏

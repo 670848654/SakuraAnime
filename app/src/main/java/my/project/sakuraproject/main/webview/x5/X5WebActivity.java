@@ -402,6 +402,26 @@ public class X5WebActivity extends BaseActivity implements VideoContract.View, S
         this.finish();
     }
 
+    @Override
+    public void showLoadingView() {
+        runOnUiThread(() -> application.showToastShortMsg(url));
+    }
+
+    @Override
+    public void showLoadErrorView(String msg) {
+
+    }
+
+    @Override
+    public void showEmptyVIew() {
+
+    }
+
+    @Override
+    public void showLog(String url) {
+
+    }
+
     /**
      * 全屏容器界面
      */

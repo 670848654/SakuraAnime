@@ -35,4 +35,9 @@ public class TagPresenter extends Presenter<TagContract.View> implements BasePre
     public void error(String msg) {
         view.showLoadErrorView(msg);
     }
+
+    @Override
+    public void log(String url) {
+        view.showLog(url);
+    }
 }

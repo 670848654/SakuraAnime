@@ -380,4 +380,24 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
         JzvdStd.releaseAllVideos();
         super.finish();
     }
+
+    @Override
+    public void showLoadingView() {
+
+    }
+
+    @Override
+    public void showLoadErrorView(String msg) {
+
+    }
+
+    @Override
+    public void showEmptyVIew() {
+
+    }
+
+    @Override
+    public void showLog(String url) {
+        runOnUiThread(() -> application.showToastShortMsg(url));
+    }
 }

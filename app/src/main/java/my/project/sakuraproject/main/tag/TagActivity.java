@@ -138,4 +138,9 @@ public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> im
     public void showEmptyVIew() {
         adapter.setEmptyView(emptyView);
     }
+
+    @Override
+    public void showLog(String url) {
+        runOnUiThread(() -> application.showToastShortMsg(url));
+    }
 }

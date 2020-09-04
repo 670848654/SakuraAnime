@@ -31,5 +31,10 @@ public class HomePresenter extends Presenter<HomeContract.View> implements BaseP
     public void error(String msg) {
         view.showLoadErrorView(msg);
     }
+
+    @Override
+    public void log(String url) {
+        view.showLog(url);
+    }
 }
 

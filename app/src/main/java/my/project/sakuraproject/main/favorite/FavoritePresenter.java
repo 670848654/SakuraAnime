@@ -34,4 +34,9 @@ public class FavoritePresenter extends Presenter<FavoriteContract.View> implemen
     public void error(String msg) {
         view.showLoadErrorView(msg);
     }
+
+    @Override
+    public void log(String url) {
+
+    }
 }

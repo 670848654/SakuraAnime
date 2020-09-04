@@ -45,4 +45,9 @@ public class AnimeListPresenter extends Presenter<AnimeListContract.View> implem
     @Override
     public void error(String msg) {
     }
+
+    @Override
+    public void log(String url) {
+        view.showLog(url);
+    }
 }

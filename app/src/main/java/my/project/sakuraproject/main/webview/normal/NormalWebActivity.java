@@ -389,6 +389,26 @@ public class NormalWebActivity extends BaseActivity implements VideoContract.Vie
         this.finish();
     }
 
+    @Override
+    public void showLoadingView() {
+
+    }
+
+    @Override
+    public void showLoadErrorView(String msg) {
+
+    }
+
+    @Override
+    public void showEmptyVIew() {
+
+    }
+
+    @Override
+    public void showLog(String url) {
+        runOnUiThread(() -> application.showToastShortMsg(url));
+    }
+
     /**
      * 全屏容器界面
      */

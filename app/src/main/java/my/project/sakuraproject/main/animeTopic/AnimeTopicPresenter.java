@@ -47,4 +47,9 @@ public class AnimeTopicPresenter extends Presenter<AnimeTopicContract.View> impl
     @Override
     public void error(String msg) {
     }
+
+    @Override
+    public void log(String url) {
+        view.showLog(url);
+    }
 }

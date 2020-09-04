@@ -217,6 +217,11 @@ public class SearchActivity extends BaseActivity<SearchContract.View, SearchPres
     }
 
     @Override
+    public void showLog(String url) {
+        runOnUiThread(() -> application.showToastShortMsg(url));
+    }
+
+    @Override
     public void showSuccessView(boolean isMain, List<AnimeListBean> list) {
         runOnUiThread(() -> {
             isSearch = false;

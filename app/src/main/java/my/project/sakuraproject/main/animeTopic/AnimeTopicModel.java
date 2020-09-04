@@ -24,11 +24,12 @@ public class AnimeTopicModel extends BaseModel implements AnimeTopicContract.Mod
     @Override
     public void getData(String url, int page, boolean isMain, AnimeTopicContract.LoadDataCallback callback) {
         if (page != 1)
-            url = url.contains(Sakura.DOMAIN) ? url + page + ".html" : Sakura.DOMAIN + url + page + ".html" + Sakura.REDIRECTED;
+            url = url.contains(Sakura.DOMAIN) ? url + page + ".html" : Sakura.DOMAIN + url + page + ".html";
         getHtml(url, isMain, callback);
     }
 
     private void getHtml(String url, boolean isMain, AnimeTopicContract.LoadDataCallback callback) {
+        callback.log(url);
         new HttpGet(url, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -39,7 +40,9 @@ public class AnimeTopicModel extends BaseModel implements AnimeTopicContract.Mod
             public void onResponse(Call call, Response response) {
                 try {
                     Document doc = Jsoup.parse(response.body().string());
-                    if (hasRefresh(doc)) getHtml(url, isMain, callback);
+                    if (hasRedirected(doc))
+                        getHtml(Sakura.DOMAIN + getRedirectedStr(doc), isMain, callback);
+                    else if (hasRefresh(doc)) getHtml(url, isMain, callback);
                     else {
                         Elements animeList = doc.select("div.dnews > ul > li");
                         if (isMain) {

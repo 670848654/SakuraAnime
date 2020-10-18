@@ -168,6 +168,7 @@ public class AboutActivity extends BaseActivity {
 
     public List createUpdateLogList() {
         List logsList = new ArrayList();
+        logsList.add(new LogBean("版本：1.9.5", "修复部分设备（平板）无法正常播放的问题"));
         logsList.add(new LogBean("版本：1.9.4_redirection_fix1", "再次尝试修复由于网站重定向导致某些获数据取异常的Bug ┐(´д｀)┌"));
         logsList.add(new LogBean("版本：1.9.4", "尝试修复由于网站重定向导致获数据取异常的Bug"));
         logsList.add(new LogBean("版本：1.9.3", "修复番剧详情加载失败闪退Bug"));

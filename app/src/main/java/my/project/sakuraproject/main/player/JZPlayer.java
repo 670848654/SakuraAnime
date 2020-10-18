@@ -56,12 +56,12 @@ public class JZPlayer extends JzvdStd {
                 if (locked) {
                     // 已经上锁，再次点击解锁
                     changeUiToPlayingShow();
-                    ibLock.setImageResource(R.drawable.player_btn_locking_pre);
+                    ibLock.setImageResource(R.drawable.player_btn_locking);
                     Toast.makeText(context, "屏幕锁定关闭", Toast.LENGTH_SHORT).show();
                 } else {
                     // 上锁
                     changeUiToPlayingClear();
-                    ibLock.setImageResource(R.drawable.player_btn_locking);
+                    ibLock.setImageResource(R.drawable.player_btn_locking_pre);
                     Toast.makeText(context, "屏幕锁定开启", Toast.LENGTH_SHORT).show();
 //                    Drawable up = ContextCompat.getDrawable(context,R.drawable.player_btn_locking_pre);
 //                    Drawable drawableUp= DrawableCompat.wrap(up);

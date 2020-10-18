@@ -76,8 +76,7 @@ public class VideoUtils {
 
     public static String getVideoUrl(String url) {
         String playStr = "";
-        url = url.substring(12);
-        url = url.substring(0, url.length() - 3);
+        url = url.replaceAll("\\$(.*)", "").replaceAll("changeplay\\('", "").replaceAll("'\\);", "");
         //如果网址
         if (Patterns.WEB_URL.matcher(url.replace(" ", "")).matches()) {
             Matcher m = PLAY_URL_PATTERN.matcher(url);

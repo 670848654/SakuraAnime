@@ -197,6 +197,16 @@
             android:layout_height="@dimen/jz_start_button_w_h_normal"/>
 
         <ImageView
+            android:id="@+id/config"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="12dp"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_settings_white_48dp"
+            android:visibility="invisible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <ImageView
             android:id="@+id/start"
             android:layout_centerHorizontal="true"
             android:layout_width="@dimen/jz_start_button_w_h_normal"
@@ -207,7 +217,7 @@
             android:id="@+id/quick_retreat"
             android:layout_toLeftOf="@+id/start"
             android:layout_marginRight="40dp"
-            android:src="@drawable/player_btn_back_off_15s"
+            android:src="@drawable/baseline_fast_rewind_white_48dp"
             android:layout_centerVertical="true"
             android:visibility="invisible"
             android:layout_width="@dimen/jz_start_button_w_h_normal"
@@ -217,7 +227,7 @@
             android:id="@+id/fast_forward"
             android:layout_toRightOf="@+id/start"
             android:layout_marginLeft="40dp"
-            android:src="@drawable/player_btn_fast_forward_15s"
+            android:src="@drawable/baseline_fast_forward_white_48dp"
             android:layout_centerVertical="true"
             android:visibility="invisible"
             android:layout_width="@dimen/jz_start_button_w_h_normal"

@@ -1,6 +1,5 @@
 package my.project.sakuraproject.main.home;
 
-import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
@@ -310,7 +309,7 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
 
     @Override
     public void showLog(String url) {
-        runOnUiThread(() -> application.showToastShortMsg(url));
+//        runOnUiThread(() -> application.showToastShortMsg(url));
     }
 
     @Override

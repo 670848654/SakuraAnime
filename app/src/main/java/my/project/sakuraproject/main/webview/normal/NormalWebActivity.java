@@ -406,7 +406,7 @@ public class NormalWebActivity extends BaseActivity implements VideoContract.Vie
 
     @Override
     public void showLog(String url) {
-        runOnUiThread(() -> application.showToastShortMsg(url));
+//        runOnUiThread(() -> application.showToastShortMsg(url));
     }
 
     /**

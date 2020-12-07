@@ -56,8 +56,6 @@ import my.project.sakuraproject.util.SharedPreferencesUtils;
 import my.project.sakuraproject.util.Utils;
 import my.project.sakuraproject.util.VideoUtils;
 
-;
-
 public class X5WebActivity extends BaseActivity implements VideoContract.View, SniffingUICallback {
     private final static String REFERER = "referer";
     private List<WebviewBean> list = new ArrayList<>();

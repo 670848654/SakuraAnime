@@ -3,7 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
-    <group android:checkableBehavior="single">
+    <group
+        android:id="@+id/group1"
+        android:checkableBehavior="single">
         <item
             android:id="@+id/find_anime"
             android:icon="@drawable/baseline_filter_white_48dp"
@@ -21,35 +23,24 @@
             android:icon="@drawable/ic_ondemand_video_white_48dp"
             android:title="@string/home_jcb_title" />
     </group>
-    <item android:title="@string/home_my_title">
-        <menu>
-            <group android:checkableBehavior="single">
-                <item
-                    android:id="@+id/favorite"
-                    android:icon="@drawable/ic_loyalty_white_48dp"
-                    android:title="@string/home_my_item_title" />
-            </group>
-        </menu>
-    </item>
-    <item android:title="@string/home_setting_title">
-        <menu>
-            <group android:checkableBehavior="single">
-                <item
-                    android:id="@+id/setting"
-                    android:icon="@drawable/ic_settings_white_48dp"
-                    android:title="@string/home_setting_item_title" />
-            </group>
-        </menu>
-    </item>
-    <item android:title="@string/home_other_title">
-        <menu>
-            <group android:checkableBehavior="single">
-                <item
-                    android:id="@+id/about"
-                    android:icon="@drawable/ic_bubble_chart_white_48dp"
-                    android:title="@string/home_other_item_title" />
-            </group>
-        </menu>
-    </item>
-
+    <group
+        android:id="@+id/group2"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/favorite"
+            android:icon="@drawable/ic_loyalty_white_48dp"
+            android:title="@string/home_my_item_title" />
+    </group>
+    <group
+        android:id="@+id/group3"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/setting"
+            android:icon="@drawable/ic_settings_white_48dp"
+            android:title="@string/home_setting_item_title" />
+        <item
+            android:id="@+id/about"
+            android:icon="@drawable/ic_bubble_chart_white_48dp"
+            android:title="@string/home_other_item_title" />
+    </group>
 </menu>

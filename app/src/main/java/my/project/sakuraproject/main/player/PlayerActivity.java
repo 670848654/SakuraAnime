@@ -12,9 +12,12 @@ import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -61,12 +64,19 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
     DrawerLayout drawerLayout;
     @BindView(R.id.anime_title)
     TextView titleView;
-    @BindView(R.id.pic)
-    TextView pic;
+    @BindView(R.id.pic_config)
+    RelativeLayout picConfig;
     private VideoPresenter presenter;
     //播放网址
     private String webUrl;
     private boolean isPip = false;
+
+    @BindView(R.id.nav_config_view)
+    LinearLayout navConfigView;
+    @BindView(R.id.speed)
+    TextView speedTextView;
+    private String[] speeds = Utils.getArray(R.array.speed_item);
+    private int userSpeed = 2;
 
     @Override
     protected Presenter createPresenter() {
@@ -85,11 +95,11 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
     @Override
     protected void init() {
         Sakura.addDestoryActivity(this, "player");
-        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         hideGap();
         Bundle bundle = getIntent().getExtras();
         init(bundle);
         initAdapter();
+        initUserConfig();
     }
 
     @Override
@@ -113,14 +123,47 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
         linearLayout.setOnClickListener(view -> {
             return;
         });
+        navConfigView.setOnClickListener(view -> {
+            return;
+        });
         linearLayout.getBackground().mutate().setAlpha(150);
+        navConfigView.getBackground().mutate().setAlpha(150);
         drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
+
+            }
+
+            @Override
+            public void onDrawerOpened(@NonNull View drawerView) {
+                if (drawerLayout.isDrawerOpen(GravityCompat.START))
+                    JzvdStd.goOnPlayOnPause();
+            }
+
+            @Override
+            public void onDrawerClosed(@NonNull View drawerView) {
+                if (!drawerLayout.isDrawerOpen(GravityCompat.START))
+                    JzvdStd.goOnPlayOnResume();
+            }
+
+            @Override
+            public void onDrawerStateChanged(int newState) {
+
+            }
+        });
+        player.config.setOnClickListener(v -> {
+            if (!Utils.isFastClick()) return;
+            if (drawerLayout.isDrawerOpen(GravityCompat.START))
+                drawerLayout.closeDrawer(GravityCompat.START);
+            else drawerLayout.openDrawer(GravityCompat.START);
+        });
         player.setListener(this, this, this);
         player.backButton.setOnClickListener(v -> finish());
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            pic.setVisibility(View.GONE);
+            picConfig.setVisibility(View.GONE);
         } else {
-            pic.setVisibility(View.VISIBLE);
+            picConfig.setVisibility(View.VISIBLE);
         }
         player.setUp(url, witchTitle, Jzvd.SCREEN_FULLSCREEN, JZExoPlayer.class);
         player.fullscreenButton.setOnClickListener(view -> {
@@ -135,10 +178,10 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
         player.startVideo();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    @OnClick(R.id.pic)
     public void startPic() {
-        drawerLayout.closeDrawer(GravityCompat.END);
+        if (drawerLayout.isDrawerOpen(GravityCompat.START))
+            drawerLayout.closeDrawer(GravityCompat.START);
+        JzvdStd.goOnPlayOnResume();
         new Handler().postDelayed(this::enterPicInPic, 500);
     }
 
@@ -199,13 +242,69 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
         }
     }
 
-    @OnClick({R.id.select_player, R.id.open_in_browser})
-    public void onClick(TextView view) {
-        switch (view.getId()) {
-            case R.id.select_player:
+    private void initUserConfig() {
+        switch ((Integer) SharedPreferencesUtils.getParam(this, "user_speed", 15)) {
+            case 5:
+                setUserSpeedConfig(speeds[0], 0);
+                break;
+            case 10:
+                setUserSpeedConfig(speeds[1], 1);
+                break;
+            case 15:
+                setUserSpeedConfig(speeds[2], 2);
+                break;
+            case 30:
+                setUserSpeedConfig(speeds[3], 3);
+                break;
+        }
+    }
+
+    private void setUserSpeedConfig(String text, int speed) {
+        speedTextView.setText(text);
+        userSpeed = speed;
+    }
+
+    private void setDefaultSpeed() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(Utils.getString(R.string.set_user_speed));
+        builder.setSingleChoiceItems(speeds, userSpeed, (dialog, which) -> {
+            switch (which) {
+                case 0:
+                    SharedPreferencesUtils.setParam(getApplicationContext(), "user_speed", 5);
+                    setUserSpeedConfig(speeds[0], which);
+                    break;
+                case 1:
+                    SharedPreferencesUtils.setParam(getApplicationContext(), "user_speed", 10);
+                    setUserSpeedConfig(speeds[1], which);
+                    break;
+                case 2:
+                    SharedPreferencesUtils.setParam(getApplicationContext(), "user_speed", 15);
+                    setUserSpeedConfig(speeds[2], which);
+                    break;
+                case 3:
+                    SharedPreferencesUtils.setParam(getApplicationContext(), "user_speed", 30);
+                    setUserSpeedConfig(speeds[3], which);
+                    break;
+            }
+            dialog.dismiss();
+        });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    @OnClick({R.id.speed_config, R.id.pic_config, R.id.player_config, R.id.browser_config})
+    public void configBtnClick(RelativeLayout relativeLayout) {
+        switch (relativeLayout.getId()) {
+            case R.id.speed_config:
+                setDefaultSpeed();
+                break;
+            case R.id.pic_config:
+                if (gtSdk26()) startPic();
+                break;
+            case R.id.player_config:
                 Utils.selectVideoPlayer(this, url);
                 break;
-            case R.id.open_in_browser:
+            case R.id.browser_config:
                 Utils.viewInChrome(this, diliUrl);
                 break;
         }
@@ -215,6 +314,8 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
     public void onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.END))
             drawerLayout.closeDrawer(GravityCompat.END);
+        if (drawerLayout.isDrawerOpen(GravityCompat.START))
+            drawerLayout.closeDrawer(GravityCompat.START);
         else finish();
     }
 
@@ -398,6 +499,6 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
 
     @Override
     public void showLog(String url) {
-        runOnUiThread(() -> application.showToastShortMsg(url));
+//        runOnUiThread(() -> application.showToastShortMsg(url));
     }
 }

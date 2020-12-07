@@ -168,6 +168,7 @@ public class AboutActivity extends BaseActivity {
 
     public List createUpdateLogList() {
         List logsList = new ArrayList();
+        logsList.add(new LogBean("版本：1.9.6", "动漫分类界面改动\n内置播放器快进、后退参数可设置（5s，10s，15s，30s），播放器界面点击“设置”图标，在弹窗界面中配置"));
         logsList.add(new LogBean("版本：1.9.5", "修复部分设备（平板）无法正常播放的问题"));
         logsList.add(new LogBean("版本：1.9.4_redirection_fix1", "再次尝试修复由于网站重定向导致某些获数据取异常的Bug ┐(´д｀)┌"));
         logsList.add(new LogBean("版本：1.9.4", "尝试修复由于网站重定向导致获数据取异常的Bug"));

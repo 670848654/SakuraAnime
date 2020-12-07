@@ -7,12 +7,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Patterns;
 
+import androidx.appcompat.app.AlertDialog;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import androidx.appcompat.app.AlertDialog;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.bean.AnimeDescDetailsBean;

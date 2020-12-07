@@ -10,6 +10,7 @@ import android.widget.Toast;
 import cn.jzvd.JZDataSource;
 import cn.jzvd.JzvdStd;
 import my.project.sakuraproject.R;
+import my.project.sakuraproject.util.SharedPreferencesUtils;
 
 public class JZPlayer extends JzvdStd {
     private Context context;
@@ -17,7 +18,7 @@ public class JZPlayer extends JzvdStd {
     private TouchListener touchListener;
     private ImageView ibLock;
     private boolean locked = false;
-    private ImageView fastForward, quickRetreat;
+    public ImageView fastForward, quickRetreat, config;
 
     public JZPlayer(Context context) { super(context); }
 
@@ -46,6 +47,7 @@ public class JZPlayer extends JzvdStd {
         quickRetreat.setOnClickListener(this);
         fastForward = findViewById(R.id.fast_forward);
         fastForward.setOnClickListener(this);
+        config = findViewById(R.id.config);
     }
 
     @Override
@@ -76,7 +78,7 @@ public class JZPlayer extends JzvdStd {
                 //当前时间
                 long currentPositionWhenPlaying = getCurrentPositionWhenPlaying();
                 //快进（15S）
-                long fastForwardProgress = currentPositionWhenPlaying + 15 * 1000;
+                long fastForwardProgress = currentPositionWhenPlaying + (Integer) SharedPreferencesUtils.getParam(context, "user_speed", 15) * 1000;
                 if (duration > fastForwardProgress) {
                     mediaInterface.seekTo(fastForwardProgress);
                 } else {
@@ -87,7 +89,7 @@ public class JZPlayer extends JzvdStd {
                 //当前时间
                 long quickRetreatCurrentPositionWhenPlaying = getCurrentPositionWhenPlaying();
                 //快退（15S）
-                long quickRetreatProgress = quickRetreatCurrentPositionWhenPlaying - 15 * 1000;
+                long quickRetreatProgress = quickRetreatCurrentPositionWhenPlaying - (Integer) SharedPreferencesUtils.getParam(context, "user_speed", 15) * 1000;
                 if (quickRetreatProgress > 0) {
                     mediaInterface.seekTo(quickRetreatProgress);
                 } else {
@@ -105,6 +107,7 @@ public class JZPlayer extends JzvdStd {
             super.changeUiToPlayingShow();
             fastForward.setVisibility(VISIBLE);
             quickRetreat.setVisibility(VISIBLE);
+            config.setVisibility(VISIBLE);
         }
         if (screen == SCREEN_FULLSCREEN)
             ibLock.setVisibility(ibLock.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
@@ -129,6 +132,7 @@ public class JZPlayer extends JzvdStd {
         ibLock.setVisibility(View.INVISIBLE);
         fastForward.setVisibility(INVISIBLE);
         quickRetreat.setVisibility(INVISIBLE);
+        config.setVisibility(INVISIBLE);
     }
 
     // 点击暂停按钮执行的回调
@@ -138,6 +142,7 @@ public class JZPlayer extends JzvdStd {
         ibLock.setVisibility(View.INVISIBLE);
         fastForward.setVisibility(INVISIBLE);
         quickRetreat.setVisibility(INVISIBLE);
+        config.setVisibility(INVISIBLE);
     }
 
 
@@ -148,6 +153,7 @@ public class JZPlayer extends JzvdStd {
         ibLock.setVisibility(View.INVISIBLE);
         fastForward.setVisibility(INVISIBLE);
         quickRetreat.setVisibility(INVISIBLE);
+        config.setVisibility(INVISIBLE);
     }
 
     //这里是出错的UI
@@ -157,6 +163,7 @@ public class JZPlayer extends JzvdStd {
         ibLock.setVisibility(View.INVISIBLE);
         fastForward.setVisibility(INVISIBLE);
         quickRetreat.setVisibility(INVISIBLE);
+        config.setVisibility(INVISIBLE);
     }
 
     // 点击屏幕会出现所有控件，一定时间后消失的回调
@@ -168,6 +175,7 @@ public class JZPlayer extends JzvdStd {
             ibLock.setVisibility(View.INVISIBLE);
             fastForward.setVisibility(INVISIBLE);
             quickRetreat.setVisibility(INVISIBLE);
+            config.setVisibility(INVISIBLE);
         });
     }
 

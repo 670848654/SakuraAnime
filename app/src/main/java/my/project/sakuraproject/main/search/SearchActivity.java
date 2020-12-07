@@ -218,7 +218,7 @@ public class SearchActivity extends BaseActivity<SearchContract.View, SearchPres
 
     @Override
     public void showLog(String url) {
-        runOnUiThread(() -> application.showToastShortMsg(url));
+//        runOnUiThread(() -> application.showToastShortMsg(url));
     }
 
     @Override

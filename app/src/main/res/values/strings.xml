@@ -122,7 +122,7 @@
     <string name="test_model_desc">OnePlus 7 Pro\nAndroid 10</string>
     <string name="now_version">当前版本</string>
     <string name="final_compile">最后编译日期</string>
-    <string name="final_compile_time">2020年10月18日</string>
+    <string name="final_compile_time">2020年12月7日</string>
     <string name="cache">缓存目录</string>
     <string name="cache_text">/SakuraAnime/\n卸载后自行删除此目录</string>
     <string name="github">Github</string>
@@ -151,6 +151,20 @@
     <string name="tagLongName">动漫分类</string>
     <string name="favoriteShortName">我的追番</string>
     <string name="favoriteLongName">我的追番</string>
+    <!-- 播放器文本 -->
+    <string name="set_user_speed">设置快进/快退时长</string>
+    <string name="player_setting_title">播放器设置</string>
+    <string name="picture_in_picture_title">画中画</string>
+    <string name="player_other_title">其他操作</string>
+    <string name="play_with_external_player">使用外部播放器播放</string>
+    <string name="open_external_browser">通过浏览器访问原地址</string>
+    <string-array name="speed_item">
+        <item>5s</item>
+        <item>10s</item>
+        <item>15s</item>
+        <item>30s</item>
+    </string-array>
+
     <string-array name="week_array">
         <item>周一</item>
         <item>周二</item>

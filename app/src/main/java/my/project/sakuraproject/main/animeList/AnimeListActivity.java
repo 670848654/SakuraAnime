@@ -219,6 +219,6 @@ public class AnimeListActivity extends BaseActivity<AnimeListContract.View, Anim
 
     @Override
     public void showLog(String url) {
-        runOnUiThread(() -> application.showToastShortMsg(url));
+//        runOnUiThread(() -> application.showToastShortMsg(url));
     }
 }

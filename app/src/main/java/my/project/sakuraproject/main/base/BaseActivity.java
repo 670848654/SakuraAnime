@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import java.util.List;
 
@@ -31,10 +32,16 @@ public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatA
     public Sakura application;
     private Unbinder mUnBinder;
     protected boolean mActivityFinish = false;
+    protected boolean isDarkTheme;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        isDarkTheme = (Boolean) SharedPreferencesUtils.getParam(this, "darkTheme", false);
+        if (isDarkTheme)
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        else
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         if (!getRunningActivityName().equals("StartActivity") && !getRunningActivityName().equals("HomeActivity")) overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         initBeforeView();
         setContentView(setLayoutRes());
@@ -145,6 +152,10 @@ public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatA
 
     public boolean gtSdk23() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
+    }
+
+    public boolean gtSdk26() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O;
     }
 
     private String getRunningActivityName() {

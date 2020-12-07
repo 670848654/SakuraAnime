@@ -52,49 +52,172 @@
                         android:layout_height="wrap_content"
                         android:layout_margin="2dp" />
 
-                    <TextView
-                        android:id="@+id/pic"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:drawableStart="@drawable/baseline_picture_in_picture_alt_white_48dp"
-                        android:drawablePadding="5dp"
-                        android:foreground="?android:attr/selectableItemBackground"
-                        android:gravity="center_vertical"
-                        android:padding="5dp"
-                        android:text="画中画模式"
-                        android:textColor="@android:color/white"
-                        android:textSize="15sp" />
-
-                    <TextView
-                        android:id="@+id/select_player"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:drawableStart="@drawable/baseline_open_in_new_white_48dp"
-                        android:drawablePadding="5dp"
-                        android:foreground="?android:attr/selectableItemBackground"
-                        android:gravity="center_vertical"
-                        android:padding="5dp"
-                        android:text="使用外部播放器播放"
-                        android:textColor="@android:color/white"
-                        android:textSize="15sp" />
-
-                    <TextView
-                        android:id="@+id/open_in_browser"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:drawableStart="@drawable/baseline_language_white_48dp"
-                        android:drawablePadding="5dp"
-                        android:foreground="?android:attr/selectableItemBackground"
-                        android:gravity="center_vertical"
-                        android:padding="5dp"
-                        android:text="通过浏览器访问原地址"
-                        android:textColor="@android:color/white"
-                        android:textSize="15sp" />
                 </LinearLayout>
+
+            </androidx.core.widget.NestedScrollView>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/nav_config_view"
+            android:layout_width="350dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:background="@color/grey900"
+            android:orientation="vertical">
+
+            <androidx.core.widget.NestedScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:descendantFocusability="blocksDescendants"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:text="@string/player_setting_title"
+                        android:textColor="@android:color/white"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginRight="16dp"
+                        android:layout_marginBottom="10dp"
+                        android:textSize="18sp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                    <RelativeLayout
+                        android:id="@+id/speed_config"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:layout_width="match_parent"
+                        android:layout_height="45dp">
+
+                        <ImageView
+                            android:id="@+id/config_icon1"
+                            android:src="@drawable/baseline_replay_white_48dp"
+                            android:tint="@android:color/white"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="16dp"
+                            android:layout_marginRight="16dp"
+                            android:layout_width="28dp"
+                            android:layout_height="28dp" />
+
+                        <TextView
+                            android:text="@string/set_user_speed"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_toRightOf="@+id/config_icon1"
+                            android:layout_centerVertical="true"
+                            android:textColor="@android:color/white" />
+
+                        <TextView
+                            android:id="@+id/speed"
+                            android:text="15s"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_alignParentRight="true"
+                            android:layout_marginRight="16dp"
+                            android:textColor="@android:color/white"/>
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/pic_config"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:layout_width="match_parent"
+                        android:layout_height="45dp">
+
+                        <ImageView
+                            android:id="@+id/config_icon2"
+                            android:src="@drawable/baseline_picture_in_picture_alt_white_48dp"
+                            android:tint="@android:color/white"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="16dp"
+                            android:layout_marginRight="16dp"
+                            android:layout_width="28dp"
+                            android:layout_height="28dp" />
+
+                        <TextView
+                            android:text="@string/picture_in_picture_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_toRightOf="@+id/config_icon2"
+                            android:layout_centerVertical="true"
+                            android:textColor="@android:color/white" />
+
+                    </RelativeLayout>
+
+                    <TextView
+                        android:text="@string/player_other_title"
+                        android:textColor="@android:color/white"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginRight="16dp"
+                        android:layout_marginBottom="10dp"
+                        android:textSize="18sp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                    <RelativeLayout
+                        android:id="@+id/player_config"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:layout_width="match_parent"
+                        android:layout_height="45dp">
+
+                        <ImageView
+                            android:id="@+id/config_icon3"
+                            android:src="@drawable/baseline_open_in_new_white_48dp"
+                            android:tint="@android:color/white"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="16dp"
+                            android:layout_marginRight="16dp"
+                            android:layout_width="28dp"
+                            android:layout_height="28dp" />
+
+                        <TextView
+                            android:text="@string/play_with_external_player"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_toRightOf="@+id/config_icon3"
+                            android:layout_centerVertical="true"
+                            android:textColor="@android:color/white" />
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/browser_config"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:layout_width="match_parent"
+                        android:layout_height="45dp">
+
+                        <ImageView
+                            android:id="@+id/config_icon4"
+                            android:src="@drawable/baseline_language_white_48dp"
+                            android:tint="@android:color/white"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="16dp"
+                            android:layout_marginRight="16dp"
+                            android:layout_width="28dp"
+                            android:layout_height="28dp" />
+
+                        <TextView
+                            android:text="@string/open_external_browser"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_toRightOf="@+id/config_icon4"
+                            android:layout_centerVertical="true"
+                            android:textColor="@android:color/white" />
+
+                    </RelativeLayout>
+
+                    </LinearLayout>
+
             </androidx.core.widget.NestedScrollView>
         </LinearLayout>
+
     </androidx.drawerlayout.widget.DrawerLayout>
 </RelativeLayout>

@@ -3,7 +3,7 @@
     <shortcut
         android:shortcutId="favorite"
         android:enabled="true"
-        android:icon="@drawable/heart"
+        android:icon="@drawable/ic_shortcut_favorite"
         android:shortcutShortLabel="@string/favoriteShortName"
         android:shortcutLongLabel="@string/favoriteLongName"
         android:shortcutDisabledMessage="@string/disableMsg">
@@ -18,7 +18,7 @@
     <shortcut
         android:shortcutId="tag"
         android:enabled="true"
-        android:icon="@drawable/heart"
+        android:icon="@drawable/ic_shortcut_dashboard"
         android:shortcutShortLabel="@string/tagShortName"
         android:shortcutLongLabel="@string/tagLongName"
         android:shortcutDisabledMessage="@string/disableMsg">
@@ -33,7 +33,7 @@
     <shortcut
         android:shortcutId="search"
         android:enabled="true"
-        android:icon="@drawable/heart"
+        android:icon="@drawable/ic_shortcut_search"
         android:shortcutShortLabel="@string/searchShortName"
         android:shortcutLongLabel="@string/searchLongName"
         android:shortcutDisabledMessage="@string/disableMsg">

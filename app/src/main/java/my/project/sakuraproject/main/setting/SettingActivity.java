@@ -147,6 +147,8 @@ public class SettingActivity extends BaseActivity {
             }
         });
         EditText editText = view.findViewById(R.id.domain);
+        String defaultUrl = (String) SharedPreferencesUtils.getParam(this, "domain", Utils.getString(R.string.domain_url));
+        editText.setText(defaultUrl.replaceAll("http://", "").replaceAll("https://", ""));
         builder.setPositiveButton(Utils.getString(R.string.page_positive_edit), null);
         builder.setNegativeButton(Utils.getString(R.string.page_negative), null);
         builder.setNeutralButton(Utils.getString(R.string.page_def), null);

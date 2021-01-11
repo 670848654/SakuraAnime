@@ -230,7 +230,13 @@ public class AboutActivity extends BaseActivity {
                             Utils.findNewVersion(AboutActivity.this,
                                     newVersion,
                                     body,
-                                    (dialog, which) -> download(),
+                                    (dialog, which) -> {
+//                                        download()
+                                        dialog.dismiss();
+                                        Utils.putTextIntoClip(downloadUrl);
+                                        application.showSuccessToastMsg(Utils.getString(R.string.url_copied));
+                                        Utils.openBrowser(AboutActivity.this, downloadUrl);
+                                    },
                                     (dialog, which) -> dialog.dismiss()
                             );
                         });

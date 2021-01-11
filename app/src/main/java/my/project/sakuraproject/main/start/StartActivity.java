@@ -87,14 +87,18 @@ public class StartActivity extends BaseActivity {
                                 newVersion,
                                 body,
                                 (dialog, which) -> {
-                                    p = Utils.showProgressDialog(StartActivity.this);
+                                    /*p = Utils.showProgressDialog(StartActivity.this);
                                     p.setButton(ProgressDialog.BUTTON_NEGATIVE, Utils.getString(R.string.cancel), (dialog1, which1) -> {
                                         if (null != downCall)
                                             downCall.cancel();
                                         dialog1.dismiss();
                                     });
                                     p.show();
-                                    downNewVersion(downUrl);
+                                    downNewVersion(downUrl);*/
+                                    dialog.dismiss();
+                                    Utils.putTextIntoClip(downUrl);
+                                    application.showSuccessToastMsg(Utils.getString(R.string.url_copied));
+                                    Utils.openBrowser(StartActivity.this, downUrl);
                                 },
                                 (dialog, which) -> {
                                     dialog.dismiss();

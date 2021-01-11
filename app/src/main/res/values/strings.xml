@@ -158,6 +158,10 @@
     <string name="player_other_title">其他操作</string>
     <string name="play_with_external_player">使用外部播放器播放</string>
     <string name="open_external_browser">通过浏览器访问原地址</string>
+    <string name="url_copied">下载地址已复制到剪切板</string>
+    <string name="select_tools">请选择下载工具</string>
+    <string name="tools_not_found">没有找到匹配的程序</string>
+
     <string-array name="speed_item">
         <item>5s</item>
         <item>10s</item>

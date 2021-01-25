@@ -103,7 +103,7 @@
     <string name="down">下载</string>
     <string name="open_in_browser">通过浏览器打开</string>
     <!-- 收藏相关文本 -->
-    <string name="favorite_title">我的追番</string>
+    <string name="favorite_title">追番列表</string>
     <string name="empty_favorite">空空如也呢(－∀＝)</string>
     <string name="favorite">追番</string>
     <string name="remove_favorite">弃番</string>

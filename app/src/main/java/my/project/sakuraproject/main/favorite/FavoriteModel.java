@@ -10,8 +10,8 @@ import my.project.sakuraproject.util.Utils;
 public class FavoriteModel implements FavoriteContract.Model {
 
     @Override
-    public void getData(FavoriteContract.LoadDataCallback callback) {
-        List<AnimeListBean> list = DatabaseUtil.queryAllFavorite();
+    public void getData(int offset, int limit, FavoriteContract.LoadDataCallback callback) {
+        List<AnimeListBean> list = DatabaseUtil.queryFavoriteByLimit(offset, limit);
         if (list.size() > 0)
             callback.success(list);
         else

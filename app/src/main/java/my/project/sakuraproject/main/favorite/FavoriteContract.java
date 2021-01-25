@@ -8,7 +8,7 @@ import my.project.sakuraproject.main.base.BaseView;
 
 public interface FavoriteContract {
     interface Model {
-        void getData(LoadDataCallback callback);
+        void getData(int offset, int limit, LoadDataCallback callback);
     }
 
     interface View extends BaseView {

@@ -1,7 +1,5 @@
 package my.project.sakuraproject.main.tag;
 
-import android.util.Log;
-
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 
 import org.jsoup.Jsoup;
@@ -49,8 +47,6 @@ public class TagModel extends BaseModel implements TagContract.Model {
                     else {
                         Elements tagTitles = doc.select("div.dtit");
                         Elements tagItems = doc.select("div.link");
-                        Log.e("size1", tagTitles.size()+"");
-                        Log.e("size2", tagItems.size()+"");
                         if (tagTitles.size() == tagItems.size()) {
                             setTagData(tagTitles, tagItems);
                             callback.success(list);

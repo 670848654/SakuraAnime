@@ -9,10 +9,14 @@ import my.project.sakuraproject.main.base.Presenter;
 public class FavoritePresenter extends Presenter<FavoriteContract.View> implements BasePresenter, FavoriteContract.LoadDataCallback {
     private FavoriteContract.View view;
     private FavoriteModel model;
+    private int offset;
+    private int limit;
 
-    public FavoritePresenter(FavoriteContract.View view) {
+    public FavoritePresenter(int offset, int limit, FavoriteContract.View view) {
         super(view);
         this.view = view;
+        this.offset = offset;
+        this.limit = limit;
         model = new FavoriteModel();
     }
 
@@ -22,7 +26,7 @@ public class FavoritePresenter extends Presenter<FavoriteContract.View> implemen
             view.showLoadingView();
             view.showEmptyVIew();
         }
-        model.getData(this);
+        model.getData(offset, limit, this);
     }
 
     @Override

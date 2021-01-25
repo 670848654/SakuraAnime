@@ -123,11 +123,14 @@ public class DatabaseUtil {
     }
 
     /**
-     * 查询用户收藏的番剧
+     * 分页查询用户收藏的番剧
      */
-    public static List<AnimeListBean> queryAllFavorite() {
+    public static List<AnimeListBean> queryFavoriteByLimit(int offset, int limit) {
         List<AnimeListBean> list = new ArrayList<>();
-        Cursor c = db.rawQuery("select * from f_favorite order by id desc", null);
+//        Cursor c = db.rawQuery("select * from f_favorite order by id desc", null);
+        String parameter = "%s,%s";
+        Cursor c = db.query("f_favorite", null, null, null,null,null,"id DESC",
+                String.format(parameter, offset, limit));
         while (c.moveToNext()) {
             AnimeListBean bean = new AnimeListBean();
             bean.setTitle(c.getString(1));
@@ -138,6 +141,19 @@ public class DatabaseUtil {
         }
         c.close();
         return list;
+    }
+
+    /**
+     *  查询用户收藏总数
+     * @return
+     */
+    public static int queryFavoriteCount() {
+        int count;
+        String QueryCount = "select * from f_favorite";
+        Cursor cursor = db.rawQuery(QueryCount, null);
+        count = cursor.getCount();
+        cursor.close();
+        return count;
     }
 
     /**

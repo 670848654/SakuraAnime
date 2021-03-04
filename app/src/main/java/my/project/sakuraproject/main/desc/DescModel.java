@@ -88,7 +88,7 @@ public class DescModel extends BaseModel implements DescContract.Model {
                             if (recommend.size() > 0) setRecommend(recommend);
                             callback.successMain(animeDescListBean);
                         } else {
-                            callback.error(Utils.getString(R.string.no_playlist_error));
+                            callback.emptyDram(Utils.getString(R.string.no_playlist_error));
                         }
                     }
                 } catch (Exception e) {

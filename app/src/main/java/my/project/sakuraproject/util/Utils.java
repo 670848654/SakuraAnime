@@ -23,6 +23,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Display;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.Animation;
@@ -44,17 +45,22 @@ import androidx.palette.graphics.Palette;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DecodeFormat;
+import com.bumptech.glide.load.model.GlideUrl;
+import com.bumptech.glide.load.model.LazyHeaders;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
 import com.bumptech.glide.request.transition.Transition;
+import com.fanchen.sniffing.SniffingVideo;
 import com.r0adkll.slidr.model.SlidrConfig;
 import com.r0adkll.slidr.model.SlidrPosition;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import my.project.sakuraproject.BuildConfig;
 import my.project.sakuraproject.R;
@@ -111,38 +117,25 @@ public class Utils {
      *
      * @return
      */
-    public static ProgressDialog getProDialog(Context context, @StringRes int id) {
-        ProgressDialog p = new ProgressDialog(context);
-        p.setMessage(getString(id));
-        p.setCancelable(false);
-        p.show();
-        return p;
+    public static AlertDialog getProDialog(Activity activity, @StringRes int id) {
+        AlertDialog alertDialog;
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity, R.style.DialogStyle);
+        View view = LayoutInflater.from(activity).inflate(R.layout.dialog_proress, null);
+        TextView msg = view.findViewById(R.id.msg);
+        msg.setText(getString(id));
+        builder.setCancelable(false);
+        alertDialog = builder.setView(view).create();
+        alertDialog.show();
+        return alertDialog;
     }
 
     /**
-     * 下载进度条
-     *
-     * @param context
-     * @return
+     * 关闭对话框
+     * @param alertDialog
      */
-    public static ProgressDialog showProgressDialog(Context context) {
-        final ProgressDialog pd = new ProgressDialog(context);
-        pd.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);// 设置水平进度条
-        pd.setCancelable(false);// 设置是否可以通过点击Back键取消
-        pd.setCanceledOnTouchOutside(false);// 设置在点击Dialog外是否取消Dialog进度条
-        pd.setMax(100);
-        pd.setMessage(getString(R.string.download));
-        return pd;
-    }
-
-    /**
-     * 关闭加载框
-     *
-     * @param p
-     */
-    public static void cancelProDialog(ProgressDialog p) {
-        if (p != null)
-            p.dismiss();
+    public static void cancelDialog(AlertDialog alertDialog) {
+        if (alertDialog != null)
+            alertDialog.dismiss();
     }
 
     /**
@@ -231,7 +224,7 @@ public class Utils {
      */
     public static void showX5Info(Context context) {
         AlertDialog alertDialog;
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
         builder.setPositiveButton(getString(R.string.x5_info_positive), null);
         builder.setMessage(getString(R.string.x5_info));
         builder.setTitle(getString(R.string.x5_info_title));
@@ -383,43 +376,41 @@ public class Utils {
 
     /**
      * 设置默认图片
-     *
+     * @param context
      * @param url
+     * @param imageView
+     * @param setPalette
+     * @param cardView
+     * @param textView
      */
-    public static void setDefaultImage(Context context, String url, ImageView imageView) {
+    public static void setDefaultImage(Context context, String url, ImageView imageView, boolean setPalette, CardView cardView, TextView textView) {
         DrawableCrossFadeFactory drawableCrossFadeFactory = new DrawableCrossFadeFactory.Builder(300).setCrossFadeEnabled(true).build();
+        GlideUrl imgUrl = new GlideUrl(url, new LazyHeaders.Builder()
+                .addHeader("Referer", Sakura.DOMAIN + "/")
+                .build());
         RequestOptions options = new RequestOptions()
                 .centerCrop()
                 .format(DecodeFormat.PREFER_RGB_565)
                 .placeholder(R.drawable.loading)
                 .error(R.drawable.error);
         Glide.with(context)
-                .load(url)
+                .load(imgUrl)
                 .transition(DrawableTransitionOptions.withCrossFade(drawableCrossFadeFactory))
                 .apply(options)
                 .into(imageView);
-    }
-
-    /**
-     * 设置Palette
-     * @param context
-     * @param url
-     * @param cardView
-     * @param textView
-     */
-    public static void setCardBg(Context context, String url, CardView cardView, TextView textView) {
-        Glide.with(context).asBitmap().load(url).into(new SimpleTarget<Bitmap>() {
-            @Override
-            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                Palette.from(resource).generate(palette -> {
-                    Palette.Swatch swatch = palette.getDarkVibrantSwatch();
-                    if (swatch != null) {
-                        cardView.setCardBackgroundColor(swatch.getRgb());
-                        textView.setTextColor(swatch.getBodyTextColor());
-                    }
-                });
-            }
-        });
+        if (setPalette) // 设置Palette
+            Glide.with(context).asBitmap().load(imgUrl).into(new SimpleTarget<Bitmap>() {
+                @Override
+                public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                    Palette.from(resource).generate(palette -> {
+                        Palette.Swatch swatch = palette.getDarkVibrantSwatch();
+                        if (swatch != null) {
+                            cardView.setCardBackgroundColor(swatch.getRgb());
+                            textView.setTextColor(swatch.getBodyTextColor());
+                        }
+                    });
+                }
+            });
     }
 
     public static void setCardDefaultBg(Context context, CardView cardView, TextView textView) {
@@ -437,7 +428,6 @@ public class Utils {
      * @param root
      */
     public static void deleteAllFiles(File root) {
-        Log.e("删除文件", root.toString());
         File files[] = root.listFiles();
         if (files != null)
             for (File f : files) {
@@ -523,7 +513,7 @@ public class Utils {
                                       DialogInterface.OnClickListener posListener,
                                       DialogInterface.OnClickListener negListener) {
         AlertDialog alertDialog;
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
         builder.setMessage(body);
         builder.setTitle(getString(R.string.find_new_version) + version);
         builder.setPositiveButton(getString(R.string.update_now), posListener);
@@ -647,6 +637,41 @@ public class Utils {
             context.startActivity(Intent.createChooser(intent, getString(R.string.select_tools)));
         } else {
             Toast.makeText(context.getApplicationContext(), getString(R.string.tools_not_found), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
+     * 嗅探视频地址集合
+     * @param list
+     * @return
+     */
+    public static List ridRepeat(List<SniffingVideo> list) {
+        List<String> urls = new ArrayList();
+        for (SniffingVideo sniffingVideo : list) {
+            if (!urls.contains(sniffingVideo.getUrl()) && !sniffingVideo.getUrl().startsWith("mp4"))
+                urls.add(sniffingVideo.getUrl());
+        }
+        return urls;
+    }
+
+    public static void getRealScreenRelatedInformation(Context context) {
+        WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        if (windowManager != null) {
+            DisplayMetrics outMetrics = new DisplayMetrics();
+            windowManager.getDefaultDisplay().getRealMetrics(outMetrics);
+            int widthPixels = outMetrics.widthPixels;
+            int heightPixels = outMetrics.heightPixels;
+            int densityDpi = outMetrics.densityDpi;
+            float density = outMetrics.density;
+            float scaledDensity = outMetrics.scaledDensity;
+            //可用显示大小的绝对宽度（以像素为单位）。
+            //可用显示大小的绝对高度（以像素为单位）。
+            //屏幕密度表示为每英寸点数。
+            //显示器的逻辑密度。
+            //显示屏上显示的字体缩放系数。
+            Log.d("display", "widthPixels = " + widthPixels + ",heightPixels = " + heightPixels + "\n" +
+                    ",densityDpi = " + densityDpi + "\n" +
+                    ",density = " + density + ",scaledDensity = " + scaledDensity);
         }
     }
 }

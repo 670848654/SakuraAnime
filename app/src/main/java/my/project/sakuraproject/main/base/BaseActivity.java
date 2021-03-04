@@ -171,7 +171,8 @@ public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatA
                 !getRunningActivityName().equals("DefaultX5WebActivity") &&
                 !getRunningActivityName().equals("X5WebActivity") &&
                 !getRunningActivityName().equals("DefaultNormalWebActivity") &&
-                !getRunningActivityName().equals("NormalWebActivity")) {
+                !getRunningActivityName().equals("NormalWebActivity") &&
+                !getRunningActivityName().equals("DLNAActivity")) {
             if (gtSdk23()) {
                 StatusBarUtil.setColorForSwipeBack(this, getColor(R.color.colorPrimary), 0);
                 if (!(Boolean) SharedPreferencesUtils.getParam(this, "darkTheme", false))

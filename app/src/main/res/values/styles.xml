@@ -93,4 +93,20 @@
         <item name="android:windowEnterAnimation">@anim/fade_in</item>
         <item name="android:windowExitAnimation">@anim/fade_out</item>
     </style>
+
+    <style name="DialogStyle" parent="Theme.AppCompat.DayNight.Dialog.Alert">
+        <item name="android:colorAccent">@color/colorAccent</item>
+        <item name="android:colorControlActivated">@color/colorAccent</item>
+    </style>
+
+    <style name="Theme.NotFullActivity" parent="Theme.AppCompat.DayNight.Dialog.Alert">
+        <item name="android:windowCloseOnTouchOutside">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textColorPrimary">@color/text_color_primary</item>
+    </style>
 </resources>

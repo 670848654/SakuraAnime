@@ -28,7 +28,7 @@ public class AnimeDescRecommendAdapter extends BaseQuickAdapter<AnimeDescRecomme
     protected void convert(final BaseViewHolder helper, AnimeDescRecommendBean item) {
         Utils.setCardDefaultBg(context, helper.getView(R.id.card_view), helper.getView(R.id.title));
         helper.setText(R.id.title, item.getTitle());
-        Utils.setDefaultImage(context, item.getImg(), helper.getView(R.id.img));
-        Utils.setCardBg(context, item.getImg(), helper.getView(R.id.card_view), helper.getView(R.id.title));
+        Utils.setDefaultImage(context, item.getImg(), helper.getView(R.id.img), true, helper.getView(R.id.card_view), helper.getView(R.id.title));
+//        Utils.setCardBg(context, item.getImg(), helper.getView(R.id.card_view), helper.getView(R.id.title));
     }
 }

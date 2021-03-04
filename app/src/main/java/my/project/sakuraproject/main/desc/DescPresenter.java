@@ -31,6 +31,11 @@ public class DescPresenter extends Presenter<DescContract.View> implements BaseP
     }
 
     @Override
+    public void emptyDram(String msg) {
+        view.showEmptyDram(msg);
+    }
+
+    @Override
     public void successDesc(AnimeListBean bean) {
         view.showSuccessDescView(bean);
     }

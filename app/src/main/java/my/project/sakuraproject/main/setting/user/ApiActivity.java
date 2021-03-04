@@ -109,7 +109,7 @@ public class ApiActivity extends BaseActivity<ApiContract.View, ApiPresenter> im
     }
 
     public void delete(int position) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.DialogStyle);
         builder.setMessage(Utils.getString(R.string.delete_api_title));
         builder.setPositiveButton(Utils.getString(R.string.page_positive), (dialog, i) -> {
             DatabaseUtil.deleteApi(apiList.get(position).getId());
@@ -137,7 +137,7 @@ public class ApiActivity extends BaseActivity<ApiContract.View, ApiPresenter> im
      * @param position
      */
     public void setApi(boolean isEdit, int position) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.DialogStyle);
         View view = LayoutInflater.from(this).inflate(R.layout.dialog_user_api_custom, null);
         final EditText title = view.findViewById(R.id.title);
         final EditText url = view.findViewById(R.id.url);

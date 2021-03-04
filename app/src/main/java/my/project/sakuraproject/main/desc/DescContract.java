@@ -17,6 +17,8 @@ public interface DescContract {
         void showSuccessDescView(AnimeListBean bean);
 
         void showSuccessFavorite(boolean favorite);
+
+        void showEmptyDram(String msg);
     }
 
     interface LoadDataCallback extends BaseLoadDataCallback {
@@ -25,5 +27,7 @@ public interface DescContract {
         void successDesc(AnimeListBean bean);
 
         void isFavorite(boolean favorite);
+
+        void emptyDram(String msg);
     }
 }

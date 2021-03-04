@@ -63,6 +63,7 @@
 
                 <LinearLayout
                     android:id="@+id/desc_view"
+                    android:visibility="gone"
                     android:layout_width="match_parent"
                     android:clipChildren="false"
                     android:layout_height="270dp"

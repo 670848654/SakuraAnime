@@ -38,7 +38,6 @@ import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.bean.LogBean;
 import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.base.Presenter;
-import my.project.sakuraproject.net.DownloadUtil;
 import my.project.sakuraproject.net.HttpGet;
 import my.project.sakuraproject.util.SharedPreferencesUtils;
 import my.project.sakuraproject.util.SwipeBackLayoutUtil;
@@ -54,7 +53,7 @@ public class AboutActivity extends BaseActivity {
     TextView cache;
     @BindView(R.id.version)
     TextView version;
-    private ProgressDialog p;
+    private AlertDialog alertDialog;
     private String downloadUrl;
     private Call downCall;
     @BindView(R.id.footer)
@@ -168,6 +167,8 @@ public class AboutActivity extends BaseActivity {
 
     public List createUpdateLogList() {
         List logsList = new ArrayList();
+        logsList.add(new LogBean("版本：1.9.7", "修复已知问题\n新增视频投屏功能"));
+        logsList.add(new LogBean("版本：1.9.6_2", "修复图片无法正常显示的问题\n修复动漫分类界面浮动按钮在有导航栏的设备上被遮挡的问题\n内置播放器新增倍数播放（0.5X - 3X）"));
         logsList.add(new LogBean("版本：1.9.6_1", "域名变更为http://www.yhdm.io"));
         logsList.add(new LogBean("版本：1.9.6", "动漫分类界面改动\n内置播放器快进、后退参数可设置（5s，10s，15s，30s），播放器界面点击“设置”图标，在弹窗界面中配置"));
         logsList.add(new LogBean("版本：1.9.5", "修复部分设备（平板）无法正常播放的问题"));
@@ -201,12 +202,12 @@ public class AboutActivity extends BaseActivity {
     }
 
     public void checkUpdate() {
-        p = Utils.getProDialog(this, R.string.check_update_text);
+        alertDialog = Utils.getProDialog(this, R.string.check_update_text);
         new Handler().postDelayed(() -> new HttpGet(Api.CHECK_UPDATE, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 runOnUiThread(() -> {
-                    Utils.cancelProDialog(p);
+                    Utils.cancelDialog(alertDialog);
                     application.showSnackbarMsgAction(show, Utils.getString(R.string.ck_network_error_start), Utils.getString(R.string.try_again), v -> checkUpdate());
                 });
             }
@@ -219,19 +220,18 @@ public class AboutActivity extends BaseActivity {
                     String newVersion = obj.getString("tag_name");
                     if (newVersion.equals(Utils.getASVersionName()))
                         runOnUiThread(() -> {
-                            Utils.cancelProDialog(p);
+                            Utils.cancelDialog(alertDialog);
                             application.showSnackbarMsg(show, Utils.getString(R.string.no_new_version));
                         });
                     else {
                         downloadUrl = obj.getJSONArray("assets").getJSONObject(0).getString("browser_download_url");
                         String body = obj.getString("body");
                         runOnUiThread(() -> {
-                            Utils.cancelProDialog(p);
+                            Utils.cancelDialog(alertDialog);
                             Utils.findNewVersion(AboutActivity.this,
                                     newVersion,
                                     body,
                                     (dialog, which) -> {
-//                                        download()
                                         dialog.dismiss();
                                         Utils.putTextIntoClip(downloadUrl);
                                         application.showSuccessToastMsg(Utils.getString(R.string.url_copied));
@@ -243,57 +243,10 @@ public class AboutActivity extends BaseActivity {
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    application.showErrorToastMsg(Utils.getString(R.string.ck_error_start));
+                    Utils.cancelDialog(alertDialog);
                 }
             }
         }), 1000);
-    }
-
-    public void download() {
-        p = Utils.showProgressDialog(AboutActivity.this);
-        p.setButton(ProgressDialog.BUTTON_NEGATIVE, Utils.getString(R.string.page_negative), (dialog1, which1) -> {
-            if (null != downCall)
-                downCall.cancel();
-            dialog1.dismiss();
-        });
-        p.show();
-        downNewVersion(downloadUrl);
-    }
-
-    /**
-     * 下载apk
-     *
-     * @param url 下载地址
-     */
-    private void downNewVersion(String url) {
-        downCall = DownloadUtil.get().downloadApk(url, new DownloadUtil.OnDownloadListener() {
-            @Override
-            public void onDownloadSuccess(final String fileName) {
-                runOnUiThread(() -> {
-                    Utils.cancelProDialog(p);
-                    Utils.startInstall(AboutActivity.this);
-                });
-            }
-
-            @Override
-            public void onDownloading(final int progress) {
-                runOnUiThread(() -> p.setProgress(progress));
-            }
-
-            @Override
-            public void onDownloadFailed() {
-                runOnUiThread(() -> {
-                    Utils.cancelProDialog(p);
-                    application.showSnackbarMsgAction(show, Utils.getString(R.string.download_error), Utils.getString(R.string.try_again), v -> download());
-                });
-            }
-        });
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 10001) {
-            Utils.startInstall(AboutActivity.this);
-        }
     }
 }

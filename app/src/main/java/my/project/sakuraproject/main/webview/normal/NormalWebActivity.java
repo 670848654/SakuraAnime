@@ -20,6 +20,7 @@ import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -69,7 +70,7 @@ public class NormalWebActivity extends BaseActivity implements VideoContract.Vie
     private List<AnimeDescDetailsBean> dramaList = new ArrayList<>();
     private DramaAdapter dramaAdapter;
     private BottomSheetDialog mBottomSheetDialog;
-    private ProgressDialog p;
+    private AlertDialog alertDialog;
     @BindView(R.id.drama)
     FloatingActionButton drama;
     @BindView(R.id.title)
@@ -211,7 +212,7 @@ public class NormalWebActivity extends BaseActivity implements VideoContract.Vie
             setResult(0x20);
             mBottomSheetDialog.dismiss();
             AnimeDescDetailsBean bean = (AnimeDescDetailsBean) adapter.getItem(position);
-            p = Utils.getProDialog(NormalWebActivity.this, R.string.parsing);
+            alertDialog = Utils.getProDialog(NormalWebActivity.this, R.string.parsing);
             Button v = (Button) adapter.getViewByPosition(dramaRecyclerView, position, R.id.tag_group);
             v.setBackgroundResource(R.drawable.button_selected);
             v.setTextColor(getResources().getColor(R.color.tabSelectedTextColor));
@@ -327,7 +328,7 @@ public class NormalWebActivity extends BaseActivity implements VideoContract.Vie
 
     @Override
     public void cancelDialog() {
-        Utils.cancelProDialog(p);
+        Utils.cancelDialog(alertDialog);
     }
 
     @Override

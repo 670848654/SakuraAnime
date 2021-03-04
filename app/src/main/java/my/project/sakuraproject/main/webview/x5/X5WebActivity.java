@@ -70,7 +70,6 @@ public class X5WebActivity extends BaseActivity implements VideoContract.View, S
     private List<AnimeDescDetailsBean> dramaList = new ArrayList<>();
     private DramaAdapter dramaAdapter;
     private BottomSheetDialog mBottomSheetDialog;
-    private ProgressDialog p;
     @BindView(R.id.drama)
     FloatingActionButton drama;
     @BindView(R.id.title)
@@ -338,7 +337,6 @@ public class X5WebActivity extends BaseActivity implements VideoContract.View, S
 
     @Override
     public void cancelDialog() {
-        Utils.cancelProDialog(p);
     }
 
     @Override

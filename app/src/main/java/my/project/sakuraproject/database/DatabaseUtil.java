@@ -127,7 +127,7 @@ public class DatabaseUtil {
      */
     public static List<AnimeListBean> queryFavoriteByLimit(int offset, int limit) {
         List<AnimeListBean> list = new ArrayList<>();
-//        Cursor c = db.rawQuery("select * from f_favorite order by id desc", null);
+//        Cursor c = db.rawQuery("select * from f_favorite order by id desc_bg", null);
         String parameter = "%s,%s";
         Cursor c = db.query("f_favorite", null, null, null,null,null,"id DESC",
                 String.format(parameter, offset, limit));

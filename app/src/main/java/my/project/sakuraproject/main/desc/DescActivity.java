@@ -1,12 +1,8 @@
 package my.project.sakuraproject.main.desc;
 
 import android.annotation.SuppressLint;
-import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,7 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
@@ -27,20 +23,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.DecodeFormat;
+import com.bumptech.glide.load.model.GlideUrl;
+import com.bumptech.glide.load.model.LazyHeaders;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
-import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
-import com.bumptech.glide.request.transition.Transition;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.fanchen.sniffing.SniffingUICallback;
-import com.fanchen.sniffing.SniffingVideo;
-import com.fanchen.sniffing.web.SniffingUtil;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.r0adkll.slidr.Slidr;
-import com.zhouwei.blurlibrary.EasyBlur;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,11 +40,11 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import co.lujun.androidtagview.TagContainerLayout;
 import co.lujun.androidtagview.TagView;
+import jp.wasabeef.glide.transformations.BlurTransformation;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.adapter.AnimeDescDetailsAdapter;
 import my.project.sakuraproject.adapter.AnimeDescDramaAdapter;
 import my.project.sakuraproject.adapter.AnimeDescRecommendAdapter;
-import my.project.sakuraproject.api.Api;
 import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.bean.AnimeDescDetailsBean;
 import my.project.sakuraproject.bean.AnimeDescListBean;
@@ -72,7 +63,7 @@ import my.project.sakuraproject.util.SwipeBackLayoutUtil;
 import my.project.sakuraproject.util.Utils;
 import my.project.sakuraproject.util.VideoUtils;
 
-public class DescActivity extends BaseActivity<DescContract.View, DescPresenter> implements DescContract.View, VideoContract.View, SniffingUICallback {
+public class DescActivity extends BaseActivity<DescContract.View, DescPresenter> implements DescContract.View, VideoContract.View {
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.anime_img)
@@ -84,7 +75,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     private String diliUrl, dramaUrl;
     private String animeTitle;
     private String witchTitle;
-    private ProgressDialog p;
+    private AlertDialog alertDialog;
     private boolean isFavorite;
     private VideoPresenter videoPresenter;
     private AnimeListBean animeListBean = new AnimeListBean();
@@ -310,7 +301,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     }
 
     public void playVideo(BaseQuickAdapter adapter, int position, AnimeDescDetailsBean bean, RecyclerView recyclerView) {
-        p = Utils.getProDialog(DescActivity.this, R.string.parsing);
+        alertDialog = Utils.getProDialog(DescActivity.this, R.string.parsing);
         Button v = (Button) adapter.getViewByPosition(recyclerView, position, R.id.tag_group);
         v.setBackgroundResource(R.drawable.button_selected);
         v.setTextColor(getResources().getColor(R.color.item_selected_color));
@@ -330,30 +321,14 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
      */
     private void playAnime(String animeUrl) {
         cancelDialog();
-        if (Patterns.WEB_URL.matcher(animeUrl.replace(" ", "")).matches()) {
-            if (animeUrl.contains("jx.618g.com")) {
-                VideoUtils.openWebview(false, this, witchTitle, animeTitle, animeUrl.replaceAll("http://jx.618g.com/\\?url=", ""), diliUrl, animeDescListBean.getAnimeDescDetailsBeans());
-            } else if (animeUrl.contains(".mp4") || animeUrl.contains(".m3u8")) {
-                cancelDialog();
-                switch ((Integer) SharedPreferencesUtils.getParam(getApplicationContext(), "player", 0)) {
-                    case 0:
-                        //调用播放器
-                        VideoUtils.openPlayer(true, this, witchTitle, animeUrl, animeTitle, diliUrl, animeDescListBean.getAnimeDescDetailsBeans());
-                        break;
-                    case 1:
-                        Utils.selectVideoPlayer(this, animeUrl);
-                        break;
-                }
-            }else {
-                p = Utils.getProDialog(DescActivity.this, R.string.parsing);
-                application.showToastMsg(Utils.getString(R.string.should_be_used_web));
-                SniffingUtil.get().activity(this).referer(animeUrl).callback(this).url(animeUrl).start();
-            }
-        }  else {
-            p = Utils.getProDialog(DescActivity.this, R.string.parsing);
-            String webUrl = String.format(Api.PARSE_API, animeUrl);
-            application.showToastMsg(Utils.getString(R.string.should_be_used_web));
-            SniffingUtil.get().activity(this).referer(webUrl).callback(this).url(webUrl).start();
+        switch ((Integer) SharedPreferencesUtils.getParam(getApplicationContext(), "player", 0)) {
+            case 0:
+                //调用播放器
+                VideoUtils.openPlayer(true, this, witchTitle, animeUrl, animeTitle, diliUrl, animeDescListBean.getAnimeDescDetailsBeans());
+                break;
+            case 1:
+                Utils.selectVideoPlayer(this, animeUrl);
+                break;
         }
     }
 
@@ -393,30 +368,15 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     }
 
     public void setCollapsingToolbar() {
-        Glide.with(DescActivity.this).asBitmap().load(animeListBean.getImg()).into(new SimpleTarget<Bitmap>() {
-            @Override
-            public void onResourceReady(Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                if (resource != null) {
-                    DrawableCrossFadeFactory drawableCrossFadeFactory = new DrawableCrossFadeFactory.Builder(300).setCrossFadeEnabled(true).build();
-                    RequestOptions options = new RequestOptions()
-                            .centerCrop()
-                            .placeholder(R.drawable.default_bg)
-                            .error(R.drawable.default_bg)
-                            .format(DecodeFormat.PREFER_RGB_565);
-                    Glide.with(DescActivity.this)
-                            .load(new BitmapDrawable(DescActivity.this.getResources(), EasyBlur.with(DescActivity.this)
-                                    .bitmap(resource) //要模糊的图片
-                                    .radius(10)//模糊半径
-                                    .scale(4)//指定模糊前缩小的倍数
-                                    .policy(EasyBlur.BlurPolicy.FAST_BLUR)//使用fastBlur
-                                    .blur()))
-                            .transition(DrawableTransitionOptions.withCrossFade(drawableCrossFadeFactory))
-                            .apply(options)
-                            .into(bg);
-                }
-            }
-        });
-        Utils.setDefaultImage(this, animeListBean.getImg(), animeImg);
+        GlideUrl imgUrl = new GlideUrl(animeListBean.getImg(), new LazyHeaders.Builder()
+                .addHeader("Referer", Sakura.DOMAIN + "/")
+                .build());
+        DrawableCrossFadeFactory drawableCrossFadeFactory = new DrawableCrossFadeFactory.Builder(300).setCrossFadeEnabled(true).build();
+        Glide.with(this).load(imgUrl)
+                .apply(RequestOptions.bitmapTransform( new BlurTransformation(25, 3)))
+                .transition(DrawableTransitionOptions.withCrossFade(drawableCrossFadeFactory))
+                .into(bg);
+        Utils.setDefaultImage(this, animeListBean.getImg(), animeImg, false, null, null);
         toolbar.setTitle(animeListBean.getTitle());
         if (animeListBean.getTagTitles() != null) {
             tagContainerLayout.setTags(animeListBean.getTagTitles());
@@ -464,7 +424,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
             if (!mActivityFinish) {
                 mIsLoad = false;
                 mSwipe.setRefreshing(false);
-                setCollapsingToolbar();
+                desc_view.setVisibility(View.GONE);
                 playLinearLayout.setVisibility(View.GONE);
                 multiLinearLayout.setVisibility(View.GONE);
                 recommendLinearLayout.setVisibility(View.GONE);
@@ -479,6 +439,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         mSwipe.setRefreshing(true);
         if (favorite != null && favorite.isVisible())
             favorite.setVisible(false);
+        desc_view.setVisibility(View.GONE);
         playLinearLayout.setVisibility(View.GONE);
         multiLinearLayout.setVisibility(View.GONE);
         recommendLinearLayout.setVisibility(View.GONE);
@@ -498,6 +459,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
                 setCollapsingToolbar();
                 mSwipe.setRefreshing(false);
                 this.animeDescListBean = bean;
+                desc_view.setVisibility(View.VISIBLE);
                 animeDescDetailsAdapter.setNewData(bean.getAnimeDescDetailsBeans());
                 if (bean.getAnimeDescMultiBeans().size() > 0)
                     multiLinearLayout.setVisibility(View.VISIBLE);
@@ -515,8 +477,6 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
             }
         });
     }
-
-
 
     @Override
     public void showSuccessDescView(AnimeListBean bean) {
@@ -545,6 +505,23 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     }
 
     @Override
+    public void showEmptyDram(String msg) {
+        runOnUiThread(() -> {
+            if (!mActivityFinish) {
+                mIsLoad = false;
+                mSwipe.setRefreshing(false);
+                setCollapsingToolbar();
+                desc_view.setVisibility(View.VISIBLE);
+                playLinearLayout.setVisibility(View.GONE);
+                multiLinearLayout.setVisibility(View.GONE);
+                recommendLinearLayout.setVisibility(View.GONE);
+                error_msg.setText(msg);
+                errorBg.setVisibility(View.VISIBLE);
+            }
+        });
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         if (null != videoPresenter)
@@ -553,7 +530,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
 
     @Override
     public void cancelDialog() {
-        Utils.cancelProDialog(p);
+        Utils.cancelDialog(alertDialog);
     }
 
     @Override
@@ -592,35 +569,5 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     @Override
     public void errorDramaView() {
 
-    }
-
-    @Override
-    public void onSniffingStart(View webView, String url) {
-
-    }
-
-    @Override
-    public void onSniffingFinish(View webView, String url) {
-        SniffingUtil.get().releaseWebView();
-        cancelDialog();
-    }
-
-    @Override
-    public void onSniffingSuccess(View webView, String url, List<SniffingVideo> videos) {
-        List<String> urls = new ArrayList<>();
-        for (SniffingVideo video : videos) {
-            urls.add(video.getUrl());
-        }
-        VideoUtils.showMultipleVideoSources(this,
-                urls,
-                (dialog, index) -> playAnime(urls.get(index)), (dialog, which) -> {
-                    dialog.dismiss();
-                }, 1);
-    }
-
-    @Override
-    public void onSniffingError(View webView, String url, int errorCode) {
-        Sakura.getInstance().showToastMsg(Utils.getString(R.string.open_web_view));
-        VideoUtils.openDefaultWebview(this, url);
     }
 }

@@ -1,7 +1,6 @@
 package my.project.sakuraproject.main.player;
 
 import android.app.PictureInPictureParams;
-import android.app.ProgressDialog;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Build;
@@ -56,7 +55,7 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
     RecyclerView recyclerView;
     private List<AnimeDescDetailsBean> list = new ArrayList<>();
     private DramaAdapter dramaAdapter;
-    private ProgressDialog p;
+    private AlertDialog alertDialog;
     private String animeTitle;
     @BindView(R.id.nav_view)
     LinearLayout linearLayout;
@@ -160,11 +159,12 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
         });
         player.setListener(this, this, this);
         player.backButton.setOnClickListener(v -> finish());
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            picConfig.setVisibility(View.GONE);
-        } else {
-            picConfig.setVisibility(View.VISIBLE);
-        }
+        // 加载视频失败，嗅探视频
+        player.snifferBtn.setOnClickListener(v -> snifferPlayUrl(url));
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) picConfig.setVisibility(View.GONE);
+        else picConfig.setVisibility(View.VISIBLE);
+        if (gtSdk23()) player.tvSpeed.setVisibility(View.VISIBLE);
+        else player.tvSpeed.setVisibility(View.GONE);
         player.setUp(url, witchTitle, Jzvd.SCREEN_FULLSCREEN, JZExoPlayer.class);
         player.fullscreenButton.setOnClickListener(view -> {
             if (!Utils.isFastClick()) return;
@@ -195,8 +195,8 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
             setResult(0x20);
             drawerLayout.closeDrawer(GravityCompat.END);
             AnimeDescDetailsBean bean = (AnimeDescDetailsBean) adapter.getItem(position);
-            player.onPrepared();
-            p = Utils.getProDialog(PlayerActivity.this, R.string.parsing);
+            Jzvd.releaseAllVideos();
+            alertDialog = Utils.getProDialog(PlayerActivity.this, R.string.parsing);
             Button v = (Button) adapter.getViewByPosition(recyclerView, position, R.id.tag_group);
             v.setBackgroundResource(R.drawable.button_selected);
             v.setTextColor(getResources().getColor(R.color.tabSelectedTextColor));
@@ -211,35 +211,45 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
     private void playAnime(String animeUrl) {
         cancelDialog();
         url = animeUrl;
+        switch ((Integer) SharedPreferencesUtils.getParam(getApplicationContext(), "player", 0)) {
+            case 0:
+                //调用播放器
+                Jzvd.releaseAllVideos();
+                player.currentSpeedIndex = 1;
+                player.setUp(url, witchTitle, Jzvd.SCREEN_FULLSCREEN, JZExoPlayer.class);
+                player.startVideo();
+                break;
+            case 1:
+                Jzvd.releaseAllVideos();
+                Utils.selectVideoPlayer(PlayerActivity.this, url);
+                break;
+        }
+    }
+
+    /**
+     * 嗅探视频真实连接
+     * @param animeUrl
+     */
+    private void snifferPlayUrl(String animeUrl) {
+        alertDialog = Utils.getProDialog(PlayerActivity.this, R.string.should_be_used_web);
+        webUrl = animeUrl;
         if (Patterns.WEB_URL.matcher(animeUrl.replace(" ", "")).matches()) {
             if (animeUrl.contains("jx.618g.com")) {
+                cancelDialog();
                 url = animeUrl.replaceAll("http://jx.618g.com/\\?url=", "");
                 VideoUtils.openWebview(false, this, witchTitle, animeTitle, url, diliUrl, this.list);
-            } else if (url.contains(".mp4") || url.contains(".m3u8")) {
-                switch ((Integer) SharedPreferencesUtils.getParam(getApplicationContext(), "player", 0)) {
-                    case 0:
-                        //调用播放器
-                        Jzvd.releaseAllVideos();
-                        player.setUp(url, witchTitle, Jzvd.SCREEN_FULLSCREEN, JZExoPlayer.class);
-                        player.startVideo();
-                        break;
-                    case 1:
-                        Jzvd.releaseAllVideos();
-                        Utils.selectVideoPlayer(PlayerActivity.this, url);
-                        break;
-                }
-            }else {
-                webUrl = animeUrl;
-                p = Utils.getProDialog(PlayerActivity.this, R.string.parsing);
-                Sakura.getInstance().showToastMsg(Utils.getString(R.string.should_be_used_web));
-                SniffingUtil.get().activity(this).referer(url).callback(this).url(url).start();
-            }
-        }  else {
-            webUrl = String.format(Api.PARSE_API, animeUrl);
-            p = Utils.getProDialog(PlayerActivity.this, R.string.parsing);
-            application.showToastMsg(Utils.getString(R.string.should_be_used_web));
-            SniffingUtil.get().activity(this).referer(webUrl).callback(this).url(webUrl).start();
-        }
+            } else sniffer(webUrl, true);
+        } else sniffer(webUrl, false);
+    }
+
+    /**
+     * 嗅探方法
+     * @param url
+     * @param isUrl
+     */
+    private void sniffer(String url, boolean isUrl) {
+        url = isUrl ? url : String.format(Api.PARSE_API, url);
+        SniffingUtil.get().activity(this).referer(url).callback(this).url(url).start();
     }
 
     private void initUserConfig() {
@@ -376,7 +386,7 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
 
     @Override
     public void cancelDialog() {
-        Utils.cancelProDialog(p);
+        Utils.cancelDialog(alertDialog);
     }
 
     @Override
@@ -452,15 +462,14 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
 
     @Override
     public void onSniffingSuccess(View webView, String url, List<SniffingVideo> videos) {
-        List<String> urls = new ArrayList<>();
-        for (SniffingVideo video : videos) {
-            urls.add(video.getUrl());
-        }
-        VideoUtils.showMultipleVideoSources(this,
-                urls,
-                (dialog, index) -> playAnime(urls.get(index)), (dialog, which) -> {
-                    dialog.dismiss();
-                }, 1);
+        List<String> urls = Utils.ridRepeat(videos);
+        if (urls.size() > 1)
+            VideoUtils.showMultipleVideoSources(this,
+                    urls,
+                    (dialog, index) -> playAnime(urls.get(index)),
+                    (dialog, which) -> dialog.dismiss(),
+                    1);
+        else playAnime(urls.get(0));
     }
 
     @Override

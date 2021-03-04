@@ -71,6 +71,14 @@
             android:textAlignment="center"
             android:textColor="#ffffff" />
 
+        <TextView
+            android:id="@+id/tvSpeed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:paddingLeft="14dp"
+            android:textColor="#ffffff" />
+
         <ImageView
             android:id="@+id/fullscreen"
             android:layout_width="wrap_content"
@@ -139,6 +147,16 @@
             android:textColor="#ffffff"
             android:textSize="18sp" />
 
+        <ImageView
+            android:id="@+id/airplay"
+            android:visibility="invisible"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="14dp"
+            android:src="@drawable/baseline_airplay_white_48dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
 
         <LinearLayout
             android:id="@+id/battery_time_layout"
@@ -276,6 +294,20 @@
             android:paddingBottom="4dp"
             android:text="@string/click_to_restart"
             android:textColor="@android:color/white"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/sniffer_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/sniffer_bg"
+            android:paddingLeft="9dp"
+            android:paddingTop="4dp"
+            android:paddingRight="9dp"
+            android:paddingBottom="4dp"
+            android:text="@string/click_to_sniffer"
+            android:textColor="@color/orange800"
             android:textSize="14sp" />
     </LinearLayout>
 </RelativeLayout>

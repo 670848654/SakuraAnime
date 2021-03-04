@@ -169,7 +169,7 @@
                         android:layout_height="45dp">
 
                         <ImageView
-                            android:id="@+id/config_icon3"
+                            android:id="@+id/config_icon4"
                             android:src="@drawable/baseline_open_in_new_white_48dp"
                             android:tint="@android:color/white"
                             android:layout_centerVertical="true"
@@ -182,7 +182,7 @@
                             android:text="@string/play_with_external_player"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_toRightOf="@+id/config_icon3"
+                            android:layout_toRightOf="@+id/config_icon4"
                             android:layout_centerVertical="true"
                             android:textColor="@android:color/white" />
 
@@ -195,7 +195,7 @@
                         android:layout_height="45dp">
 
                         <ImageView
-                            android:id="@+id/config_icon4"
+                            android:id="@+id/config_icon5"
                             android:src="@drawable/baseline_language_white_48dp"
                             android:tint="@android:color/white"
                             android:layout_centerVertical="true"
@@ -208,7 +208,7 @@
                             android:text="@string/open_external_browser"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_toRightOf="@+id/config_icon4"
+                            android:layout_toRightOf="@+id/config_icon5"
                             android:layout_centerVertical="true"
                             android:textColor="@android:color/white" />
 

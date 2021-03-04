@@ -56,7 +56,7 @@
     <string name="error_msg">抱歉，未找到相关信息~</string>
     <string name="no_playlist_error">该番剧暂无播放列表。</string>
     <string name="get_drama_error">获取剧集信息出错</string>
-    <string name="should_be_used_web">常规解析失败,尝试嗅探获取播放地址&#8230;</string>
+    <string name="should_be_used_web">尝试嗅探获取播放地址&#8230;</string>
     <string name="open_web_view">解析视频地址失败，尝试使用webView打开</string>
     <!-- 详情界面文本 -->
     <string name="online">在线</string>
@@ -122,7 +122,7 @@
     <string name="test_model_desc">OnePlus 7 Pro\nAndroid 10</string>
     <string name="now_version">当前版本</string>
     <string name="final_compile">最后编译日期</string>
-    <string name="final_compile_time">2020年12月30日</string>
+    <string name="final_compile_time">2021年3月4日</string>
     <string name="cache">缓存目录</string>
     <string name="cache_text">/SakuraAnime/\n卸载后自行删除此目录</string>
     <string name="github">Github</string>
@@ -134,6 +134,7 @@
     <string name="download">下载中,请等待</string>
     <string name="ck_network_error">连接Github超时，请重试</string>
     <string name="ck_network_error_start">连接Github超时，检测更新失败</string>
+    <string name="ck_error_start">Github返回出错，检测更新失败</string>
     <string name="try_again">重试</string>
     <string name="no_new_version">已是最新版本，无需更新</string>
     <string name="cancel">取消</string>
@@ -155,12 +156,26 @@
     <string name="set_user_speed">设置快进/快退时长</string>
     <string name="player_setting_title">播放器设置</string>
     <string name="picture_in_picture_title">画中画</string>
+    <string name="airplay_title">电视投屏</string>
     <string name="player_other_title">其他操作</string>
     <string name="play_with_external_player">使用外部播放器播放</string>
     <string name="open_external_browser">通过浏览器访问原地址</string>
     <string name="url_copied">下载地址已复制到剪切板</string>
     <string name="select_tools">请选择下载工具</string>
     <string name="tools_not_found">没有找到匹配的程序</string>
+    <string name="click_to_sniffer">尝试网页嗅探解析</string>
+
+    <string name="device_title">设备列表</string>
+    <string name="notice">请选择连接设备，连接设备后才可播放</string>
+    <string name="selectedText">已选中: %s</string>
+    <string name="progress">进度</string>
+    <string name="volume">音量</string>
+    <string name="mute">静音</string>
+    <string name="play">播放</string>
+    <string name="pause">暂停</string>
+    <string name="stop">停止</string>
+    <string name="exit">退出</string>
+
 
     <string-array name="speed_item">
         <item>5s</item>

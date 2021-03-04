@@ -34,7 +34,7 @@ public class VideoUtils {
      * @param HTML_url
      */
     public static void showErrorInfo(Context context, String HTML_url) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
         builder.setPositiveButton(Utils.getString(R.string.play_not_found_positive), null);
         builder.setNegativeButton(Utils.getString(R.string.play_not_found_negative), null);
         builder.setTitle(Utils.getString(R.string.play_not_found_title));
@@ -66,7 +66,7 @@ public class VideoUtils {
             if (type == 0) items[i] = getVideoUrl(list.get(i));
             else items[i] = list.get(i);
         }
-        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(context);
+        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(context, R.style.DialogStyle);
         builder.setTitle(Utils.getString(R.string.select_video_source));
         builder.setCancelable(false);
         builder.setItems(items, listener);

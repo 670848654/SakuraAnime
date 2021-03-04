@@ -17,7 +17,6 @@ import my.project.sakuraproject.api.Api;
 import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.base.Presenter;
 import my.project.sakuraproject.main.home.HomeActivity;
-import my.project.sakuraproject.net.DownloadUtil;
 import my.project.sakuraproject.net.HttpGet;
 import my.project.sakuraproject.util.SharedPreferencesUtils;
 import my.project.sakuraproject.util.StatusBarUtil;
@@ -31,7 +30,6 @@ public class StartActivity extends BaseActivity {
     LinearLayout linearLayout;
     private ProgressDialog p;
     private String downUrl;
-    private Call downCall;
 
     @Override
     protected Presenter createPresenter() {
@@ -87,14 +85,6 @@ public class StartActivity extends BaseActivity {
                                 newVersion,
                                 body,
                                 (dialog, which) -> {
-                                    /*p = Utils.showProgressDialog(StartActivity.this);
-                                    p.setButton(ProgressDialog.BUTTON_NEGATIVE, Utils.getString(R.string.cancel), (dialog1, which1) -> {
-                                        if (null != downCall)
-                                            downCall.cancel();
-                                        dialog1.dismiss();
-                                    });
-                                    p.show();
-                                    downNewVersion(downUrl);*/
                                     dialog.dismiss();
                                     Utils.putTextIntoClip(downUrl);
                                     application.showSuccessToastMsg(Utils.getString(R.string.url_copied));
@@ -108,39 +98,9 @@ public class StartActivity extends BaseActivity {
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
-                }
-            }
-        });
-    }
-
-    /**
-     * 下载apk
-     *
-     * @param url 下载地址
-     */
-    private void downNewVersion(String url) {
-        downCall = DownloadUtil.get().downloadApk(url, new DownloadUtil.OnDownloadListener() {
-            @Override
-            public void onDownloadSuccess(final String fileName) {
-                runOnUiThread(() -> {
-                    Utils.cancelProDialog(p);
-                    Utils.startInstall(StartActivity.this);
-                    StartActivity.this.finish();
-                });
-            }
-
-            @Override
-            public void onDownloading(final int progress) {
-                runOnUiThread(() -> p.setProgress(progress));
-            }
-
-            @Override
-            public void onDownloadFailed() {
-                runOnUiThread(() -> {
-                    Utils.cancelProDialog(p);
-                    application.showErrorToastMsg(Utils.getString(R.string.download_error));
+                    application.showErrorToastMsg(Utils.getString(R.string.ck_error_start));
                     openMain();
-                });
+                }
             }
         });
     }

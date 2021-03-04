@@ -74,11 +74,11 @@ public class OpenSourceActivity extends BaseActivity {
         list.add(new SourceBean("jsoup", "jhy", "jsoup: Java HTML Parser, with best of DOM, CSS, and jquery", "https://github.com/jhy/jsoup"));
         list.add(new SourceBean("BaseRecyclerView\nAdapterHelper", "CymChad", "BRVAH:Powerful and flexible RecyclerAdapter", "https://github.com/CymChad/BaseRecyclerViewAdapterHelper"));
         list.add(new SourceBean("Glide", "bumptech", "An image loading and caching library for Android focused on smooth scrolling", "https://github.com/bumptech/glide"));
+        list.add(new SourceBean("glide-transformations", "wasabeef", "An Android transformation library providing a variety of image transformations for Glide.", "https://github.com/wasabeef/glide-transformations"));
         list.add(new SourceBean("EasyPermissions", "googlesamples", "Simplify Android M system permissions", "https://github.com/googlesamples/easypermissions"));
         list.add(new SourceBean("MaterialEditText", "rengwuxian", "EditText in Material Design", "https://github.com/rengwuxian/MaterialEditText"));
-        list.add(new SourceBean("JiaoZiVideoPlayer", "lipangit", "Android VideoPlayer MediaPlayer VideoView MediaView Float View And Fullscreen", "https://github.com/lipangit/JiaoZiVideoPlayer"));
+        list.add(new SourceBean("JZVideo", "Jzvd", "高度自定义的安卓视频框架 MediaPlayer exoplayer ijkplayer ffmpeg", "https://github.com/Jzvd/JZVideo"));
         list.add(new SourceBean("ExoPlayer", "google", "An extensible media player for Android", "https://github.com/google/ExoPlayer"));
-        list.add(new SourceBean("EasyBlur","pinguo-zhouwei","A Library for Android Image blur","https://github.com/pinguo-zhouwei/EasyBlur"));
         list.add(new SourceBean("Slidr", "r0adkll", "Easily add slide to dismiss functionality to an Activity", "https://github.com/r0adkll/Slidr"));
         list.add(new SourceBean("butterknife", "JakeWharton", "Bind Android views and callbacks to fields and methods.", "https://github.com/JakeWharton/butterknife"));
         list.add(new SourceBean("okhttp", "square", "An HTTP+HTTP/2 client for Android and Java applications.", "https://github.com/square/okhttp"));
@@ -86,6 +86,8 @@ public class OpenSourceActivity extends BaseActivity {
         list.add(new SourceBean("Toasty","GrenderG","The usual Toast, but with steroids","https://github.com/GrenderG/Toasty"));
         list.add(new SourceBean("Sniffing","fanchen001","【次元番】使用的，一个基于webview/x5webview的视频嗅探工具,能准确解析绝大多数手机在线视频网站的视频真实链接。","https://github.com/fanchen001/Sniffing"));
         list.add(new SourceBean("AndroidTagView","whilu","A TagView library for Android. Customize your own & Drag effect.","https://github.com/whilu/AndroidTagView"));
+        list.add(new SourceBean("AndroidUPnPDemo","zaneCC","android 投屏","https://github.com/zaneCC/AndroidUPnPDemo"));
+        list.add(new SourceBean("cling","4thline","UPnP/DLNA library for Java and Android","https://github.com/4thline/cling"));
     }
 
     public void initAdapter() {
@@ -96,7 +98,7 @@ public class OpenSourceActivity extends BaseActivity {
         adapter.setOnItemClickListener((adapter, view, position) -> {
             if (Utils.isFastClick()) Utils.viewInChrome(this, list.get(position).getUrl());
         });
-        if (Utils.checkHasNavigationBar(this)) recyclerView.setPadding(0,0,0, Utils.getNavigationBarHeight(this) - 5);
+        if (Utils.checkHasNavigationBar(this)) recyclerView.setPadding(0,0,0, Utils.getNavigationBarHeight(this));
         recyclerView.setAdapter(adapter);
     }
 }

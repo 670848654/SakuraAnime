@@ -33,6 +33,7 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultAllocator;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.video.VideoListener;
 
@@ -82,16 +83,24 @@ public class JZExoPlayer extends JZMediaInterface implements Player.EventListene
             RenderersFactory renderersFactory = new DefaultRenderersFactory(context);
             simpleExoPlayer = ExoPlayerFactory.newSimpleInstance(context, renderersFactory, trackSelector, loadControl);
             // Produces DataSource instances through which media data is loaded.
-            DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(context,
-                    Util.getUserAgent(context, context.getResources().getString(R.string.app_name)));
+/*            DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(context,
+                    Util.getUserAgent(context, context.getResources().getString(R.string.app_name)));*/
 
             String currUrl = jzvd.jzDataSource.getCurrentUrl().toString();
             MediaSource videoSource;
+            DefaultHttpDataSourceFactory httpDataSourceFactory = new DefaultHttpDataSourceFactory(
+                    Util.getUserAgent(context, context.getResources().getString(R.string.app_name)),
+                    null,
+                    1500,
+                    1500,
+                    true /* allowCrossProtocolRedirects */
+            );
+
             if (currUrl.contains(".m3u8")) {
-                videoSource = new HlsMediaSource.Factory(dataSourceFactory)
+                videoSource = new HlsMediaSource.Factory(httpDataSourceFactory)
                         .createMediaSource(Uri.parse(currUrl), handler, null);
             } else {
-                videoSource = new ExtractorMediaSource.Factory(dataSourceFactory)
+                videoSource = new ExtractorMediaSource.Factory(httpDataSourceFactory)
                         .createMediaSource(Uri.parse(currUrl));
             }
             simpleExoPlayer.addVideoListener(this);

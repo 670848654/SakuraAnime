@@ -142,7 +142,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     protected void init() {
         StatusBarUtil.setColorForSwipeBack(this, getResources().getColor(R.color.colorPrimaryDark), 0);
         StatusBarUtil.setTranslucentForImageView(this, 0, toolbar);
-        if ((Boolean) SharedPreferencesUtils.getParam(this, "darkTheme", false)) bg.setVisibility(View.GONE);
+        if (isDarkTheme) bg.setVisibility(View.GONE);
         Slidr.attach(this, Utils.defaultInit());
         CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) msg.getLayoutParams();
         params.setMargins(10, 0, 10, 0);
@@ -177,9 +177,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
 
     public void initSwipe() {
         mSwipe.setColorSchemeResources(R.color.pink500, R.color.blue500, R.color.purple500);
-        mSwipe.setOnRefreshListener(() -> {
-            mPresenter.loadData(true);
-        });
+        mSwipe.setOnRefreshListener(() -> mPresenter.loadData(true));
         mSwipe.setRefreshing(true);
     }
 

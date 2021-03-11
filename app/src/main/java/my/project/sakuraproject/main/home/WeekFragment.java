@@ -39,7 +39,7 @@ public class WeekFragment extends LazyFragment {
     RecyclerView recyclerView;
     @BindView(R.id.loading)
     ProgressBar loading;
-    private FragmentAdapter adapter;
+    protected FragmentAdapter adapter;
     private List<HomeWekBean> list = new ArrayList<>();
     private Sakura application;
     private View view;

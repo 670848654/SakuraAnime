@@ -167,6 +167,7 @@ public class AboutActivity extends BaseActivity {
 
     public List createUpdateLogList() {
         List logsList = new ArrayList();
+        logsList.add(new LogBean("版本：1.9.7_1", "修复ExoPlayer不支持（http -> https | https -> http）重定向导致部分番剧无法正常播放的问题"));
         logsList.add(new LogBean("版本：1.9.7", "修复已知问题\n新增视频投屏功能"));
         logsList.add(new LogBean("版本：1.9.6_2", "修复图片无法正常显示的问题\n修复动漫分类界面浮动按钮在有导航栏的设备上被遮挡的问题\n内置播放器新增倍数播放（0.5X - 3X）"));
         logsList.add(new LogBean("版本：1.9.6_1", "域名变更为http://www.yhdm.io"));

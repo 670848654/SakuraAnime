@@ -175,7 +175,7 @@ public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatA
                 !getRunningActivityName().equals("DLNAActivity")) {
             if (gtSdk23()) {
                 StatusBarUtil.setColorForSwipeBack(this, getColor(R.color.colorPrimary), 0);
-                if (!(Boolean) SharedPreferencesUtils.getParam(this, "darkTheme", false))
+                if (!isDarkTheme)
                     this.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
             } else
                 StatusBarUtil.setColorForSwipeBack(this, getResources().getColor(R.color.colorPrimaryDark), 0);

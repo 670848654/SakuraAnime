@@ -30,6 +30,7 @@ import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -121,7 +122,10 @@ public class Utils {
         AlertDialog alertDialog;
         AlertDialog.Builder builder = new AlertDialog.Builder(activity, R.style.DialogStyle);
         View view = LayoutInflater.from(activity).inflate(R.layout.dialog_proress, null);
+        RelativeLayout root = view.findViewById(R.id.root);
         TextView msg = view.findViewById(R.id.msg);
+        root.setBackgroundColor(activity.getResources().getColor(R.color.window_bg));
+        msg.setTextColor(activity.getResources().getColor(R.color.text_color_primary));
         msg.setText(getString(id));
         builder.setCancelable(false);
         alertDialog = builder.setView(view).create();

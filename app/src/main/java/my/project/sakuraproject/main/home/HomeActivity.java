@@ -2,13 +2,13 @@ package my.project.sakuraproject.main.home;
 
 import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.content.res.Configuration;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -17,6 +17,9 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.graphics.BlendModeColorFilterCompat;
+import androidx.core.graphics.BlendModeCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentTransaction;
@@ -24,6 +27,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
+import com.wuyr.rippleanimation.RippleAnimation;
 
 import org.json.JSONObject;
 
@@ -58,10 +62,8 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
     Toolbar toolbar;
     @BindView(R.id.mSwipe)
     VpSwipeRefreshLayout mSwipe;
-//    private ImageView imageView;
-    LinearLayout setTheme;
-    private ImageView theme;
-    private TextView themeTitle;
+    private ImageView headerImg;
+    private TextView themeView;
     @BindView(R.id.tab)
     TabLayout tab;
     @BindView(R.id.viewpager)
@@ -69,8 +71,15 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
     private WeekAdapter adapter;
     private int week;
     private SearchView mSearchView;
+    private MenuItem query;
+    private SearchView.SearchAutoComplete queryTextView;
     private String[] tabs = Utils.getArray(R.array.week_array);
     private long exitTime = 0;
+    private boolean isChangingTheme = false;
+    private int[][] states = new int[][]{
+            new int[]{-android.R.attr.state_checked},
+            new int[]{android.R.attr.state_checked}
+    };
 
     @Override
     protected HomePresenter createPresenter() {
@@ -108,7 +117,7 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
     public void initDrawer() {
         if (gtSdk23()) {
             StatusBarUtil.setColorForDrawerLayout(this, drawer, getColor(R.color.colorPrimary), 0);
-            if (!(Boolean) SharedPreferencesUtils.getParam(this, "darkTheme", false))
+            if (!isDarkTheme)
                 this.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         }
         else
@@ -117,10 +126,6 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-        int[][] states = new int[][]{
-                new int[]{-android.R.attr.state_checked},
-                new int[]{android.R.attr.state_checked}
-        };
         int[] colors = new int[]{getResources().getColor(R.color.tabTextColor),
                 getResources().getColor(R.color.tabSelectedTextColor)
         };
@@ -128,39 +133,12 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
         navigationView.setItemTextColor(csl);
         navigationView.setItemIconTintList(csl);
         View view = navigationView.getHeaderView(0);
-//        imageView = view.findViewById(R.id.imageView);
-//        imageView.setOnClickListener(view1 -> {
-//            final ObjectAnimator animator = Utils.tada(imageView);
-//            animator.setRepeatCount(0);
-//            animator.setDuration(1000);
-//            animator.start();
-//        });
-        setTheme = view.findViewById(R.id.set_theme);
-        setTheme.setOnClickListener(view2 -> {
-            if ((Boolean) SharedPreferencesUtils.getParam(this, "darkTheme", false))
-            {
-                SharedPreferencesUtils.setParam(getApplicationContext(),"darkTheme",false);
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-            }
-            else
-            {
-                SharedPreferencesUtils.setParam(getApplicationContext(),"darkTheme",true);
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-            }
-            drawer.closeDrawer(GravityCompat.START);
-            HomeActivity.this.getWindow().setWindowAnimations(R.style.WindowAnimationFadeInOut);
-            new Handler().postDelayed(this::recreate, 500);
+        themeView = view.findViewById(R.id.theme);
+        headerImg = view.findViewById(R.id.header_img);
+        setHeaderImg();
+        themeView.setOnClickListener(view2 -> {
+            if (Utils.isFastClick()) setTheme(isDarkTheme);
         });
-        theme = view.findViewById(R.id.theme);
-        themeTitle = view.findViewById(R.id.theme_title);
-        if ((Boolean) SharedPreferencesUtils.getParam(this, "darkTheme", false)) {
-            theme.setImageDrawable(getDrawable(R.drawable.ic_night));
-            themeTitle.setText(Utils.getString(R.string.dark));
-        } else {
-            theme.setImageDrawable(getDrawable(R.drawable.ic_sun));
-            themeTitle.setText(Utils.getString(R.string.light));
-        }
-//        navigationView.getBackground().mutate().setAlpha(150);//0~255透明度值
         navigationView.setNavigationItemSelectedListener(this);
     }
 
@@ -189,6 +167,15 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
             Utils.showX5Info(this);
     }
 
+    private void setHeaderImg() {
+        Drawable[] drawables = themeView.getCompoundDrawables();
+        Drawable wrapDrawable = DrawableCompat.wrap(drawables[0]);
+        themeView.setText(isDarkTheme ? Utils.getString(R.string.set_light_theme) : Utils.getString(R.string.set_dark_theme));
+        headerImg.setImageDrawable(isDarkTheme ? getDrawable(R.drawable.night_img) : getDrawable(R.drawable.light_img));
+        themeView.setTextColor(isDarkTheme ? getResources().getColor(R.color.light_toolbar_color) : getResources().getColor(R.color.dark_toolbar_color));
+        DrawableCompat.setTint(wrapDrawable, isDarkTheme ?  getResources().getColor(R.color.light_toolbar_color) : getResources().getColor(R.color.dark_toolbar_color));
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         return super.onOptionsItemSelected(item);
@@ -197,15 +184,15 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.home_menu, menu);
-        final MenuItem item = menu.findItem(R.id.search);
-        mSearchView = (SearchView) item.getActionView();
+        query = menu.findItem(R.id.search);
+        mSearchView = (SearchView) query.getActionView();
         mSearchView.setQueryHint(Utils.getString(R.string.search_hint));
         mSearchView.setMaxWidth(2000);
-        SearchView.SearchAutoComplete textView = mSearchView.findViewById(R.id.search_src_text);
+        queryTextView = mSearchView.findViewById(R.id.search_src_text);
         mSearchView.findViewById(R.id.search_plate).setBackground(null);
         mSearchView.findViewById(R.id.submit_area).setBackground(null);
-        textView.setTextColor(getResources().getColor(R.color.text_color_primary));
-        textView.setHintTextColor(getResources().getColor(R.color.text_color_primary));
+        queryTextView.setTextColor(getResources().getColor(R.color.text_color_primary));
+        queryTextView.setHintTextColor(getResources().getColor(R.color.text_color_primary));
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -351,15 +338,82 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
         }
     }
 
+    private void setTheme(boolean isDark) {
+        isChangingTheme = true;
+        if (isDark) {
+            isDarkTheme = false;
+            SharedPreferencesUtils.setParam(getApplicationContext(), "darkTheme", false);
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        } else {
+            isDarkTheme = true;
+            SharedPreferencesUtils.setParam(getApplicationContext(), "darkTheme", true);
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        }
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
         DatabaseUtil.closeDB();
     }
 
-    @Override
+/*    @Override
     public void recreate() {
         removeFragmentTransaction();
         super.recreate();
+    }*/
+
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        int[] lightColors = new int[]{getResources().getColor(R.color.light_navigation_text_color),
+                getResources().getColor(R.color.light_navigation_tini_color)
+        };
+        int[] darkColors = new int[]{getResources().getColor(R.color.dark_navigation_text_color),
+                getResources().getColor(R.color.dark_navigation_tini_color)
+        };
+        if (isChangingTheme) {
+            RippleAnimation.create(themeView).setDuration(1000).start();
+            setHeaderImg();
+            if (gtSdk23()) {
+                if (isDarkTheme) getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN & ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+                else getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            }
+            /** 设置DrawerLayout相关颜色 **/
+            navigationView.setBackgroundColor(isDarkTheme ? getResources().getColor(R.color.dark_navigation_color) : getResources().getColor(R.color.light_navigation_color));
+            ColorStateList csl = new ColorStateList(states, isDarkTheme ? darkColors : lightColors);
+            navigationView.setItemTextColor(csl);
+            navigationView.setItemIconTintList(csl);
+            drawer.setBackgroundColor(isDarkTheme ? getResources().getColor(R.color.dark_navigation_color) : getResources().getColor(R.color.light_navigation_color));
+            /** 设置Toolbar相关颜色 **/
+            toolbar.setBackgroundColor(isDarkTheme ? getResources().getColor(R.color.dark_toolbar_color) : getResources().getColor(R.color.light_toolbar_color));
+            toolbar.setTitleTextColor(isDarkTheme ? getResources().getColor(R.color.light_toolbar_color) : getResources().getColor(R.color.dark_toolbar_color));
+            toolbar.setSubtitleTextColor(isDarkTheme ? getResources().getColor(R.color.light_toolbar_color) : getResources().getColor(R.color.dark_toolbar_color));
+            toolbar.getNavigationIcon().setColorFilter(BlendModeColorFilterCompat.createBlendModeColorFilterCompat(isDarkTheme ? getResources().getColor(R.color.light_toolbar_color) : getResources().getColor(R.color.dark_toolbar_color), BlendModeCompat.SRC_ATOP));
+            ImageView searchIcon = mSearchView.findViewById(androidx.appcompat.R.id.search_button);
+            searchIcon.setColorFilter(isDarkTheme ? getResources().getColor(R.color.light_toolbar_color) : getResources().getColor(R.color.dark_toolbar_color));
+            ImageView searchIcon2 = mSearchView.findViewById(androidx.appcompat.R.id.search_close_btn);
+            searchIcon2.setColorFilter(isDarkTheme ? getResources().getColor(R.color.light_toolbar_color) : getResources().getColor(R.color.dark_toolbar_color));
+            /** 设置TabLayout相关颜色 **/
+            int[] colors = new int[]{isDarkTheme ? getResources().getColor(R.color.light_toolbar_color) :getResources().getColor(R.color.dark_toolbar_color) ,
+                    getResources().getColor(R.color.tabSelectedTextColor)
+            };
+            tab.setTabTextColors(new ColorStateList(states, colors));
+            tab.setTabTextColors(isDarkTheme ? getResources().getColor(R.color.light_toolbar_color) :getResources().getColor(R.color.dark_toolbar_color), getResources().getColor(R.color.tabSelectedTextColor));
+            tab.setBackgroundColor(isDarkTheme ? getResources().getColor(R.color.dark_navigation_color) : getResources().getColor(R.color.light_navigation_color));
+            /** 设置searchView相关颜色 **/
+            queryTextView.setTextColor(isDarkTheme ? getResources().getColor(R.color.light_toolbar_color) : getResources().getColor(R.color.dark_toolbar_color));
+            queryTextView.setHintTextColor(isDarkTheme ? getResources().getColor(R.color.light_toolbar_color) : getResources().getColor(R.color.dark_toolbar_color));
+            emptyView.setBackgroundColor(isDarkTheme ? getResources().getColor(R.color.dark_window_color) : getResources().getColor(R.color.light_window_color));
+            if (gtSdk23()) StatusBarUtil.setColorForDrawerLayout(this, drawer, isDarkTheme ? getResources().getColor(R.color.dark_toolbar_color) : getResources().getColor(R.color.light_toolbar_color), 0);
+            else StatusBarUtil.setColorForDrawerLayout(this, drawer, isDarkTheme ? getResources().getColor(R.color.dark_toolbar_color) : getResources().getColor(R.color.light_toolbar_color_lt23), 0);
+            if (adapter != null)
+                for (int i=0,size=adapter.getCount(); i<size; i++) {
+                    WeekFragment weekFragment = (WeekFragment) adapter.getItem(i);
+                    if (weekFragment.adapter != null)
+                        weekFragment.adapter .notifyDataSetChanged();
+                }
+            isChangingTheme = false;
+        }
     }
 }

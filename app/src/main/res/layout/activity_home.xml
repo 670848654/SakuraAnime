@@ -33,7 +33,7 @@
                     app:contentInsetStartWithNavigation="0dp"
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
-                    android:elevation="6dp"
+                    android:elevation="0dp"
                     android:theme="@style/ThemeToolbar"
                     app:layout_scrollFlags="scroll|enterAlways"
                     app:popupTheme="@style/AppTheme.PopupOverlay" />

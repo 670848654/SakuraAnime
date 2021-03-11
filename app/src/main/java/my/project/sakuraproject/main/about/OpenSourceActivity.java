@@ -88,6 +88,7 @@ public class OpenSourceActivity extends BaseActivity {
         list.add(new SourceBean("AndroidTagView","whilu","A TagView library for Android. Customize your own & Drag effect.","https://github.com/whilu/AndroidTagView"));
         list.add(new SourceBean("AndroidUPnPDemo","zaneCC","android 投屏","https://github.com/zaneCC/AndroidUPnPDemo"));
         list.add(new SourceBean("cling","4thline","UPnP/DLNA library for Java and Android","https://github.com/4thline/cling"));
+        list.add(new SourceBean("RippleAnimation", "wuyr", "仿酷安客户端的主题切换动画效果", "https://github.com/wuyr/RippleAnimation"));
     }
 
     public void initAdapter() {

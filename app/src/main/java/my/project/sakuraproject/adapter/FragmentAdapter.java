@@ -2,6 +2,8 @@ package my.project.sakuraproject.adapter;
 
 import android.content.Context;
 
+import androidx.cardview.widget.CardView;
+
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 
@@ -21,7 +23,10 @@ public class FragmentAdapter extends BaseQuickAdapter<HomeWekBean, BaseViewHolde
     @Override
     protected void convert(BaseViewHolder helper, HomeWekBean item) {
 //        helper.addOnClickListener(R.id.drama);
+        CardView cardView = helper.getView(R.id.card_view);
+        cardView.setCardBackgroundColor(context.getResources().getColor(R.color.window_bg));
         helper.setText(R.id.title, item.getTitle());
+        helper.setTextColor(R.id.title, context.getResources().getColor(R.color.text_color_primary));
         helper.setText(R.id.drama, item.getDrama());
     }
 }

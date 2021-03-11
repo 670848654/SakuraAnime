@@ -1,6 +1,5 @@
 package my.project.sakuraproject.main.start;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Handler;
 import android.view.View;
@@ -28,7 +27,6 @@ import okhttp3.Response;
 public class StartActivity extends BaseActivity {
     @BindView(R.id.check_update)
     LinearLayout linearLayout;
-    private ProgressDialog p;
     private String downUrl;
 
     @Override

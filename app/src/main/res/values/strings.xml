@@ -78,7 +78,7 @@
     <string name="page_positive_edit">修改</string>
     <string name="page_negative">取消</string>
     <string name="page_def">恢复默认</string>
-    <string name="domain_title">输入樱花动漫域名(电脑版)</string>
+    <string name="domain_title">输入樱花动漫域名（PC端）</string>
     <string name="set_domain_ok">域名更改成功</string>
     <string name="set_domain_error1">参数不能为空</string>
     <string name="set_domain_error2">参数格式错误</string>
@@ -88,8 +88,8 @@
     <string name="player_default">内置</string>
     <string name="domain">域名设置 (备用)</string>
     <string name="domain_url">http://www.yhdm.io</string>
-    <string name="light">亮色主题</string>
-    <string name="dark">暗色主题</string>
+    <string name="set_light_theme">切至亮色主题</string>
+    <string name="set_dark_theme">切至暗色主题</string>
     <!-- webViewDialog 文本 -->
     <string name="other_operation">操作</string>
     <string name="anthology">选集</string>
@@ -122,7 +122,7 @@
     <string name="test_model_desc">OnePlus 7 Pro\nAndroid 10</string>
     <string name="now_version">当前版本</string>
     <string name="final_compile">最后编译日期</string>
-    <string name="final_compile_time">2021年3月4日</string>
+    <string name="final_compile_time">2021年3月11日</string>
     <string name="cache">缓存目录</string>
     <string name="cache_text">/SakuraAnime/\n卸载后自行删除此目录</string>
     <string name="github">Github</string>

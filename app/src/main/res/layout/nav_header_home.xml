@@ -5,50 +5,27 @@
     android:gravity="bottom">
 
     <ImageView
-        android:id="@+id/image"
+        android:id="@+id/header_img"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:adjustViewBounds="true"
-        android:scaleType="centerCrop"
-        android:src="@drawable/header" />
+        android:scaleType="centerCrop" />
 
-    <!--
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/nav_header_height"
-        android:layout_margin="8dp">
-
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"
-            android:src="@drawable/huaji" />
-    </RelativeLayout>
-    -->
-
-    <LinearLayout
-        android:id="@+id/set_theme"
+    <TextView
+        android:id="@+id/theme"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
+        android:textColor="@color/light_navigation_text_color"
+        android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
         android:layout_marginRight="5dp"
-        android:orientation="horizontal">
-        <ImageView
-            android:id="@+id/theme"
-            android:tint="@color/night"
-            android:layout_width="15dp"
-            android:layout_height="15dp"
-            android:layout_gravity="center"
-            android:layout_margin="5dp" />
-        <TextView
-            android:id="@+id/theme_title"
-            android:textColor="@color/night"
-            android:layout_gravity="center"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-    </LinearLayout>
+        android:gravity="center"
+        android:drawableLeft="@drawable/baseline_style_white_48dp"
+        android:drawableTint="@color/light_navigation_text_color"
+        android:drawablePadding="5dp"
+        android:shadowColor="@color/light_toolbar_color_lt23"
+        android:shadowDx="1.0"
+        android:shadowDy="1.0"
+        android:shadowRadius="2.0"
+        />
 </RelativeLayout>

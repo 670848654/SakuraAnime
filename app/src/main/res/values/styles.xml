@@ -8,6 +8,7 @@
         <item name="android:textColorPrimary">@color/text_color_primary</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:listDivider">@color/colorPrimaryDark</item>
     </style>
 
     <style name="startTheme" parent="AppTheme">
@@ -61,6 +62,7 @@
     </style>
 
     <style name="ThemeToolbar" parent="Theme.AppCompat">
+        <item name="searchViewStyle">@style/searchStyle</item>
         <item name="colorPrimary">@color/toolbar_color</item>
         <item name="colorPrimaryDark">@color/toolbar_color</item>
         <item name="android:textColorPrimary">@color/toolbar_color</item>
@@ -68,6 +70,10 @@
         <item name="colorControlNormal">@color/toolbar_color</item>
         <!-- color of the menu overflow icon -->
         <item name="android:textColorSecondary">@color/toolbar_color</item>
+    </style>
+
+    <style name="searchStyle" parent="Widget.AppCompat.SearchView.ActionBar">
+        <item name="searchHintIcon">@null</item>
     </style>
 
     <style name="DescToolbarTheme" parent="AppTheme">

@@ -294,4 +294,17 @@
     <color name="jd_bg">#FFF</color>
     <color name="white">#FFF</color>
     <color name="logo_bg">#e55578</color>
+
+    <color name="light_toolbar_color">#FFF</color>
+    <color name="light_toolbar_color_lt23">#bdbdbd</color>
+    <color name="light_window_color">#FFFFFF</color>
+    <color name="light_navigation_color">#FFFFFF</color>
+    <color name="light_navigation_text_color">#000000</color>
+    <color name="light_navigation_tini_color">#ff4081</color>
+
+    <color name="dark_toolbar_color">#303030</color>
+    <color name="dark_window_color">#303030</color>
+    <color name="dark_navigation_color">#303030</color>
+    <color name="dark_navigation_text_color">#FFFFFF</color>
+    <color name="dark_navigation_tini_color">#ff4081</color>
 </resources>

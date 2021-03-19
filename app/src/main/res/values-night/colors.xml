@@ -294,6 +294,7 @@
     <color name="jd_bg">#FFF</color>
     <color name="white">#FFF</color>
     <color name="logo_bg">#e55578</color>
+    <color name="drama">#424242</color>
 
     <color name="light_toolbar_color">#FFF</color>
     <color name="light_toolbar_color_lt23">#bdbdbd</color>

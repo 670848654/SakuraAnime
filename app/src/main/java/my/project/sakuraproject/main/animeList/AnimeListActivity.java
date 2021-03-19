@@ -101,7 +101,7 @@ public class AnimeListActivity extends BaseActivity<AnimeListContract.View, Anim
             params.setMargins(Utils.dpToPx(this, 16),
                     Utils.dpToPx(this, 16),
                     Utils.dpToPx(this, 16),
-                    Utils.getNavigationBarHeight(this));
+                    Utils.getNavigationBarHeight(this) + 15);
             query.setLayoutParams(params);
         }
         query.setVisibility(View.VISIBLE);

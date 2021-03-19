@@ -164,6 +164,9 @@
     <string name="select_tools">请选择下载工具</string>
     <string name="tools_not_found">没有找到匹配的程序</string>
     <string name="click_to_sniffer">尝试网页嗅探解析</string>
+    <string name="authorize_msg">点击前往授权</string>
+    <string name="authorize_title_msg">缺少必要权限</string>
+    <string name="file_manger_msg">Android 11 需要授予所有文件的管理权限</string>
 
     <string name="device_title">设备列表</string>
     <string name="notice">请选择连接设备，连接设备后才可播放</string>

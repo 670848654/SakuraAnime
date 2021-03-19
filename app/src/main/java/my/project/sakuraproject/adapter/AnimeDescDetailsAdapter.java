@@ -1,12 +1,12 @@
 package my.project.sakuraproject.adapter;
 
 import android.content.Context;
-import android.widget.Button;
 
 import androidx.annotation.Nullable;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
+import com.google.android.material.button.MaterialButton;
 
 import java.util.List;
 
@@ -26,14 +26,11 @@ public class AnimeDescDetailsAdapter extends BaseQuickAdapter<AnimeDescDetailsBe
 
     @Override
     protected void convert(final BaseViewHolder helper, AnimeDescDetailsBean item) {
-        Button btn = helper.getView(R.id.tag_group);
+        MaterialButton materialButton = helper.getView(R.id.tag_group);
         helper.setText(R.id.tag_group, item.getTitle().replaceAll("第", "").replaceAll("集", ""));
-        if (item.isSelected()) {
-            helper.getView(R.id.tag_group).setBackgroundResource(R.drawable.button_selected);
-            btn.setTextColor(context.getResources().getColor(R.color.tabSelectedTextColor));
-        } else {
-            helper.getView(R.id.tag_group).setBackgroundResource(R.drawable.button_default);
-            btn.setTextColor(context.getResources().getColor(R.color.text_color_primary));
-        }
+        if (item.isSelected())
+            materialButton.setTextColor(context.getResources().getColor(R.color.tabSelectedTextColor));
+        else
+            materialButton.setTextColor(context.getResources().getColor(R.color.text_color_primary));
     }
 }

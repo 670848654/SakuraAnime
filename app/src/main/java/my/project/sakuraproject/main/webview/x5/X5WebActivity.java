@@ -1,6 +1,5 @@
 package my.project.sakuraproject.main.webview.x5;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;

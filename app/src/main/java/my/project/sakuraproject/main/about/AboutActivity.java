@@ -1,6 +1,5 @@
 package my.project.sakuraproject.main.about;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Environment;
@@ -146,7 +145,7 @@ public class AboutActivity extends BaseActivity {
 
     public void showUpdateLogs() {
         AlertDialog alertDialog;
-        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.DialogStyle);
         View view = LayoutInflater.from(this).inflate(R.layout.dialog_update_log, null);
         RecyclerView logs = view.findViewById(R.id.rv_list);
         logs.setLayoutManager(new LinearLayoutManager(this));

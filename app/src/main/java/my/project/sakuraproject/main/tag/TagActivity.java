@@ -104,7 +104,7 @@ public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> im
             params.setMargins(Utils.dpToPx(this, 16),
                     Utils.dpToPx(this, 16),
                     Utils.dpToPx(this, 16),
-                    Utils.getNavigationBarHeight(this));
+                    Utils.getNavigationBarHeight(this) + 15);
             tag_btn.setLayoutParams(params);
         }
     }

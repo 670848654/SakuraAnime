@@ -82,7 +82,7 @@ public class OpenSourceActivity extends BaseActivity {
         list.add(new SourceBean("Slidr", "r0adkll", "Easily add slide to dismiss functionality to an Activity", "https://github.com/r0adkll/Slidr"));
         list.add(new SourceBean("butterknife", "JakeWharton", "Bind Android views and callbacks to fields and methods.", "https://github.com/JakeWharton/butterknife"));
         list.add(new SourceBean("okhttp", "square", "An HTTP+HTTP/2 client for Android and Java applications.", "https://github.com/square/okhttp"));
-        list.add(new SourceBean("customtabs", "GoogleChrome", "mirrored from https://chromium.googlesource.com/custom-tabs-client", "https://github.com/GoogleChrome/custom-tabs-client"));
+//        list.add(new SourceBean("customtabs", "GoogleChrome", "mirrored from https://chromium.googlesource.com/custom-tabs-client", "https://github.com/GoogleChrome/custom-tabs-client"));
         list.add(new SourceBean("Toasty","GrenderG","The usual Toast, but with steroids","https://github.com/GrenderG/Toasty"));
         list.add(new SourceBean("Sniffing","fanchen001","【次元番】使用的，一个基于webview/x5webview的视频嗅探工具,能准确解析绝大多数手机在线视频网站的视频真实链接。","https://github.com/fanchen001/Sniffing"));
         list.add(new SourceBean("AndroidTagView","whilu","A TagView library for Android. Customize your own & Drag effect.","https://github.com/whilu/AndroidTagView"));
@@ -99,7 +99,7 @@ public class OpenSourceActivity extends BaseActivity {
         adapter.setOnItemClickListener((adapter, view, position) -> {
             if (Utils.isFastClick()) Utils.viewInChrome(this, list.get(position).getUrl());
         });
-        if (Utils.checkHasNavigationBar(this)) recyclerView.setPadding(0,0,0, Utils.getNavigationBarHeight(this));
+        if (Utils.checkHasNavigationBar(this)) recyclerView.setPadding(0,0,0, Utils.getNavigationBarHeight(this) + 15);
         recyclerView.setAdapter(adapter);
     }
 }

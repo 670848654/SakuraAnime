@@ -9,7 +9,6 @@ import android.os.Handler;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -25,6 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.fanchen.sniffing.SniffingUICallback;
 import com.fanchen.sniffing.SniffingVideo;
 import com.fanchen.sniffing.web.SniffingUtil;
+import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -197,9 +197,8 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
             AnimeDescDetailsBean bean = (AnimeDescDetailsBean) adapter.getItem(position);
             Jzvd.releaseAllVideos();
             alertDialog = Utils.getProDialog(PlayerActivity.this, R.string.parsing);
-            Button v = (Button) adapter.getViewByPosition(recyclerView, position, R.id.tag_group);
-            v.setBackgroundResource(R.drawable.button_selected);
-            v.setTextColor(getResources().getColor(R.color.tabSelectedTextColor));
+            MaterialButton materialButton = (MaterialButton) adapter.getViewByPosition(recyclerView, position, R.id.tag_group);
+            materialButton.setTextColor(getResources().getColor(R.color.tabSelectedTextColor));
             bean.setSelected(true);
             diliUrl = VideoUtils.getUrl(bean.getUrl());
             witchTitle = animeTitle + " - " + bean.getTitle();

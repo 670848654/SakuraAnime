@@ -1,12 +1,15 @@
 package my.project.sakuraproject.cling.adapter;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.core.content.ContextCompat;
 
 import org.fourthline.cling.model.meta.Device;
 
@@ -20,10 +23,12 @@ import my.project.sakuraproject.cling.entity.ClingDevice;
  */
 
 public class DevicesAdapter extends ArrayAdapter<ClingDevice> {
+    private Context context;
     private LayoutInflater mInflater;
 
     public DevicesAdapter(Context context) {
         super(context, 0);
+        this.context = context;
         mInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
@@ -39,11 +44,12 @@ public class DevicesAdapter extends ArrayAdapter<ClingDevice> {
 
         Device device = item.getDevice();
 
-//        ImageView imageView = (ImageView)convertView.findViewById(R.id.img);
-//        imageView.setBackgroundResource(R.drawable.ic_action_dock);
+        ImageView imageView = convertView.findViewById(R.id.img);
+        imageView.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.text_color_primary)));
 
         TextView textView = convertView.findViewById(R.id.title);
         textView.setText(device.getDetails().getFriendlyName());
+        textView.setTextColor(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.text_color_primary)));
         return convertView;
     }
 }

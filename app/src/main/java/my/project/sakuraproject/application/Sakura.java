@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-
 import es.dmoral.toasty.Toasty;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.util.SharedPreferencesUtils;

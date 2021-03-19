@@ -121,8 +121,8 @@
 
         <ImageView
             android:id="@+id/back"
-            android:layout_width="26dp"
-            android:layout_height="26dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
@@ -143,9 +143,19 @@
             android:layout_toEndOf="@+id/back"
             android:layout_toRightOf="@+id/back"
             android:ellipsize="end"
-            android:maxLines="2"
+            android:maxLines="1"
             android:textColor="#ffffff"
             android:textSize="18sp" />
+
+        <ImageView
+            android:id="@+id/config"
+            android:visibility="invisible"
+            android:layout_toLeftOf="@+id/airplay"
+            android:layout_marginRight="14dp"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_settings_white_48dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
 
         <ImageView
             android:id="@+id/airplay"
@@ -213,16 +223,6 @@
             android:visibility="invisible"
             android:layout_width="@dimen/jz_start_button_w_h_normal"
             android:layout_height="@dimen/jz_start_button_w_h_normal"/>
-
-        <ImageView
-            android:id="@+id/config"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="12dp"
-            android:layout_centerVertical="true"
-            android:src="@drawable/ic_settings_white_48dp"
-            android:visibility="invisible"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
 
         <ImageView
             android:id="@+id/start"

@@ -99,7 +99,7 @@ public class AnimeTopicActivity extends BaseActivity<AnimeTopicContract.View, An
             params.setMargins(Utils.dpToPx(this, 16),
                     Utils.dpToPx(this, 16),
                     Utils.dpToPx(this, 16),
-                    Utils.getNavigationBarHeight(this));
+                    Utils.getNavigationBarHeight(this) + 15);
             query.setLayoutParams(params);
         }
         query.setVisibility(View.VISIBLE);

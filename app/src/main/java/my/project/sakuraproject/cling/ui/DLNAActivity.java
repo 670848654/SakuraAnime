@@ -203,7 +203,7 @@ public class DLNAActivity extends BaseActivity implements SeekBar.OnSeekBarChang
         mDeviceList.setAdapter(mDevicesAdapter);
         // 片源的时间
         mSeekProgress.setMax((int) duration);
-        durationText.setText(String.format(refTimeText, "", OtherUtils.getStringTime((int) duration)));
+        durationText.setText(String.format(refTimeText, "00:00:00", OtherUtils.getStringTime((int) duration)));
         // 设置最大音量
         mSeekVolume.setMax(100);
     }

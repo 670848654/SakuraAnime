@@ -28,8 +28,10 @@ import com.fanchen.sniffing.SniffingUICallback;
 import com.fanchen.sniffing.SniffingVideo;
 import com.fanchen.sniffing.web.SniffingUtil;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.r0adkll.slidr.Slidr;
+import com.tencent.smtt.utils.v;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -212,10 +214,9 @@ public class NormalWebActivity extends BaseActivity implements VideoContract.Vie
             mBottomSheetDialog.dismiss();
             AnimeDescDetailsBean bean = (AnimeDescDetailsBean) adapter.getItem(position);
             alertDialog = Utils.getProDialog(NormalWebActivity.this, R.string.parsing);
-            Button v = (Button) adapter.getViewByPosition(dramaRecyclerView, position, R.id.tag_group);
-            v.setBackgroundResource(R.drawable.button_selected);
-            v.setTextColor(getResources().getColor(R.color.tabSelectedTextColor));
-            bean.setSelected(true);
+            MaterialButton materialButton = (MaterialButton) adapter.getViewByPosition(dramaRecyclerView, position, R.id.tag_group);
+            materialButton.setTextColor(getResources().getColor(R.color.tabSelectedTextColor));
+            materialButton.setSelected(true);
             diliUrl = VideoUtils.getUrl(bean.getUrl());
             witchTitle = animeTitle + " - " + bean.getTitle();
             presenter = new VideoPresenter(animeTitle, diliUrl, NormalWebActivity.this);

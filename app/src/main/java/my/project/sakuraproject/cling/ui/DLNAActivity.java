@@ -1,5 +1,6 @@
 package my.project.sakuraproject.cling.ui;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -20,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.fourthline.cling.model.meta.Device;
+import org.fourthline.cling.support.model.PositionInfo;
 
 import java.util.Collection;
 
@@ -44,22 +46,23 @@ import my.project.sakuraproject.cling.service.manager.DeviceManager;
 import my.project.sakuraproject.cling.util.OtherUtils;
 import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.base.Presenter;
+import my.project.sakuraproject.util.Utils;
 
 public class DLNAActivity extends BaseActivity implements SeekBar.OnSeekBarChangeListener {
 
     private static final String TAG = DLNAActivity.class.getSimpleName();
     /** 连接设备状态: 播放状态 */
-    public static final int PLAY_ACTION = 0xa1;
+    public static final int PLAY_ACTION = 1;
     /** 连接设备状态: 暂停状态 */
-    public static final int PAUSE_ACTION = 0xa2;
+    public static final int PAUSE_ACTION = 2;
     /** 连接设备状态: 停止状态 */
-    public static final int STOP_ACTION = 0xa3;
+    public static final int STOP_ACTION = 3;
     /** 连接设备状态: 转菊花状态 */
-    public static final int TRANSITIONING_ACTION = 0xa4;
-    /** 获取进度 */
-    public static final int GET_POSITION_INFO_ACTION = 0xa5;
+    public static final int TRANSITIONING_ACTION = 4;
     /** 投放失败 */
-    public static final int ERROR_ACTION = 0xa5;
+    public static final int ERROR_ACTION = 5;
+    /** 获取进度 */
+    public static final int GET_POSITION_INFO_ACTION = 6;
 
     private Context mContext;
     private Handler mHandler = new InnerHandler();
@@ -72,7 +75,13 @@ public class DLNAActivity extends BaseActivity implements SeekBar.OnSeekBarChang
     SeekBar mSeekProgress;
     @BindView(R.id.seekbar_volume)
     SeekBar mSeekVolume;
+    @BindView(R.id.duration)
+    TextView durationText;
 //    private Switch mSwitchMute;
+    private boolean isSeek = false;
+    private String posTime;
+    private String refTimeText = "%s/%s";
+    private boolean isMain = true;
 
     private BroadcastReceiver mTransportStateBroadcastReceiver;
     private ArrayAdapter<ClingDevice> mDevicesAdapter;
@@ -109,7 +118,7 @@ public class DLNAActivity extends BaseActivity implements SeekBar.OnSeekBarChang
         }
     };
     private String playUrl; // 视频播放地址
-    private long duration; // 视屏长度 TODO:视频进度拖动、回显
+    private long duration; // 视屏长度
 
     @Override
     protected Presenter createPresenter() {
@@ -184,7 +193,7 @@ public class DLNAActivity extends BaseActivity implements SeekBar.OnSeekBarChang
         //        unbindService(mSystemServiceConnection);
         // UnRegister Receiver
         unregisterReceiver(mTransportStateBroadcastReceiver);
-
+        postHandler.removeCallbacksAndMessages(null);
         ClingManager.getInstance().destroy();
         ClingDeviceList.getInstance().destroy();
     }
@@ -192,10 +201,8 @@ public class DLNAActivity extends BaseActivity implements SeekBar.OnSeekBarChang
     private void initView() {
         mDevicesAdapter = new DevicesAdapter(mContext);
         mDeviceList.setAdapter(mDevicesAdapter);
-
         // 片源的时间
         mSeekProgress.setMax((int) duration);
-
         // 设置最大音量
         mSeekVolume.setMax(100);
     }
@@ -275,6 +282,7 @@ public class DLNAActivity extends BaseActivity implements SeekBar.OnSeekBarChang
 
     @OnClick({R.id.play, R.id.pause, R.id.stop, R.id.exit})
     public void onClick(View view) {
+        if (!Utils.isFastClick()) return;
         switch (view.getId()) {
             case R.id.play:
                 play();
@@ -299,6 +307,7 @@ public class DLNAActivity extends BaseActivity implements SeekBar.OnSeekBarChang
             @Override
             public void success(IResponse response) {
                 Log.e(TAG, "stop success");
+                mHandler.sendEmptyMessage(STOP_ACTION);
             }
 
             @Override
@@ -312,6 +321,7 @@ public class DLNAActivity extends BaseActivity implements SeekBar.OnSeekBarChang
      * 暂停
      */
     private void pause() {
+        isMain = false;
         mClingPlayControl.pause(new ControlCallback() {
             @Override
             public void success(IResponse response) {
@@ -321,25 +331,6 @@ public class DLNAActivity extends BaseActivity implements SeekBar.OnSeekBarChang
             @Override
             public void fail(IResponse response) {
                 Log.e(TAG, "pause fail");
-            }
-        });
-    }
-
-    public void getPositionInfo() {
-        mClingPlayControl.getPositionInfo(new ControlReceiveCallback() {
-            @Override
-            public void receive(IResponse response) {
-
-            }
-
-            @Override
-            public void success(IResponse response) {
-
-            }
-
-            @Override
-            public void fail(IResponse response) {
-
             }
         });
     }
@@ -355,6 +346,7 @@ public class DLNAActivity extends BaseActivity implements SeekBar.OnSeekBarChang
          */
 
         if (currentState == DLANPlayState.STOP) {
+            isMain = true;
             mClingPlayControl.playNew(playUrl, new ControlCallback() {
 
                 @Override
@@ -403,10 +395,12 @@ public class DLNAActivity extends BaseActivity implements SeekBar.OnSeekBarChang
         int id = seekBar.getId();
         switch (id) {
             case R.id.seekbar_progress: // 进度
-                int currentProgress = seekBar.getProgress() * 1000; // 转为毫秒
+                int currentProgress = seekBar.getProgress(); // 转为毫秒
                 mClingPlayControl.seek(currentProgress, new ControlCallback() {
                     @Override
                     public void success(IResponse response) {
+                        posTime = OtherUtils.getStringTime(currentProgress);
+                        isSeek = true;
                         Log.e(TAG, "seek success");
                     }
 
@@ -442,19 +436,29 @@ public class DLNAActivity extends BaseActivity implements SeekBar.OnSeekBarChang
             switch (msg.what) {
                 case PLAY_ACTION:
                     Log.i(TAG, "Execute PLAY_ACTION");
-                    Toast.makeText(mContext, "正在投放", Toast.LENGTH_SHORT).show();
+                    if (isMain) {
+                        Toast.makeText(mContext, isSeek ? "快进到：" + posTime : "开始投屏", Toast.LENGTH_SHORT).show();
+                    }
+                    isSeek = false;
                     mClingPlayControl.setCurrentState(DLANPlayState.PLAY);
-
+                    postHandler.postDelayed(positionRunnable, refreshPositionTime);
                     break;
                 case PAUSE_ACTION:
                     Log.i(TAG, "Execute PAUSE_ACTION");
                     mClingPlayControl.setCurrentState(DLANPlayState.PAUSE);
 
+                    postHandler.post(positionRunnable);
+                    postHandler.removeCallbacksAndMessages(null);
                     break;
                 case STOP_ACTION:
                     Log.i(TAG, "Execute STOP_ACTION");
                     mClingPlayControl.setCurrentState(DLANPlayState.STOP);
 
+                    postHandler.post(positionRunnable);
+                    postHandler.removeCallbacksAndMessages(null);
+
+                    mSeekProgress.setProgress(0);
+                    durationText.setText(String.format(refTimeText, "00:00:00", "00:00:00"));
                     break;
                 case TRANSITIONING_ACTION:
                     Log.i(TAG, "Execute TRANSITIONING_ACTION");
@@ -463,6 +467,9 @@ public class DLNAActivity extends BaseActivity implements SeekBar.OnSeekBarChang
                 case ERROR_ACTION:
                     Log.e(TAG, "Execute ERROR_ACTION");
                     Toast.makeText(mContext, "投放失败", Toast.LENGTH_SHORT).show();
+
+                    postHandler.post(positionRunnable);
+                    postHandler.removeCallbacksAndMessages(null);
                     break;
             }
         }
@@ -491,6 +498,35 @@ public class DLNAActivity extends BaseActivity implements SeekBar.OnSeekBarChang
             }
         }
     }
+    Handler postHandler = new Handler();
+    private int refreshPositionTime = 500; // 刷新时长
+    private Runnable positionRunnable = new Runnable() {
+        @Override
+        public void run() {
+            mClingPlayControl.getPositionInfo(new ControlReceiveCallback() {
+                @Override
+                public void receive(IResponse response) {
+                    if (response != null) {
+                        Log.e(TAG, "=================================>");
+                        PositionInfo positionInfo = (PositionInfo) response.getResponse();
+                        mSeekProgress.setProgress(OtherUtils.getIntTime(positionInfo.getRelTime()));
+                        durationText.setText(String.format(refTimeText, positionInfo.getRelTime(), positionInfo.getTrackDuration()));
+                    }
+                }
+
+                @Override
+                public void success(IResponse response) {
+
+                }
+
+                @Override
+                public void fail(IResponse response) {
+
+                }
+            });
+            postHandler.postDelayed(this, refreshPositionTime);
+        }
+    };
 
     @Override
     protected void onResume() {

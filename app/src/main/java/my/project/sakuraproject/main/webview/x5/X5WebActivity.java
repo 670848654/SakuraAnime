@@ -25,11 +25,13 @@ import com.fanchen.sniffing.SniffingUICallback;
 import com.fanchen.sniffing.SniffingVideo;
 import com.fanchen.sniffing.web.SniffingUtil;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.r0adkll.slidr.Slidr;
 import com.tencent.smtt.export.external.interfaces.IX5WebChromeClient;
 import com.tencent.smtt.sdk.WebChromeClient;
 import com.tencent.smtt.sdk.WebView;
+import com.tencent.smtt.utils.v;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -210,10 +212,9 @@ public class X5WebActivity extends BaseActivity implements VideoContract.View, S
             setResult(0x20);
             mBottomSheetDialog.dismiss();
             AnimeDescDetailsBean bean = (AnimeDescDetailsBean) adapter.getItem(position);
-            Button v = (Button) adapter.getViewByPosition(dramaRecyclerView, position, R.id.tag_group);
-            v.setBackgroundResource(R.drawable.button_selected);
-            v.setTextColor(getResources().getColor(R.color.tabSelectedTextColor));
-            bean.setSelected(true);
+            MaterialButton materialButton = (MaterialButton) adapter.getViewByPosition(dramaRecyclerView, position, R.id.tag_group);
+            materialButton.setTextColor(getResources().getColor(R.color.tabSelectedTextColor));
+            materialButton.setSelected(true);
             diliUrl = VideoUtils.getUrl(bean.getUrl());
             witchTitle = animeTitle + " - " + bean.getTitle();
             presenter = new VideoPresenter(animeTitle, diliUrl, X5WebActivity.this);

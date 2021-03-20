@@ -54,7 +54,7 @@
 
     <LinearLayout
         android:layout_width="0dp"
-        android:layout_margin="8dp"
+        android:layout_margin="16dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:orientation="vertical">
@@ -73,29 +73,45 @@
         android:layout_height="wrap_content"
         android:text="@string/mute"
         android:textColor="@color/text_color_primary"/>-->
-
-    <LinearLayout
-        android:visibility="gone"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:gravity="center_vertical">
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:id="@+id/time"
+            android:layout_width="match_parent"
+            android:layout_marginTop="8dp"
+            android:layout_height="20dp"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/progress"
+                android:textColor="@color/text_color_primary"/>
+
+            <SeekBar
+                android:id="@+id/seekbar_progress"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
 
         <TextView
+            android:layout_below="@+id/time"
+            android:id="@+id/duration"
+            android:gravity="end"
+            android:text="00:00:00/00:00:00"
+            android:layout_marginRight="15dp"
+            android:textColor="@color/text_color_primary"
+            android:layout_alignParentRight="true"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/progress"
-            android:textColor="@color/text_color_primary"/>
-
-        <SeekBar
-            android:id="@+id/seekbar_progress"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
             android:layout_height="wrap_content" />
-    </LinearLayout>
 
-    <LinearLayout
+    </RelativeLayout>
+        <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="30dp"
+        android:layout_height="20dp"
         android:layout_marginTop="8dp"
         android:gravity="center_vertical">
 

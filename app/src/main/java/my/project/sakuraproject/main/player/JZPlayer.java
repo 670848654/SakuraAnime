@@ -111,7 +111,7 @@ public class JZPlayer extends JzvdStd {
             case R.id.airplay:
                 Bundle bundle = new Bundle();
                 bundle.putString("playUrl", jzDataSource.getCurrentUrl().toString());
-                bundle.putLong("duration", getDrawingTime());
+                bundle.putLong("duration", getDuration());
                 Log.e("duration", getDrawingTime() + "");
                 Log.e("playUrl", jzDataSource.getCurrentUrl().toString());
                 context.startActivity(new Intent(context, DLNAActivity.class).putExtras(bundle));

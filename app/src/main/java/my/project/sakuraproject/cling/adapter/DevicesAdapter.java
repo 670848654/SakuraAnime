@@ -1,15 +1,11 @@
 package my.project.sakuraproject.cling.adapter;
 
 import android.content.Context;
-import android.content.res.ColorStateList;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
-
-import androidx.core.content.ContextCompat;
 
 import org.fourthline.cling.model.meta.Device;
 
@@ -36,20 +32,13 @@ public class DevicesAdapter extends ArrayAdapter<ClingDevice> {
     public View getView(int position, View convertView, ViewGroup parent) {
         if (convertView == null)
             convertView = mInflater.inflate(R.layout.item_device, null);
-
         ClingDevice item = getItem(position);
         if (item == null || item.getDevice() == null) {
             return convertView;
         }
-
         Device device = item.getDevice();
-
-        ImageView imageView = convertView.findViewById(R.id.img);
-        imageView.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.text_color_primary)));
-
         TextView textView = convertView.findViewById(R.id.title);
         textView.setText(device.getDetails().getFriendlyName());
-        textView.setTextColor(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.text_color_primary)));
         return convertView;
     }
 }

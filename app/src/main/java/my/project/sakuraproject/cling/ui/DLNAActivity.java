@@ -1,6 +1,5 @@
 package my.project.sakuraproject.cling.ui;
 
-import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -401,6 +400,7 @@ public class DLNAActivity extends BaseActivity implements SeekBar.OnSeekBarChang
                     @Override
                     public void success(IResponse response) {
                         posTime = OtherUtils.getStringTime(currentProgress);
+                        durationText.setText(String.format(refTimeText, posTime, OtherUtils.getStringTime((int) duration)));
                         isSeek = true;
                         Log.e(TAG, "seek success");
                     }
@@ -508,7 +508,6 @@ public class DLNAActivity extends BaseActivity implements SeekBar.OnSeekBarChang
                 @Override
                 public void receive(IResponse response) {
                     if (response != null) {
-                        Log.e(TAG, "=================================>");
                         PositionInfo positionInfo = (PositionInfo) response.getResponse();
                         mSeekProgress.setProgress(OtherUtils.getIntTime(positionInfo.getRelTime()));
                         durationText.setText(String.format(refTimeText, positionInfo.getRelTime(), positionInfo.getTrackDuration()));

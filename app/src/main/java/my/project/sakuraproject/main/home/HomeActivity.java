@@ -140,6 +140,10 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
             if (Utils.isFastClick()) setTheme(isDarkTheme);
         });
         navigationView.setNavigationItemSelectedListener(this);
+        if (Utils.isImomoe()) {
+            navigationView.getMenu().findItem(R.id.anime_zt).setVisible(false);
+            navigationView.getMenu().findItem(R.id.anime_movie).setVisible(false);
+        }
     }
 
     public void initSwipe() {

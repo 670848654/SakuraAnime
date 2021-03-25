@@ -14,8 +14,8 @@ import my.project.sakuraproject.util.Utils;
 public class AnimeListAdapter extends BaseQuickAdapter<AnimeListBean, BaseViewHolder> {
     private Context context;
 
-    public AnimeListAdapter(Context context, List list) {
-        super(R.layout.item_anime, list);
+    public AnimeListAdapter(Context context, List list, boolean isTopic) {
+        super(isTopic ? R.layout.item_topic : R.layout.item_anime, list);
         this.context = context;
     }
 

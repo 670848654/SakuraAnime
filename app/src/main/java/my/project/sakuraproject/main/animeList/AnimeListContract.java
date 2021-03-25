@@ -1,5 +1,6 @@
 package my.project.sakuraproject.main.animeList;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import my.project.sakuraproject.bean.AnimeListBean;
@@ -8,7 +9,7 @@ import my.project.sakuraproject.main.base.BaseView;
 
 public interface AnimeListContract {
     interface Model {
-        void getData(String url, int page, boolean isMain, boolean isMovie, LoadDataCallback callback);
+        void getData(String url, int page, boolean isMain, boolean isMovie, LoadDataCallback callback) throws UnsupportedEncodingException;
     }
 
     interface View extends BaseView {

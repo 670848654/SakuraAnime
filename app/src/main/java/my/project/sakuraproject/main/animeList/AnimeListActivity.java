@@ -15,6 +15,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.r0adkll.slidr.Slidr;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -121,7 +122,7 @@ public class AnimeListActivity extends BaseActivity<AnimeListContract.View, Anim
 
     public void initAdapter() {
         mRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
-        adapter = new AnimeListAdapter(this, list);
+        adapter = new AnimeListAdapter(this, list, false);
         adapter.openLoadAnimation();
         adapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
         adapter.setOnItemClickListener((adapter, view, position) -> {

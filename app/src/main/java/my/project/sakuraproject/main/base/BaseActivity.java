@@ -18,6 +18,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import butterknife.ButterKnife;
@@ -85,7 +86,7 @@ public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatA
 
     protected abstract P createPresenter();
 
-    protected abstract void loadData();
+    protected abstract void loadData() ;
 
     protected abstract int setLayoutRes();
 

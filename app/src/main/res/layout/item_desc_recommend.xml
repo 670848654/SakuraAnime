@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/tools"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:id="@+id/card_view"
-    android:layout_width="125dp"
+    android:layout_width="145dp"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
     android:layout_marginTop="6dp"
@@ -25,7 +25,7 @@
         <ImageView
             android:id="@+id/img"
             android:layout_width="match_parent"
-            android:layout_height="175dp"
+            android:layout_height="203dp"
             android:scaleType="centerCrop"
             android:transitionName="sharedImg" />
         <TextView

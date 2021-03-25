@@ -1,5 +1,6 @@
 package my.project.sakuraproject.main.animeList;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import my.project.sakuraproject.bean.AnimeListBean;
@@ -24,7 +25,11 @@ public class AnimeListPresenter extends Presenter<AnimeListContract.View> implem
             view.showLoadingView();
             view.showEmptyVIew();
         }
-        model.getData(url, page, isMain, isMovie, this);
+        try {
+            model.getData(url, page, isMain, isMovie, this);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

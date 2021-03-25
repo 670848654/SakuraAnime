@@ -18,6 +18,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.r0adkll.slidr.Slidr;
 
@@ -53,7 +54,7 @@ public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> im
     private List<MultiItemEntity> tagList = new ArrayList<>();
     private RecyclerView tagRecyclerView;
     private BottomSheetDialog mBottomSheetDialog;
-    private Button ref;
+    private MaterialButton ref;
     @BindView(R.id.tag_btn)
     FloatingActionButton tag_btn;
     private AnimeListPresenter animeListPresenter;
@@ -124,7 +125,7 @@ public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> im
     public void initAdapter() {
         // 动漫列表数据
         animeListRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
-        animeListAdapter = new AnimeListAdapter(this, animeLists);
+        animeListAdapter = new AnimeListAdapter(this, animeLists, false);
         animeListAdapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
         animeListAdapter.setOnItemClickListener((adapter, view, position) -> {
             if (!Utils.isFastClick()) return;
@@ -161,6 +162,7 @@ public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> im
         tagRecyclerView = tagView.findViewById(R.id.tag_list);
         ref = tagView.findViewById(R.id.ref);
         ref.setOnClickListener((view)-> {
+            mBottomSheetDialog.dismiss();
             tagList.clear();
             tagAdapter.setNewData(tagList);
             mPresenter = createPresenter();

@@ -388,9 +388,13 @@ public class Utils {
      */
     public static void setDefaultImage(Context context, String url, ImageView imageView, boolean setPalette, CardView cardView, TextView textView) {
         DrawableCrossFadeFactory drawableCrossFadeFactory = new DrawableCrossFadeFactory.Builder(300).setCrossFadeEnabled(true).build();
-        GlideUrl imgUrl = new GlideUrl(url, new LazyHeaders.Builder()
+        GlideUrl imgUrl;
+        if (!isImomoe())
+            imgUrl = new GlideUrl(getImgUrl(url), new LazyHeaders.Builder()
                 .addHeader("Referer", Sakura.DOMAIN + "/")
                 .build());
+        else
+            imgUrl = new GlideUrl(getImgUrl(url));
         RequestOptions options = new RequestOptions()
                 .centerCrop()
                 .format(DecodeFormat.PREFER_RGB_565)
@@ -657,24 +661,15 @@ public class Utils {
         return urls;
     }
 
-    public static void getRealScreenRelatedInformation(Context context) {
-        WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        if (windowManager != null) {
-            DisplayMetrics outMetrics = new DisplayMetrics();
-            windowManager.getDefaultDisplay().getRealMetrics(outMetrics);
-            int widthPixels = outMetrics.widthPixels;
-            int heightPixels = outMetrics.heightPixels;
-            int densityDpi = outMetrics.densityDpi;
-            float density = outMetrics.density;
-            float scaledDensity = outMetrics.scaledDensity;
-            //可用显示大小的绝对宽度（以像素为单位）。
-            //可用显示大小的绝对高度（以像素为单位）。
-            //屏幕密度表示为每英寸点数。
-            //显示器的逻辑密度。
-            //显示屏上显示的字体缩放系数。
-            Log.d("display", "widthPixels = " + widthPixels + ",heightPixels = " + heightPixels + "\n" +
-                    ",densityDpi = " + densityDpi + "\n" +
-                    ",density = " + density + ",scaledDensity = " + scaledDensity);
-        }
+    /**
+     * 判断当前选择的网站源是否是imomoe
+     * @return
+     */
+    public static boolean isImomoe() {
+        return (boolean) SharedPreferencesUtils.getParam(Utils.getContext(), "isImomoe", false);
+    }
+
+    public static String getImgUrl(String url) {
+        return url.contains("http") ? url : Sakura.DOMAIN + url;
     }
 }

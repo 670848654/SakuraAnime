@@ -2,32 +2,38 @@ package my.project.sakuraproject.main.desc;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.appcompat.widget.AppCompatTextView;
-import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.content.ContextCompat;
+import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.model.LazyHeaders;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.ctetin.expandabletextviewlibrary.ExpandableTextView;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
@@ -40,7 +46,6 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import co.lujun.androidtagview.TagContainerLayout;
 import co.lujun.androidtagview.TagView;
-import jp.wasabeef.glide.transformations.BlurTransformation;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.adapter.AnimeDescDetailsAdapter;
 import my.project.sakuraproject.adapter.AnimeDescDramaAdapter;
@@ -50,7 +55,6 @@ import my.project.sakuraproject.bean.AnimeDescDetailsBean;
 import my.project.sakuraproject.bean.AnimeDescListBean;
 import my.project.sakuraproject.bean.AnimeDescRecommendBean;
 import my.project.sakuraproject.bean.AnimeListBean;
-import my.project.sakuraproject.custom.InsideScrollView;
 import my.project.sakuraproject.custom.MyTextView;
 import my.project.sakuraproject.database.DatabaseUtil;
 import my.project.sakuraproject.main.animeList.AnimeListActivity;
@@ -64,12 +68,14 @@ import my.project.sakuraproject.util.Utils;
 import my.project.sakuraproject.util.VideoUtils;
 
 public class DescActivity extends BaseActivity<DescContract.View, DescPresenter> implements DescContract.View, VideoContract.View {
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
+//    @BindView(R.id.toolbar)
+//    Toolbar toolbar;
     @BindView(R.id.anime_img)
     ImageView animeImg;
     @BindView(R.id.desc)
-    AppCompatTextView desc;
+    ExpandableTextView desc;
+    @BindView(R.id.title)
+    TextView title;
     @BindView(R.id.mSwipe)
     SwipeRefreshLayout mSwipe;
     private String diliUrl, dramaUrl;
@@ -113,15 +119,21 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     LinearLayout desc_view;
     @BindView(R.id.bg)
     ImageView bg;
-    private MenuItem favorite;
+    @BindView(R.id.favorite)
+    TextView favorite;
     @BindView(R.id.tag_view)
     TagContainerLayout tagContainerLayout;
     @BindView(R.id.update_time)
     MyTextView update_time;
     @BindView(R.id.score_view)
     AppCompatTextView score_view;
-    @BindView(R.id.inside_view)
-    InsideScrollView scrollView;
+/*    @BindView(R.id.inside_view)
+    InsideScrollView scrollView;*/
+    @BindView(R.id.scrollview)
+    NestedScrollView scrollView;
+    @BindView(R.id.spinner)
+    AppCompatSpinner spinner;
+    private ArrayAdapter<String> spinnerAdapter;
 
     @Override
     protected DescPresenter createPresenter() {
@@ -141,12 +153,13 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     @Override
     protected void init() {
         StatusBarUtil.setColorForSwipeBack(this, getResources().getColor(R.color.colorPrimaryDark), 0);
-        StatusBarUtil.setTranslucentForImageView(this, 0, toolbar);
+//        StatusBarUtil.setTranslucentForImageView(this, 0, toolbar);
         if (isDarkTheme) bg.setVisibility(View.GONE);
         Slidr.attach(this, Utils.defaultInit());
         CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) msg.getLayoutParams();
         params.setMargins(10, 0, 10, 0);
         scrollView.getViewTreeObserver().addOnScrollChangedListener(() -> mSwipe.setEnabled(scrollView.getScrollY() == 0));
+        desc.setNeedExpend(true);
         getBundle();
         initToolbar();
         initSwipe();
@@ -169,16 +182,19 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     }
 
     public void initToolbar() {
-        toolbar.setTitle(Utils.getString(R.string.loading));
+/*        toolbar.setTitle(Utils.getString(R.string.loading));
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        toolbar.setNavigationOnClickListener(view -> finish());
+        toolbar.setNavigationOnClickListener(view -> finish());*/
     }
 
     public void initSwipe() {
         mSwipe.setColorSchemeResources(R.color.pink500, R.color.blue500, R.color.purple500);
-        mSwipe.setOnRefreshListener(() -> mPresenter.loadData(true));
-        mSwipe.setRefreshing(true);
+        mSwipe.setProgressViewOffset(true, -0, 150);
+        mSwipe.setOnRefreshListener(() ->  {
+            mSwipe.setRefreshing(true);
+            mPresenter.loadData(true);
+        });
     }
 
     @SuppressLint("RestrictedApi")
@@ -279,16 +295,15 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
 
     @SuppressLint("RestrictedApi")
     public void openAnimeDesc() {
-        toolbar.setTitle(Utils.getString(R.string.loading));
+//        toolbar.setTitle(Utils.getString(R.string.loading));
         animeImg.setImageDrawable(getDrawable(R.drawable.loading));
         tagContainerLayout.setVisibility(View.GONE);
         tagContainerLayout.setTags("");
         update_time.setText("");
         score_view.setVisibility(View.GONE);
         setTextviewEmpty(desc);
-        mSwipe.setRefreshing(true);
         animeDescListBean = new AnimeDescListBean();
-        favorite.setVisible(false);
+        favorite.setVisibility(View.GONE);
         bg.setImageDrawable(getResources().getDrawable(R.drawable.default_bg));
         mPresenter = new DescPresenter(diliUrl, this);
         mPresenter.loadData(true);
@@ -333,7 +348,6 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 0x10 && resultCode == 0x20) {
-            mSwipe.setRefreshing(true);
             mPresenter.loadData(true);
         }
     }
@@ -353,40 +367,68 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     public void favoriteAnime() {
         setResult(200);
         isFavorite = DatabaseUtil.favorite(animeListBean);
+        Drawable drawable = ContextCompat.getDrawable(this, isFavorite ? R.drawable.baseline_star_white_48dp : R.drawable.baseline_star_border_white_48dp);
+        drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight());
         if (isFavorite) {
-            favorite.setIcon(R.drawable.baseline_star_white_48dp);
-            favorite.setTitle(Utils.getString(R.string.remove_favorite));
+            favorite.setCompoundDrawables(drawable,null,null,null);
+            favorite.setText(Utils.getString(R.string.has_favorite));
             application.showSnackbarMsg(msg, Utils.getString(R.string.join_ok));
         } else {
-            favorite.setIcon(R.drawable.baseline_star_border_white_48dp);
-            favorite.setTitle(Utils.getString(R.string.favorite));
+            favorite.setCompoundDrawables(drawable,null,null,null);
+            favorite.setText(Utils.getString(R.string.favorite));
             application.showSnackbarMsg(msg, Utils.getString(R.string.join_error));
         }
     }
 
     public void setCollapsingToolbar() {
-        GlideUrl imgUrl = new GlideUrl(animeListBean.getImg(), new LazyHeaders.Builder()
+        GlideUrl imgUrl;
+        if (!Utils.isImomoe())
+            imgUrl = new GlideUrl(Utils.getImgUrl(animeListBean.getImg()), new LazyHeaders.Builder()
                 .addHeader("Referer", Sakura.DOMAIN + "/")
                 .build());
+        else
+            imgUrl = new GlideUrl(Utils.getImgUrl(animeListBean.getImg()));
         DrawableCrossFadeFactory drawableCrossFadeFactory = new DrawableCrossFadeFactory.Builder(300).setCrossFadeEnabled(true).build();
-        Glide.with(this).load(imgUrl)
+/*        Glide.with(this).load(imgUrl)
                 .apply(RequestOptions.bitmapTransform( new BlurTransformation(25, 3)))
                 .transition(DrawableTransitionOptions.withCrossFade(drawableCrossFadeFactory))
+                .into(bg);*/
+        RequestOptions options = new RequestOptions()
+                .centerCrop()
+                .format(DecodeFormat.PREFER_RGB_565)
+                .placeholder(R.drawable.loading)
+                .error(R.drawable.error);
+        Glide.with(this)
+                .load(imgUrl)
+                .transition(DrawableTransitionOptions.withCrossFade(drawableCrossFadeFactory))
+                .apply(options)
                 .into(bg);
         Utils.setDefaultImage(this, animeListBean.getImg(), animeImg, false, null, null);
-        toolbar.setTitle(animeListBean.getTitle());
+//        toolbar.setTitle(animeListBean.getTitle());
+        title.setText(animeListBean.getTitle());
         if (animeListBean.getTagTitles() != null) {
             tagContainerLayout.setTags(animeListBean.getTagTitles());
             tagContainerLayout.setVisibility(View.VISIBLE);
         }else
             tagContainerLayout.setVisibility(View.GONE);
-        desc.setText(animeListBean.getDesc());
+        desc.setContent(animeListBean.getDesc());
         update_time.setText(animeListBean.getUpdateTime());
-        score_view.setText(animeListBean.getScore()+"分");
-        score_view.setVisibility(View.VISIBLE);
+        if (!Utils.isImomoe()) {
+            score_view.setText(animeListBean.getScore()+"分");
+            score_view.setVisibility(View.VISIBLE);
+        }
     }
 
-    @Override
+    @OnClick(R.id.favorite)
+    public void setFavorite() {
+        favoriteAnime();
+    }
+
+    @OnClick(R.id.exit)
+    public void exit() {
+        finish();
+    }
+   /* @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.open_in_browser:
@@ -404,7 +446,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         getMenuInflater().inflate(R.menu.desc_menu, menu);
         favorite = menu.findItem(R.id.favorite);
         return true;
-    }
+    }*/
 
     @Override
     public void showLoadingView() {
@@ -434,8 +476,8 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     @Override
     public void showEmptyVIew() {
         mSwipe.setRefreshing(true);
-        if (favorite != null && favorite.isVisible())
-            favorite.setVisible(false);
+        if ( favorite.isShown())
+            favorite.setVisibility(View.GONE);
         desc_view.setVisibility(View.GONE);
         playLinearLayout.setVisibility(View.GONE);
         multiLinearLayout.setVisibility(View.GONE);
@@ -456,23 +498,68 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
                 setCollapsingToolbar();
                 mSwipe.setRefreshing(false);
                 this.animeDescListBean = bean;
-                desc_view.setVisibility(View.VISIBLE);
-                animeDescDetailsAdapter.setNewData(bean.getAnimeDescDetailsBeans());
+                if (animeDescListBean.getMultipleAnimeDescDetailsBeans() != null) {
+                    animeDescDetailsAdapter.setNewData(animeDescListBean.getMultipleAnimeDescDetailsBeans().get(0));
+                    setAnimeDescDramaAdapter(true, 0);
+                    // imomoe
+                    if (bean.getMultipleAnimeDescDetailsBeans().size() > 1)
+                        getSpinner(animeDescListBean.getMultipleAnimeDescDetailsBeans().size());
+                } else {
+                    animeDescDetailsAdapter.setNewData(bean.getAnimeDescDetailsBeans());
+                    spinner.setVisibility(View.GONE);
+                }
                 if (bean.getAnimeDescMultiBeans().size() > 0)
                     multiLinearLayout.setVisibility(View.VISIBLE);
                 else
                     multiLinearLayout.setVisibility(View.GONE);
                 animeDescMultiAdapter.setNewData(bean.getAnimeDescMultiBeans());
                 animeDescRecommendAdapter.setNewData(bean.getAnimeDescRecommendBeans());
-                if (bean.getAnimeDescDetailsBeans().size() > 4)
-                    openDrama.setVisibility(View.VISIBLE);
-                else
-                    openDrama.setVisibility(View.GONE);
-                animeDescDramaAdapter.setNewData(bean.getAnimeDescDetailsBeans());
+                setAnimeDescDramaAdapter(false, 0);
+                desc_view.setVisibility(View.VISIBLE);
                 playLinearLayout.setVisibility(View.VISIBLE);
                 recommendLinearLayout.setVisibility(View.VISIBLE);
             }
         });
+    }
+
+    private void setAnimeDescDramaAdapter(boolean isImomoe, int sourceIndex) {
+        if (isImomoe) {
+            List<AnimeDescDetailsBean> animeDescDetailsBean = animeDescListBean.getMultipleAnimeDescDetailsBeans().get(sourceIndex);
+            if (animeDescDetailsBean.size() > 4)
+                openDrama.setVisibility(View.VISIBLE);
+            else
+                openDrama.setVisibility(View.GONE);
+            animeDescDramaAdapter.setNewData(animeDescDetailsBean);
+        } else {
+            if (animeDescListBean.getAnimeDescDetailsBeans().size() > 4)
+                openDrama.setVisibility(View.VISIBLE);
+            else
+                openDrama.setVisibility(View.GONE);
+            animeDescDramaAdapter.setNewData(animeDescListBean.getAnimeDescDetailsBeans());
+        }
+    }
+
+    private void getSpinner(int size) {
+        List<String> items = new ArrayList<>();
+        for (int i=1; i<size+1; i++) {
+            items.add("播放源 " + i);
+        }
+        spinnerAdapter = new ArrayAdapter<>(this, R.layout.item_spinner, items);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(spinnerAdapter);
+        spinner.setOnItemSelectedListener(new Spinner.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                animeDescDetailsAdapter.setNewData(animeDescListBean.getMultipleAnimeDescDetailsBeans().get(position));
+                setAnimeDescDramaAdapter(true, position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        spinner.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -487,15 +574,19 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         isFavorite = is;
         runOnUiThread(() -> {
             if (!mActivityFinish) {
-                if (!favorite.isVisible()) {
+                if (!favorite.isShown()) {
+                    Drawable drawable = ContextCompat.getDrawable(this, isFavorite ? R.drawable.baseline_star_white_48dp : R.drawable.baseline_star_border_white_48dp);
+                    drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight());
                     if (isFavorite) {
-                        favorite.setIcon(R.drawable.baseline_star_white_48dp);
-                        favorite.setTitle(Utils.getString(R.string.remove_favorite));
+//                        favorite.setIcon(R.drawable.baseline_star_white_48dp);
+                        favorite.setText(Utils.getString(R.string.has_favorite));
+                        favorite.setCompoundDrawables(drawable,null,null,null);
                     } else {
-                        favorite.setIcon(R.drawable.baseline_star_border_white_48dp);
-                        favorite.setTitle(Utils.getString(R.string.favorite));
+//                        favorite.setIcon(R.drawable.baseline_star_border_white_48dp);
+                        favorite.setText(Utils.getString(R.string.favorite));
+                        favorite.setCompoundDrawables(drawable,null,null,null);
                     }
-                    favorite.setVisible(true);
+                    favorite.setVisibility(View.VISIBLE);
                 }
             }
         });

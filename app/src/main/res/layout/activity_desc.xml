@@ -2,7 +2,6 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/activity_main"
     android:background="@color/window_bg"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -20,7 +19,7 @@
         android:background="@drawable/desc_gradient"
         android:fitsSystemWindows="true" />
 
-    <com.google.android.material.appbar.AppBarLayout
+    <!--<com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/translucent"
@@ -36,154 +35,203 @@
             android:theme="@style/DescToolbarTheme"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
-        android:id="@+id/msg"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_anchor="@id/toolbar"
-        app:layout_anchorGravity="center" />
+    </com.google.android.material.appbar.AppBarLayout>-->
 
     <my.project.sakuraproject.custom.MySwipeRefreshLayout
         android:id="@+id/mSwipe"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:layout_height="wrap_content">
 
         <androidx.core.widget.NestedScrollView
+            android:id="@+id/scrollview"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <LinearLayout
                 android:clipChildren="true"
+                android:layout_marginTop="?attr/actionBarSize"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <LinearLayout
                     android:id="@+id/desc_view"
-                    android:visibility="gone"
+                    android:visibility="visible"
                     android:layout_width="match_parent"
                     android:clipChildren="false"
-                    android:layout_height="270dp"
-                    android:orientation="horizontal">
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
-                    <androidx.cardview.widget.CardView
-                        android:id="@+id/card_view"
-                        android:layout_width="0dp"
-                        android:layout_height="250dp"
-                        android:layout_margin="10dp"
-                        android:layout_weight="4"
-                        app:cardBackgroundColor="@color/toolbar_layout_bg"
-                        app:cardCornerRadius="4dp"
-                        app:cardElevation="4dp">
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/img_box"
+                        android:layout_width="match_parent"
+                        android:layout_height="203dp">
+
+                        <ImageView
+                            android:id="@+id/exit"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="20dp"
+                            android:clickable="true"
+                            android:src="@drawable/baseline_arrow_back_white_48dp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/favorite"
+                            android:layout_marginRight="5dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:drawablePadding="5dp"
+                            android:gravity="center_vertical"
+                            android:textSize="14sp"
+                            android:textColor="@color/white"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"/>
+
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/card_view"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            app:cardBackgroundColor="@android:color/transparent"
+                            app:cardCornerRadius="4dp"
+                            app:cardElevation="4dp"
+                            app:layout_constraintDimensionRatio="W,1:1.4"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:cardUseCompatPadding="false">
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent">
+
+                                <ImageView
+                                    android:id="@+id/anime_img"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:scaleType="centerCrop" />
+
+                                <androidx.appcompat.widget.AppCompatTextView
+                                    android:id="@+id/score_view"
+                                    android:visibility="gone"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentLeft="true"
+                                    android:background="@drawable/score_bg"
+                                    android:padding="4dp"
+                                    android:gravity="center_vertical"
+                                    android:textStyle="bold"
+                                    android:textSize="12sp"
+                                    android:textColor="@color/white" />
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignBottom="@+id/anime_img"
+                                    android:layout_centerVertical="true"
+                                    android:background="@drawable/desc_update_time_gradient"
+                                    android:orientation="vertical">
+
+                                    <my.project.sakuraproject.custom.MyTextView
+                                        android:id="@+id/update_time"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:gravity="right"
+                                        android:focusable="true"
+                                        android:focusableInTouchMode="true"
+                                        android:marqueeRepeatLimit="marquee_forever"
+                                        android:ellipsize="marquee"
+                                        android:scrollHorizontally="true"
+                                        android:singleLine="true"
+                                        android:paddingTop="5dp"
+                                        android:paddingBottom="2dp"
+                                        android:paddingRight="2dp"
+                                        android:paddingLeft="2dp"
+                                        android:textSize="12sp"
+                                        android:textColor="#f3f3f3" />
+
+                                </LinearLayout>
+
+                            </RelativeLayout>
+                        </androidx.cardview.widget.CardView>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+<!--                    <RelativeLayout-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:clipChildren="true"-->
+<!--                        android:layout_marginTop="10dp"-->
+<!--                        android:layout_marginRight="10dp"-->
+<!--                        android:layout_marginBottom="10dp"-->
+<!--                        android:layout_weight="6">-->
+
+<!--                        <my.project.sakuraproject.custom.InsideScrollView-->
+<!--                            android:id="@+id/inside_view"-->
+<!--                            android:scrollbars="none"-->
+<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_height="wrap_content">-->
 
                         <RelativeLayout
                             android:layout_width="match_parent"
-                            android:layout_height="250dp">
-
-
-                        <ImageView
-                            android:id="@+id/anime_img"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:background="@drawable/loading"
-                            android:scaleType="centerCrop" />
-
-                            <androidx.appcompat.widget.AppCompatTextView
-                                android:id="@+id/score_view"
-                                android:visibility="gone"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentLeft="true"
-                                android:background="@drawable/score_bg"
-                                android:padding="4dp"
-                                android:gravity="center_vertical"
-                                android:textStyle="bold"
-                                android:textSize="12sp"
-                                android:textColor="@color/white" />
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_alignBottom="@+id/anime_img"
-                            android:layout_centerVertical="true"
-                            android:background="@drawable/desc_update_time_gradient"
-                            android:orientation="vertical">
-
-                            <my.project.sakuraproject.custom.MyTextView
-                                android:id="@+id/update_time"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:gravity="right"
-                                android:focusable="true"
-                                android:focusableInTouchMode="true"
-                                android:marqueeRepeatLimit="marquee_forever"
-                                android:ellipsize="marquee"
-                                android:scrollHorizontally="true"
-                                android:singleLine="true"
-                                android:paddingTop="5dp"
-                                android:paddingBottom="2dp"
-                                android:paddingRight="2dp"
-                                android:paddingLeft="2dp"
-                                android:textSize="12sp"
-                                android:textColor="#f3f3f3" />
-
-                        </LinearLayout>
-
-                        </RelativeLayout>
-                    </androidx.cardview.widget.CardView>
-
-                    <RelativeLayout
-                        android:layout_width="0dp"
-                        android:layout_height="250dp"
-                        android:clipChildren="true"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginRight="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:layout_weight="6">
-
-                        <my.project.sakuraproject.custom.InsideScrollView
-                            android:id="@+id/inside_view"
-                            android:scrollbars="none"
-                            android:layout_width="match_parent"
                             android:layout_height="wrap_content">
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical">
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/title"
+                                android:layout_marginTop="10dp"
+                                android:layout_marginLeft="20dp"
+                                android:layout_marginRight="20dp"
+                                android:ellipsize="end"
+                                android:gravity="center_horizontal"
+                                android:maxLines="2"
+                                android:textStyle="bold"
+                                android:shadowColor="@color/light_toolbar_color_lt23"
+                                android:shadowDx="1.0"
+                                android:shadowDy="1.0"
+                                android:shadowRadius="2.0"
+                                android:textColor="@color/white"
+                                android:textSize="18sp" />
 
                             <co.lujun.androidtagview.TagContainerLayout
+                                android:layout_below="@+id/title"
                                 android:id="@+id/tag_view"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_margin="0dp"
+                                android:layout_marginTop="10dp"
                                 app:container_border_color="@color/translucent"
                                 app:container_background_color="@color/translucent"
                                 app:tag_corner_radius="4dp"
+                                app:container_gravity="center"
                                 app:tag_text_color="@color/white"
                                 app:tag_border_color="#73e55578"
                                 app:tag_background_color="#73e55578"
                                 app:tag_clickable="true"
-                                app:tag_horizontal_padding="12dp"
+                                app:tag_horizontal_padding="10dp"
                                 app:tag_theme="none"/>
 
-                            <androidx.appcompat.widget.AppCompatTextView
+                            <com.ctetin.expandabletextviewlibrary.ExpandableTextView
                                 android:id="@+id/desc"
-                                android:layout_marginTop="5dp"
+                                android:layout_below="@id/tag_view"
+                                android:layout_margin="10dp"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:scrollbars="none"
+                                app:ep_max_line="4"
+                                android:lineSpacingExtra="4dp"
+                                app:ep_need_contract="true"
+                                app:ep_need_animation="true"
+                                app:ep_expand_color="@color/colorAccent"
                                 android:textColor="@color/white"
                                 android:textSize="14sp" />
 
-                        </LinearLayout>
+                        </RelativeLayout>
 
-                        </my.project.sakuraproject.custom.InsideScrollView>
+<!--                        </my.project.sakuraproject.custom.InsideScrollView>-->
 
-                    </RelativeLayout>
+<!--                    </RelativeLayout>-->
 
                 </LinearLayout>
 
@@ -196,15 +244,31 @@
                     android:padding="5dp"
                     android:visibility="gone">
 
-                    <androidx.appcompat.widget.AppCompatTextView
+                    <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="8dp"
-                        android:layout_marginBottom="8dp"
-                        android:text="选集"
-                        android:textSize="16sp"
-                        android:textColor="@color/white"
-                        android:textStyle="bold"/>
+                        android:layout_marginBottom="8dp">
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:layout_centerVertical="true"
+                            android:id="@+id/selected_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="8dp"
+                            android:text="选集"
+                            android:textSize="16sp"
+                            android:textColor="@color/white"
+                            android:textStyle="bold"/>
+
+                        <androidx.appcompat.widget.AppCompatSpinner
+                            android:visibility="gone"
+                            android:layout_toRightOf="@id/selected_text"
+                            android:id="@+id/spinner"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="8dp"/>
+                    </RelativeLayout>
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/details_list"
@@ -324,5 +388,11 @@
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
     </my.project.sakuraproject.custom.MySwipeRefreshLayout>
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/msg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_anchor="@id/favorite"
+        app:layout_anchorGravity="center" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

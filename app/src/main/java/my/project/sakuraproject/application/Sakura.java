@@ -34,7 +34,7 @@ public class Sakura extends Application {
     public static String TAG_API, MOVIE_API, ZT_API, JCB_API, SEARCH_API;
     public String error;
     public JSONObject week = new JSONObject();
-
+    public static boolean isImomoe = false;
     public static Sakura getInstance() {
         return appContext;
     }
@@ -49,7 +49,8 @@ public class Sakura extends Application {
         oList = new ArrayList<>();
         appContext = this;
         Utils.init(this);
-        DOMAIN = (String) SharedPreferencesUtils.getParam(this, "domain", Utils.getString(R.string.domain_url));
+        isImomoe = Utils.isImomoe();
+        DOMAIN = isImomoe ? (String) SharedPreferencesUtils.getParam(this, "imomoe_domain", Utils.getString(R.string.imomoe_url)) : (String) SharedPreferencesUtils.getParam(this, "domain", Utils.getString(R.string.domain_url));
         setApi();
         initTBS();
     }
@@ -70,31 +71,29 @@ public class Sakura extends Application {
     }
 
     public static void setApi() {
-        TAG_API = Sakura.DOMAIN + "/sitemap";
-        MOVIE_API = Sakura.DOMAIN + "/movie/";
-        ZT_API = Sakura.DOMAIN + "/topic/";
-        JCB_API = Sakura.DOMAIN + "/37/";
-        SEARCH_API = Sakura.DOMAIN + "/search/";
+        TAG_API = isImomoe ?  DOMAIN + "/so.asp" : DOMAIN + "/sitemap";
+        MOVIE_API = DOMAIN + "/movie/";
+        ZT_API = DOMAIN + "/topic/";
+        JCB_API = isImomoe ? DOMAIN + "/search.asp?page=1&searchword=%BE%E7%B3%A1" : DOMAIN + "/37/";
+        SEARCH_API = isImomoe ? DOMAIN + "/search.asp" : DOMAIN + "/search/";
     }
 
     private void initTBS() {
-        if (!android.os.Build.MODEL.contains("Pixel C")) {
-            //搜集本地tbs内核信息并上报服务器，服务器返回结果决定使用哪个内核。
-            QbSdk.setDownloadWithoutWifi(true);//非wifi条件下允许下载X5内核
-            QbSdk.PreInitCallback cb = new QbSdk.PreInitCallback() {
-                @Override
-                public void onViewInitFinished(boolean arg0) {
-                    if (arg0) SharedPreferencesUtils.setParam(appContext, "X5State", true);
-                    else SharedPreferencesUtils.setParam(appContext, "X5State", false);
-                }
+        //搜集本地tbs内核信息并上报服务器，服务器返回结果决定使用哪个内核。
+        QbSdk.setDownloadWithoutWifi(true);//非wifi条件下允许下载X5内核
+        QbSdk.PreInitCallback cb = new QbSdk.PreInitCallback() {
+            @Override
+            public void onViewInitFinished(boolean arg0) {
+                if (arg0) SharedPreferencesUtils.setParam(appContext, "X5State", true);
+                else SharedPreferencesUtils.setParam(appContext, "X5State", false);
+            }
 
-                @Override
-                public void onCoreInitFinished() {
-                }
-            };
-            //x5内核初始化接口
-            QbSdk.initX5Environment(getApplicationContext(), cb);
-        }
+            @Override
+            public void onCoreInitFinished() {
+            }
+        };
+        //x5内核初始化接口
+        QbSdk.initX5Environment(getApplicationContext(), cb);
     }
 
     public void showToastShortMsg(String msg) {

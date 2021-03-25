@@ -15,7 +15,7 @@ public class FavoriteListAdapter extends BaseQuickAdapter<AnimeListBean, BaseVie
     private Context context;
 
     public FavoriteListAdapter(Context context, List<AnimeListBean> list) {
-        super(R.layout.item_favorite, list);
+        super(R.layout.item_anime, list);
         this.context = context;
     }
 

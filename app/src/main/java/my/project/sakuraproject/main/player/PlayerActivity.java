@@ -32,7 +32,6 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.jzvd.Jzvd;
-import cn.jzvd.JzvdStd;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.adapter.DramaAdapter;
 import my.project.sakuraproject.api.Api;
@@ -137,13 +136,13 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
             @Override
             public void onDrawerOpened(@NonNull View drawerView) {
                 if (drawerLayout.isDrawerOpen(GravityCompat.START))
-                    JzvdStd.goOnPlayOnPause();
+                    player.goOnPlayOnPause();
             }
 
             @Override
             public void onDrawerClosed(@NonNull View drawerView) {
                 if (!drawerLayout.isDrawerOpen(GravityCompat.START))
-                    JzvdStd.goOnPlayOnResume();
+                    player.goOnPlayOnResume();
             }
 
             @Override
@@ -181,7 +180,6 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
     public void startPic() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START))
             drawerLayout.closeDrawer(GravityCompat.START);
-        JzvdStd.goOnPlayOnResume();
         new Handler().postDelayed(this::enterPicInPic, 500);
     }
 
@@ -331,14 +329,21 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
     @Override
     protected void onPause() {
         super.onPause();
-        if (!inMultiWindow()) JzvdStd.goOnPlayOnPause();
+        if (!inMultiWindow()) player.goOnPlayOnPause();
+        else player.goOnPlayOnResume();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         hideNavBar();
-        if (!inMultiWindow()) JzvdStd.goOnPlayOnResume();
+        if (!inMultiWindow()) player.goOnPlayOnResume();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (inMultiWindow()) player.goOnPlayOnResume();
     }
 
     @Override
@@ -380,6 +385,7 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
         if (isInPictureInPictureMode) {
             player.startPIP();
             isPip = true;
+            player.goOnPlayOnResume();
         } else isPip = false;
     }
 
@@ -437,7 +443,7 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
     @Override
     protected void onDestroy() {
         if (null != presenter) presenter.detachView();
-        JzvdStd.releaseAllVideos();
+        player.releaseAllVideos();
         super.onDestroy();
     }
 
@@ -486,7 +492,7 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
     @Override
     public void finish() {
         if (null != presenter) presenter.detachView();
-        JzvdStd.releaseAllVideos();
+        player.releaseAllVideos();
         super.finish();
     }
 

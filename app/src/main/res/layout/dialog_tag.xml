@@ -12,13 +12,14 @@
         android:clipToPadding="false"
         android:fadingEdge="none" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/ref"
         android:visibility="gone"
-        android:layout_margin="5dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:backgroundTint="@color/drama"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="点击重新加载数据"
-        android:textColor="@android:color/white"
-        android:background="@color/colorAccent" />
+        android:textColor="@color/text_color_primary" />
 </LinearLayout>

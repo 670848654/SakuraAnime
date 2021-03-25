@@ -88,6 +88,7 @@
     <string name="player_default">内置</string>
     <string name="domain">域名设置 (备用)</string>
     <string name="domain_url">http://www.yhdm.io</string>
+    <string name="imomoe_url">http://www.imomoe.ai</string>
     <string name="set_light_theme">切至亮色主题</string>
     <string name="set_dark_theme">切至暗色主题</string>
     <!-- webViewDialog 文本 -->
@@ -106,6 +107,7 @@
     <string name="favorite_title">追番列表</string>
     <string name="empty_favorite">空空如也呢(－∀＝)</string>
     <string name="favorite">追番</string>
+    <string name="has_favorite">已追番</string>
     <string name="remove_favorite">弃番</string>
     <string name="remove_api">移除</string>
     <!-- 动画分类activity文本 -->

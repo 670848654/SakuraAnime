@@ -181,6 +181,7 @@ public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatA
         if (!getRunningActivityName().equals("HomeActivity") &&
                 !getRunningActivityName().equals("DescActivity") &&
                 !getRunningActivityName().equals("PlayerActivity") &&
+                !getRunningActivityName().equals("ImomoePlayerActivity") &&
                 !getRunningActivityName().equals("DefaultX5WebActivity") &&
                 !getRunningActivityName().equals("X5WebActivity") &&
                 !getRunningActivityName().equals("DefaultNormalWebActivity") &&

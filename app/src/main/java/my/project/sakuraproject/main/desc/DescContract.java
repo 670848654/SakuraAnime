@@ -19,6 +19,8 @@ public interface DescContract {
         void showSuccessFavorite(boolean favorite);
 
         void showEmptyDram(String msg);
+
+        void isImomoe(boolean isImomoe);
     }
 
     interface LoadDataCallback extends BaseLoadDataCallback {
@@ -29,5 +31,7 @@ public interface DescContract {
         void isFavorite(boolean favorite);
 
         void emptyDram(String msg);
+
+        void isImomoe(boolean isImomoe);
     }
 }

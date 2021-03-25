@@ -45,6 +45,7 @@ public class AnimeListActivity extends BaseActivity<AnimeListContract.View, Anim
     FloatingActionButton query;
     private String title, url;
     private boolean isMovie;
+    private boolean isImomoe;
     private int nowPage = 1;
     private int pageCount = 1;
     private boolean isErr = true;
@@ -56,7 +57,7 @@ public class AnimeListActivity extends BaseActivity<AnimeListContract.View, Anim
 
     @Override
     protected void loadData() {
-        mPresenter.loadData(true, isMovie);
+        mPresenter.loadData(true, isMovie, isImomoe);
     }
 
     @Override
@@ -85,6 +86,7 @@ public class AnimeListActivity extends BaseActivity<AnimeListContract.View, Anim
             title = bundle.getString("title");
             url = bundle.getString("url");
             isMovie = bundle.getBoolean("isMovie");
+            isImomoe = bundle.getBoolean("isImomoe");
         }
     }
 
@@ -116,7 +118,7 @@ public class AnimeListActivity extends BaseActivity<AnimeListContract.View, Anim
             nowPage = 1;
             pageCount = 1;
             mPresenter = createPresenter();
-            mPresenter.loadData(true, isMovie);
+            mPresenter.loadData(true, isMovie, isImomoe);
         });
     }
 
@@ -130,7 +132,7 @@ public class AnimeListActivity extends BaseActivity<AnimeListContract.View, Anim
             final AnimeListBean bean = (AnimeListBean) adapter.getItem(position);
             Bundle bundle = new Bundle();
             bundle.putString("name", bean.getTitle());
-            String diliUrl = VideoUtils.getUrl(bean.getUrl());
+            String diliUrl = bean.getUrl();
             bundle.putString("url", diliUrl);
             startActivity(new Intent(AnimeListActivity.this, DescActivity.class).putExtras(bundle));
         });
@@ -146,7 +148,7 @@ public class AnimeListActivity extends BaseActivity<AnimeListContract.View, Anim
                     //成功获取更多数据
                     nowPage++;
                     mPresenter = createPresenter();
-                    mPresenter.loadData(false, isMovie);
+                    mPresenter.loadData(false, isMovie, isImomoe);
                 } else {
                     //获取更多数据失败
                     isErr = true;

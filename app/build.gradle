@@ -65,5 +65,6 @@ dependencies {
     implementation 'org.eclipse.jetty:jetty-client:8.1.22.v20160922'
     implementation 'com.wuyr:rippleanimation:1.0.0'
     implementation 'com.github.MZCretin:ExpandableTextView:v1.6.1-x'
+    implementation 'com.alibaba:fastjson:1.1.72.android'
 }
 

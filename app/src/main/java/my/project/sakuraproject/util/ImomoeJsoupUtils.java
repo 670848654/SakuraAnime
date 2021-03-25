@@ -177,7 +177,7 @@ public class ImomoeJsoupUtils {
         animeListBean.setImg(document.select("div.tpic > img").attr("src"));
         //番剧地址
         animeListBean.setUrl(url);
-        Elements tagElements = document.select("div.alex > a");
+        Elements tagElements = document.select("div.alex > span > a");
         List<String> tagTitles = new ArrayList<>();
         List<String> tagUrls = new ArrayList<>();
         for (int i=0,size=tagElements.size(); i<size; i++) {
@@ -233,4 +233,19 @@ public class ImomoeJsoupUtils {
             return null;
     }
     /**************************************  动漫详情解析方法结束  **************************************/
+
+    /**************************************  视频解析方法开始  **************************************/
+    public static String getPlayDataJs(String source) {
+        Document document = Jsoup.parse(source);
+        Elements elements = document.select("script");
+        String js = "";
+        for (Element srcipt : elements) {
+            if (srcipt.attr("src").contains("playdata")) {
+                js = srcipt.attr("src");
+                break;
+            }
+        }
+        return js;
+    }
+    /**************************************  视频解析方法结束  **************************************/
 }

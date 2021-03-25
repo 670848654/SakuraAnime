@@ -118,7 +118,7 @@ public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> im
             animeListAdapter.setNewData(animeLists);
             nowPage = 1;
             animeListPresenter = new AnimeListPresenter(animeUrl, nowPage, this);
-            animeListPresenter.loadData(true, false);
+            animeListPresenter.loadData(true, false, Utils.isImomoe());
         });
     }
 
@@ -132,7 +132,7 @@ public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> im
             final AnimeListBean bean = (AnimeListBean) adapter.getItem(position);
             Bundle bundle = new Bundle();
             bundle.putString("name", bean.getTitle());
-            String diliUrl = VideoUtils.getUrl(bean.getUrl());
+            String diliUrl = bean.getUrl();
             bundle.putString("url", diliUrl);
             startActivity(new Intent(TagActivity.this, DescActivity.class).putExtras(bundle));
         });
@@ -148,7 +148,7 @@ public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> im
                     //成功获取更多数据
                     nowPage++;
                     animeListPresenter = new AnimeListPresenter(animeUrl, nowPage, this);
-                    animeListPresenter.loadData(false, false);
+                    animeListPresenter.loadData(false, false, Utils.isImomoe());
                 } else {
                     //获取更多数据失败
                     isErr = true;
@@ -185,12 +185,12 @@ public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> im
             adapter.setNewData(tagList);
             mSwipe.setEnabled(true);
             toolbar.setTitle(bean.getTitle());
-            animeUrl = VideoUtils.getUrl(bean.getItemUrl());
+            animeUrl = bean.getItemUrl();
             animeListAdapter.setNewData(null);
             animeListAdapter.setEmptyView(getLayoutInflater().inflate(R.layout.base_emnty_view, null));
             nowPage = 1;
             animeListPresenter = new AnimeListPresenter(animeUrl, nowPage, this);
-            animeListPresenter.loadData(true, false);
+            animeListPresenter.loadData(true, false, Utils.isImomoe());
         });
         tagRecyclerView.setAdapter(tagAdapter);
         mBottomSheetDialog = new BottomSheetDialog(this);

@@ -3,6 +3,7 @@ package my.project.sakuraproject.main.video;
 import java.util.List;
 
 import my.project.sakuraproject.bean.AnimeDescDetailsBean;
+import my.project.sakuraproject.bean.ImomoeVideoUrlBean;
 import my.project.sakuraproject.main.base.BaseLoadDataCallback;
 import my.project.sakuraproject.main.base.BaseView;
 
@@ -23,6 +24,8 @@ public interface VideoContract {
         void showSuccessDramaView(List<AnimeDescDetailsBean> list);
 
         void errorDramaView();
+
+        void showSuccessImomoeDramaView(List<List<ImomoeVideoUrlBean>> bean);
     }
 
     interface LoadDataCallback extends BaseLoadDataCallback {
@@ -33,5 +36,7 @@ public interface VideoContract {
         void empty();
 
         void successDrama(List<AnimeDescDetailsBean> list);
+
+        void successImomoeDrama(List<List<ImomoeVideoUrlBean>> bean);
     }
 }

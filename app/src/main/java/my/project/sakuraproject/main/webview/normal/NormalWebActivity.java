@@ -45,6 +45,7 @@ import my.project.sakuraproject.api.Api;
 import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.bean.AnimeDescDetailsBean;
 import my.project.sakuraproject.bean.ApiBean;
+import my.project.sakuraproject.bean.ImomoeVideoUrlBean;
 import my.project.sakuraproject.bean.WebviewBean;
 import my.project.sakuraproject.database.DatabaseUtil;
 import my.project.sakuraproject.main.base.BaseActivity;
@@ -355,6 +356,9 @@ public class NormalWebActivity extends BaseActivity implements VideoContract.Vie
     public void errorDramaView() {
         runOnUiThread(() -> application.showToastMsg(Utils.getString(R.string.get_drama_error)));
     }
+
+    @Override
+    public void showSuccessImomoeDramaView(List<List<ImomoeVideoUrlBean>> bean) {}
 
     @Override
     public void onSniffingStart(View webView, String url) {

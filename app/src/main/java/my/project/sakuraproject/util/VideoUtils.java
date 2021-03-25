@@ -7,9 +7,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Patterns;
 
+import com.alibaba.fastjson.JSONArray;
+
 import androidx.appcompat.app.AlertDialog;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -17,6 +20,8 @@ import java.util.regex.Pattern;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.bean.AnimeDescDetailsBean;
+import my.project.sakuraproject.bean.ImomoeVideoUrlBean;
+import my.project.sakuraproject.main.player.ImomoePlayerActivity;
 import my.project.sakuraproject.main.player.PlayerActivity;
 import my.project.sakuraproject.main.webview.normal.DefaultNormalWebActivity;
 import my.project.sakuraproject.main.webview.normal.NormalWebActivity;
@@ -117,6 +122,35 @@ public class VideoUtils {
     }
 
     /**
+     * 打开播放器 Imomoe
+     * @param isDescActivity
+     * @param activity
+     * @param witchTitle
+     * @param url
+     * @param animeTitle
+     * @param diliUrl
+     * @param list
+     * @param bean
+     */
+    public static void openImomoePlayer(boolean isDescActivity, Activity activity, String witchTitle, String url, String animeTitle, String diliUrl,  List<List<AnimeDescDetailsBean>> list, List<List<ImomoeVideoUrlBean>> bean, int nowSource) {
+        Bundle bundle = new Bundle();
+        bundle.putString("title", witchTitle);
+        bundle.putString("url", url);
+        bundle.putString("animeTitle", animeTitle);
+        bundle.putString("dili", diliUrl);
+        bundle.putSerializable("list", (Serializable) list);
+        bundle.putSerializable("playList", (Serializable) bean);
+        bundle.putInt("nowSource", nowSource);
+        Sakura.destoryActivity("playerImomoe");
+        if (isDescActivity)
+            activity.startActivityForResult(new Intent(activity, ImomoePlayerActivity.class).putExtras(bundle), 0x10);
+        else {
+            activity.startActivity(new Intent(activity, ImomoePlayerActivity.class).putExtras(bundle));
+            activity.finish();
+        }
+    }
+
+    /**
      * 打开webview
      *
      * @param isDescActivity
@@ -163,5 +197,37 @@ public class VideoUtils {
 
     public static String getUrl(String url) {
         return url.contains(Sakura.DOMAIN) ? url : Sakura.DOMAIN + url;
+    }
+
+    /**************************************  imomoe视频解析方法  **************************************/
+    public static List<List<ImomoeVideoUrlBean>> getImomoePlayUrl(String json) {
+        List<List<ImomoeVideoUrlBean>> allList = new ArrayList<>();
+        JSONArray jsonArray = JSONArray.parseArray(json);
+        for (int i=0,size=jsonArray.size(); i<size; i++) {
+            JSONArray sourceArr = JSONArray.parseArray(jsonArray.getJSONArray(i).getString(1));
+            List<ImomoeVideoUrlBean> imomoeVideoUrlBeans = new ArrayList<>();
+            for (int j=0,size2=sourceArr.size(); j<size2; j++) {
+                String str = sourceArr.getString(j);
+                String[] strs = str.split("\\$");
+                Matcher matcher = Pattern.compile("\\$(.*)\\$").matcher(str);
+                if (matcher.find()) {
+                    ImomoeVideoUrlBean imomoeVideoUrlBean = new ImomoeVideoUrlBean();
+                    String find = matcher.group().replaceAll("\\$", "");
+                    if (find.contains("http")) {
+                        // 是http
+                        imomoeVideoUrlBean.setHttp(true);
+                        imomoeVideoUrlBean.setVidOrUrl(find);
+                    } else {
+                        // 非http
+                        imomoeVideoUrlBean.setHttp(false);
+                        imomoeVideoUrlBean.setVidOrUrl(find);
+                        imomoeVideoUrlBean.setParam(strs[strs.length-1]);
+                    }
+                    imomoeVideoUrlBeans.add(imomoeVideoUrlBean);
+                }
+            }
+            allList.add(imomoeVideoUrlBeans);
+        }
+        return allList;
     }
 }

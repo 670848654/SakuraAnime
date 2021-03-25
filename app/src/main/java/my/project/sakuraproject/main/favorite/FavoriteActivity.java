@@ -27,7 +27,6 @@ import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.desc.DescActivity;
 import my.project.sakuraproject.util.SwipeBackLayoutUtil;
 import my.project.sakuraproject.util.Utils;
-import my.project.sakuraproject.util.VideoUtils;
 
 public class FavoriteActivity extends BaseActivity<FavoriteContract.View, FavoritePresenter> implements FavoriteContract.View {
     @BindView(R.id.toolbar)
@@ -97,7 +96,7 @@ public class FavoriteActivity extends BaseActivity<FavoriteContract.View, Favori
             AnimeListBean bean = (AnimeListBean) adapter.getItem(position);
             Bundle bundle = new Bundle();
             bundle.putString("name", bean.getTitle());
-            String url = VideoUtils.getUrl(bean.getUrl());
+            String url = bean.getUrl();
             bundle.putString("url", url);
             startActivityForResult(new Intent(FavoriteActivity.this, DescActivity.class).putExtras(bundle), 3000);
         });

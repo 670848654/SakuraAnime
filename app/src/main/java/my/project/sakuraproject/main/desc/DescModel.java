@@ -22,10 +22,10 @@ public class DescModel extends BaseModel implements DescContract.Model {
 
     @Override
     public void getData(String url, DescContract.LoadDataCallback callback) {
-        if (isImomoe())
-            parserImomoe(url, callback);
+        if (url.contains("/view/"))
+            parserImomoe(getDomain(true) + url, callback);
         else
-            parserYhdm(url, callback);
+            parserYhdm(getDomain(false) + url, callback);
     }
 
     private void parserYhdm(String url, DescContract.LoadDataCallback callback) {
@@ -39,7 +39,7 @@ public class DescModel extends BaseModel implements DescContract.Model {
             @Override
             public void onResponse(Call call, Response response) {
                 try {
-                    String source = getBody(response);
+                    String source = getHtmlBody(response, false);
                     if (YhdmJsoupUtils.hasRedirected(source))
                         parserYhdm(Sakura.DOMAIN + YhdmJsoupUtils.getRedirectedStr(source), callback);
                     else if (YhdmJsoupUtils.hasRefresh(source))
@@ -54,6 +54,7 @@ public class DescModel extends BaseModel implements DescContract.Model {
                         fid = DatabaseUtil.getAnimeID(animeTitle);
                         dramaStr = DatabaseUtil.queryAllIndex(fid);
                         callback.successDesc(animeListBean);
+                        callback.isImomoe(false);
                         AnimeDescListBean animeDescListBean = YhdmJsoupUtils.getAnimeDescList(source, dramaStr);
                         if (animeDescListBean != null)
                             callback.successMain(animeDescListBean);
@@ -79,7 +80,7 @@ public class DescModel extends BaseModel implements DescContract.Model {
             @Override
             public void onResponse(Call call, Response response) {
                 try {
-                    String source = getBody(response);
+                    String source = getHtmlBody(response, true);
                     AnimeListBean animeListBean = ImomoeJsoupUtils.getAinmeInfo(source, url);
                     String animeTitle = animeListBean.getTitle();
                     //是否收藏
@@ -89,6 +90,7 @@ public class DescModel extends BaseModel implements DescContract.Model {
                     fid = DatabaseUtil.getAnimeID(animeTitle);
                     dramaStr = DatabaseUtil.queryAllIndex(fid);
                     callback.successDesc(animeListBean);
+                    callback.isImomoe(true);
                     AnimeDescListBean animeDescListBean = ImomoeJsoupUtils.getAnimeDescList(source, dramaStr);
                     if (animeDescListBean != null)
                         callback.successMain(animeDescListBean);

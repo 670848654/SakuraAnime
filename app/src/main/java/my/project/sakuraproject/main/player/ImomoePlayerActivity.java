@@ -6,29 +6,32 @@ import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
-import android.util.Patterns;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AlertDialog;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.fanchen.sniffing.SniffingUICallback;
 import com.fanchen.sniffing.SniffingVideo;
 import com.fanchen.sniffing.web.SniffingUtil;
 import com.google.android.material.button.MaterialButton;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.AppCompatSpinner;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.jzvd.Jzvd;
@@ -38,23 +41,22 @@ import my.project.sakuraproject.api.Api;
 import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.bean.AnimeDescDetailsBean;
 import my.project.sakuraproject.bean.ImomoeVideoUrlBean;
+import my.project.sakuraproject.database.DatabaseUtil;
 import my.project.sakuraproject.main.base.BaseActivity;
-import my.project.sakuraproject.main.base.BaseModel;
 import my.project.sakuraproject.main.base.Presenter;
-import my.project.sakuraproject.main.video.VideoContract;
-import my.project.sakuraproject.main.video.VideoPresenter;
 import my.project.sakuraproject.util.SharedPreferencesUtils;
 import my.project.sakuraproject.util.StatusBarUtil;
 import my.project.sakuraproject.util.Utils;
 import my.project.sakuraproject.util.VideoUtils;
 
-public class PlayerActivity extends BaseActivity implements VideoContract.View, JZPlayer.CompleteListener, JZPlayer.TouchListener, SniffingUICallback {
+public class ImomoePlayerActivity extends BaseActivity implements JZPlayer.CompleteListener, JZPlayer.TouchListener, SniffingUICallback {
     @BindView(R.id.player)
     JZPlayer player;
     private String witchTitle, url, diliUrl;
     @BindView(R.id.rv_list)
     RecyclerView recyclerView;
-    private List<AnimeDescDetailsBean> list = new ArrayList<>();
+    private List<List<AnimeDescDetailsBean>> list = new ArrayList<>();
+    private List<List<ImomoeVideoUrlBean>> imomoeBeans = new ArrayList<>();
     private DramaAdapter dramaAdapter;
     private AlertDialog alertDialog;
     private String animeTitle;
@@ -66,7 +68,6 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
     TextView titleView;
     @BindView(R.id.pic_config)
     RelativeLayout picConfig;
-    private VideoPresenter presenter;
     //播放网址
     private String webUrl;
     private boolean isPip = false;
@@ -77,6 +78,13 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
     TextView speedTextView;
     private String[] speeds = Utils.getArray(R.array.speed_item);
     private int userSpeed = 2;
+
+    private int nowSource = 0; // 当前源
+    private int clickIndex; // 当前点击剧集
+    @BindView(R.id.spinner)
+    AppCompatSpinner spinner;
+    private ArrayAdapter<String> spinnerAdapter;
+
 
     @Override
     protected Presenter createPresenter() {
@@ -89,12 +97,12 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
 
     @Override
     protected int setLayoutRes() {
-        return R.layout.activity_play;
+        return R.layout.activity_play_imomoe;
     }
 
     @Override
     protected void init() {
-        Sakura.addDestoryActivity(this, "player");
+        Sakura.addDestoryActivity(this, "playerImomoe");
         hideGap();
         Bundle bundle = getIntent().getExtras();
         init(bundle);
@@ -118,7 +126,11 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
         //源地址
         diliUrl = bundle.getString("dili");
         //剧集list
-        list = (List<AnimeDescDetailsBean>) bundle.getSerializable("list");
+        list = (List<List<AnimeDescDetailsBean>>) bundle.getSerializable("list");
+        //播放地址
+        imomoeBeans = (List<List<ImomoeVideoUrlBean>>) bundle.getSerializable("playList");
+        //当前选择源
+        nowSource = bundle.getInt("nowSource");
         //禁止冒泡
         linearLayout.setOnClickListener(view -> {
             return;
@@ -152,16 +164,40 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
 
             }
         });
+        if (list.size() > 1) {
+            List<String> items = new ArrayList<>();
+            for (int i=1; i<list.size()+1; i++) {
+                items.add("播放源 " + i);
+            }
+            spinnerAdapter = new ArrayAdapter<>(this, R.layout.item_spinner, items);
+            spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinner.setAdapter(spinnerAdapter);
+            spinner.setSelection(nowSource);
+            spinner.setOnItemSelectedListener(new Spinner.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    dramaAdapter.setNewData(list.get(position));
+                    nowSource = position;
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+
+                }
+            });
+            spinner.setVisibility(View.VISIBLE);
+        }
         player.config.setOnClickListener(v -> {
             if (!Utils.isFastClick()) return;
             if (drawerLayout.isDrawerOpen(GravityCompat.START))
                 drawerLayout.closeDrawer(GravityCompat.START);
             else drawerLayout.openDrawer(GravityCompat.START);
         });
+        System.out.println(url + "========================>");
         player.setListener(this, this, this);
         player.backButton.setOnClickListener(v -> finish());
         // 加载视频失败，嗅探视频
-        player.snifferBtn.setOnClickListener(v -> snifferPlayUrl(url));
+        player.snifferBtn.setOnClickListener(v -> snifferPlayUrl(imomoeBeans.get(nowSource).get(clickIndex)));
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) picConfig.setVisibility(View.GONE);
         else picConfig.setVisibility(View.VISIBLE);
         if (gtSdk23()) player.tvSpeed.setVisibility(View.VISIBLE);
@@ -188,22 +224,25 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
     public void initAdapter() {
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 4));
-        dramaAdapter = new DramaAdapter(this, list);
+        dramaAdapter = new DramaAdapter(this, list.get(nowSource));
         recyclerView.setAdapter(dramaAdapter);
         dramaAdapter.setOnItemClickListener((adapter, view, position) -> {
             if (!Utils.isFastClick()) return;
             setResult(0x20);
+            clickIndex = position;
             drawerLayout.closeDrawer(GravityCompat.END);
-            AnimeDescDetailsBean bean = (AnimeDescDetailsBean) adapter.getItem(position);
+            AnimeDescDetailsBean bean = list.get(nowSource).get(position);
             Jzvd.releaseAllVideos();
-            alertDialog = Utils.getProDialog(PlayerActivity.this, R.string.parsing);
+            alertDialog = Utils.getProDialog(ImomoePlayerActivity.this, R.string.parsing);
             MaterialButton materialButton = (MaterialButton) adapter.getViewByPosition(recyclerView, position, R.id.tag_group);
             materialButton.setTextColor(getResources().getColor(R.color.tabSelectedTextColor));
             bean.setSelected(true);
-            diliUrl = bean.getUrl();
+            String fid = DatabaseUtil.getAnimeID(animeTitle);
+            DatabaseUtil.addIndex(fid, Sakura.DOMAIN + list.get(nowSource).get(clickIndex).getUrl());
+            System.out.println(Sakura.DOMAIN + list.get(nowSource).get(clickIndex).getUrl());
+            diliUrl = VideoUtils.getUrl(bean.getUrl());
             witchTitle = animeTitle + " - " + bean.getTitle();
-            presenter = new VideoPresenter(animeTitle, diliUrl, PlayerActivity.this);
-            presenter.loadData(true);
+            playAnime(imomoeBeans.get(nowSource).get(clickIndex).getVidOrUrl());
         });
     }
 
@@ -220,34 +259,30 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
                 break;
             case 1:
                 Jzvd.releaseAllVideos();
-                Utils.selectVideoPlayer(PlayerActivity.this, url);
+                Utils.selectVideoPlayer(this, url);
                 break;
         }
     }
 
     /**
      * 嗅探视频真实连接
-     * @param animeUrl
+     * @param imomoeVideoUrlBean
      */
-    private void snifferPlayUrl(String animeUrl) {
-        alertDialog = Utils.getProDialog(PlayerActivity.this, R.string.should_be_used_web);
-        webUrl = animeUrl;
-        if (Patterns.WEB_URL.matcher(animeUrl.replace(" ", "")).matches()) {
-            if (animeUrl.contains("jx.618g.com")) {
-                cancelDialog();
-                url = animeUrl.replaceAll("http://jx.618g.com/\\?url=", "");
-                VideoUtils.openWebview(false, this, witchTitle, animeTitle, url, BaseModel.getDomain(false) + diliUrl, this.list);
-            } else sniffer(webUrl, true);
-        } else sniffer(webUrl, false);
+    private void snifferPlayUrl(ImomoeVideoUrlBean imomoeVideoUrlBean) {
+        alertDialog = Utils.getProDialog(this, R.string.should_be_used_web);
+        try {
+            webUrl = imomoeVideoUrlBean.getVidOrUrl().contains("http") ? imomoeVideoUrlBean.getVidOrUrl() : String.format(Api.IMOMOE_PARSE_API, imomoeVideoUrlBean.getParam(), imomoeVideoUrlBean.getVidOrUrl(),  URLEncoder.encode(Sakura.DOMAIN + list.get(nowSource).get(clickIndex).getUrl(),"GB2312"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        sniffer(webUrl);
     }
 
     /**
      * 嗅探方法
      * @param url
-     * @param isUrl
      */
-    private void sniffer(String url, boolean isUrl) {
-        url = isUrl ? url : String.format(Api.PARSE_API, url);
+    private void sniffer(String url) {
         SniffingUtil.get().activity(this).referer(url).callback(this).url(url).start();
     }
 
@@ -314,7 +349,7 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
                 Utils.selectVideoPlayer(this, url);
                 break;
             case R.id.browser_config:
-                Utils.viewInChrome(this, BaseModel.getDomain(false) + diliUrl);
+                Utils.viewInChrome(this, diliUrl);
                 break;
         }
     }
@@ -391,63 +426,12 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
         } else isPip = false;
     }
 
-    @Override
     public void cancelDialog() {
         Utils.cancelDialog(alertDialog);
     }
 
     @Override
-    public void getVideoSuccess(List<String> list) {
-        runOnUiThread(() -> {
-            hideNavBar();
-            Log.e("playUrl", list.toString());
-            if (list.size() == 1)
-                playAnime(list.get(0));
-            else
-                VideoUtils.showMultipleVideoSources(this,
-                        list,
-                        (dialog, index) -> playAnime(list.get(index)), (dialog, which) -> {
-                            cancelDialog();
-                            dialog.dismiss();
-                        }, 1);
-        });
-    }
-
-    @Override
-    public void getVideoEmpty() {
-        runOnUiThread(() -> {
-            hideNavBar();
-            VideoUtils.showErrorInfo(PlayerActivity.this, BaseModel.getDomain(false) + diliUrl);
-        });
-    }
-
-    @Override
-    public void getVideoError() {
-        //网络出错
-        runOnUiThread(() -> {
-            hideNavBar();
-            application.showErrorToastMsg(Utils.getString(R.string.error_700));
-        });
-    }
-
-    @Override
-    public void showSuccessDramaView(List<AnimeDescDetailsBean> dramaList) {
-        list = dramaList;
-        runOnUiThread(() -> dramaAdapter.setNewData(list));
-
-    }
-
-    @Override
-    public void errorDramaView() {
-        runOnUiThread(() -> application.showErrorToastMsg(Utils.getString(R.string.get_drama_error)));
-    }
-
-    @Override
-    public void showSuccessImomoeDramaView(List<List<ImomoeVideoUrlBean>> bean) {}
-
-    @Override
     protected void onDestroy() {
-        if (null != presenter) presenter.detachView();
         player.releaseAllVideos();
         super.onDestroy();
     }
@@ -492,32 +476,5 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
     @Override
     public void touch() {
         hideNavBar();
-    }
-
-    @Override
-    public void finish() {
-        if (null != presenter) presenter.detachView();
-        player.releaseAllVideos();
-        super.finish();
-    }
-
-    @Override
-    public void showLoadingView() {
-
-    }
-
-    @Override
-    public void showLoadErrorView(String msg) {
-
-    }
-
-    @Override
-    public void showEmptyVIew() {
-
-    }
-
-    @Override
-    public void showLog(String url) {
-//        runOnUiThread(() -> application.showToastShortMsg(url));
     }
 }

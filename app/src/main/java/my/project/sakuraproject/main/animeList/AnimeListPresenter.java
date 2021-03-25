@@ -20,13 +20,13 @@ public class AnimeListPresenter extends Presenter<AnimeListContract.View> implem
         model = new AnimeListModel();
     }
 
-    public void loadData(boolean isMain, boolean isMovie) {
+    public void loadData(boolean isMain, boolean isMovie,  boolean isImomoe) {
         if (isMain) {
             view.showLoadingView();
             view.showEmptyVIew();
         }
         try {
-            model.getData(url, page, isMain, isMovie, this);
+            model.getData(url, page, isMain, isMovie, isImomoe, this);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }

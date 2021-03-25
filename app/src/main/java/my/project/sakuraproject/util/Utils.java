@@ -386,10 +386,10 @@ public class Utils {
      * @param cardView
      * @param textView
      */
-    public static void setDefaultImage(Context context, String url, ImageView imageView, boolean setPalette, CardView cardView, TextView textView) {
+    public static void setDefaultImage(Context context, String url, String htmlUrl, ImageView imageView, boolean setPalette, CardView cardView, TextView textView) {
         DrawableCrossFadeFactory drawableCrossFadeFactory = new DrawableCrossFadeFactory.Builder(300).setCrossFadeEnabled(true).build();
         GlideUrl imgUrl;
-        if (!isImomoe())
+        if (!htmlUrl.contains("/view/"))
             imgUrl = new GlideUrl(getImgUrl(url), new LazyHeaders.Builder()
                 .addHeader("Referer", Sakura.DOMAIN + "/")
                 .build());

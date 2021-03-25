@@ -48,7 +48,10 @@ public class SearchActivity extends BaseActivity<SearchContract.View, SearchPres
 
     @Override
     protected SearchPresenter createPresenter() {
-        return new SearchPresenter(Sakura.SEARCH_API + title + "/", page, this);
+        if (Utils.isImomoe())
+            return new SearchPresenter(Sakura.SEARCH_API, page,  title,this);
+        else
+            return new SearchPresenter(Sakura.SEARCH_API + title + "/", page,  "",this);
     }
 
     @Override
@@ -102,7 +105,7 @@ public class SearchActivity extends BaseActivity<SearchContract.View, SearchPres
         adapter.setOnItemClickListener((adapter, view, position) -> {
             if (!Utils.isFastClick()) return;
             AnimeListBean bean = (AnimeListBean) adapter.getItem(position);
-            String url = VideoUtils.getUrl(bean.getUrl());
+            String url = bean.getUrl();
             String title = bean.getTitle();
             openAnimeDesc(title, url);
         });

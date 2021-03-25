@@ -87,7 +87,7 @@ public class WeekFragment extends LazyFragment {
                 HomeWekBean bean = (HomeWekBean) adapter.getItem(position);
                 Bundle bundle = new Bundle();
                 bundle.putString("name", bean.getTitle());
-                bundle.putString("url", VideoUtils.getUrl(bean.getUrl()));
+                bundle.putString("url", bean.getUrl());
                 startActivity(new Intent(getActivity(), DescActivity.class).putExtras(bundle));
             });
 //            adapter.setOnItemChildClickListener((adapter, view, position) -> {

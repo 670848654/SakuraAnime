@@ -47,6 +47,7 @@ public class SettingActivity extends BaseActivity {
     private String url;
     private String[] playerItems = Utils.getArray(R.array.player);
     private String [] x5Items = {"启用","禁用"};
+    private boolean isImomoe;
 
     @Override
     protected Presenter createPresenter() {
@@ -89,6 +90,7 @@ public class SettingActivity extends BaseActivity {
     }
 
     public void getUserCustomSet() {
+        isImomoe = Utils.isImomoe();
         api.setText(DatabaseUtil.queryAllApi().size() + "");
         switch ((Integer) SharedPreferencesUtils.getParam(getApplicationContext(), "player", 0)) {
             case 0:
@@ -147,7 +149,7 @@ public class SettingActivity extends BaseActivity {
             }
         });
         EditText editText = view.findViewById(R.id.domain);
-        String defaultUrl = (String) SharedPreferencesUtils.getParam(this, "domain", Utils.getString(R.string.domain_url));
+        String defaultUrl = isImomoe ? (String) SharedPreferencesUtils.getParam(this, "imomoe_domain", Utils.getString(R.string.imomoe_url)) : (String) SharedPreferencesUtils.getParam(this, "domain", Utils.getString(R.string.domain_url));
         editText.setText(defaultUrl.replaceAll("http://", "").replaceAll("https://", ""));
         builder.setPositiveButton(Utils.getString(R.string.page_positive_edit), null);
         builder.setNegativeButton(Utils.getString(R.string.page_negative), null);
@@ -163,7 +165,10 @@ public class SettingActivity extends BaseActivity {
                     setResult(0x20);
                     if (text.endsWith("/")) text = text.substring(0, text.length() - 1);
                     url += text;
-                    SharedPreferencesUtils.setParam(SettingActivity.this, "domain", url);
+                    if (isImomoe)
+                        SharedPreferencesUtils.setParam(SettingActivity.this, "imomoe_domain", url);
+                    else
+                        SharedPreferencesUtils.setParam(SettingActivity.this, "domain", url);
                     Sakura.DOMAIN = url;
                     Sakura.setApi();
                     domain_default.setText(url);
@@ -174,9 +179,12 @@ public class SettingActivity extends BaseActivity {
         });
         alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(v -> {
             setResult(0x20);
-            Sakura.DOMAIN = Utils.getString(R.string.domain_url);
+            Sakura.DOMAIN = isImomoe ? Utils.getString(R.string.imomoe_url) : Utils.getString(R.string.domain_url);
             Sakura.setApi();
-            SharedPreferencesUtils.setParam(SettingActivity.this, "domain", Sakura.DOMAIN);
+            if (isImomoe)
+                SharedPreferencesUtils.setParam(SettingActivity.this, "imomoe_domain", url);
+            else
+                SharedPreferencesUtils.setParam(SettingActivity.this, "domain", url);
             domain_default.setText(Sakura.DOMAIN);
             alertDialog.dismiss();
         });

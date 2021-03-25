@@ -55,10 +55,12 @@ import my.project.sakuraproject.bean.AnimeDescDetailsBean;
 import my.project.sakuraproject.bean.AnimeDescListBean;
 import my.project.sakuraproject.bean.AnimeDescRecommendBean;
 import my.project.sakuraproject.bean.AnimeListBean;
+import my.project.sakuraproject.bean.ImomoeVideoUrlBean;
 import my.project.sakuraproject.custom.MyTextView;
 import my.project.sakuraproject.database.DatabaseUtil;
 import my.project.sakuraproject.main.animeList.AnimeListActivity;
 import my.project.sakuraproject.main.base.BaseActivity;
+import my.project.sakuraproject.main.base.BaseModel;
 import my.project.sakuraproject.main.video.VideoContract;
 import my.project.sakuraproject.main.video.VideoPresenter;
 import my.project.sakuraproject.util.SharedPreferencesUtils;
@@ -78,7 +80,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     TextView title;
     @BindView(R.id.mSwipe)
     SwipeRefreshLayout mSwipe;
-    private String diliUrl, dramaUrl;
+    private String sakuraUrl, dramaUrl;
     private String animeTitle;
     private String witchTitle;
     private AlertDialog alertDialog;
@@ -134,10 +136,14 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     @BindView(R.id.spinner)
     AppCompatSpinner spinner;
     private ArrayAdapter<String> spinnerAdapter;
+    private boolean isImomoe;
+    private List<List<ImomoeVideoUrlBean>> imomoeBeans = new ArrayList<>();
+    private int nowSource = 0; // 当前源
+    private int clickIndex; // 当前点击剧集
 
     @Override
     protected DescPresenter createPresenter() {
-        return new DescPresenter(diliUrl, this);
+        return new DescPresenter(sakuraUrl, this);
     }
 
     @Override
@@ -175,9 +181,9 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     public void getBundle() {
         Bundle bundle = getIntent().getExtras();
         if (!bundle.isEmpty()) {
-            diliUrl = bundle.getString("url");
+            sakuraUrl = bundle.getString("url");
             animeTitle = bundle.getString("name");
-            animeUrlList.add(diliUrl);
+            animeUrlList.add(sakuraUrl);
         }
     }
 
@@ -202,8 +208,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         animeDescDetailsAdapter = new AnimeDescDetailsAdapter(this, animeDescListBean.getAnimeDescDetailsBeans());
         animeDescDetailsAdapter.setOnItemClickListener((adapter, view, position) -> {
             if (!Utils.isFastClick()) return;
-            AnimeDescDetailsBean bean = (AnimeDescDetailsBean) adapter.getItem(position);
-            playVideo(adapter, position, bean, detailsRv);
+            playVideo(adapter, position, detailsRv);
         });
         detailsRv.setLayoutManager(getLinearLayoutManager());
         detailsRv.setAdapter(animeDescDetailsAdapter);
@@ -213,8 +218,8 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         animeDescMultiAdapter.setOnItemClickListener((adapter, view, position) -> {
             AnimeDescRecommendBean bean = (AnimeDescRecommendBean) adapter.getItem(position);
             animeTitle = bean.getTitle();
-            diliUrl = VideoUtils.getUrl(bean.getUrl());
-            animeUrlList.add(diliUrl);
+            sakuraUrl = bean.getUrl();
+            animeUrlList.add(sakuraUrl);
             openAnimeDesc();
         });
         multiRv.setLayoutManager(getLinearLayoutManager());
@@ -225,8 +230,8 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         animeDescRecommendAdapter.setOnItemClickListener((adapter, view, position) -> {
             AnimeDescRecommendBean bean = (AnimeDescRecommendBean) adapter.getItem(position);
             animeTitle = bean.getTitle();
-            diliUrl = VideoUtils.getUrl(bean.getUrl());
-            animeUrlList.add(diliUrl);
+            sakuraUrl = bean.getUrl();
+            animeUrlList.add(sakuraUrl);
             openAnimeDesc();
         });
         recommendRv.setLayoutManager(getLinearLayoutManager());
@@ -241,8 +246,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         animeDescDramaAdapter.setOnItemClickListener((adapter, view, position) -> {
             if (!Utils.isFastClick()) return;
             mBottomSheetDialog.dismiss();
-            AnimeDescDetailsBean bean = (AnimeDescDetailsBean) adapter.getItem(position);
-            playVideo(adapter, position, bean, lineRecyclerView);
+            playVideo(adapter, position, lineRecyclerView);
         });
         lineRecyclerView.setAdapter(animeDescDramaAdapter);
         mBottomSheetDialog = new BottomSheetDialog(this);
@@ -263,8 +267,9 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
             public void onTagClick(int position, String text) {
                 Bundle bundle = new Bundle();
                 bundle.putString("title", animeListBean.getTagTitles().get(position));
-                bundle.putString("url", VideoUtils.getUrl(animeListBean.getTagUrls().get(position)));
+                bundle.putString("url", sakuraUrl.contains("/view/") ? animeListBean.getTagUrls().get(position) + "&page=1&" : animeListBean.getTagUrls().get(position));
                 bundle.putBoolean("isMovie", animeListBean.getTagUrls().get(position).contains("movie") ? true : false);
+                bundle.putBoolean("isImomoe", sakuraUrl.contains("/view/"));
                 startActivity(new Intent(DescActivity.this, AnimeListActivity.class).putExtras(bundle));
             }
 
@@ -304,8 +309,9 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         setTextviewEmpty(desc);
         animeDescListBean = new AnimeDescListBean();
         favorite.setVisibility(View.GONE);
+        spinner.setVisibility(View.GONE);
         bg.setImageDrawable(getResources().getDrawable(R.drawable.default_bg));
-        mPresenter = new DescPresenter(diliUrl, this);
+        mPresenter = new DescPresenter(sakuraUrl, this);
         mPresenter.loadData(true);
     }
 
@@ -313,17 +319,32 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         appCompatTextView.setText("");
     }
 
-    public void playVideo(BaseQuickAdapter adapter, int position, AnimeDescDetailsBean bean, RecyclerView recyclerView) {
+    public void playVideo(BaseQuickAdapter adapter, int position, RecyclerView recyclerView) {
         alertDialog = Utils.getProDialog(DescActivity.this, R.string.parsing);
         MaterialButton materialButton = (MaterialButton) adapter.getViewByPosition(recyclerView, position, R.id.tag_group);
         materialButton.setTextColor(getResources().getColor(R.color.tabSelectedTextColor));
-        bean.setSelected(true);
-        dramaUrl = VideoUtils.getUrl(bean.getUrl());
-        witchTitle = animeTitle + " - " + bean.getTitle();
+        clickIndex = position;
+        if (isImomoe) {
+            animeDescListBean.getMultipleAnimeDescDetailsBeans().get(nowSource).get(clickIndex).setSelected(true);
+            dramaUrl = animeDescListBean.getMultipleAnimeDescDetailsBeans().get(nowSource).get(clickIndex).getUrl();
+            witchTitle = animeTitle + " - " + animeDescListBean.getMultipleAnimeDescDetailsBeans().get(nowSource).get(clickIndex).getTitle();
+        } else {
+            animeDescListBean.getAnimeDescDetailsBeans().get(position).setSelected(true);
+            dramaUrl = animeDescListBean.getAnimeDescDetailsBeans().get(position).getUrl();
+            witchTitle = animeTitle + " - " + animeDescListBean.getAnimeDescDetailsBeans().get(position).getTitle();
+        }
         animeDescDetailsAdapter.notifyDataSetChanged();
         animeDescDramaAdapter.notifyDataSetChanged();
-        videoPresenter = new VideoPresenter(animeTitle, dramaUrl, DescActivity.this);
-        videoPresenter.loadData(true);
+        if (isImomoe && imomoeBeans.size() > 0) {
+            String fid = DatabaseUtil.getAnimeID(animeTitle);
+            DatabaseUtil.addIndex(fid, Sakura.DOMAIN + animeDescListBean.getMultipleAnimeDescDetailsBeans().get(nowSource).get(clickIndex).getUrl());
+            playAnime(imomoeBeans.get(nowSource).get(clickIndex).getVidOrUrl());
+            System.out.println(Sakura.DOMAIN + animeDescListBean.getMultipleAnimeDescDetailsBeans().get(nowSource).get(clickIndex).getUrl());
+        }
+        else {
+            videoPresenter = new VideoPresenter(animeTitle, dramaUrl, DescActivity.this);
+            videoPresenter.loadData(true);
+        }
     }
 
     /**
@@ -336,7 +357,10 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         switch ((Integer) SharedPreferencesUtils.getParam(getApplicationContext(), "player", 0)) {
             case 0:
                 //调用播放器
-                VideoUtils.openPlayer(true, this, witchTitle, animeUrl, animeTitle, diliUrl, animeDescListBean.getAnimeDescDetailsBeans());
+                if (isImomoe)
+                    VideoUtils.openImomoePlayer(true, this, witchTitle, animeUrl, animeTitle, sakuraUrl, animeDescListBean.getMultipleAnimeDescDetailsBeans(), imomoeBeans, nowSource);
+                else
+                    VideoUtils.openPlayer(true, this, witchTitle, animeUrl, animeTitle, sakuraUrl, animeDescListBean.getAnimeDescDetailsBeans());
                 break;
             case 1:
                 Utils.selectVideoPlayer(this, animeUrl);
@@ -358,7 +382,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         else {
             if (!mIsLoad) {
                 animeUrlList.remove(animeUrlList.size() - 1);
-                diliUrl = animeUrlList.get(animeUrlList.size() - 1);
+                sakuraUrl = animeUrlList.get(animeUrlList.size() - 1);
                 openAnimeDesc();
             } else Sakura.getInstance().showToastMsg(Utils.getString(R.string.load_desc_info));
         }
@@ -382,7 +406,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
 
     public void setCollapsingToolbar() {
         GlideUrl imgUrl;
-        if (!Utils.isImomoe())
+        if (!isImomoe)
             imgUrl = new GlideUrl(Utils.getImgUrl(animeListBean.getImg()), new LazyHeaders.Builder()
                 .addHeader("Referer", Sakura.DOMAIN + "/")
                 .build());
@@ -403,7 +427,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
                 .transition(DrawableTransitionOptions.withCrossFade(drawableCrossFadeFactory))
                 .apply(options)
                 .into(bg);
-        Utils.setDefaultImage(this, animeListBean.getImg(), animeImg, false, null, null);
+        Utils.setDefaultImage(this, animeListBean.getUrl(), animeListBean.getImg(), animeImg, false, null, null);
 //        toolbar.setTitle(animeListBean.getTitle());
         title.setText(animeListBean.getTitle());
         if (animeListBean.getTagTitles() != null) {
@@ -413,7 +437,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
             tagContainerLayout.setVisibility(View.GONE);
         desc.setContent(animeListBean.getDesc());
         update_time.setText(animeListBean.getUpdateTime());
-        if (!Utils.isImomoe()) {
+        if (!isImomoe) {
             score_view.setText(animeListBean.getScore()+"分");
             score_view.setVisibility(View.VISIBLE);
         }
@@ -432,7 +456,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.open_in_browser:
-                if (Utils.isFastClick()) Utils.viewInChrome(this, diliUrl);
+                if (Utils.isFastClick()) Utils.viewInChrome(this, sakuraUrl);
                 break;
             case R.id.favorite:
                 if (Utils.isFastClick()) favoriteAnime();
@@ -501,6 +525,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
                 if (animeDescListBean.getMultipleAnimeDescDetailsBeans() != null) {
                     animeDescDetailsAdapter.setNewData(animeDescListBean.getMultipleAnimeDescDetailsBeans().get(0));
                     setAnimeDescDramaAdapter(true, 0);
+                    nowSource = 0;
                     // imomoe
                     if (bean.getMultipleAnimeDescDetailsBeans().size() > 1)
                         getSpinner(animeDescListBean.getMultipleAnimeDescDetailsBeans().size());
@@ -552,6 +577,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 animeDescDetailsAdapter.setNewData(animeDescListBean.getMultipleAnimeDescDetailsBeans().get(position));
                 setAnimeDescDramaAdapter(true, position);
+                nowSource = position;
             }
 
             @Override
@@ -610,6 +636,11 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     }
 
     @Override
+    public void isImomoe(boolean isImomoe) {
+        this.isImomoe = isImomoe;
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         if (null != videoPresenter)
@@ -640,7 +671,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     public void getVideoEmpty() {
         runOnUiThread(() -> {
             application.showToastMsg(Utils.getString(R.string.open_web_view));
-            VideoUtils.openDefaultWebview(this, dramaUrl);
+            VideoUtils.openDefaultWebview(this, dramaUrl.contains("/view/") ? BaseModel.getDomain(true) + dramaUrl : BaseModel.getDomain(false) + dramaUrl);
         });
     }
 
@@ -657,5 +688,16 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     @Override
     public void errorDramaView() {
 
+    }
+
+    @Override
+    public void showSuccessImomoeDramaView(List<List<ImomoeVideoUrlBean>> bean) {
+        imomoeBeans = bean;
+        runOnUiThread(() -> {
+            if (imomoeBeans.size() > 0) {
+                ImomoeVideoUrlBean imomoeVideoUrlBean = imomoeBeans.get(nowSource).get(clickIndex);
+                playAnime(imomoeVideoUrlBean.getVidOrUrl());
+            }
+        });
     }
 }

@@ -1,5 +1,6 @@
 package my.project.sakuraproject.main.search;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import my.project.sakuraproject.bean.AnimeListBean;
@@ -9,13 +10,15 @@ import my.project.sakuraproject.main.base.Presenter;
 public class SearchPresenter extends Presenter<SearchContract.View> implements BasePresenter, SearchContract.LoadDataCallback {
     private String url;
     private int page;
+    private String imomoeParam;
     private SearchContract.View view;
     private SearchModel model;
 
-    public SearchPresenter(String url, int page, SearchContract.View view) {
+    public SearchPresenter(String url, int page, String imomoeParam, SearchContract.View view) {
         super(view);
         this.url = url;
         this.page = page;
+        this.imomoeParam = imomoeParam;
         this.view = view;
         model = new SearchModel();
     }
@@ -26,7 +29,11 @@ public class SearchPresenter extends Presenter<SearchContract.View> implements B
             view.showLoadingView();
             view.showEmptyVIew();
         }
-        model.getData(url, page, isMain, this);
+        try {
+            model.getData(url, page, isMain, imomoeParam, this);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

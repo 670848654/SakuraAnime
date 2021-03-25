@@ -22,7 +22,7 @@ public class FavoriteListAdapter extends BaseQuickAdapter<AnimeListBean, BaseVie
     @Override
     protected void convert(BaseViewHolder helper, AnimeListBean item) {
         Utils.setCardDefaultBg(context, helper.getView(R.id.card_view), helper.getView(R.id.title));
-        Utils.setDefaultImage(context, item.getImg(), helper.getView(R.id.img), true, helper.getView(R.id.card_view), helper.getView(R.id.title));
+        Utils.setDefaultImage(context, item.getImg(), item.getUrl(), helper.getView(R.id.img), true, helper.getView(R.id.card_view), helper.getView(R.id.title));
         helper.setText(R.id.title, item.getTitle());
 //        Utils.setCardBg(context, item.getImg(), helper.getView(R.id.card_view), helper.getView(R.id.title));
     }

@@ -56,6 +56,15 @@
             android:screenOrientation="sensorLandscape"
             android:theme="@style/AppTheme.FullScreenTheme" />
         <activity
+            android:name=".main.player.ImomoePlayerActivity"
+            android:configChanges="screenLayout|orientation|screenSize|smallestScreenSize|keyboardHidden|uiMode"
+            android:excludeFromRecents="true"
+            android:resizeableActivity="true"
+            android:launchMode="singleTask"
+            android:supportsPictureInPicture="true"
+            android:screenOrientation="sensorLandscape"
+            android:theme="@style/AppTheme.FullScreenTheme" />
+        <activity
             android:name=".main.webview.normal.NormalWebActivity"
             android:configChanges="screenLayout|orientation|screenSize|smallestScreenSize|keyboardHidden|uiMode"
             android:hardwareAccelerated="true"

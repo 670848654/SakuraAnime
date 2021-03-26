@@ -26,6 +26,8 @@ import com.fanchen.sniffing.SniffingVideo;
 import com.fanchen.sniffing.web.SniffingUtil;
 import com.google.android.material.button.MaterialButton;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,6 +39,7 @@ import my.project.sakuraproject.adapter.DramaAdapter;
 import my.project.sakuraproject.api.Api;
 import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.bean.AnimeDescDetailsBean;
+import my.project.sakuraproject.bean.Event;
 import my.project.sakuraproject.bean.ImomoeVideoUrlBean;
 import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.base.BaseModel;
@@ -51,7 +54,7 @@ import my.project.sakuraproject.util.VideoUtils;
 public class PlayerActivity extends BaseActivity implements VideoContract.View, JZPlayer.CompleteListener, JZPlayer.TouchListener, SniffingUICallback {
     @BindView(R.id.player)
     JZPlayer player;
-    private String witchTitle, url, diliUrl;
+    private String witchTitle, url, sakuraUrl;
     @BindView(R.id.rv_list)
     RecyclerView recyclerView;
     private List<AnimeDescDetailsBean> list = new ArrayList<>();
@@ -62,8 +65,8 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
     LinearLayout linearLayout;
     @BindView(R.id.drawer_layout)
     DrawerLayout drawerLayout;
-    @BindView(R.id.anime_title)
-    TextView titleView;
+/*    @BindView(R.id.anime_title)
+    TextView titleView;*/
     @BindView(R.id.pic_config)
     RelativeLayout picConfig;
     private VideoPresenter presenter;
@@ -114,9 +117,9 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
         witchTitle = bundle.getString("title");
         //番剧名称
         animeTitle = bundle.getString("animeTitle");
-        titleView.setText(animeTitle);
+//        titleView.setText(animeTitle);
         //源地址
-        diliUrl = bundle.getString("dili");
+        sakuraUrl = bundle.getString("sakuraUrl");
         //剧集list
         list = (List<AnimeDescDetailsBean>) bundle.getSerializable("list");
         //禁止冒泡
@@ -192,7 +195,7 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
         recyclerView.setAdapter(dramaAdapter);
         dramaAdapter.setOnItemClickListener((adapter, view, position) -> {
             if (!Utils.isFastClick()) return;
-            setResult(0x20);
+//            setResult(0x20);
             drawerLayout.closeDrawer(GravityCompat.END);
             AnimeDescDetailsBean bean = (AnimeDescDetailsBean) adapter.getItem(position);
             Jzvd.releaseAllVideos();
@@ -200,9 +203,10 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
             MaterialButton materialButton = (MaterialButton) adapter.getViewByPosition(recyclerView, position, R.id.tag_group);
             materialButton.setTextColor(getResources().getColor(R.color.tabSelectedTextColor));
             bean.setSelected(true);
-            diliUrl = bean.getUrl();
+            EventBus.getDefault().post(new Event(false, -1, position));
+            sakuraUrl = bean.getUrl();
             witchTitle = animeTitle + " - " + bean.getTitle();
-            presenter = new VideoPresenter(animeTitle, diliUrl, PlayerActivity.this);
+            presenter = new VideoPresenter(animeTitle, sakuraUrl, PlayerActivity.this);
             presenter.loadData(true);
         });
     }
@@ -236,7 +240,7 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
             if (animeUrl.contains("jx.618g.com")) {
                 cancelDialog();
                 url = animeUrl.replaceAll("http://jx.618g.com/\\?url=", "");
-                VideoUtils.openWebview(false, this, witchTitle, animeTitle, url, BaseModel.getDomain(false) + diliUrl, this.list);
+                VideoUtils.openWebview(false, this, witchTitle, animeTitle, url, BaseModel.getDomain(false) + sakuraUrl, this.list);
             } else sniffer(webUrl, true);
         } else sniffer(webUrl, false);
     }
@@ -314,7 +318,7 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
                 Utils.selectVideoPlayer(this, url);
                 break;
             case R.id.browser_config:
-                Utils.viewInChrome(this, BaseModel.getDomain(false) + diliUrl);
+                Utils.viewInChrome(this, BaseModel.getDomain(false) + sakuraUrl);
                 break;
         }
     }
@@ -417,7 +421,7 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
     public void getVideoEmpty() {
         runOnUiThread(() -> {
             hideNavBar();
-            VideoUtils.showErrorInfo(PlayerActivity.this, BaseModel.getDomain(false) + diliUrl);
+            VideoUtils.showErrorInfo(PlayerActivity.this, BaseModel.getDomain(false) + sakuraUrl);
         });
     }
 

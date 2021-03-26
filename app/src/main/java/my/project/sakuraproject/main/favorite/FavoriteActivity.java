@@ -14,6 +14,10 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.r0adkll.slidr.Slidr;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +25,7 @@ import butterknife.BindView;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.adapter.FavoriteListAdapter;
 import my.project.sakuraproject.bean.AnimeListBean;
+import my.project.sakuraproject.bean.Refresh;
 import my.project.sakuraproject.custom.CustomLoadMoreView;
 import my.project.sakuraproject.database.DatabaseUtil;
 import my.project.sakuraproject.main.base.BaseActivity;
@@ -62,6 +67,7 @@ public class FavoriteActivity extends BaseActivity<FavoriteContract.View, Favori
 
     @Override
     protected void init() {
+        EventBus.getDefault().register(this);
         Slidr.attach(this, Utils.defaultInit());
         CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) msg.getLayoutParams();
         params.setMargins(10, 0, 10, Utils.getNavigationBarHeight(this) - 5);
@@ -152,6 +158,7 @@ public class FavoriteActivity extends BaseActivity<FavoriteContract.View, Favori
         }
     }
 
+/*
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -162,6 +169,7 @@ public class FavoriteActivity extends BaseActivity<FavoriteContract.View, Favori
             loadData();
         }
     }
+*/
 
     @Override
     public void showLoadingView() {
@@ -171,10 +179,12 @@ public class FavoriteActivity extends BaseActivity<FavoriteContract.View, Favori
     @Override
     public void showLoadErrorView(String msg) {
         setLoadState(false);
-        if (isMain) {
-            errorTitle.setText(msg);
-            adapter.setEmptyView(errorView);
-        }
+        runOnUiThread(() -> {
+            if (isMain) {
+                errorTitle.setText(msg);
+                adapter.setEmptyView(errorView);
+            }
+        });
     }
 
     @Override
@@ -190,10 +200,28 @@ public class FavoriteActivity extends BaseActivity<FavoriteContract.View, Favori
     @Override
     public void showSuccessView(List<AnimeListBean> list) {
         setLoadState(true);
-        if (isMain) {
-            favoriteList = list;
-            adapter.setNewData(favoriteList);
-        } else
-            adapter.addData(list);
+        runOnUiThread(() -> {
+            if (isMain) {
+                favoriteList = list;
+                adapter.setNewData(favoriteList);
+            } else
+                adapter.addData(list);
+        });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(Refresh refresh) {
+        if (refresh.getIndex() == 1) {
+            isMain = true;
+            favoriteList.clear();
+            mPresenter = createPresenter();
+            loadData();
+        }
     }
 }

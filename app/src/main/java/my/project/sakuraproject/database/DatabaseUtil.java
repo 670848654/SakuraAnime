@@ -8,9 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import my.project.sakuraproject.application.Sakura;
+import my.project.sakuraproject.R;
 import my.project.sakuraproject.bean.AnimeListBean;
 import my.project.sakuraproject.bean.ApiBean;
+import my.project.sakuraproject.main.base.BaseModel;
+import my.project.sakuraproject.util.Utils;
 
 public class DatabaseUtil {
     private static SQLiteDatabase db;
@@ -82,9 +84,12 @@ public class DatabaseUtil {
      * @param url 播放地址
      */
     public static void addIndex(String fid, String url) {
-        if (!checkIndex(fid, url.substring(Sakura.DOMAIN.length())))
+        String imomoeUlr = BaseModel.getDomain(true);
+        String yhdmUrl  = BaseModel.getDomain(false);
+        url = url.contains(imomoeUlr) ? url.substring(imomoeUlr.length()) : url.substring(yhdmUrl.length());
+        if (!checkIndex(fid, url))
             db.execSQL("insert into f_index values(?,?,?)",
-                    new Object[]{null, fid, url.substring(Sakura.DOMAIN.length())});
+                    new Object[]{null, fid, url});
     }
 
     /**
@@ -162,7 +167,8 @@ public class DatabaseUtil {
      * @param bean
      * @return true 收藏成功 false 移除收藏
      */
-    public static boolean favorite(AnimeListBean bean) {
+    public static boolean favorite(AnimeListBean bean, boolean isImomoe) {
+        if (isImomoe) bean.setTitle(bean.getTitle()+Utils.getString(R.string.imomoe));
         if (checkFavorite(bean.getTitle())) {
             deleteFavorite(bean.getTitle());
             return false;
@@ -178,10 +184,13 @@ public class DatabaseUtil {
      * @param bean
      */
     private static void addFavorite(AnimeListBean bean) {
+        String imomoeUlr = BaseModel.getDomain(true);
+        String yhdmUrl  = BaseModel.getDomain(false);
+        String url =  bean.getUrl().contains(imomoeUlr) ?  bean.getUrl().substring(imomoeUlr.length()) :  bean.getUrl().substring(yhdmUrl.length());
         db.execSQL("insert into f_favorite values(?,?,?,?,?)",
                 new Object[]{null,
                         bean.getTitle(),
-                        bean.getUrl().contains(Sakura.DOMAIN) ? bean.getUrl().substring(Sakura.DOMAIN.length()) : bean.getUrl(),
+                        url,
                         bean.getDesc(),
                         bean.getImg()
                 });

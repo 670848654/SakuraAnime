@@ -59,7 +59,7 @@ import my.project.sakuraproject.util.VideoUtils;
 public class NormalWebActivity extends BaseActivity implements VideoContract.View, SniffingUICallback {
     private final static String REFERER = "referer";
     private List<WebviewBean> list = new ArrayList<>();
-    private String url = "", diliUrl = "";
+    private String url = "", sakuraUrl = "";
     private String animeTitle;
     private String witchTitle;
     private String api = Api.SOURCE_1_API;
@@ -141,7 +141,7 @@ public class NormalWebActivity extends BaseActivity implements VideoContract.Vie
             witchTitle = bundle.getString("witchTitle");
             animeTitle = bundle.getString("title");
             url = bundle.getString("url");
-            diliUrl = bundle.getString("dili");
+            sakuraUrl = bundle.getString("sakuraUrl");
             dramaList = (List<AnimeDescDetailsBean>) bundle.getSerializable("list");
         }
     }
@@ -183,7 +183,7 @@ public class NormalWebActivity extends BaseActivity implements VideoContract.Vie
         WebviewAdapter webviewAdapter = new WebviewAdapter(this, list);
         webviewAdapter.setOnItemClickListener((adapter, view, position) -> {
             if (list.get(position).isOriginalPage()) {
-                Utils.viewInChrome(NormalWebActivity.this, diliUrl);
+                Utils.viewInChrome(NormalWebActivity.this, sakuraUrl);
             } else if (list.get(position).isOriginalAddress()) {
                 Utils.viewInChrome(NormalWebActivity.this, url);
             } else {
@@ -194,7 +194,7 @@ public class NormalWebActivity extends BaseActivity implements VideoContract.Vie
                 list.get(position).setSelect(true);
                 adapter.notifyDataSetChanged();
                 Map<String, String> map = new HashMap<>();
-                map.put(REFERER, diliUrl);
+                map.put(REFERER, sakuraUrl);
                 api = list.get(position).getUrl();
                 newUrl = api + url;
                 normalWebView.loadUrl(newUrl, map);
@@ -216,9 +216,9 @@ public class NormalWebActivity extends BaseActivity implements VideoContract.Vie
             MaterialButton materialButton = (MaterialButton) adapter.getViewByPosition(dramaRecyclerView, position, R.id.tag_group);
             materialButton.setTextColor(getResources().getColor(R.color.tabSelectedTextColor));
             materialButton.setSelected(true);
-            diliUrl = VideoUtils.getUrl(bean.getUrl());
+            sakuraUrl = VideoUtils.getUrl(bean.getUrl());
             witchTitle = animeTitle + " - " + bean.getTitle();
-            presenter = new VideoPresenter(animeTitle, diliUrl, NormalWebActivity.this);
+            presenter = new VideoPresenter(animeTitle, sakuraUrl, NormalWebActivity.this);
             presenter.loadData(true);
         });
         dramaRecyclerView.setAdapter(dramaAdapter);
@@ -337,7 +337,7 @@ public class NormalWebActivity extends BaseActivity implements VideoContract.Vie
 
     @Override
     public void getVideoEmpty() {
-        runOnUiThread(() -> VideoUtils.showErrorInfo(NormalWebActivity.this, diliUrl));
+        runOnUiThread(() -> VideoUtils.showErrorInfo(NormalWebActivity.this, sakuraUrl));
     }
 
     @Override
@@ -506,7 +506,7 @@ public class NormalWebActivity extends BaseActivity implements VideoContract.Vie
                 switch ((Integer) SharedPreferencesUtils.getParam(getApplicationContext(), "player", 0)) {
                     case 0:
                         //调用播放器
-                        VideoUtils.openPlayer(false, NormalWebActivity.this, witchTitle, url, animeTitle, diliUrl, dramaList);
+                        VideoUtils.openPlayer(false, NormalWebActivity.this, witchTitle, url, animeTitle, sakuraUrl, dramaList);
                         break;
                     case 1:
                         Utils.selectVideoPlayer(this, url);
@@ -574,7 +574,7 @@ public class NormalWebActivity extends BaseActivity implements VideoContract.Vie
                     application.showToastMsg("已切换成电脑版");
                 }
                 Map<String, String> map = new HashMap<>();
-                map.put(REFERER, diliUrl);
+                map.put(REFERER, sakuraUrl);
                 normalWebView.loadUrl(newUrl, map);
                 break;
         }

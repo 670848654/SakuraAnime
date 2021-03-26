@@ -66,5 +66,6 @@ dependencies {
     implementation 'com.wuyr:rippleanimation:1.0.0'
     implementation 'com.github.MZCretin:ExpandableTextView:v1.6.1-x'
     implementation 'com.alibaba:fastjson:1.1.72.android'
+    implementation 'org.greenrobot:eventbus:3.2.0'
 }
 

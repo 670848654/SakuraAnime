@@ -31,7 +31,9 @@ public class Sakura extends Application {
     private List<Activity> oList;
     private static Map<String, Activity> destoryMap = new HashMap<>();
     public static String DOMAIN;
-    public static String TAG_API, MOVIE_API, ZT_API, JCB_API, SEARCH_API;
+    public static String TAG_API, JCB_API, SEARCH_API;
+    public static String YHDM_MOVIE_API = "/movie/";
+    public static String YHDM_ZT_API = "/topic/";
     public String error;
     public JSONObject week = new JSONObject();
     public static boolean isImomoe = false;
@@ -49,8 +51,6 @@ public class Sakura extends Application {
         oList = new ArrayList<>();
         appContext = this;
         Utils.init(this);
-        isImomoe = Utils.isImomoe();
-        DOMAIN = isImomoe ? (String) SharedPreferencesUtils.getParam(this, "imomoe_domain", Utils.getString(R.string.imomoe_url)) : (String) SharedPreferencesUtils.getParam(this, "domain", Utils.getString(R.string.domain_url));
         setApi();
         initTBS();
     }
@@ -71,10 +71,10 @@ public class Sakura extends Application {
     }
 
     public static void setApi() {
+        isImomoe = Utils.isImomoe();
+        DOMAIN = isImomoe ? (String) SharedPreferencesUtils.getParam(appContext, "imomoe_domain", Utils.getString(R.string.imomoe_url)) : (String) SharedPreferencesUtils.getParam(appContext, "domain", Utils.getString(R.string.domain_url));
         TAG_API = isImomoe ?  DOMAIN + "/so.asp" : DOMAIN + "/sitemap";
-        MOVIE_API = DOMAIN + "/movie/";
-        ZT_API = DOMAIN + "/topic/";
-        JCB_API = isImomoe ? DOMAIN + "/search.asp?page=1&searchword=%BE%E7%B3%A1" : DOMAIN + "/37/";
+        JCB_API = isImomoe ? "/search.asp?page=1&searchword=%BE%E7%B3%A1" : "/37/";
         SEARCH_API = isImomoe ? DOMAIN + "/search.asp" : DOMAIN + "/search/";
     }
 

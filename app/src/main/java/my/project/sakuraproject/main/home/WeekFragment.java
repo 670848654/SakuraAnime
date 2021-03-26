@@ -31,7 +31,6 @@ import my.project.sakuraproject.bean.HomeWekBean;
 import my.project.sakuraproject.main.base.LazyFragment;
 import my.project.sakuraproject.main.desc.DescActivity;
 import my.project.sakuraproject.util.Utils;
-import my.project.sakuraproject.util.VideoUtils;
 
 @SuppressLint("ValidFragment")
 public class WeekFragment extends LazyFragment {

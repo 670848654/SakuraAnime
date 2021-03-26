@@ -15,7 +15,6 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.r0adkll.slidr.Slidr;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,7 +29,6 @@ import my.project.sakuraproject.main.desc.DescActivity;
 import my.project.sakuraproject.main.search.SearchActivity;
 import my.project.sakuraproject.util.SwipeBackLayoutUtil;
 import my.project.sakuraproject.util.Utils;
-import my.project.sakuraproject.util.VideoUtils;
 
 public class AnimeListActivity extends BaseActivity<AnimeListContract.View, AnimeListPresenter> implements AnimeListContract.View {
     @BindView(R.id.rv_list)
@@ -132,8 +130,8 @@ public class AnimeListActivity extends BaseActivity<AnimeListContract.View, Anim
             final AnimeListBean bean = (AnimeListBean) adapter.getItem(position);
             Bundle bundle = new Bundle();
             bundle.putString("name", bean.getTitle());
-            String diliUrl = bean.getUrl();
-            bundle.putString("url", diliUrl);
+            String sakuraUrl = bean.getUrl();
+            bundle.putString("url", sakuraUrl);
             startActivity(new Intent(AnimeListActivity.this, DescActivity.class).putExtras(bundle));
         });
         if (Utils.checkHasNavigationBar(this)) mRecyclerView.setPadding(0,0,0, Utils.getNavigationBarHeight(this));

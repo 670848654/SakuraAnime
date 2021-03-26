@@ -2,7 +2,6 @@ package my.project.sakuraproject.main.animeList;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.List;
 
 import my.project.sakuraproject.R;
@@ -23,7 +22,6 @@ public class AnimeListModel extends BaseModel implements AnimeListContract.Model
     @Override
     public void getData(String url, int page, boolean isMain, boolean isMovie, boolean isImomoe, AnimeListContract.LoadDataCallback callback) throws UnsupportedEncodingException {
         String htmlUrl = getUlr(url, page, isImomoe);
-        System.out.println(htmlUrl);
         if (isImomoe)
             parserImomoe(htmlUrl, isMain, callback);
         else

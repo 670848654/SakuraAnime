@@ -7,9 +7,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Patterns;
 
+import androidx.appcompat.app.AlertDialog;
+
 import com.alibaba.fastjson.JSONArray;
 
-import androidx.appcompat.app.AlertDialog;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -102,15 +107,15 @@ public class VideoUtils {
      * @param witchTitle
      * @param url
      * @param animeTitle
-     * @param diliUrl
+     * @param sakuraUrl
      * @param list
      */
-    public static void openPlayer(boolean isDescActivity, Activity activity, String witchTitle, String url, String animeTitle, String diliUrl, List<AnimeDescDetailsBean> list) {
+    public static void openPlayer(boolean isDescActivity, Activity activity, String witchTitle, String url, String animeTitle, String sakuraUrl, List<AnimeDescDetailsBean> list) {
         Bundle bundle = new Bundle();
         bundle.putString("title", witchTitle);
         bundle.putString("url", url);
         bundle.putString("animeTitle", animeTitle);
-        bundle.putString("dili", diliUrl);
+        bundle.putString("sakuraUrl", sakuraUrl);
         bundle.putSerializable("list", (Serializable) list);
         Sakura.destoryActivity("player");
         if (isDescActivity)
@@ -128,16 +133,16 @@ public class VideoUtils {
      * @param witchTitle
      * @param url
      * @param animeTitle
-     * @param diliUrl
+     * @param sakuraUrl
      * @param list
      * @param bean
      */
-    public static void openImomoePlayer(boolean isDescActivity, Activity activity, String witchTitle, String url, String animeTitle, String diliUrl,  List<List<AnimeDescDetailsBean>> list, List<List<ImomoeVideoUrlBean>> bean, int nowSource) {
+    public static void openImomoePlayer(boolean isDescActivity, Activity activity, String witchTitle, String url, String animeTitle, String sakuraUrl,  List<List<AnimeDescDetailsBean>> list, List<List<ImomoeVideoUrlBean>> bean, int nowSource) {
         Bundle bundle = new Bundle();
         bundle.putString("title", witchTitle);
         bundle.putString("url", url);
         bundle.putString("animeTitle", animeTitle);
-        bundle.putString("dili", diliUrl);
+        bundle.putString("sakuraUrl", sakuraUrl);
         bundle.putSerializable("list", (Serializable) list);
         bundle.putSerializable("playList", (Serializable) bean);
         bundle.putInt("nowSource", nowSource);
@@ -158,15 +163,15 @@ public class VideoUtils {
      * @param witchTitle
      * @param animeTitle
      * @param url
-     * @param diliUrl
+     * @param sakuraUrl
      * @param list
      */
-    public static void openWebview(boolean isDescActivity, Activity activity, String witchTitle, String animeTitle, String url, String diliUrl, List<AnimeDescDetailsBean> list) {
+    public static void openWebview(boolean isDescActivity, Activity activity, String witchTitle, String animeTitle, String url, String sakuraUrl, List<AnimeDescDetailsBean> list) {
         Bundle bundle = new Bundle();
         bundle.putString("witchTitle", witchTitle);
         bundle.putString("title", animeTitle);
         bundle.putString("url", url);
-        bundle.putString("dili", diliUrl);
+        bundle.putString("sakuraUrl", sakuraUrl);
         bundle.putSerializable("list", (Serializable) list);
         if (isDescActivity)
             if (Utils.loadX5())
@@ -229,5 +234,21 @@ public class VideoUtils {
             allList.add(imomoeVideoUrlBeans);
         }
         return allList;
+    }
+
+    public static String getImomoeApiPlayUrl(String source) {
+        String playUrl = "";
+        Document document = Jsoup.parse(source);
+        Elements scripts = document.select("script");
+        for (Element element : scripts) {
+            if (element.html().contains("var video")) {
+                Matcher m = PLAY_URL_PATTERN.matcher(element.html());
+                if (m.find()) {
+                    playUrl = m.group();
+                    break;
+                }
+            }
+        }
+        return playUrl;
     }
 }

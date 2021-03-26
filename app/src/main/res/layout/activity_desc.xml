@@ -2,7 +2,6 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/window_bg"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -76,18 +75,6 @@
                             android:src="@drawable/baseline_arrow_back_white_48dp"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
-
-                        <TextView
-                            android:id="@+id/favorite"
-                            android:layout_marginRight="5dp"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:drawablePadding="5dp"
-                            android:gravity="center_vertical"
-                            android:textSize="14sp"
-                            android:textColor="@color/white"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"/>
 
                         <androidx.cardview.widget.CardView
                             android:id="@+id/card_view"
@@ -178,16 +165,20 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content">
 
-                            <TextView
+                            <my.project.sakuraproject.custom.MyTextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:id="@+id/title"
                                 android:layout_marginTop="10dp"
                                 android:layout_marginLeft="20dp"
                                 android:layout_marginRight="20dp"
-                                android:ellipsize="end"
                                 android:gravity="center_horizontal"
-                                android:maxLines="2"
+                                android:focusable="true"
+                                android:focusableInTouchMode="true"
+                                android:marqueeRepeatLimit="marquee_forever"
+                                android:ellipsize="marquee"
+                                android:scrollHorizontally="true"
+                                android:singleLine="true"
                                 android:textStyle="bold"
                                 android:shadowColor="@color/light_toolbar_color_lt23"
                                 android:shadowDx="1.0"
@@ -196,12 +187,45 @@
                                 android:textColor="@color/white"
                                 android:textSize="18sp" />
 
+                            <LinearLayout
+                                android:id="@+id/btn_view"
+                                android:layout_below="@id/title"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerHorizontal="true"
+                                android:orientation="horizontal">
+
+                                <com.google.android.material.button.MaterialButton
+                                    android:id="@+id/favorite"
+                                    style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textSize="14sp"
+                                    app:strokeColor="@color/mtrl_btn_stroke_color_selector"
+                                    android:textColor="@color/white"
+                                    app:iconTint="@color/white"/>
+
+                                <com.google.android.material.button.MaterialButton
+                                    android:id="@+id/browser"
+                                    android:layout_marginLeft="5dp"
+                                    style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textSize="14sp"
+                                    app:icon="@drawable/baseline_language_white_48dp"
+                                    android:text="@string/open_browser"
+                                    app:strokeColor="@color/mtrl_btn_stroke_color_selector"
+                                    android:textColor="@color/white"
+                                    app:iconTint="@color/white"/>
+
+                            </LinearLayout>
+
                             <co.lujun.androidtagview.TagContainerLayout
-                                android:layout_below="@+id/title"
+                                android:layout_below="@+id/btn_view"
                                 android:id="@+id/tag_view"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="10dp"
+                                android:layout_marginTop="5dp"
                                 app:container_border_color="@color/translucent"
                                 app:container_background_color="@color/translucent"
                                 app:tag_corner_radius="4dp"
@@ -216,7 +240,9 @@
                             <com.ctetin.expandabletextviewlibrary.ExpandableTextView
                                 android:id="@+id/desc"
                                 android:layout_below="@id/tag_view"
-                                android:layout_margin="10dp"
+                                android:layout_marginTop="10dp"
+                                android:layout_marginLeft="10dp"
+                                android:layout_marginRight="10dp"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 app:ep_max_line="4"
@@ -241,6 +267,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
+                    android:layout_marginTop="10dp"
                     android:padding="5dp"
                     android:visibility="gone">
 
@@ -267,7 +294,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerVertical="true"
-                            android:backgroundTint="@android:color/white"
+                            android:backgroundTint="@color/white"
                             android:layout_marginLeft="8dp"/>
                     </RelativeLayout>
 
@@ -386,14 +413,19 @@
                         android:textSize="16sp" />
                     <!--android:background="#f4f5f7"-->
                 </RelativeLayout>
+
             </LinearLayout>
+
         </androidx.core.widget.NestedScrollView>
+
     </my.project.sakuraproject.custom.MySwipeRefreshLayout>
+
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/msg"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_anchor="@id/favorite"
+        app:layout_anchor="@id/tag_view"
         app:layout_anchorGravity="center" />
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

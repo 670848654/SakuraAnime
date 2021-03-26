@@ -26,6 +26,7 @@ import my.project.sakuraproject.bean.AnimeListBean;
 import my.project.sakuraproject.custom.CustomLoadMoreView;
 import my.project.sakuraproject.main.animeList.AnimeListActivity;
 import my.project.sakuraproject.main.base.BaseActivity;
+import my.project.sakuraproject.main.base.BaseModel;
 import my.project.sakuraproject.main.search.SearchActivity;
 import my.project.sakuraproject.util.SwipeBackLayoutUtil;
 import my.project.sakuraproject.util.Utils;
@@ -49,7 +50,7 @@ public class AnimeTopicActivity extends BaseActivity<AnimeTopicContract.View, An
 
     @Override
     protected AnimeTopicPresenter createPresenter() {
-        return new AnimeTopicPresenter(url, nowPage, this);
+        return new AnimeTopicPresenter(BaseModel.getDomain(false) + url, nowPage, this);
     }
 
     @Override

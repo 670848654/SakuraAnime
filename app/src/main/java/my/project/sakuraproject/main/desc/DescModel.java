@@ -48,7 +48,7 @@ public class DescModel extends BaseModel implements DescContract.Model {
                         AnimeListBean animeListBean = YhdmJsoupUtils.getAinmeInfo(source, url);
                         String animeTitle = animeListBean.getTitle();
                         //是否收藏
-                        callback.isFavorite(DatabaseUtil.checkFavorite(animeTitle));
+                        callback.isFavorite(DatabaseUtil.checkFavorite(animeListBean.getTitle()));
                         //创建番剧索引
                         DatabaseUtil.addAnime(animeTitle);
                         fid = DatabaseUtil.getAnimeID(animeTitle);
@@ -84,10 +84,10 @@ public class DescModel extends BaseModel implements DescContract.Model {
                     AnimeListBean animeListBean = ImomoeJsoupUtils.getAinmeInfo(source, url);
                     String animeTitle = animeListBean.getTitle();
                     //是否收藏
-                    callback.isFavorite(DatabaseUtil.checkFavorite(animeTitle));
+                    callback.isFavorite(DatabaseUtil.checkFavorite(animeListBean.getTitle()+Utils.getString(R.string.imomoe)));
                     //创建番剧索引
-                    DatabaseUtil.addAnime(animeTitle);
-                    fid = DatabaseUtil.getAnimeID(animeTitle);
+                    DatabaseUtil.addAnime(animeTitle+Utils.getString(R.string.imomoe));
+                    fid = DatabaseUtil.getAnimeID(animeTitle+Utils.getString(R.string.imomoe));
                     dramaStr = DatabaseUtil.queryAllIndex(fid);
                     callback.successDesc(animeListBean);
                     callback.isImomoe(true);

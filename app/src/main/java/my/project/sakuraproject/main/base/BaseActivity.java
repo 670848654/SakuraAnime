@@ -18,7 +18,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import butterknife.ButterKnife;

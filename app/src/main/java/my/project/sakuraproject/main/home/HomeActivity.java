@@ -12,8 +12,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
@@ -29,6 +29,9 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.wuyr.rippleanimation.RippleAnimation;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONObject;
 
 import java.lang.reflect.Field;
@@ -39,6 +42,7 @@ import butterknife.BindView;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.adapter.WeekAdapter;
 import my.project.sakuraproject.application.Sakura;
+import my.project.sakuraproject.bean.Refresh;
 import my.project.sakuraproject.custom.VpSwipeRefreshLayout;
 import my.project.sakuraproject.database.DatabaseUtil;
 import my.project.sakuraproject.main.about.AboutActivity;
@@ -80,6 +84,7 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
             new int[]{-android.R.attr.state_checked},
             new int[]{android.R.attr.state_checked}
     };
+    private String[] sourceItems = Utils.getArray(R.array.source);
 
     @Override
     protected HomePresenter createPresenter() {
@@ -98,6 +103,7 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
 
     @Override
     protected void init() {
+        EventBus.getDefault().register(this);
         initToolbar();
         initDrawer();
         initSwipe();
@@ -109,9 +115,48 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
     }
 
     public void initToolbar() {
-        toolbar.setTitle(getResources().getString(R.string.app_name));
+        toolbar.setTitle(Utils.isImomoe() ? getResources().getString(R.string.imomoe_name) : getResources().getString(R.string.yhdm_name));
         toolbar.setSubtitle(getResources().getString(R.string.app_sub_name));
+        toolbar.setOnClickListener(v -> {
+            if (!Utils.isFastClick()) return;
+            if (mSwipe.isRefreshing()) {
+                application.showSnackbarMsg(toolbar, Utils.getString(R.string.loading_info));
+                return;
+            }
+            setDefaultSource();
+        });
         setSupportActionBar(toolbar);
+    }
+
+    private void setDefaultSource() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.DialogStyle);
+        builder.setTitle(Utils.getString(R.string.select_source));
+        int selected = Utils.isImomoe() ? 1 : 0;
+        builder.setSingleChoiceItems(sourceItems, selected, (dialog, index) -> {
+            switch (index) {
+                case 0:
+                    SharedPreferencesUtils.setParam(this, "isImomoe", false);
+                    toolbar.setTitle(getResources().getString(R.string.yhdm_name));
+                    break;
+                case 1:
+                    SharedPreferencesUtils.setParam(this, "isImomoe", true);
+                    toolbar.setTitle(getResources().getString(R.string.imomoe_name));
+                    break;
+            }
+            setDomain(index==1);
+            dialog.dismiss();
+        });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    private void setDomain(boolean isImomoe) {
+        navigationView.getMenu().findItem(R.id.anime_zt).setVisible(isImomoe ? false : true);
+        navigationView.getMenu().findItem(R.id.anime_movie).setVisible(isImomoe ? false : true);
+        Sakura.setApi();
+        viewpager.removeAllViews();
+        removeFragmentTransaction();
+        mPresenter.loadData(true);
     }
 
     public void initDrawer() {
@@ -140,10 +185,8 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
             if (Utils.isFastClick()) setTheme(isDarkTheme);
         });
         navigationView.setNavigationItemSelectedListener(this);
-        if (Utils.isImomoe()) {
-            navigationView.getMenu().findItem(R.id.anime_zt).setVisible(false);
-            navigationView.getMenu().findItem(R.id.anime_movie).setVisible(false);
-        }
+        navigationView.getMenu().findItem(R.id.anime_zt).setVisible(Utils.isImomoe() ? false :true);
+        navigationView.getMenu().findItem(R.id.anime_movie).setVisible(Utils.isImomoe() ? false :true);
     }
 
     public void initSwipe() {
@@ -235,12 +278,12 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
                 startActivity(new Intent(this, TagActivity.class));
                 break;
             case R.id.anime_movie:
-                openAnimeListActivity(Utils.getString(R.string.home_movie_title), Sakura.MOVIE_API, true);
+                openAnimeListActivity(Utils.getString(R.string.home_movie_title), Sakura.YHDM_MOVIE_API, true);
                 break;
             case R.id.anime_zt:
                 Bundle bundle = new Bundle();
                 bundle.putString("title", Utils.getString(R.string.home_zt_title));
-                bundle.putString("url", Sakura.ZT_API);
+                bundle.putString("url", Sakura.YHDM_ZT_API);
                 startActivity(new Intent(this, AnimeTopicActivity.class).putExtras(bundle));
                 break;
             case R.id.anime_jcb:
@@ -264,10 +307,11 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
         bundle.putString("title", title);
         bundle.putString("url", url);
         bundle.putBoolean("isMovie", isMovie);
+        bundle.putBoolean("isImomoe", Utils.isImomoe());
         startActivity(new Intent(this, AnimeListActivity.class).putExtras(bundle));
     }
 
-    @Override
+/*    @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 0x10 && resultCode == 0x20) {
@@ -275,7 +319,7 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
             removeFragmentTransaction();
             mPresenter.loadData(true);
         }
-    }
+    }*/
 
     @Override
     public void showLoadingView() {
@@ -359,6 +403,7 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
     protected void onDestroy() {
         super.onDestroy();
         DatabaseUtil.closeDB();
+        EventBus.getDefault().unregister(this);
     }
 
 /*    @Override
@@ -418,6 +463,14 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
                         weekFragment.adapter .notifyDataSetChanged();
                 }
             isChangingTheme = false;
+        }
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(Refresh refresh) {
+        if (refresh.getIndex() == 0) {
+            viewpager.removeAllViews();
+            removeFragmentTransaction();
+            mPresenter.loadData(true);
         }
     }
 }

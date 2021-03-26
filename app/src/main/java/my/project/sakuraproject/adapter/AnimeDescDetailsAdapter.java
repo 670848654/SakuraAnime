@@ -27,7 +27,7 @@ public class AnimeDescDetailsAdapter extends BaseQuickAdapter<AnimeDescDetailsBe
     @Override
     protected void convert(final BaseViewHolder helper, AnimeDescDetailsBean item) {
         MaterialButton materialButton = helper.getView(R.id.tag_group);
-        helper.setText(R.id.tag_group, item.getTitle().contains("第") || item.getTitle().contains("集") ? item.getTitle().replaceAll("[\u4e00-\u9fa5]", "") : item.getTitle().replaceAll("第", "").replaceAll("集",""));
+        helper.setText(R.id.tag_group, item.getTitle().replaceAll("第", "").replaceAll("集(.*)","").replaceAll("话(.*)",""));
         if (item.isSelected())
             materialButton.setTextColor(context.getResources().getColor(R.color.tabSelectedTextColor));
         else

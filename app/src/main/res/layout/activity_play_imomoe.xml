@@ -37,25 +37,24 @@
                     android:descendantFocusability="blocksDescendants"
                     android:orientation="vertical">
 
-                    <TextView
+<!--                    <TextView
                         android:id="@+id/anime_title"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
                         android:padding="5dp"
                         android:textColor="@android:color/white"
-                        android:textSize="18sp" />
+                        android:textSize="18sp" />-->
 
                     <androidx.appcompat.widget.AppCompatSpinner
                         android:visibility="gone"
-                        android:layout_toRightOf="@id/selected_text"
                         android:id="@+id/spinner"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
+                        android:layout_gravity="center_vertical|right"
                         android:backgroundTint="@android:color/white"
                         android:layout_marginTop="5dp"
-                        android:layout_marginLeft="5dp"/>
+                        android:layout_marginRight="5dp"/>
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rv_list"

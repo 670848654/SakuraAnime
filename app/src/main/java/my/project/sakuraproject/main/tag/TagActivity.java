@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.appcompat.widget.Toolbar;
@@ -30,6 +29,7 @@ import butterknife.OnClick;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.adapter.AnimeListAdapter;
 import my.project.sakuraproject.adapter.TagAdapter;
+import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.bean.AnimeListBean;
 import my.project.sakuraproject.bean.TagBean;
 import my.project.sakuraproject.custom.CustomLoadMoreView;
@@ -39,7 +39,6 @@ import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.desc.DescActivity;
 import my.project.sakuraproject.util.SwipeBackLayoutUtil;
 import my.project.sakuraproject.util.Utils;
-import my.project.sakuraproject.util.VideoUtils;
 
 public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> implements TagContract.View, AnimeListContract.View {
     @BindView(R.id.toolbar)
@@ -171,6 +170,10 @@ public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> im
         tagAdapter = new TagAdapter(this, tagList);
         tagAdapter.setOnItemClickListener((adapter, view, position) -> {
             if (!Utils.isFastClick()) return;
+            if (mSwipe.isRefreshing()) {
+                Sakura.getInstance().showToastMsg(Utils.getString(R.string.loading_info));
+                return;
+            }
             mBottomSheetDialog.dismiss();
             TextView textView = (TextView) adapter.getViewByPosition(tagRecyclerView, position, R.id.tag_group);
             textView.setTextColor(getResources().getColor(R.color.colorAccent));

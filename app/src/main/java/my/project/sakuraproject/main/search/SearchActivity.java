@@ -28,7 +28,6 @@ import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.desc.DescActivity;
 import my.project.sakuraproject.util.SwipeBackLayoutUtil;
 import my.project.sakuraproject.util.Utils;
-import my.project.sakuraproject.util.VideoUtils;
 
 public class SearchActivity extends BaseActivity<SearchContract.View, SearchPresenter> implements SearchContract.View {
     @BindView(R.id.toolbar)

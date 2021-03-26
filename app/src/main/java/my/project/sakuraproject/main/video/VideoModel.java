@@ -1,17 +1,18 @@
 package my.project.sakuraproject.main.video;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import my.project.sakuraproject.R;
 import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.bean.ImomoeVideoUrlBean;
 import my.project.sakuraproject.database.DatabaseUtil;
 import my.project.sakuraproject.main.base.BaseModel;
 import my.project.sakuraproject.net.HttpGet;
 import my.project.sakuraproject.util.ImomoeJsoupUtils;
+import my.project.sakuraproject.util.Utils;
 import my.project.sakuraproject.util.VideoUtils;
 import my.project.sakuraproject.util.YhdmJsoupUtils;
 import okhttp3.Call;
@@ -20,11 +21,12 @@ import okhttp3.Response;
 
 public class VideoModel extends BaseModel implements VideoContract.Model {
     private final static Pattern PLAY_DATA_PATTERN = Pattern.compile("\\[(.*)\\]");
-
+    private boolean isImomoe;
     @Override
     public void getData(String title, String url, VideoContract.LoadDataCallback callback) {
-        if (url.contains("/player/"))
-            parserImomoe(title, BaseModel.getDomain(true) + url, false, callback);
+        isImomoe = url.contains("/player/");
+        if (isImomoe)
+            parserImomoe(title+Utils.getString(R.string.imomoe), BaseModel.getDomain(true) + url, false, callback);
         else
             parserYhdm(title, BaseModel.getDomain(false) + url, callback);
     }

@@ -7,7 +7,6 @@ import java.util.List;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.bean.AnimeListBean;
-import my.project.sakuraproject.main.animeList.AnimeListContract;
 import my.project.sakuraproject.main.base.BaseModel;
 import my.project.sakuraproject.net.HttpGet;
 import my.project.sakuraproject.util.ImomoeJsoupUtils;

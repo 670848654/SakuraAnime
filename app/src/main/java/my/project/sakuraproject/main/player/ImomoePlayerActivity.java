@@ -14,16 +14,6 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.fanchen.sniffing.SniffingUICallback;
-import com.fanchen.sniffing.SniffingVideo;
-import com.fanchen.sniffing.web.SniffingUtil;
-import com.google.android.material.button.MaterialButton;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.List;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
@@ -32,6 +22,19 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.fanchen.sniffing.SniffingUICallback;
+import com.fanchen.sniffing.SniffingVideo;
+import com.fanchen.sniffing.web.SniffingUtil;
+import com.google.android.material.button.MaterialButton;
+
+import org.greenrobot.eventbus.EventBus;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.jzvd.Jzvd;
@@ -40,19 +43,22 @@ import my.project.sakuraproject.adapter.DramaAdapter;
 import my.project.sakuraproject.api.Api;
 import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.bean.AnimeDescDetailsBean;
+import my.project.sakuraproject.bean.Event;
 import my.project.sakuraproject.bean.ImomoeVideoUrlBean;
 import my.project.sakuraproject.database.DatabaseUtil;
 import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.base.Presenter;
+import my.project.sakuraproject.main.video.ImomoeVideoContract;
+import my.project.sakuraproject.main.video.ImomoeVideoPresenter;
 import my.project.sakuraproject.util.SharedPreferencesUtils;
 import my.project.sakuraproject.util.StatusBarUtil;
 import my.project.sakuraproject.util.Utils;
 import my.project.sakuraproject.util.VideoUtils;
 
-public class ImomoePlayerActivity extends BaseActivity implements JZPlayer.CompleteListener, JZPlayer.TouchListener, SniffingUICallback {
+public class ImomoePlayerActivity extends BaseActivity implements JZPlayer.CompleteListener, JZPlayer.TouchListener, SniffingUICallback, ImomoeVideoContract.View {
     @BindView(R.id.player)
     JZPlayer player;
-    private String witchTitle, url, diliUrl;
+    private String witchTitle, url, sakuraUrl;
     @BindView(R.id.rv_list)
     RecyclerView recyclerView;
     private List<List<AnimeDescDetailsBean>> list = new ArrayList<>();
@@ -64,8 +70,8 @@ public class ImomoePlayerActivity extends BaseActivity implements JZPlayer.Compl
     LinearLayout linearLayout;
     @BindView(R.id.drawer_layout)
     DrawerLayout drawerLayout;
-    @BindView(R.id.anime_title)
-    TextView titleView;
+/*    @BindView(R.id.anime_title)
+    TextView titleView;*/
     @BindView(R.id.pic_config)
     RelativeLayout picConfig;
     //播放网址
@@ -84,7 +90,7 @@ public class ImomoePlayerActivity extends BaseActivity implements JZPlayer.Compl
     @BindView(R.id.spinner)
     AppCompatSpinner spinner;
     private ArrayAdapter<String> spinnerAdapter;
-
+    private ImomoeVideoPresenter presenter;
 
     @Override
     protected Presenter createPresenter() {
@@ -122,9 +128,9 @@ public class ImomoePlayerActivity extends BaseActivity implements JZPlayer.Compl
         witchTitle = bundle.getString("title");
         //番剧名称
         animeTitle = bundle.getString("animeTitle");
-        titleView.setText(animeTitle);
+//        titleView.setText(animeTitle);
         //源地址
-        diliUrl = bundle.getString("dili");
+        sakuraUrl = bundle.getString("sakuraUrl");
         //剧集list
         list = (List<List<AnimeDescDetailsBean>>) bundle.getSerializable("list");
         //播放地址
@@ -170,7 +176,7 @@ public class ImomoePlayerActivity extends BaseActivity implements JZPlayer.Compl
                 items.add("播放源 " + i);
             }
             spinnerAdapter = new ArrayAdapter<>(this, R.layout.item_spinner, items);
-            spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinnerAdapter.setDropDownViewResource(R.layout.item_spinner_item);
             spinner.setAdapter(spinnerAdapter);
             spinner.setSelection(nowSource);
             spinner.setOnItemSelectedListener(new Spinner.OnItemSelectedListener() {
@@ -193,7 +199,6 @@ public class ImomoePlayerActivity extends BaseActivity implements JZPlayer.Compl
                 drawerLayout.closeDrawer(GravityCompat.START);
             else drawerLayout.openDrawer(GravityCompat.START);
         });
-        System.out.println(url + "========================>");
         player.setListener(this, this, this);
         player.backButton.setOnClickListener(v -> finish());
         // 加载视频失败，嗅探视频
@@ -228,7 +233,7 @@ public class ImomoePlayerActivity extends BaseActivity implements JZPlayer.Compl
         recyclerView.setAdapter(dramaAdapter);
         dramaAdapter.setOnItemClickListener((adapter, view, position) -> {
             if (!Utils.isFastClick()) return;
-            setResult(0x20);
+//            setResult(0x20);
             clickIndex = position;
             drawerLayout.closeDrawer(GravityCompat.END);
             AnimeDescDetailsBean bean = list.get(nowSource).get(position);
@@ -237,10 +242,10 @@ public class ImomoePlayerActivity extends BaseActivity implements JZPlayer.Compl
             MaterialButton materialButton = (MaterialButton) adapter.getViewByPosition(recyclerView, position, R.id.tag_group);
             materialButton.setTextColor(getResources().getColor(R.color.tabSelectedTextColor));
             bean.setSelected(true);
-            String fid = DatabaseUtil.getAnimeID(animeTitle);
+            EventBus.getDefault().post(new Event(true, nowSource, clickIndex));
+            String fid = DatabaseUtil.getAnimeID(animeTitle+Utils.getString(R.string.imomoe));
             DatabaseUtil.addIndex(fid, Sakura.DOMAIN + list.get(nowSource).get(clickIndex).getUrl());
-            System.out.println(Sakura.DOMAIN + list.get(nowSource).get(clickIndex).getUrl());
-            diliUrl = VideoUtils.getUrl(bean.getUrl());
+            sakuraUrl = VideoUtils.getUrl(bean.getUrl());
             witchTitle = animeTitle + " - " + bean.getTitle();
             playAnime(imomoeBeans.get(nowSource).get(clickIndex).getVidOrUrl());
         });
@@ -275,7 +280,8 @@ public class ImomoePlayerActivity extends BaseActivity implements JZPlayer.Compl
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        sniffer(webUrl);
+        presenter = new ImomoeVideoPresenter(webUrl, this);
+        presenter.loadData(true);
     }
 
     /**
@@ -349,7 +355,7 @@ public class ImomoePlayerActivity extends BaseActivity implements JZPlayer.Compl
                 Utils.selectVideoPlayer(this, url);
                 break;
             case R.id.browser_config:
-                Utils.viewInChrome(this, diliUrl);
+                Utils.viewInChrome(this, sakuraUrl);
                 break;
         }
     }
@@ -426,8 +432,26 @@ public class ImomoePlayerActivity extends BaseActivity implements JZPlayer.Compl
         } else isPip = false;
     }
 
+    @Override
     public void cancelDialog() {
         Utils.cancelDialog(alertDialog);
+    }
+
+    @Override
+    public void getVideoSuccess(String playUrl) {
+        runOnUiThread(() -> {
+            cancelDialog();
+            playAnime(playUrl);
+        });
+    }
+
+    @Override
+    public void getVideoError() {
+        runOnUiThread(() -> {
+            cancelDialog();
+            alertDialog = Utils.getProDialog(this, R.string.should_be_used_web);
+            sniffer(webUrl);
+        });
     }
 
     @Override
@@ -476,5 +500,25 @@ public class ImomoePlayerActivity extends BaseActivity implements JZPlayer.Compl
     @Override
     public void touch() {
         hideNavBar();
+    }
+
+    @Override
+    public void showLoadingView() {
+
+    }
+
+    @Override
+    public void showLoadErrorView(String msg) {
+
+    }
+
+    @Override
+    public void showEmptyVIew() {
+
+    }
+
+    @Override
+    public void showLog(String url) {
+
     }
 }

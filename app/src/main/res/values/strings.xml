@@ -1,5 +1,9 @@
 <resources>
     <string name="app_name">樱花动漫</string>
+    <string name="yhdm_name">樱花动漫 Yhdm</string>
+    <string name="imomoe_name">樱花动漫 Imomoe</string>
+    <string name="yhdm">yhdm</string>
+    <string name="imomoe">imomoe</string>
     <string name="app_sub_name">新番时间表</string>
     <string name="search">搜索</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -42,6 +46,7 @@
     <!-- 加载文本 -->
     <string name="loading">加载中</string>
     <string name="load_error">加载失败</string>
+    <string name="loading_info">请在数据加载完毕后再进行操作</string>
     <string name="load_desc_info">请在番剧详情加载完毕后再进行操作</string>
     <string name="no_more">数据全部加载完毕</string>
     <!-- msg文本 -->
@@ -103,6 +108,7 @@
     <string name="pc_model">电脑版</string>
     <string name="down">下载</string>
     <string name="open_in_browser">通过浏览器打开</string>
+    <string name="open_browser">网页访问</string>
     <!-- 收藏相关文本 -->
     <string name="favorite_title">追番列表</string>
     <string name="empty_favorite">空空如也呢(－∀＝)</string>
@@ -205,5 +211,10 @@
     <string-array name="player">
         <item>内置</item>
         <item>外置</item>
+    </string-array>
+    <string name="select_source">请选择解析网站</string>
+    <string-array name="source">
+        <item>Yhdm</item>
+        <item>Imomoe</item>
     </string-array>
 </resources>

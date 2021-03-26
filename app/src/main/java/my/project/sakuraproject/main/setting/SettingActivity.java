@@ -17,10 +17,13 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.r0adkll.slidr.Slidr;
 
+import org.greenrobot.eventbus.EventBus;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.application.Sakura;
+import my.project.sakuraproject.bean.Refresh;
 import my.project.sakuraproject.database.DatabaseUtil;
 import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.base.Presenter;
@@ -162,30 +165,30 @@ public class SettingActivity extends BaseActivity {
             String text = editText.getText().toString();
             if (!text.equals("")) {
                 if (Patterns.WEB_URL.matcher(text).matches()) {
-                    setResult(0x20);
+//                    setResult(0x20);
                     if (text.endsWith("/")) text = text.substring(0, text.length() - 1);
                     url += text;
                     if (isImomoe)
                         SharedPreferencesUtils.setParam(SettingActivity.this, "imomoe_domain", url);
                     else
                         SharedPreferencesUtils.setParam(SettingActivity.this, "domain", url);
-                    Sakura.DOMAIN = url;
                     Sakura.setApi();
                     domain_default.setText(url);
                     alertDialog.dismiss();
+                    EventBus.getDefault().post(new Refresh(0));
                     application.showSuccessToastMsg(Utils.getString(R.string.set_domain_ok));
                 } else editText.setError(Utils.getString(R.string.set_domain_error2));
             } else editText.setError(Utils.getString(R.string.set_domain_error1));
         });
         alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(v -> {
-            setResult(0x20);
-            Sakura.DOMAIN = isImomoe ? Utils.getString(R.string.imomoe_url) : Utils.getString(R.string.domain_url);
-            Sakura.setApi();
+//            setResult(0x20);
             if (isImomoe)
-                SharedPreferencesUtils.setParam(SettingActivity.this, "imomoe_domain", url);
+                SharedPreferencesUtils.setParam(SettingActivity.this, "imomoe_domain", Utils.getString(R.string.imomoe_url));
             else
-                SharedPreferencesUtils.setParam(SettingActivity.this, "domain", url);
+                SharedPreferencesUtils.setParam(SettingActivity.this, "imomoe_domain", Utils.getString(R.string.domain_url));
+            Sakura.setApi();
             domain_default.setText(Sakura.DOMAIN);
+            EventBus.getDefault().post(new Refresh(0));
             alertDialog.dismiss();
         });
     }

@@ -59,7 +59,7 @@ import my.project.sakuraproject.util.VideoUtils;
 public class X5WebActivity extends BaseActivity implements VideoContract.View, SniffingUICallback {
     private final static String REFERER = "referer";
     private List<WebviewBean> list = new ArrayList<>();
-    private String url = "", diliUrl = "";
+    private String url = "", sakuraUrl = "";
     private String animeTitle;
     private String witchTitle;
     private String api = Api.SOURCE_1_API;
@@ -140,7 +140,7 @@ public class X5WebActivity extends BaseActivity implements VideoContract.View, S
             witchTitle = bundle.getString("witchTitle");
             animeTitle = bundle.getString("title");
             url = bundle.getString("url");
-            diliUrl = bundle.getString("dili");
+            sakuraUrl = bundle.getString("sakuraUrl");
             dramaList = (List<AnimeDescDetailsBean>) bundle.getSerializable("list");
         }
     }
@@ -182,7 +182,7 @@ public class X5WebActivity extends BaseActivity implements VideoContract.View, S
         WebviewAdapter webviewAdapter = new WebviewAdapter(this, list);
         webviewAdapter.setOnItemClickListener((adapter, view, position) -> {
             if (list.get(position).isOriginalPage()) {
-                Utils.viewInChrome(X5WebActivity.this, diliUrl);
+                Utils.viewInChrome(X5WebActivity.this, sakuraUrl);
             } else if (list.get(position).isOriginalAddress()) {
                 Utils.viewInChrome(X5WebActivity.this, url);
             } else {
@@ -193,7 +193,7 @@ public class X5WebActivity extends BaseActivity implements VideoContract.View, S
                 list.get(position).setSelect(true);
                 adapter.notifyDataSetChanged();
                 Map<String, String> map = new HashMap<>();
-                map.put(REFERER, diliUrl);
+                map.put(REFERER, sakuraUrl);
                 api = list.get(position).getUrl();
                 newUrl = api + url;
                 x5WebView.loadUrl(newUrl, map);
@@ -214,9 +214,9 @@ public class X5WebActivity extends BaseActivity implements VideoContract.View, S
             MaterialButton materialButton = (MaterialButton) adapter.getViewByPosition(dramaRecyclerView, position, R.id.tag_group);
             materialButton.setTextColor(getResources().getColor(R.color.tabSelectedTextColor));
             materialButton.setSelected(true);
-            diliUrl = VideoUtils.getUrl(bean.getUrl());
+            sakuraUrl = VideoUtils.getUrl(bean.getUrl());
             witchTitle = animeTitle + " - " + bean.getTitle();
-            presenter = new VideoPresenter(animeTitle, diliUrl, X5WebActivity.this);
+            presenter = new VideoPresenter(animeTitle, sakuraUrl, X5WebActivity.this);
             presenter.loadData(true);
         });
         dramaRecyclerView.setAdapter(dramaAdapter);
@@ -345,7 +345,7 @@ public class X5WebActivity extends BaseActivity implements VideoContract.View, S
 
     @Override
     public void getVideoEmpty() {
-        runOnUiThread(() -> VideoUtils.showErrorInfo(X5WebActivity.this, diliUrl));
+        runOnUiThread(() -> VideoUtils.showErrorInfo(X5WebActivity.this, sakuraUrl));
     }
 
     @Override
@@ -516,7 +516,7 @@ public class X5WebActivity extends BaseActivity implements VideoContract.View, S
                 switch ((Integer) SharedPreferencesUtils.getParam(getApplicationContext(), "player", 0)) {
                     case 0:
                         //调用播放器
-                        VideoUtils.openPlayer(false, X5WebActivity.this, witchTitle, url, animeTitle, diliUrl, dramaList);
+                        VideoUtils.openPlayer(false, X5WebActivity.this, witchTitle, url, animeTitle, sakuraUrl, dramaList);
                         break;
                     case 1:
                         Utils.selectVideoPlayer(this, url);
@@ -584,7 +584,7 @@ public class X5WebActivity extends BaseActivity implements VideoContract.View, S
                     application.showToastMsg("已切换成电脑版");
                 }
                 Map<String, String> map = new HashMap<>();
-                map.put(REFERER, diliUrl);
+                map.put(REFERER, sakuraUrl);
                 x5WebView.loadUrl(newUrl, map);
                 break;
         }

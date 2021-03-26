@@ -57,7 +57,6 @@ public class ImomoeJsoupUtils {
      */
     public static LinkedHashMap getHomeData(String source) throws JSONException {
         Document document = Jsoup.parse(source);
-        System.out.println(source);
         Elements elements = document.select("div.tists > ul");
         LinkedHashMap homeMap = new LinkedHashMap();
         JSONObject weekObj = new JSONObject();

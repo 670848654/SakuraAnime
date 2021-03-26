@@ -65,6 +65,7 @@ import java.util.List;
 import my.project.sakuraproject.BuildConfig;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.application.Sakura;
+import my.project.sakuraproject.main.base.BaseModel;
 
 public class Utils {
     private static Context context;
@@ -390,11 +391,11 @@ public class Utils {
         DrawableCrossFadeFactory drawableCrossFadeFactory = new DrawableCrossFadeFactory.Builder(300).setCrossFadeEnabled(true).build();
         GlideUrl imgUrl;
         if (!htmlUrl.contains("/view/"))
-            imgUrl = new GlideUrl(getImgUrl(url), new LazyHeaders.Builder()
-                .addHeader("Referer", Sakura.DOMAIN + "/")
+            imgUrl = new GlideUrl(getImgUrl(url, false), new LazyHeaders.Builder()
+                .addHeader("Referer", BaseModel.getDomain(false) + "/")
                 .build());
         else
-            imgUrl = new GlideUrl(getImgUrl(url));
+            imgUrl = new GlideUrl(getImgUrl(url, true));
         RequestOptions options = new RequestOptions()
                 .centerCrop()
                 .format(DecodeFormat.PREFER_RGB_565)
@@ -669,7 +670,7 @@ public class Utils {
         return (boolean) SharedPreferencesUtils.getParam(Utils.getContext(), "isImomoe", false);
     }
 
-    public static String getImgUrl(String url) {
-        return url.contains("http") ? url : Sakura.DOMAIN + url;
+    public static String getImgUrl(String url, boolean isImomoe) {
+        return url.contains("http") ? url : BaseModel.getDomain(isImomoe) + url;
     }
 }

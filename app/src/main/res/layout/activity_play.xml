@@ -37,14 +37,14 @@
                     android:descendantFocusability="blocksDescendants"
                     android:orientation="vertical">
 
-                    <TextView
+<!--                    <TextView
                         android:id="@+id/anime_title"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
                         android:padding="5dp"
                         android:textColor="@android:color/white"
-                        android:textSize="18sp" />
+                        android:textSize="18sp" />-->
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rv_list"

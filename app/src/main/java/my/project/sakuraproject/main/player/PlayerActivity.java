@@ -178,6 +178,7 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
         });
         Jzvd.FULLSCREEN_ORIENTATION = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE;
         Jzvd.NORMAL_ORIENTATION = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE;
+        player.playingShow();
         player.startButton.performClick();
         player.startVideo();
     }
@@ -206,6 +207,7 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
             EventBus.getDefault().post(new Event(false, -1, position));
             sakuraUrl = bean.getUrl();
             witchTitle = animeTitle + " - " + bean.getTitle();
+            player.playingShow();
             presenter = new VideoPresenter(animeTitle, sakuraUrl, PlayerActivity.this);
             presenter.loadData(true);
         });
@@ -472,6 +474,7 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
     public void onSniffingFinish(View webView, String url) {
         SniffingUtil.get().releaseWebView();
         cancelDialog();
+        hideNavBar();
     }
 
     @Override

@@ -400,7 +400,7 @@ public class DLNAActivity extends BaseActivity implements SeekBar.OnSeekBarChang
                     @Override
                     public void success(IResponse response) {
                         posTime = OtherUtils.getStringTime(currentProgress);
-                        durationText.setText(String.format(refTimeText, posTime, OtherUtils.getStringTime((int) duration)));
+//                        durationText.setText(String.format(refTimeText, posTime, OtherUtils.getStringTime((int) duration)));
                         isSeek = true;
                         Log.e(TAG, "seek success");
                     }
@@ -442,7 +442,7 @@ public class DLNAActivity extends BaseActivity implements SeekBar.OnSeekBarChang
                     }
                     isSeek = false;
                     mClingPlayControl.setCurrentState(DLANPlayState.PLAY);
-                    postHandler.postDelayed(positionRunnable, refreshPositionTime);
+                    postHandler.post(positionRunnable);
                     break;
                 case PAUSE_ACTION:
                     Log.i(TAG, "Execute PAUSE_ACTION");
@@ -500,7 +500,7 @@ public class DLNAActivity extends BaseActivity implements SeekBar.OnSeekBarChang
         }
     }
     Handler postHandler = new Handler();
-    private int refreshPositionTime = 500; // 刷新时长
+    private int refreshPositionTime = 1000; // 刷新时长
     private Runnable positionRunnable = new Runnable() {
         @Override
         public void run() {

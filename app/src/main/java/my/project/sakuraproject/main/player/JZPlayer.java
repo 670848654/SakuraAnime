@@ -159,6 +159,16 @@ public class JZPlayer extends JzvdStd {
             ibLock.setVisibility(ibLock.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
     }
 
+    public void playingShow() {
+        setAllControlsVisiblity(View.INVISIBLE, View.INVISIBLE, View.INVISIBLE,
+                View.VISIBLE, View.INVISIBLE, View.INVISIBLE, View.INVISIBLE);
+        ibLock.setVisibility(GONE);
+        fastForward.setVisibility(GONE);
+        quickRetreat.setVisibility(GONE);
+        config.setVisibility(GONE);
+        airplay.setVisibility(GONE);
+    }
+
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         touchListener.touch();

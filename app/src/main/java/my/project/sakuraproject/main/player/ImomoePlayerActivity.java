@@ -202,12 +202,11 @@ public class ImomoePlayerActivity extends BaseActivity implements JZPlayer.Compl
         player.setListener(this, this, this);
         player.backButton.setOnClickListener(v -> finish());
         // 加载视频失败，嗅探视频
-        player.snifferBtn.setOnClickListener(v -> snifferPlayUrl(imomoeBeans.get(nowSource).get(clickIndex)));
+        player.snifferBtn.setOnClickListener(v -> sniffer());
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) picConfig.setVisibility(View.GONE);
         else picConfig.setVisibility(View.VISIBLE);
         if (gtSdk23()) player.tvSpeed.setVisibility(View.VISIBLE);
         else player.tvSpeed.setVisibility(View.GONE);
-        player.setUp(url, witchTitle, Jzvd.SCREEN_FULLSCREEN, JZExoPlayer.class);
         player.fullscreenButton.setOnClickListener(view -> {
             if (!Utils.isFastClick()) return;
             if (drawerLayout.isDrawerOpen(GravityCompat.END))
@@ -216,8 +215,8 @@ public class ImomoePlayerActivity extends BaseActivity implements JZPlayer.Compl
         });
         Jzvd.FULLSCREEN_ORIENTATION = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE;
         Jzvd.NORMAL_ORIENTATION = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE;
-        player.startButton.performClick();
-        player.startVideo();
+        player.playingShow();
+        checkPlayUrl();
     }
 
     public void startPic() {
@@ -238,7 +237,6 @@ public class ImomoePlayerActivity extends BaseActivity implements JZPlayer.Compl
             drawerLayout.closeDrawer(GravityCompat.END);
             AnimeDescDetailsBean bean = list.get(nowSource).get(position);
             Jzvd.releaseAllVideos();
-            alertDialog = Utils.getProDialog(ImomoePlayerActivity.this, R.string.parsing);
             MaterialButton materialButton = (MaterialButton) adapter.getViewByPosition(recyclerView, position, R.id.tag_group);
             materialButton.setTextColor(getResources().getColor(R.color.tabSelectedTextColor));
             bean.setSelected(true);
@@ -247,7 +245,9 @@ public class ImomoePlayerActivity extends BaseActivity implements JZPlayer.Compl
             DatabaseUtil.addIndex(fid, Sakura.DOMAIN + list.get(nowSource).get(clickIndex).getUrl());
             sakuraUrl = VideoUtils.getUrl(bean.getUrl());
             witchTitle = animeTitle + " - " + bean.getTitle();
-            playAnime(imomoeBeans.get(nowSource).get(clickIndex).getVidOrUrl());
+            url = imomoeBeans.get(nowSource).get(clickIndex).getVidOrUrl();
+            player.playingShow();
+            checkPlayUrl();
         });
     }
 
@@ -257,10 +257,7 @@ public class ImomoePlayerActivity extends BaseActivity implements JZPlayer.Compl
         switch ((Integer) SharedPreferencesUtils.getParam(getApplicationContext(), "player", 0)) {
             case 0:
                 //调用播放器
-                Jzvd.releaseAllVideos();
-                player.currentSpeedIndex = 1;
-                player.setUp(url, witchTitle, Jzvd.SCREEN_FULLSCREEN, JZExoPlayer.class);
-                player.startVideo();
+                play(url);
                 break;
             case 1:
                 Jzvd.releaseAllVideos();
@@ -269,27 +266,48 @@ public class ImomoePlayerActivity extends BaseActivity implements JZPlayer.Compl
         }
     }
 
-    /**
-     * 嗅探视频真实连接
-     * @param imomoeVideoUrlBean
-     */
-    private void snifferPlayUrl(ImomoeVideoUrlBean imomoeVideoUrlBean) {
-        alertDialog = Utils.getProDialog(this, R.string.should_be_used_web);
-        try {
-            webUrl = imomoeVideoUrlBean.getVidOrUrl().contains("http") ? imomoeVideoUrlBean.getVidOrUrl() : String.format(Api.IMOMOE_PARSE_API, imomoeVideoUrlBean.getParam(), imomoeVideoUrlBean.getVidOrUrl(),  URLEncoder.encode(Sakura.DOMAIN + list.get(nowSource).get(clickIndex).getUrl(),"GB2312"));
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+    private void checkPlayUrl() {
+        if (url.contains("http"))
+            play(url);
+        else {
+            try {
+                webUrl = String.format(Api.IMOMOE_PARSE_API, imomoeBeans.get(nowSource).get(clickIndex).getParam(), url,  URLEncoder.encode(Sakura.DOMAIN +  list.get(nowSource).get(clickIndex).getUrl(),"GB2312"));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            presenter = new ImomoeVideoPresenter(webUrl, this);
+            presenter.loadData(true);
         }
-        presenter = new ImomoeVideoPresenter(webUrl, this);
-        presenter.loadData(true);
+    }
+
+    /**
+     * 播放视频
+     * @param playUrl
+     */
+    private void play(String playUrl) {
+        Jzvd.releaseAllVideos();
+        player.currentSpeedIndex = 1;
+        player.setUp(playUrl, witchTitle, Jzvd.SCREEN_FULLSCREEN, JZExoPlayer.class);
+        player.startVideo();
     }
 
     /**
      * 嗅探方法
-     * @param url
      */
-    private void sniffer(String url) {
-        SniffingUtil.get().activity(this).referer(url).callback(this).url(url).start();
+    private void sniffer() {
+        alertDialog = Utils.getProDialog(this, R.string.should_be_used_web);
+        if (url.contains("http")) {
+            webUrl = url;
+            SniffingUtil.get().activity(this).referer(webUrl).callback(this).url(webUrl).start();
+        } else {
+            try {
+              webUrl = String.format(Api.IMOMOE_PARSE_API, imomoeBeans.get(nowSource).get(clickIndex).getParam(), url,  URLEncoder.encode(Sakura.DOMAIN +  list.get(nowSource).get(clickIndex).getUrl(),"GB2312"));
+                SniffingUtil.get().activity(this).referer(webUrl).callback(this).url(webUrl).start();
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 
     private void initUserConfig() {
@@ -439,18 +457,14 @@ public class ImomoePlayerActivity extends BaseActivity implements JZPlayer.Compl
 
     @Override
     public void getVideoSuccess(String playUrl) {
-        runOnUiThread(() -> {
-            cancelDialog();
-            playAnime(playUrl);
-        });
+        runOnUiThread(() -> playAnime(playUrl));
     }
 
     @Override
     public void getVideoError() {
         runOnUiThread(() -> {
             cancelDialog();
-            alertDialog = Utils.getProDialog(this, R.string.should_be_used_web);
-            sniffer(webUrl);
+            sniffer();
         });
     }
 
@@ -476,6 +490,7 @@ public class ImomoePlayerActivity extends BaseActivity implements JZPlayer.Compl
     public void onSniffingFinish(View webView, String url) {
         SniffingUtil.get().releaseWebView();
         cancelDialog();
+        hideNavBar();
     }
 
     @Override

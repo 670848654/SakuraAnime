@@ -120,7 +120,7 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
         toolbar.setOnClickListener(v -> {
             if (!Utils.isFastClick()) return;
             if (mSwipe.isRefreshing()) {
-                application.showSnackbarMsg(toolbar, Utils.getString(R.string.loading_info));
+                Sakura.getInstance().showToastMsg(Utils.getString(R.string.loading_info));
                 return;
             }
             setDefaultSource();

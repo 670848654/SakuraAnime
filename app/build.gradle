@@ -6,8 +6,8 @@ android {
         applicationId "my.project.sakuraproject"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 31
-        versionName "1.9.7_1"
+        versionCode 32
+        versionName "1.9.8"
         ndk{abiFilters "armeabi", "x86"}
         resConfigs"zh"
     }

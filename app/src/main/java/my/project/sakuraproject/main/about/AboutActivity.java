@@ -236,7 +236,7 @@ public class AboutActivity extends BaseActivity {
                                         dialog.dismiss();
                                         Utils.putTextIntoClip(downloadUrl);
                                         application.showSuccessToastMsg(Utils.getString(R.string.url_copied));
-                                        Utils.openBrowser(AboutActivity.this, downloadUrl);
+                                        Utils.viewInBrowser(AboutActivity.this, downloadUrl);
                                     },
                                     (dialog, which) -> dialog.dismiss()
                             );

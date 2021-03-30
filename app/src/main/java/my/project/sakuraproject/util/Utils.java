@@ -31,7 +31,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.ArrayRes;
 import androidx.annotation.NonNull;
@@ -629,23 +628,6 @@ public class Utils {
         int heightPixels = outMetrics.heightPixels;
         Log.i("Pixel", "widthPixels = " + widthPixels + ",heightPixels = " + heightPixels);
         return heightPixels;
-    }
-
-    /**
-     * 选择浏览器
-     *
-     * @param url
-     */
-    public static void openBrowser(Context context, String url) {
-        final Intent intent = new Intent();
-        intent.setAction(Intent.ACTION_VIEW);
-        intent.setData(Uri.parse(url));
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        if (intent.resolveActivity(context.getPackageManager()) != null) {
-            context.startActivity(Intent.createChooser(intent, getString(R.string.select_tools)));
-        } else {
-            Toast.makeText(context.getApplicationContext(), getString(R.string.tools_not_found), Toast.LENGTH_SHORT).show();
-        }
     }
 
     /**

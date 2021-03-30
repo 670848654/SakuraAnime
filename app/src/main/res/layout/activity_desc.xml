@@ -246,6 +246,8 @@
                                 android:layout_marginRight="10dp"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                app:ep_need_link="false"
+                                app:ep_need_mention="true"
                                 app:ep_max_line="4"
                                 android:lineSpacingExtra="4dp"
                                 app:ep_need_contract="true"

@@ -34,6 +34,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.jzvd.Jzvd;
+import cn.jzvd.JzvdStd;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.adapter.DramaAdapter;
 import my.project.sakuraproject.api.Api;
@@ -349,12 +350,6 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        if (inMultiWindow()) player.goOnPlayOnResume();
-    }
-
-    @Override
     protected void onStop() {
         super.onStop();
         if (isPip) finish();
@@ -393,7 +388,6 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
         if (isInPictureInPictureMode) {
             player.startPIP();
             isPip = true;
-            player.goOnPlayOnResume();
         } else isPip = false;
     }
 

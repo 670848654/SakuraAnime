@@ -402,12 +402,6 @@ public class ImomoePlayerActivity extends BaseActivity implements JZPlayer.Compl
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        if (inMultiWindow()) player.goOnPlayOnResume();
-    }
-
-    @Override
     protected void onStop() {
         super.onStop();
         if (isPip) finish();
@@ -446,7 +440,6 @@ public class ImomoePlayerActivity extends BaseActivity implements JZPlayer.Compl
         if (isInPictureInPictureMode) {
             player.startPIP();
             isPip = true;
-            player.goOnPlayOnResume();
         } else isPip = false;
     }
 

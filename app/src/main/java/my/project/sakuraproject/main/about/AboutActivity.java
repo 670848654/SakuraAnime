@@ -166,6 +166,7 @@ public class AboutActivity extends BaseActivity {
 
     public List createUpdateLogList() {
         List logsList = new ArrayList();
+        logsList.add(new LogBean("版本：1.9.8_1", "修复Yhdm源动漫专题无法正常加载的问题"));
         logsList.add(new LogBean("版本：1.9.8", "支持Android 11\n修复已知问题，部分UI变更\n新增对樱花动漫网（Imomoe）的支持，首页点击标题栏可切换（可能存在Bug）"));
         logsList.add(new LogBean("版本：1.9.7_1", "修复ExoPlayer不支持（http -> https | https -> http）重定向导致部分番剧无法正常播放的问题"));
         logsList.add(new LogBean("版本：1.9.7", "修复已知问题\n新增视频投屏功能"));

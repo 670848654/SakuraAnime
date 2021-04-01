@@ -128,8 +128,9 @@ public class AnimeTopicActivity extends BaseActivity<AnimeTopicContract.View, An
             final AnimeListBean bean = (AnimeListBean) adapter.getItem(position);
             Bundle bundle = new Bundle();
             bundle.putString("title", bean.getTitle());
-            bundle.putString("url", VideoUtils.getUrl(bean.getUrl()));
+            bundle.putString("url", bean.getUrl());
             bundle.putBoolean("isMovie", false);
+            bundle.putBoolean("isImomoe", Utils.isImomoe());
             startActivity(new Intent(this, AnimeListActivity.class).putExtras(bundle));
         });
         if (Utils.checkHasNavigationBar(this)) mRecyclerView.setPadding(0,0,0, Utils.getNavigationBarHeight(this));

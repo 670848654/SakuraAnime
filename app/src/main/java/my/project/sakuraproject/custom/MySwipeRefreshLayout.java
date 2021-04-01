@@ -7,6 +7,7 @@ import android.view.ViewConfiguration;
 
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+
 public class MySwipeRefreshLayout extends SwipeRefreshLayout {
     private float startX;
     private float startY;

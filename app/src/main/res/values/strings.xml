@@ -61,6 +61,7 @@
     <string name="error_msg">抱歉，未找到相关信息~</string>
     <string name="no_playlist_error">该番剧暂无播放列表。</string>
     <string name="get_drama_error">获取剧集信息出错</string>
+    <string name="should_be_sniffer">非可播放视频地址，尝试嗅探获取播放地址&#8230;</string>
     <string name="should_be_used_web">尝试嗅探获取播放地址&#8230;</string>
     <string name="open_web_view">解析视频地址失败，尝试使用webView打开</string>
     <!-- 详情界面文本 -->

@@ -122,6 +122,7 @@ public class ImomoePlayerActivity extends BaseActivity implements JZPlayer.Compl
     }
 
     private void init(Bundle bundle) {
+        player.setOnClickListener(view -> { return; });
         //播放地址
         url = bundle.getString("url");
         //集数名称
@@ -270,6 +271,7 @@ public class ImomoePlayerActivity extends BaseActivity implements JZPlayer.Compl
         if (url.contains("http"))
             play(url);
         else {
+            alertDialog = Utils.getProDialog(this, R.string.should_be_sniffer);
             try {
                 webUrl = String.format(Api.IMOMOE_PARSE_API, imomoeBeans.get(nowSource).get(clickIndex).getParam(), url,  URLEncoder.encode(Sakura.DOMAIN +  list.get(nowSource).get(clickIndex).getUrl(),"GB2312"));
             } catch (UnsupportedEncodingException e) {

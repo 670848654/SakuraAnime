@@ -338,8 +338,7 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
     @Override
     protected void onPause() {
         super.onPause();
-        if (!inMultiWindow()) player.goOnPlayOnPause();
-        else player.goOnPlayOnResume();
+        player.goOnPlayOnPause();
     }
 
     @Override
@@ -389,6 +388,13 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
             player.startPIP();
             isPip = true;
         } else isPip = false;
+    }
+
+    @Override
+    public void onMultiWindowModeChanged(boolean isInMultiWindowMode, Configuration newConfig) {
+        super.onMultiWindowModeChanged(isInMultiWindowMode, newConfig);
+        if (isInMultiWindowMode)
+            player.goOnPlayOnResume();
     }
 
     @Override

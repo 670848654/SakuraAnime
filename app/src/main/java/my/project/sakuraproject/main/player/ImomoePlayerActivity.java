@@ -390,8 +390,7 @@ public class ImomoePlayerActivity extends BaseActivity implements JZPlayer.Compl
     @Override
     protected void onPause() {
         super.onPause();
-        if (!inMultiWindow()) player.goOnPlayOnPause();
-        else player.goOnPlayOnResume();
+        player.goOnPlayOnPause();
     }
 
     @Override
@@ -441,6 +440,13 @@ public class ImomoePlayerActivity extends BaseActivity implements JZPlayer.Compl
             player.startPIP();
             isPip = true;
         } else isPip = false;
+    }
+
+    @Override
+    public void onMultiWindowModeChanged(boolean isInMultiWindowMode, Configuration newConfig) {
+        super.onMultiWindowModeChanged(isInMultiWindowMode, newConfig);
+        if (isInMultiWindowMode)
+            player.goOnPlayOnResume();
     }
 
     @Override

@@ -185,7 +185,7 @@ public class SettingActivity extends BaseActivity {
             if (isImomoe)
                 SharedPreferencesUtils.setParam(SettingActivity.this, "imomoe_domain", Utils.getString(R.string.imomoe_url));
             else
-                SharedPreferencesUtils.setParam(SettingActivity.this, "imomoe_domain", Utils.getString(R.string.domain_url));
+                SharedPreferencesUtils.setParam(SettingActivity.this, "domain", Utils.getString(R.string.domain_url));
             Sakura.setApi();
             domain_default.setText(Sakura.DOMAIN);
             EventBus.getDefault().post(new Refresh(0));

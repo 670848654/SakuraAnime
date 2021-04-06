@@ -290,14 +290,17 @@
                             android:textColor="@color/white"
                             android:textStyle="bold"/>
 
-                        <androidx.appcompat.widget.AppCompatSpinner
+                        <TextView
                             android:visibility="gone"
                             android:layout_toRightOf="@id/selected_text"
                             android:id="@+id/spinner"
+                            android:textColor="@color/colorAccent"
+                            android:gravity="center_vertical"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerVertical="true"
-                            android:backgroundTint="@color/white"
+                            android:drawableRight="@drawable/baseline_arrow_drop_down_white_48dp"
+                            android:drawablePadding="5dp"
                             android:layout_marginLeft="8dp"/>
                     </RelativeLayout>
 

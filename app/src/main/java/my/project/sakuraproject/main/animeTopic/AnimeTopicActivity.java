@@ -30,7 +30,6 @@ import my.project.sakuraproject.main.base.BaseModel;
 import my.project.sakuraproject.main.search.SearchActivity;
 import my.project.sakuraproject.util.SwipeBackLayoutUtil;
 import my.project.sakuraproject.util.Utils;
-import my.project.sakuraproject.util.VideoUtils;
 
 public class AnimeTopicActivity extends BaseActivity<AnimeTopicContract.View, AnimeTopicPresenter> implements AnimeTopicContract.View {
     @BindView(R.id.rv_list)

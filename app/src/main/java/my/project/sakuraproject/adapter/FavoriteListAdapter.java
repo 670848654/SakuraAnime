@@ -30,6 +30,5 @@ public class FavoriteListAdapter extends BaseQuickAdapter<AnimeListBean, BaseVie
         source.setText(Utils.getString(item.getUrl().contains("/view/") ? R.string.imomoe : R.string.yhdm));
         source.setVisibility(View.VISIBLE);
         helper.setText(R.id.title, item.getTitle().replaceAll("imomoe", ""));
-//        Utils.setCardBg(context, item.getImg(), helper.getView(R.id.card_view), helper.getView(R.id.title));
     }
 }

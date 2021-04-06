@@ -5,6 +5,7 @@ import android.animation.Keyframe;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -151,11 +152,9 @@ public class Utils {
         intent.setAction(Intent.ACTION_VIEW);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.setDataAndType(Uri.parse(url), "video/*");
-        // 注意此处的判断intent.resolveActivity()可以返回显示该Intent的Activity对应的组件名
-        // 官方解释 : Name of the component implementing an activity that can display the intent
-        if (intent.resolveActivity(context.getPackageManager()) != null) {
+        try {
             context.startActivity(Intent.createChooser(intent, "请选择视频播放器"));
-        } else {
+        } catch (ActivityNotFoundException e) {
             Sakura.getInstance().showToastMsg("没有找到匹配的程序");
         }
     }

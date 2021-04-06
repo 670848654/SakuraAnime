@@ -4,17 +4,16 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.content.ContextCompat;
@@ -134,12 +133,13 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     @BindView(R.id.scrollview)
     NestedScrollView scrollView;
     @BindView(R.id.spinner)
-    AppCompatSpinner spinner;
+    TextView spinner;
     private ArrayAdapter<String> spinnerAdapter;
     private boolean isImomoe;
     private List<List<ImomoeVideoUrlBean>> imomoeBeans = new ArrayList<>();
     private int nowSource = 0; // 当前源
     private int clickIndex; // 当前点击剧集
+    private PopupMenu popupMenu;
 
     @Override
     protected DescPresenter createPresenter() {
@@ -166,6 +166,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         params.setMargins(10, 0, 10, 0);
         scrollView.getViewTreeObserver().addOnScrollChangedListener(() -> mSwipe.setEnabled(scrollView.getScrollY() == 0));
         desc.setNeedExpend(true);
+        popupMenu = new PopupMenu(this, spinner);
         getBundle();
         initSwipe();
         initAdapter();
@@ -233,7 +234,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
 
         View dramaView = LayoutInflater.from(this).inflate(R.layout.dialog_drama, null);
         lineRecyclerView = dramaView.findViewById(R.id.drama_list);
-        lineRecyclerView.setLayoutManager(new GridLayoutManager(this, 5));
+        lineRecyclerView.setLayoutManager(new GridLayoutManager(this, 4));
         animeDescDramaAdapter = new AnimeDescDramaAdapter(this, new ArrayList<>());
         animeDescDramaAdapter.setOnItemClickListener((adapter, view, position) -> {
             if (!Utils.isFastClick()) return;
@@ -352,9 +353,9 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
             case 0:
                 //调用播放器
                 if (isImomoe)
-                    VideoUtils.openImomoePlayer(true, this, witchTitle, animeUrl, animeTitle, sakuraUrl, animeDescListBean.getMultipleAnimeDescDetailsBeans(), imomoeBeans, nowSource);
+                    VideoUtils.openImomoePlayer(true, this, witchTitle, animeUrl, animeTitle, dramaUrl, animeDescListBean.getMultipleAnimeDescDetailsBeans(), imomoeBeans, nowSource);
                 else
-                    VideoUtils.openPlayer(true, this, witchTitle, animeUrl, animeTitle, sakuraUrl, animeDescListBean.getAnimeDescDetailsBeans());
+                    VideoUtils.openPlayer(true, this, witchTitle, animeUrl, animeTitle, dramaUrl, animeDescListBean.getAnimeDescDetailsBeans());
                 break;
             case 1:
                 Utils.selectVideoPlayer(this, animeUrl);
@@ -433,6 +434,11 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         }
     }
 
+    @OnClick(R.id.spinner)
+    public void showMenu() {
+        showPopupMenu();
+    }
+
     @OnClick(R.id.favorite)
     public void setFavorite() {
         favoriteAnime();
@@ -494,8 +500,13 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
                     // imomoe
                     animeDescDetailsAdapter.setNewData(animeDescListBean.getMultipleAnimeDescDetailsBeans().get(0));
                     nowSource = 0;
-                    if (bean.getMultipleAnimeDescDetailsBeans().size() > 1)
-                        getSpinner(animeDescListBean.getMultipleAnimeDescDetailsBeans().size());
+                    if (bean.getMultipleAnimeDescDetailsBeans().size() > 1) {
+                        for (int i=1; i<bean.getMultipleAnimeDescDetailsBeans().size()+1; i++) {
+                            popupMenu.getMenu().add(android.view.Menu.NONE, i, i, "播放源 " + i);
+                        }
+                        spinner.setVisibility(View.VISIBLE);
+                        setSource(popupMenu.getMenu().getItem(nowSource));
+                    }
                 } else {
                     // yhdm
                     animeDescDetailsAdapter.setNewData(animeDescListBean.getAnimeDescDetailsBeans());
@@ -531,7 +542,22 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         }
     }
 
-    private void getSpinner(int size) {
+    private void showPopupMenu() {
+        popupMenu.setOnMenuItemClickListener(item -> {
+            setSource(item);
+            return true;
+        });
+        popupMenu.show();
+    }
+
+    private void setSource(MenuItem item) {
+        animeDescDetailsAdapter.setNewData(animeDescListBean.getMultipleAnimeDescDetailsBeans().get(item.getItemId()-1));
+        setAnimeDescDramaAdapter(item.getItemId()-1);
+        nowSource = item.getItemId()-1;
+        spinner.setText("播放源 " + item.getItemId());
+    }
+
+    /*private void getSpinner(int size) {
         List<String> items = new ArrayList<>();
         for (int i=1; i<size+1; i++) {
             items.add("播放源 " + i);
@@ -553,7 +579,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
             }
         });
         spinner.setVisibility(View.VISIBLE);
-    }
+    }*/
 
     @Override
     public void showSuccessDescView(AnimeListBean bean) {
@@ -666,7 +692,8 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
             clickIndex = event.getClickIndex();
             animeDescListBean.getMultipleAnimeDescDetailsBeans().get(nowSource).get(clickIndex).setSelected(true);
             if (nowSource != 0)
-                spinner.setSelection(nowSource);
+                setSource(popupMenu.getMenu().getItem(nowSource));
+//                spinner.setSelection(nowSource);
         } else
             animeDescListBean.getAnimeDescDetailsBeans().get(clickIndex).setSelected(true);
         animeDescDetailsAdapter.notifyDataSetChanged();

@@ -34,7 +34,6 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.jzvd.Jzvd;
-import cn.jzvd.JzvdStd;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.adapter.DramaAdapter;
 import my.project.sakuraproject.api.Api;
@@ -55,7 +54,7 @@ import my.project.sakuraproject.util.VideoUtils;
 public class PlayerActivity extends BaseActivity implements VideoContract.View, JZPlayer.CompleteListener, JZPlayer.TouchListener, SniffingUICallback {
     @BindView(R.id.player)
     JZPlayer player;
-    private String witchTitle, url, sakuraUrl;
+    private String witchTitle, url, dramaUrl;
     @BindView(R.id.rv_list)
     RecyclerView recyclerView;
     private List<AnimeDescDetailsBean> list = new ArrayList<>();
@@ -120,7 +119,7 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
         animeTitle = bundle.getString("animeTitle");
 //        titleView.setText(animeTitle);
         //源地址
-        sakuraUrl = bundle.getString("sakuraUrl");
+        dramaUrl = bundle.getString("dramaUrl");
         //剧集list
         list = (List<AnimeDescDetailsBean>) bundle.getSerializable("list");
         //禁止冒泡
@@ -206,10 +205,10 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
             materialButton.setTextColor(getResources().getColor(R.color.tabSelectedTextColor));
             bean.setSelected(true);
             EventBus.getDefault().post(new Event(false, -1, position));
-            sakuraUrl = bean.getUrl();
+            dramaUrl = bean.getUrl();
             witchTitle = animeTitle + " - " + bean.getTitle();
             player.playingShow();
-            presenter = new VideoPresenter(animeTitle, sakuraUrl, PlayerActivity.this);
+            presenter = new VideoPresenter(animeTitle, dramaUrl, PlayerActivity.this);
             presenter.loadData(true);
         });
     }
@@ -243,7 +242,7 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
             if (animeUrl.contains("jx.618g.com")) {
                 cancelDialog();
                 url = animeUrl.replaceAll("http://jx.618g.com/\\?url=", "");
-                VideoUtils.openWebview(false, this, witchTitle, animeTitle, url, BaseModel.getDomain(false) + sakuraUrl, this.list);
+                VideoUtils.openWebview(false, this, witchTitle, animeTitle, url, BaseModel.getDomain(false) + dramaUrl, this.list);
             } else sniffer(webUrl, true);
         } else sniffer(webUrl, false);
     }
@@ -321,7 +320,8 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
                 Utils.selectVideoPlayer(this, url);
                 break;
             case R.id.browser_config:
-                Utils.viewInChrome(this, BaseModel.getDomain(false) + sakuraUrl);
+                Utils.viewInChrome(this, BaseModel.getDomain(false) + dramaUrl);
+                application.showSuccessToastMsg(BaseModel.getDomain(false) + dramaUrl);
                 break;
         }
     }
@@ -423,7 +423,7 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
     public void getVideoEmpty() {
         runOnUiThread(() -> {
             hideNavBar();
-            VideoUtils.showErrorInfo(PlayerActivity.this, BaseModel.getDomain(false) + sakuraUrl);
+            VideoUtils.showErrorInfo(PlayerActivity.this, BaseModel.getDomain(false) + dramaUrl);
         });
     }
 

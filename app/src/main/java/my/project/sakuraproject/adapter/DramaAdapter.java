@@ -24,7 +24,7 @@ public class DramaAdapter extends BaseQuickAdapter<AnimeDescDetailsBean, BaseVie
     @Override
     protected void convert(final BaseViewHolder helper, AnimeDescDetailsBean item) {
         MaterialButton materialButton = helper.getView(R.id.tag_group);
-        helper.setText(R.id.tag_group, item.getTitle().replaceAll("第", "").replaceAll("集", ""));
+        helper.setText(R.id.tag_group, item.getTitle());
         if (item.isSelected())
             materialButton.setTextColor(context.getResources().getColor(R.color.tabSelectedTextColor));
         else

@@ -107,15 +107,15 @@ public class VideoUtils {
      * @param witchTitle
      * @param url
      * @param animeTitle
-     * @param sakuraUrl
+     * @param dramaUrl
      * @param list
      */
-    public static void openPlayer(boolean isDescActivity, Activity activity, String witchTitle, String url, String animeTitle, String sakuraUrl, List<AnimeDescDetailsBean> list) {
+    public static void openPlayer(boolean isDescActivity, Activity activity, String witchTitle, String url, String animeTitle, String dramaUrl, List<AnimeDescDetailsBean> list) {
         Bundle bundle = new Bundle();
         bundle.putString("title", witchTitle);
         bundle.putString("url", url);
         bundle.putString("animeTitle", animeTitle);
-        bundle.putString("sakuraUrl", sakuraUrl);
+        bundle.putString("dramaUrl", dramaUrl);
         bundle.putSerializable("list", (Serializable) list);
         Sakura.destoryActivity("player");
         if (isDescActivity)
@@ -137,12 +137,12 @@ public class VideoUtils {
      * @param list
      * @param bean
      */
-    public static void openImomoePlayer(boolean isDescActivity, Activity activity, String witchTitle, String url, String animeTitle, String sakuraUrl,  List<List<AnimeDescDetailsBean>> list, List<List<ImomoeVideoUrlBean>> bean, int nowSource) {
+    public static void openImomoePlayer(boolean isDescActivity, Activity activity, String witchTitle, String url, String animeTitle, String dramaUrl,  List<List<AnimeDescDetailsBean>> list, List<List<ImomoeVideoUrlBean>> bean, int nowSource) {
         Bundle bundle = new Bundle();
         bundle.putString("title", witchTitle);
         bundle.putString("url", url);
         bundle.putString("animeTitle", animeTitle);
-        bundle.putString("sakuraUrl", sakuraUrl);
+        bundle.putString("dramaUrl", dramaUrl);
         bundle.putSerializable("list", (Serializable) list);
         bundle.putSerializable("playList", (Serializable) bean);
         bundle.putInt("nowSource", nowSource);

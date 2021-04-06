@@ -106,8 +106,10 @@ public class WeekFragment extends LazyFragment {
         if (adapter.getData().isEmpty()) {
             list = getList(week);
             if (list.size() == 0) {
-                errorTitle.setText(application.error);
-                adapter.setEmptyView(errorView);
+                if (!application.error.isEmpty()) {
+                    errorTitle.setText(application.error);
+                    adapter.setEmptyView(errorView);
+                }
             } else
                 adapter.setNewData(list);
         }

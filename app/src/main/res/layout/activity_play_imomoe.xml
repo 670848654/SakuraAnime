@@ -46,15 +46,18 @@
                         android:textColor="@android:color/white"
                         android:textSize="18sp" />-->
 
-                    <androidx.appcompat.widget.AppCompatSpinner
+                    <TextView
                         android:visibility="gone"
                         android:id="@+id/spinner"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical|right"
-                        android:backgroundTint="@android:color/white"
+                        android:textColor="@color/colorAccent"
+                        android:gravity="center_vertical"
+                        android:layout_gravity="center_vertical|left"
+                        android:drawableRight="@drawable/baseline_arrow_drop_down_white_48dp"
+                        android:drawablePadding="5dp"
                         android:layout_marginTop="5dp"
-                        android:layout_marginRight="5dp"/>
+                        android:layout_marginLeft="5dp"/>
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rv_list"

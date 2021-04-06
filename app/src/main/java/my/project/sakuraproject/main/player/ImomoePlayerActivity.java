@@ -7,17 +7,15 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -47,6 +45,7 @@ import my.project.sakuraproject.bean.Event;
 import my.project.sakuraproject.bean.ImomoeVideoUrlBean;
 import my.project.sakuraproject.database.DatabaseUtil;
 import my.project.sakuraproject.main.base.BaseActivity;
+import my.project.sakuraproject.main.base.BaseModel;
 import my.project.sakuraproject.main.base.Presenter;
 import my.project.sakuraproject.main.video.ImomoeVideoContract;
 import my.project.sakuraproject.main.video.ImomoeVideoPresenter;
@@ -58,7 +57,7 @@ import my.project.sakuraproject.util.VideoUtils;
 public class ImomoePlayerActivity extends BaseActivity implements JZPlayer.CompleteListener, JZPlayer.TouchListener, SniffingUICallback, ImomoeVideoContract.View {
     @BindView(R.id.player)
     JZPlayer player;
-    private String witchTitle, url, sakuraUrl;
+    private String witchTitle, url, dramaUrl;
     @BindView(R.id.rv_list)
     RecyclerView recyclerView;
     private List<List<AnimeDescDetailsBean>> list = new ArrayList<>();
@@ -88,9 +87,10 @@ public class ImomoePlayerActivity extends BaseActivity implements JZPlayer.Compl
     private int nowSource = 0; // 当前源
     private int clickIndex; // 当前点击剧集
     @BindView(R.id.spinner)
-    AppCompatSpinner spinner;
+    TextView spinner;
     private ArrayAdapter<String> spinnerAdapter;
     private ImomoeVideoPresenter presenter;
+    private PopupMenu popupMenu;
 
     @Override
     protected Presenter createPresenter() {
@@ -131,7 +131,7 @@ public class ImomoePlayerActivity extends BaseActivity implements JZPlayer.Compl
         animeTitle = bundle.getString("animeTitle");
 //        titleView.setText(animeTitle);
         //源地址
-        sakuraUrl = bundle.getString("sakuraUrl");
+        dramaUrl = bundle.getString("dramaUrl");
         //剧集list
         list = (List<List<AnimeDescDetailsBean>>) bundle.getSerializable("list");
         //播放地址
@@ -172,26 +172,17 @@ public class ImomoePlayerActivity extends BaseActivity implements JZPlayer.Compl
             }
         });
         if (list.size() > 1) {
-            List<String> items = new ArrayList<>();
+            popupMenu = new PopupMenu(this, spinner);
             for (int i=1; i<list.size()+1; i++) {
-                items.add("播放源 " + i);
+                popupMenu.getMenu().add(android.view.Menu.NONE, i, i, "播放源 " + i);
             }
-            spinnerAdapter = new ArrayAdapter<>(this, R.layout.item_spinner, items);
-            spinnerAdapter.setDropDownViewResource(R.layout.item_spinner_item);
-            spinner.setAdapter(spinnerAdapter);
-            spinner.setSelection(nowSource);
-            spinner.setOnItemSelectedListener(new Spinner.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    dramaAdapter.setNewData(list.get(position));
-                    nowSource = position;
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
-
-                }
+            popupMenu.setOnMenuItemClickListener(item -> {
+                dramaAdapter.setNewData(list.get(item.getItemId()-1));
+                nowSource = item.getItemId()-1;
+                spinner.setText("播放源 " + item.getItemId());
+                return true;
             });
+            spinner.setText("播放源 " + (nowSource+1));
             spinner.setVisibility(View.VISIBLE);
         }
         player.config.setOnClickListener(v -> {
@@ -220,6 +211,11 @@ public class ImomoePlayerActivity extends BaseActivity implements JZPlayer.Compl
         checkPlayUrl();
     }
 
+    @OnClick(R.id.spinner)
+    public void showMenu() {
+        popupMenu.show();
+    }
+
     public void startPic() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START))
             drawerLayout.closeDrawer(GravityCompat.START);
@@ -244,7 +240,7 @@ public class ImomoePlayerActivity extends BaseActivity implements JZPlayer.Compl
             EventBus.getDefault().post(new Event(true, nowSource, clickIndex));
             String fid = DatabaseUtil.getAnimeID(animeTitle+Utils.getString(R.string.imomoe));
             DatabaseUtil.addIndex(fid, Sakura.DOMAIN + list.get(nowSource).get(clickIndex).getUrl());
-            sakuraUrl = VideoUtils.getUrl(bean.getUrl());
+            dramaUrl = VideoUtils.getUrl(bean.getUrl());
             witchTitle = animeTitle + " - " + bean.getTitle();
             url = imomoeBeans.get(nowSource).get(clickIndex).getVidOrUrl();
             player.playingShow();
@@ -375,7 +371,7 @@ public class ImomoePlayerActivity extends BaseActivity implements JZPlayer.Compl
                 Utils.selectVideoPlayer(this, url);
                 break;
             case R.id.browser_config:
-                Utils.viewInChrome(this, sakuraUrl);
+                Utils.viewInChrome(this, BaseModel.getDomain(true) + dramaUrl);
                 break;
         }
     }

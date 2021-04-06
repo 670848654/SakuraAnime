@@ -28,7 +28,7 @@
     <string name="exit_app">再按一次退出程序</string>
     <!-- 主页dialog文本 -->
     <string name="x5_info_title">注意事项</string>
-    <string name="x5_info">一些番剧可能需要使用WebView播放。\n新番多数可以直接使用内置播放器或外部播放器播放(某些可能第一次播放失败，需多尝试几次)。\n注：并不是所有番剧都能正常播放（多为网站本身原因）~</string>
+    <string name="x5_info">本应用只是爬取樱花动漫（yhdm、imomoe）网站部分内容编写的第三方APP，官方并未发布APP，仅供学习交流。\n一些番剧可能需要使用WebView播放。\n新番多数可以直接使用内置播放器或外部播放器播放(某些可能第一次播放失败，需多尝试几次)。\n注：并不是所有番剧都能正常播放（多为网站本身原因）~</string>
     <string name="x5_info_positive">OJBK</string>
     <!-- 空文本 -->
     <string name="empty">未能获取到任何信息</string>
@@ -131,7 +131,7 @@
     <string name="test_model_desc">OnePlus 7 Pro\nAndroid 11</string>
     <string name="now_version">当前版本</string>
     <string name="final_compile">最后编译日期</string>
-    <string name="final_compile_time">2021年4月1日</string>
+    <string name="final_compile_time">2021年4月6日</string>
     <string name="cache">缓存目录</string>
     <string name="cache_text">/SakuraAnime/\n卸载后自行删除此目录</string>
     <string name="github">Github</string>

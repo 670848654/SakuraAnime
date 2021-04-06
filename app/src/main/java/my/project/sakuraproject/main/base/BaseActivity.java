@@ -29,6 +29,7 @@ import my.project.sakuraproject.util.SharedPreferencesUtils;
 import my.project.sakuraproject.util.StatusBarUtil;
 import my.project.sakuraproject.util.Utils;
 import pub.devrel.easypermissions.EasyPermissions;
+import pub.devrel.easypermissions.PermissionRequest;
 
 public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
     protected P mPresenter;
@@ -79,8 +80,14 @@ public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatA
         if (EasyPermissions.hasPermissions(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             isManager();
         } else {
-            EasyPermissions.requestPermissions(this, Utils.getString(R.string.permissions),
-                    300, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+/*            EasyPermissions.requestPermissions(this, Utils.getString(R.string.permissions),
+                    300, Manifest.permission.WRITE_EXTERNAL_STORAGE);*/
+            EasyPermissions.requestPermissions(
+                    new PermissionRequest.Builder(this, 300, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                            .setRationale(R.string.permissions)
+                            .setPositiveButtonText(R.string.page_positive)
+                            .setTheme(R.style.DialogStyle)
+                            .build());
         }
     }
 
@@ -144,7 +151,7 @@ public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatA
 
     @Override
     public void onPermissionsGranted(int requestCode, List<String> perms) {
-        init();
+        isManager();
     }
 
     @Override

@@ -7,11 +7,15 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
+
 import cn.jzvd.JZDataSource;
+import cn.jzvd.JZUtils;
 import cn.jzvd.JzvdStd;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.cling.ui.DLNAActivity;
@@ -267,5 +271,31 @@ public class JZPlayer extends JzvdStd {
     public void onAutoCompletion() {
         onStateAutoComplete();
         listener.complete();
+    }
+
+    @Override
+    public void showWifiDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), R.style.DialogStyle);
+        builder.setMessage(getResources().getString(R.string.tips_not_wifi));
+        builder.setPositiveButton(getResources().getString(R.string.tips_not_wifi_confirm), (dialog, which) -> {
+            dialog.dismiss();
+            WIFI_TIP_DIALOG_SHOWED = true;
+            if (state == STATE_PAUSE) {
+                startButton.performClick();
+            } else {
+                startVideo();
+            }
+
+        });
+        builder.setNegativeButton(getResources().getString(R.string.tips_not_wifi_cancel), (dialog, which) -> {
+            dialog.dismiss();
+            releaseAllVideos();
+            ViewGroup vg = (ViewGroup) (JZUtils.scanForActivity(getContext())).getWindow().getDecorView();
+            vg.removeView(this);
+            if (mediaInterface != null) mediaInterface.release();
+            CURRENT_JZVD = null;
+        });
+        builder.setCancelable(false);
+        builder.create().show();
     }
 }

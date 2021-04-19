@@ -48,7 +48,7 @@ public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatA
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         else
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-        if (!getRunningActivityName().equals("StartActivity") && !getRunningActivityName().equals("HomeActivity")) overridePendingTransition(R.anim.activity_in, R.anim.activity_out);
+        if (!getRunningActivityName().equals("StartActivity")) overridePendingTransition(R.anim.activity_in, R.anim.activity_out);
         initBeforeView();
         setContentView(setLayoutRes());
         if (Utils.checkHasNavigationBar(this)) {
@@ -247,6 +247,6 @@ public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatA
     @Override
     public void finish() {
         super.finish();
-        if (!getRunningActivityName().equals("StartActivity") && !getRunningActivityName().equals("HomeActivity")) overridePendingTransition(R.anim.activity_in, R.anim.activity_out);
+        if (!getRunningActivityName().equals("StartActivity")) overridePendingTransition(R.anim.activity_in, R.anim.activity_out);
     }
 }

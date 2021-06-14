@@ -87,7 +87,7 @@ public class StartActivity extends BaseActivity {
                                     dialog.dismiss();
                                     Utils.putTextIntoClip(downUrl);
                                     application.showSuccessToastMsg(Utils.getString(R.string.url_copied));
-                                    Utils.viewInBrowser(StartActivity.this, downUrl);
+                                    Utils.viewInChrome(StartActivity.this, downUrl);
                                 },
                                 (dialog, which) -> {
                                     dialog.dismiss();

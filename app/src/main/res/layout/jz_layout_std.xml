@@ -226,9 +226,9 @@
 
         <ImageView
             android:id="@+id/start"
-            android:layout_centerHorizontal="true"
             android:layout_width="@dimen/jz_start_button_w_h_normal"
             android:layout_height="@dimen/jz_start_button_w_h_normal"
+            android:layout_centerHorizontal="true"
             android:src="@drawable/jz_click_play_selector" />
 
         <ImageView
@@ -293,6 +293,20 @@
             android:paddingRight="9dp"
             android:paddingBottom="4dp"
             android:text="@string/click_to_restart"
+            android:textColor="@android:color/white"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/open_drama_list"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/retry_bg"
+            android:paddingLeft="9dp"
+            android:paddingTop="4dp"
+            android:paddingRight="9dp"
+            android:paddingBottom="4dp"
+            android:text="@string/open_drama_list"
             android:textColor="@android:color/white"
             android:textSize="14sp" />
 

@@ -197,6 +197,31 @@ public class DatabaseUtil {
     }
 
     /**
+     * 更新收藏信息
+     * @param bean
+     */
+    public static void updateFavorite(AnimeListBean bean) {
+        String Query = "select * from f_favorite where f_title =?";
+        String title = bean.getUrl().contains("/view/") ?  bean.getTitle() + Utils.getString(R.string.imomoe) : bean.getTitle();
+        Cursor cursor = db.rawQuery(Query, new String[] { title });
+        if (cursor.getCount() > 0) {
+            cursor.moveToNext();
+            int id = cursor.getInt(cursor.getColumnIndex("id"));
+            String imomoeUlr = BaseModel.getDomain(true);
+            String yhdmUrl  = BaseModel.getDomain(false);
+            String url =  bean.getUrl().contains(imomoeUlr) ?  bean.getUrl().substring(imomoeUlr.length()) :  bean.getUrl().substring(yhdmUrl.length());
+            db.execSQL("update f_favorite set f_title=?, f_url=?, f_desc=?, f_img=? where id=?",
+                    new Object[]{
+                            title,
+                            url,
+                            bean.getDesc(),
+                            bean.getImg(),
+                            id});
+        }
+        cursor.close();
+    }
+
+    /**
      * 删除收藏
      *
      * @param title

@@ -161,6 +161,12 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
                 drawerLayout.closeDrawer(GravityCompat.START);
             else drawerLayout.openDrawer(GravityCompat.START);
         });
+        player.openDrama.setOnClickListener(view -> {
+            if (!Utils.isFastClick()) return;
+            if (drawerLayout.isDrawerOpen(GravityCompat.END))
+                drawerLayout.closeDrawer(GravityCompat.END);
+            else drawerLayout.openDrawer(GravityCompat.END);
+        });
         player.setListener(this, this, this);
         player.backButton.setOnClickListener(v -> finish());
         // 加载视频失败，嗅探视频

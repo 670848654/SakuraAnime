@@ -6,8 +6,8 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:textColorPrimary">@color/text_color_primary</item>
-        <item name="android:navigationBarColor">@android:color/transparent</item>
-        <item name="android:windowTranslucentNavigation">true</item>
+<!--        <item name="android:navigationBarColor">@color/navigation_bar_color</item>
+        <item name="android:windowTranslucentNavigation">true</item>-->
         <item name="android:textColor">@color/toolbar_color</item>
 
         <!-- New MaterialComponents attributes. -->

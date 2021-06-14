@@ -28,7 +28,7 @@ public class JZPlayer extends JzvdStd {
     private ImageView ibLock;
     private boolean locked = false;
     public ImageView fastForward, quickRetreat, config, airplay;
-    public TextView tvSpeed, snifferBtn;
+    public TextView tvSpeed, snifferBtn, openDrama;
     public int currentSpeedIndex = 1;
 
     public JZPlayer(Context context) { super(context); }
@@ -64,6 +64,7 @@ public class JZPlayer extends JzvdStd {
         airplay = findViewById(R.id.airplay);
         airplay.setOnClickListener(this);
         snifferBtn = findViewById(R.id.sniffer_btn);
+        openDrama = findViewById(R.id.open_drama_list);
     }
 
     @Override
@@ -107,7 +108,7 @@ public class JZPlayer extends JzvdStd {
                 else mediaInterface.seekTo(0);
                 break;
             case R.id.tvSpeed:
-                if (currentSpeedIndex == 5) currentSpeedIndex = 0;
+                if (currentSpeedIndex == 7) currentSpeedIndex = 0;
                 else currentSpeedIndex += 1;
                 mediaInterface.setSpeed(getSpeedFromIndex(currentSpeedIndex));
                 tvSpeed.setText("倍数X" + getSpeedFromIndex(currentSpeedIndex));
@@ -133,15 +134,21 @@ public class JZPlayer extends JzvdStd {
                 ret = 1.0f;
                 break;
             case 2:
-                ret = 1.5f;
+                ret = 1.25f;
                 break;
             case 3:
-                ret = 2.0f;
+                ret = 1.5f;
                 break;
             case 4:
-                ret = 2.5f;
+                ret = 1.75f;
                 break;
             case 5:
+                ret = 2.0f;
+                break;
+            case 6:
+                ret = 2.5f;
+                break;
+            case 7:
                 ret = 3.0f;
                 break;
         }

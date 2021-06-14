@@ -103,6 +103,7 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
 
     @Override
     protected void init() {
+        hideGap();
         EventBus.getDefault().register(this);
         initToolbar();
         initDrawer();
@@ -325,6 +326,7 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
     public void showLoadingView() {
         mSwipe.setRefreshing(true);
         application.error = "";
+        application.week = new JSONObject();
     }
 
     @Override

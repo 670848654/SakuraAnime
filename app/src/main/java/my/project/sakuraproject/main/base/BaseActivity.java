@@ -52,24 +52,31 @@ public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatA
         initBeforeView();
         setContentView(setLayoutRes());
         if (Utils.checkHasNavigationBar(this)) {
-            getWindow().getDecorView().setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
             if (!getRunningActivityName().equals("PlayerActivity"))
                 getWindow().setFlags(
                         WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
                         WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
                 );
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            getWindow().setNavigationBarColor(Color.TRANSPARENT);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                getWindow().setNavigationBarDividerColor(Color.TRANSPARENT);
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                getWindow().setNavigationBarContrastEnforced(false);
+                getWindow().setStatusBarContrastEnforced(false);
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                getWindow().getDecorView().setSystemUiVisibility(
+                        View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+                getWindow().setFlags(
+                        WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION,
+                        WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION
+                );
                 getWindow().setNavigationBarColor(Color.TRANSPARENT);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                    getWindow().setNavigationBarDividerColor(Color.TRANSPARENT);
-                }
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    getWindow().setNavigationBarContrastEnforced(false);
-                    getWindow().setStatusBarContrastEnforced(false);
-                }
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                getWindow().setDecorFitsSystemWindows(false);
             }
         }
         mUnBinder = ButterKnife.bind(this);

@@ -45,6 +45,7 @@ public class StartActivity extends BaseActivity {
 
     @Override
     protected void init() {
+        hideGap();
         SharedPreferencesUtils.setParam(this, "initX5", "init");
         Handler handler = new Handler();
         handler.postDelayed(() -> {
@@ -55,7 +56,7 @@ public class StartActivity extends BaseActivity {
 
     @Override
     protected void initBeforeView() {
-        StatusBarUtil.setTranslucentForCoordinatorLayout(this, getResources().getColor(R.color.logo_bg));
+        StatusBarUtil.setColorNoTranslucent(this, getResources().getColor(R.color.logo_bg));
     }
 
     private void checkUpdate() {

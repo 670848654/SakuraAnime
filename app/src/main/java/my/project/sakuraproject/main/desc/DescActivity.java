@@ -495,6 +495,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
             if (!mActivityFinish) {
                 setCollapsingToolbar();
                 mSwipe.setRefreshing(false);
+                if (isFavorite) DatabaseUtil.updateFavorite(animeListBean);
                 this.animeDescListBean = bean;
                 if (animeDescListBean.getMultipleAnimeDescDetailsBeans() != null) {
                     // imomoe
@@ -687,9 +688,9 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(Event event) {
+        clickIndex = event.getClickIndex();
+        nowSource = event.getNowSource();
         if (event.isImomoe()) {
-            nowSource = event.getNowSource();
-            clickIndex = event.getClickIndex();
             animeDescListBean.getMultipleAnimeDescDetailsBeans().get(nowSource).get(clickIndex).setSelected(true);
             if (nowSource != 0)
                 setSource(popupMenu.getMenu().getItem(nowSource));
@@ -697,5 +698,6 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         } else
             animeDescListBean.getAnimeDescDetailsBeans().get(clickIndex).setSelected(true);
         animeDescDetailsAdapter.notifyDataSetChanged();
+        animeDescDramaAdapter.notifyDataSetChanged();
     }
 }

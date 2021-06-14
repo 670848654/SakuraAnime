@@ -1,4 +1,4 @@
-<com.google.android.material.button.MaterialButton xmlns:android="http://schemas.android.com/apk/res/android"
+<my.project.sakuraproject.custom.MyButton xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/tag_group"
     android:backgroundTint="@color/drama"
@@ -11,4 +11,10 @@
     android:layout_marginTop="0dp"
     android:layout_marginBottom="0dp"
     app:elevation="5dp"
-    android:padding="5dp" />
+    android:padding="5dp"
+    android:singleLine="true"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:marqueeRepeatLimit="marquee_forever"
+    android:ellipsize="marquee"
+    />

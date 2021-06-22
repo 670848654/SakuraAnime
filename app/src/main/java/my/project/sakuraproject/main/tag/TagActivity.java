@@ -123,7 +123,7 @@ public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> im
 
     public void initAdapter() {
         // 动漫列表数据
-        animeListRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
+        animeListRecyclerView.setLayoutManager(new GridLayoutManager(this, Utils.isPad() ? 5 : 3));
         animeListAdapter = new AnimeListAdapter(this, animeLists, false);
         animeListAdapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
         animeListAdapter.setOnItemClickListener((adapter, view, position) -> {
@@ -223,7 +223,7 @@ public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> im
         runOnUiThread(() -> {
             if (!mActivityFinish) {
                 ref.setVisibility(View.GONE);
-                final GridLayoutManager manager = new GridLayoutManager(this, 8);
+                final GridLayoutManager manager = new GridLayoutManager(this, Utils.isPad() ? 12 : 8);
                 manager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
                     @Override
                     public int getSpanSize(int position) {

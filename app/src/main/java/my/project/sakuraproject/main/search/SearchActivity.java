@@ -97,7 +97,7 @@ public class SearchActivity extends BaseActivity<SearchContract.View, SearchPres
     }
 
     public void initAdapter() {
-        mRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
+        mRecyclerView.setLayoutManager(new GridLayoutManager(this, Utils.isPad() ? 5 : 3));
         adapter = new AnimeListAdapter(this, searchList, false);
         adapter.openLoadAnimation();
         adapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);

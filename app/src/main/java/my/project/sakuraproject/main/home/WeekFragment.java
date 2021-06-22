@@ -77,7 +77,7 @@ public class WeekFragment extends LazyFragment {
 
     public void initAdapter() {
         if (adapter == null) {
-            recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+            recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), Utils.isPad() ? 4 : 2));
             adapter = new FragmentAdapter(getActivity(), list);
             adapter.openLoadAnimation();
             adapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);

@@ -93,7 +93,7 @@ public class FavoriteActivity extends BaseActivity<FavoriteContract.View, Favori
     }
 
     public void initAdapter() {
-        mRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
+        mRecyclerView.setLayoutManager(new GridLayoutManager(this, Utils.isPad() ? 5 : 3));
         adapter = new FavoriteListAdapter(this, favoriteList);
         adapter.openLoadAnimation();
         adapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);

@@ -234,7 +234,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
 
         View dramaView = LayoutInflater.from(this).inflate(R.layout.dialog_drama, null);
         lineRecyclerView = dramaView.findViewById(R.id.drama_list);
-        lineRecyclerView.setLayoutManager(new GridLayoutManager(this, 4));
+        lineRecyclerView.setLayoutManager(new GridLayoutManager(this, Utils.isPad() ? 8 : 4));
         animeDescDramaAdapter = new AnimeDescDramaAdapter(this, new ArrayList<>());
         animeDescDramaAdapter.setOnItemClickListener((adapter, view, position) -> {
             if (!Utils.isFastClick()) return;

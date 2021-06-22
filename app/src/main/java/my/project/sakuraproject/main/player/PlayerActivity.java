@@ -16,6 +16,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -80,6 +81,8 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
     TextView speedTextView;
     private String[] speeds = Utils.getArray(R.array.speed_item);
     private int userSpeed = 2;
+    @BindView(R.id.hide_progress)
+    SwitchCompat switchCompat;
 
     @Override
     protected Presenter createPresenter() {
@@ -278,6 +281,10 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
                 setUserSpeedConfig(speeds[3], 3);
                 break;
         }
+        switchCompat.setChecked((Boolean) SharedPreferencesUtils.getParam(this, "hide_progress", false));
+        switchCompat.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            SharedPreferencesUtils.setParam(this, "hide_progress", isChecked);
+        });
     }
 
     private void setUserSpeedConfig(String text, int speed) {

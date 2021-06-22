@@ -125,13 +125,46 @@
                     </RelativeLayout>
 
                     <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="45dp">
+
+                        <ImageView
+                            android:id="@+id/config_icon2"
+                            android:src="@drawable/baseline_visibility_black_48dp"
+                            android:tint="@android:color/white"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="16dp"
+                            android:layout_marginRight="16dp"
+                            android:layout_width="28dp"
+                            android:layout_height="28dp" />
+
+                        <TextView
+                            android:text="@string/hide_progress"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_toRightOf="@+id/config_icon2"
+                            android:layout_centerVertical="true"
+                            android:textColor="@android:color/white" />
+
+                        <androidx.appcompat.widget.SwitchCompat
+                            android:id="@+id/hide_progress"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_alignParentRight="true"
+                            android:thumbTint="@color/colorAccent"
+                            android:textColor="@android:color/white"/>
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
                         android:id="@+id/pic_config"
                         android:background="?android:attr/selectableItemBackground"
                         android:layout_width="match_parent"
                         android:layout_height="45dp">
 
                         <ImageView
-                            android:id="@+id/config_icon2"
+                            android:id="@+id/config_icon3"
                             android:src="@drawable/baseline_picture_in_picture_alt_white_48dp"
                             android:tint="@android:color/white"
                             android:layout_centerVertical="true"
@@ -144,7 +177,7 @@
                             android:text="@string/picture_in_picture_title"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_toRightOf="@+id/config_icon2"
+                            android:layout_toRightOf="@+id/config_icon3"
                             android:layout_centerVertical="true"
                             android:textColor="@android:color/white" />
 

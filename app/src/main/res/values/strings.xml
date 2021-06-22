@@ -165,6 +165,7 @@
     <string name="set_user_speed">设置快进/快退时长</string>
     <string name="player_setting_title">播放器设置</string>
     <string name="picture_in_picture_title">画中画</string>
+    <string name="hide_progress">播放时隐藏底部进度</string>
     <string name="airplay_title">电视投屏</string>
     <string name="player_other_title">其他操作</string>
     <string name="play_with_external_player">使用外部播放器播放</string>

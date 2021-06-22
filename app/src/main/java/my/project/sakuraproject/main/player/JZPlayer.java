@@ -195,7 +195,11 @@ public class JZPlayer extends JzvdStd {
     //这里是播放的时候屏幕上面UI消失  只显示下面底部的进度条UI
     @Override
     public void changeUiToPlayingClear() {
-        super.changeUiToPlayingClear();
+        if ((Boolean) SharedPreferencesUtils.getParam(context, "hide_progress", false))
+            setAllControlsVisiblity(View.INVISIBLE, View.INVISIBLE, View.INVISIBLE,
+                    View.INVISIBLE, View.INVISIBLE, View.INVISIBLE, View.INVISIBLE);// 全屏播放时隐藏底部进度条
+        else
+            super.changeUiToPlayingClear();
         ibLock.setVisibility(View.INVISIBLE);
         fastForward.setVisibility(INVISIBLE);
         quickRetreat.setVisibility(INVISIBLE);
@@ -248,6 +252,8 @@ public class JZPlayer extends JzvdStd {
             quickRetreat.setVisibility(INVISIBLE);
             config.setVisibility(INVISIBLE);
             airplay.setVisibility(state == STATE_ERROR ? INVISIBLE : VISIBLE);
+            if ((Boolean) SharedPreferencesUtils.getParam(context, "hide_progress", false))
+                bottomProgressBar.setVisibility(View.INVISIBLE);// 全屏播放时隐藏底部进度条
         });
     }
 

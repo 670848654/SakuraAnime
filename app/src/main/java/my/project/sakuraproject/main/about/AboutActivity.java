@@ -166,7 +166,8 @@ public class AboutActivity extends BaseActivity {
 
     public List createUpdateLogList() {
         List logsList = new ArrayList();
-        logsList.add(new LogBean("版本：1.9.9", "yhdm域名变更为http://www.yhdm.so，imomoe域名变更为http://www.imomoe.la\n添加1.25、1.75倍速播放\n修复其他已知问题"));
+        logsList.add(new LogBean("版本：2.0.0", "修复Yhdm源一些剧集无法解析的问题\n修复Imomoe源的一个Bug\n内置播放器添加播放时可隐藏底部进度条的选项（在播放器中设置）\n内置播放器优化相关操作"));
+        logsList.add(new LogBean("版本：1.9.9", "Yhdm域名变更为http://www.yhdm.so，Imomoe域名变更为http://www.imomoe.la\n添加1.25、1.75倍速播放\n修复其他已知问题"));
         logsList.add(new LogBean("版本：1.9.8_2", "修复Imomoe源一些番剧播放时崩溃的问题\n修复其他已知问题"));
         logsList.add(new LogBean("版本：1.9.8_1", "修复Yhdm源动漫专题无法正常加载的问题"));
         logsList.add(new LogBean("版本：1.9.8", "支持Android 11\n修复已知问题，部分UI变更\n新增对樱花动漫网（Imomoe）的支持，首页点击标题栏可切换（可能存在Bug）"));

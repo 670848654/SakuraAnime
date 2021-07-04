@@ -91,6 +91,7 @@ public class X5WebActivity extends BaseActivity implements VideoContract.View, S
     CoordinatorLayout coordinatorLayout;
     //播放网址
     private String webUrl;
+    private int clickIndex;
 
     @Override
     protected Presenter createPresenter() {
@@ -208,6 +209,7 @@ public class X5WebActivity extends BaseActivity implements VideoContract.View, S
         dramaAdapter = new DramaAdapter(this, dramaList);
         dramaAdapter.setOnItemClickListener((adapter, view, position) -> {
             if (!Utils.isFastClick()) return;
+            clickIndex = position;
             setResult(0x20);
             mBottomSheetDialog.dismiss();
             AnimeDescDetailsBean bean = (AnimeDescDetailsBean) adapter.getItem(position);
@@ -392,7 +394,7 @@ public class X5WebActivity extends BaseActivity implements VideoContract.View, S
                 (dialog, index) -> playAnime(urls.get(index)), (dialog, which) -> {
                     cancelDialog();
                     dialog.dismiss();
-                }, 1);
+                }, 1, false);
     }
 
     @Override
@@ -500,7 +502,7 @@ public class X5WebActivity extends BaseActivity implements VideoContract.View, S
                         playAnime(VideoUtils.getVideoUrl(list.get(index))), (dialog, which) -> {
                     cancelDialog();
                     dialog.dismiss();
-                }, 0
+                }, 0, false
         );
     }
 
@@ -516,7 +518,7 @@ public class X5WebActivity extends BaseActivity implements VideoContract.View, S
                 switch ((Integer) SharedPreferencesUtils.getParam(getApplicationContext(), "player", 0)) {
                     case 0:
                         //调用播放器
-                        VideoUtils.openPlayer(false, X5WebActivity.this, witchTitle, url, animeTitle, sakuraUrl, dramaList);
+                        VideoUtils.openPlayer(false, X5WebActivity.this, witchTitle, url, animeTitle, sakuraUrl, dramaList, clickIndex);
                         break;
                     case 1:
                         Utils.selectVideoPlayer(this, url);

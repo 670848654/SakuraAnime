@@ -19,6 +19,39 @@
             android:scaleType="fitXY" />
     </FrameLayout>
 
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="14dp"
+        android:layout_above="@+id/layout_bottom">
+
+        <TextView
+            android:id="@+id/pre_video"
+            android:visibility="gone"
+            android:drawableLeft="@drawable/baseline_first_page_white_48dp"
+            android:padding="8dp"
+            android:textColor="#ffffff"
+            android:gravity="center"
+            android:background="@drawable/change_drama_bg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/next_video"
+            android:layout_toRightOf="@+id/pre_video"
+            android:visibility="gone"
+            android:layout_marginLeft="14dp"
+            android:drawableRight="@drawable/baseline_last_page_white_48dp"
+            android:padding="8dp"
+            android:textColor="#ffffff"
+            android:gravity="center"
+            android:background="@drawable/change_drama_bg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </RelativeLayout>
+
     <LinearLayout
         android:id="@+id/layout_bottom"
         android:layout_width="match_parent"

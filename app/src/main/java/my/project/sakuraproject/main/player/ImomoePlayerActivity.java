@@ -16,6 +16,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -54,7 +55,7 @@ import my.project.sakuraproject.util.StatusBarUtil;
 import my.project.sakuraproject.util.Utils;
 import my.project.sakuraproject.util.VideoUtils;
 
-public class ImomoePlayerActivity extends BaseActivity implements JZPlayer.CompleteListener, JZPlayer.TouchListener, SniffingUICallback, ImomoeVideoContract.View {
+public class ImomoePlayerActivity extends BaseActivity implements JZPlayer.CompleteListener, JZPlayer.TouchListener, SniffingUICallback, JZPlayer.ShowOrHideChangeViewListener, ImomoeVideoContract.View {
     @BindView(R.id.player)
     JZPlayer player;
     private String witchTitle, url, dramaUrl;
@@ -91,6 +92,10 @@ public class ImomoePlayerActivity extends BaseActivity implements JZPlayer.Compl
     private ArrayAdapter<String> spinnerAdapter;
     private ImomoeVideoPresenter presenter;
     private PopupMenu popupMenu;
+    @BindView(R.id.hide_progress)
+    SwitchCompat switchCompat;
+    private boolean hasPreVideo = false;
+    private boolean hasNextVideo = false;
 
     @Override
     protected Presenter createPresenter() {
@@ -134,6 +139,8 @@ public class ImomoePlayerActivity extends BaseActivity implements JZPlayer.Compl
         dramaUrl = bundle.getString("dramaUrl");
         //剧集list
         list = (List<List<AnimeDescDetailsBean>>) bundle.getSerializable("list");
+        //当前播放剧集下标
+        clickIndex = bundle.getInt("clickIndex");
         //播放地址
         imomoeBeans = (List<List<ImomoeVideoUrlBean>>) bundle.getSerializable("playList");
         //当前选择源
@@ -145,6 +152,7 @@ public class ImomoePlayerActivity extends BaseActivity implements JZPlayer.Compl
         navConfigView.setOnClickListener(view -> {
             return;
         });
+        setPlayerPreNextTag();
         linearLayout.getBackground().mutate().setAlpha(150);
         navConfigView.getBackground().mutate().setAlpha(150);
         drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
@@ -180,6 +188,7 @@ public class ImomoePlayerActivity extends BaseActivity implements JZPlayer.Compl
                 dramaAdapter.setNewData(list.get(item.getItemId()-1));
                 nowSource = item.getItemId()-1;
                 spinner.setText("播放源 " + item.getItemId());
+                setPlayerPreNextTag();
                 return true;
             });
             spinner.setText("播放源 " + (nowSource+1));
@@ -197,8 +206,16 @@ public class ImomoePlayerActivity extends BaseActivity implements JZPlayer.Compl
                 drawerLayout.closeDrawer(GravityCompat.END);
             else drawerLayout.openDrawer(GravityCompat.END);
         });
-        player.setListener(this, this, this);
+        player.setListener(this, this, this, this);
         player.backButton.setOnClickListener(v -> finish());
+        player.preVideo.setOnClickListener(v -> {
+            clickIndex--;
+            changePlayUrl(clickIndex);
+        });
+        player.nextVideo.setOnClickListener(v -> {
+            clickIndex++;
+            changePlayUrl(clickIndex);
+        });
         // 加载视频失败，嗅探视频
         player.snifferBtn.setOnClickListener(v -> sniffer());
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) picConfig.setVisibility(View.GONE);
@@ -236,22 +253,34 @@ public class ImomoePlayerActivity extends BaseActivity implements JZPlayer.Compl
         dramaAdapter.setOnItemClickListener((adapter, view, position) -> {
             if (!Utils.isFastClick()) return;
 //            setResult(0x20);
-            clickIndex = position;
             drawerLayout.closeDrawer(GravityCompat.END);
-            AnimeDescDetailsBean bean = list.get(nowSource).get(position);
-            Jzvd.releaseAllVideos();
-            MaterialButton materialButton = (MaterialButton) adapter.getViewByPosition(recyclerView, position, R.id.tag_group);
-            materialButton.setTextColor(getResources().getColor(R.color.tabSelectedTextColor));
-            bean.setSelected(true);
-            EventBus.getDefault().post(new Event(true, nowSource, clickIndex));
-            String fid = DatabaseUtil.getAnimeID(animeTitle+Utils.getString(R.string.imomoe));
-            DatabaseUtil.addIndex(fid, Sakura.DOMAIN + list.get(nowSource).get(clickIndex).getUrl());
-            dramaUrl = VideoUtils.getUrl(bean.getUrl());
-            witchTitle = animeTitle + " - " + bean.getTitle();
-            url = imomoeBeans.get(nowSource).get(clickIndex).getVidOrUrl();
-            player.playingShow();
-            checkPlayUrl();
+            changePlayUrl(position);
         });
+    }
+
+    private void setPlayerPreNextTag() {
+        hasPreVideo = clickIndex != 0;
+        player.preVideo.setText(hasPreVideo ? String.format(PREVIDEOSTR, list.get(nowSource).get(clickIndex-1).getTitle()) : "");
+        hasNextVideo = clickIndex != list.get(nowSource).size() - 1;
+        player.nextVideo.setText(hasNextVideo ? String.format(NEXTVIDEOSTR, list.get(nowSource).get(clickIndex+1).getTitle()) : "");
+    }
+
+    private void changePlayUrl(int position) {
+        clickIndex = position;
+        setPlayerPreNextTag();
+        AnimeDescDetailsBean bean = list.get(nowSource).get(position);
+        Jzvd.releaseAllVideos();
+        MaterialButton materialButton = (MaterialButton) dramaAdapter.getViewByPosition(recyclerView, position, R.id.tag_group);
+        materialButton.setTextColor(getResources().getColor(R.color.tabSelectedTextColor));
+        bean.setSelected(true);
+        EventBus.getDefault().post(new Event(true, nowSource, clickIndex));
+        String fid = DatabaseUtil.getAnimeID(animeTitle+Utils.getString(R.string.imomoe));
+        DatabaseUtil.addIndex(fid, Sakura.DOMAIN + list.get(nowSource).get(clickIndex).getUrl());
+        dramaUrl = VideoUtils.getUrl(bean.getUrl());
+        witchTitle = animeTitle + " - " + bean.getTitle();
+        url = imomoeBeans.get(nowSource).get(clickIndex).getVidOrUrl();
+        player.playingShow();
+        checkPlayUrl();
     }
 
     private void playAnime(String animeUrl) {
@@ -329,6 +358,10 @@ public class ImomoePlayerActivity extends BaseActivity implements JZPlayer.Compl
                 setUserSpeedConfig(speeds[3], 3);
                 break;
         }
+        switchCompat.setChecked((Boolean) SharedPreferencesUtils.getParam(this, "hide_progress", false));
+        switchCompat.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            SharedPreferencesUtils.setParam(this, "hide_progress", isChecked);
+        });
     }
 
     private void setUserSpeedConfig(String text, int speed) {
@@ -479,9 +512,15 @@ public class ImomoePlayerActivity extends BaseActivity implements JZPlayer.Compl
 
     @Override
     public void complete() {
-        application.showSuccessToastMsg("播放完毕");
-        if (!drawerLayout.isDrawerOpen(GravityCompat.END))
-            drawerLayout.openDrawer(GravityCompat.END);
+        if (hasNextVideo) {
+            application.showSuccessToastMsg("开始播放下一集");
+            clickIndex++;
+            changePlayUrl(clickIndex);
+        } else {
+            application.showSuccessToastMsg("播放完毕");
+            if (!drawerLayout.isDrawerOpen(GravityCompat.END))
+                drawerLayout.openDrawer(GravityCompat.END);
+        }
     }
 
     @Override
@@ -503,8 +542,8 @@ public class ImomoePlayerActivity extends BaseActivity implements JZPlayer.Compl
             VideoUtils.showMultipleVideoSources(this,
                     urls,
                     (dialog, index) -> playAnime(urls.get(index)),
-                    (dialog, which) -> dialog.dismiss(),
-                    1);
+                    null,
+                    1, true);
         else playAnime(urls.get(0));
     }
 
@@ -538,5 +577,11 @@ public class ImomoePlayerActivity extends BaseActivity implements JZPlayer.Compl
     @Override
     public void showLog(String url) {
 
+    }
+
+    @Override
+    public void showOrHideChangeView() {
+        player.preVideo.setVisibility(hasPreVideo ? View.VISIBLE : View.GONE);
+        player.nextVideo.setVisibility(hasNextVideo ? View.VISIBLE : View.GONE);
     }
 }

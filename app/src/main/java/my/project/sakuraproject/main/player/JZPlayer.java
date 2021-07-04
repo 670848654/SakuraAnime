@@ -25,10 +25,11 @@ public class JZPlayer extends JzvdStd {
     private Context context;
     private CompleteListener listener;
     private TouchListener touchListener;
+    private ShowOrHideChangeViewListener showOrHideChangeViewListener;
     private ImageView ibLock;
     private boolean locked = false;
     public ImageView fastForward, quickRetreat, config, airplay;
-    public TextView tvSpeed, snifferBtn, openDrama;
+    public TextView tvSpeed, snifferBtn, openDrama, preVideo, nextVideo;
     public int currentSpeedIndex = 1;
 
     public JZPlayer(Context context) { super(context); }
@@ -37,10 +38,11 @@ public class JZPlayer extends JzvdStd {
         super(context, attrs);
     }
 
-    public void setListener(Context context, CompleteListener listener, TouchListener touchListener) {
+    public void setListener(Context context, CompleteListener listener, TouchListener touchListener, ShowOrHideChangeViewListener showOrHideChangeViewListener) {
         this.context = context;
         this.listener = listener;
         this.touchListener = touchListener;
+        this.showOrHideChangeViewListener = showOrHideChangeViewListener;
     }
 
     @Override
@@ -65,6 +67,8 @@ public class JZPlayer extends JzvdStd {
         airplay.setOnClickListener(this);
         snifferBtn = findViewById(R.id.sniffer_btn);
         openDrama = findViewById(R.id.open_drama_list);
+        preVideo = findViewById(R.id.pre_video);
+        nextVideo = findViewById(R.id.next_video);
     }
 
     @Override
@@ -165,6 +169,7 @@ public class JZPlayer extends JzvdStd {
             quickRetreat.setVisibility(VISIBLE);
             config.setVisibility(VISIBLE);
             airplay.setVisibility(VISIBLE);
+            showOrHideChangeViewListener.showOrHideChangeView();
         }
         if (screen == SCREEN_FULLSCREEN)
             ibLock.setVisibility(ibLock.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
@@ -178,6 +183,8 @@ public class JZPlayer extends JzvdStd {
         quickRetreat.setVisibility(GONE);
         config.setVisibility(GONE);
         airplay.setVisibility(GONE);
+        preVideo.setVisibility(GONE);
+        nextVideo.setVisibility(GONE);
     }
 
     @Override
@@ -205,6 +212,8 @@ public class JZPlayer extends JzvdStd {
         quickRetreat.setVisibility(INVISIBLE);
         config.setVisibility(INVISIBLE);
         airplay.setVisibility(INVISIBLE);
+        preVideo.setVisibility(INVISIBLE);
+        nextVideo.setVisibility(INVISIBLE);
     }
 
     // 点击暂停按钮执行的回调
@@ -216,6 +225,8 @@ public class JZPlayer extends JzvdStd {
         quickRetreat.setVisibility(INVISIBLE);
         config.setVisibility(INVISIBLE);
         airplay.setVisibility(VISIBLE);
+        preVideo.setVisibility(INVISIBLE);
+        nextVideo.setVisibility(INVISIBLE);
     }
 
 
@@ -228,6 +239,8 @@ public class JZPlayer extends JzvdStd {
         quickRetreat.setVisibility(INVISIBLE);
         config.setVisibility(INVISIBLE);
         airplay.setVisibility(VISIBLE);
+        preVideo.setVisibility(INVISIBLE);
+        nextVideo.setVisibility(INVISIBLE);
     }
 
     //这里是出错的UI
@@ -239,6 +252,8 @@ public class JZPlayer extends JzvdStd {
         quickRetreat.setVisibility(INVISIBLE);
         config.setVisibility(INVISIBLE);
         airplay.setVisibility(INVISIBLE);
+        preVideo.setVisibility(INVISIBLE);
+        nextVideo.setVisibility(INVISIBLE);
     }
 
     // 点击屏幕会出现所有控件，一定时间后消失的回调
@@ -254,6 +269,8 @@ public class JZPlayer extends JzvdStd {
             airplay.setVisibility(state == STATE_ERROR ? INVISIBLE : VISIBLE);
             if ((Boolean) SharedPreferencesUtils.getParam(context, "hide_progress", false))
                 bottomProgressBar.setVisibility(View.INVISIBLE);// 全屏播放时隐藏底部进度条
+            preVideo.setVisibility(INVISIBLE);
+            nextVideo.setVisibility(INVISIBLE);
         });
     }
 
@@ -264,12 +281,16 @@ public class JZPlayer extends JzvdStd {
         tvSpeed.setText("倍数X" + getSpeedFromIndex(currentSpeedIndex));
     }
 
-    public interface  CompleteListener{
+    public interface CompleteListener {
         void complete();
     }
 
     public interface TouchListener {
         void touch();
+    }
+
+    public interface ShowOrHideChangeViewListener {
+        void showOrHideChangeView();
     }
 
     @Override

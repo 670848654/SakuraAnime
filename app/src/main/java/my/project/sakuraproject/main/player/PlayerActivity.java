@@ -52,7 +52,7 @@ import my.project.sakuraproject.util.StatusBarUtil;
 import my.project.sakuraproject.util.Utils;
 import my.project.sakuraproject.util.VideoUtils;
 
-public class PlayerActivity extends BaseActivity implements VideoContract.View, JZPlayer.CompleteListener, JZPlayer.TouchListener, SniffingUICallback {
+public class PlayerActivity extends BaseActivity implements VideoContract.View, JZPlayer.CompleteListener, JZPlayer.TouchListener, JZPlayer.ShowOrHideChangeViewListener, SniffingUICallback {
     @BindView(R.id.player)
     JZPlayer player;
     private String witchTitle, url, dramaUrl;
@@ -83,6 +83,9 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
     private int userSpeed = 2;
     @BindView(R.id.hide_progress)
     SwitchCompat switchCompat;
+    private int clickIndex;
+    private boolean hasPreVideo = false;
+    private boolean hasNextVideo = false;
 
     @Override
     protected Presenter createPresenter() {
@@ -125,6 +128,8 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
         dramaUrl = bundle.getString("dramaUrl");
         //剧集list
         list = (List<AnimeDescDetailsBean>) bundle.getSerializable("list");
+        //当前播放剧集下标
+        clickIndex = bundle.getInt("clickIndex");
         //禁止冒泡
         linearLayout.setOnClickListener(view -> {
             return;
@@ -132,6 +137,7 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
         navConfigView.setOnClickListener(view -> {
             return;
         });
+        setPlayerPreNextTag();
         linearLayout.getBackground().mutate().setAlpha(150);
         navConfigView.getBackground().mutate().setAlpha(150);
         drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
@@ -170,15 +176,23 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
                 drawerLayout.closeDrawer(GravityCompat.END);
             else drawerLayout.openDrawer(GravityCompat.END);
         });
-        player.setListener(this, this, this);
+        player.setListener(this, this, this, this);
         player.backButton.setOnClickListener(v -> finish());
+        player.preVideo.setOnClickListener(v -> {
+            clickIndex--;
+            changePlayUrl(clickIndex);
+        });
+        player.nextVideo.setOnClickListener(v -> {
+            clickIndex++;
+            changePlayUrl(clickIndex);
+        });
         // 加载视频失败，嗅探视频
         player.snifferBtn.setOnClickListener(v -> snifferPlayUrl(url));
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) picConfig.setVisibility(View.GONE);
         else picConfig.setVisibility(View.VISIBLE);
         if (gtSdk23()) player.tvSpeed.setVisibility(View.VISIBLE);
         else player.tvSpeed.setVisibility(View.GONE);
-        player.setUp(url, witchTitle, Jzvd.SCREEN_FULLSCREEN, JZExoPlayer.class);
+//        player.setUp(url, witchTitle, Jzvd.SCREEN_FULLSCREEN, JZExoPlayer.class);
         player.fullscreenButton.setOnClickListener(view -> {
             if (!Utils.isFastClick()) return;
             if (drawerLayout.isDrawerOpen(GravityCompat.END))
@@ -188,8 +202,9 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
         Jzvd.FULLSCREEN_ORIENTATION = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE;
         Jzvd.NORMAL_ORIENTATION = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE;
         player.playingShow();
-        player.startButton.performClick();
-        player.startVideo();
+//        player.startButton.performClick();
+//        player.startVideo();
+        checkPlayUrl(url);
     }
 
     public void startPic() {
@@ -207,19 +222,32 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
             if (!Utils.isFastClick()) return;
 //            setResult(0x20);
             drawerLayout.closeDrawer(GravityCompat.END);
-            AnimeDescDetailsBean bean = (AnimeDescDetailsBean) adapter.getItem(position);
-            Jzvd.releaseAllVideos();
-            alertDialog = Utils.getProDialog(PlayerActivity.this, R.string.parsing);
-            MaterialButton materialButton = (MaterialButton) adapter.getViewByPosition(recyclerView, position, R.id.tag_group);
-            materialButton.setTextColor(getResources().getColor(R.color.tabSelectedTextColor));
-            bean.setSelected(true);
-            EventBus.getDefault().post(new Event(false, -1, position));
-            dramaUrl = bean.getUrl();
-            witchTitle = animeTitle + " - " + bean.getTitle();
-            player.playingShow();
-            presenter = new VideoPresenter(animeTitle, dramaUrl, PlayerActivity.this);
-            presenter.loadData(true);
+            changePlayUrl(position);
         });
+    }
+
+    private void setPlayerPreNextTag() {
+        hasPreVideo = clickIndex != 0;
+        player.preVideo.setText(hasPreVideo ? String.format(PREVIDEOSTR, list.get(clickIndex-1).getTitle()) : "");
+        hasNextVideo = clickIndex != list.size() - 1;
+        player.nextVideo.setText(hasNextVideo ? String.format(NEXTVIDEOSTR, list.get(clickIndex+1).getTitle()) : "");
+    }
+
+    private void changePlayUrl(int position) {
+        clickIndex = position;
+        setPlayerPreNextTag();
+        AnimeDescDetailsBean bean = (AnimeDescDetailsBean) dramaAdapter.getItem(position);
+        Jzvd.releaseAllVideos();
+        alertDialog = Utils.getProDialog(PlayerActivity.this, R.string.parsing);
+        MaterialButton materialButton = (MaterialButton) dramaAdapter.getViewByPosition(recyclerView, position, R.id.tag_group);
+        materialButton.setTextColor(getResources().getColor(R.color.tabSelectedTextColor));
+        bean.setSelected(true);
+        EventBus.getDefault().post(new Event(false, -1, position));
+        dramaUrl = bean.getUrl();
+        witchTitle = animeTitle + " - " + bean.getTitle();
+        player.playingShow();
+        presenter = new VideoPresenter(animeTitle, dramaUrl, PlayerActivity.this);
+        presenter.loadData(true);
     }
 
     private void playAnime(String animeUrl) {
@@ -228,10 +256,7 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
         switch ((Integer) SharedPreferencesUtils.getParam(getApplicationContext(), "player", 0)) {
             case 0:
                 //调用播放器
-                Jzvd.releaseAllVideos();
-                player.currentSpeedIndex = 1;
-                player.setUp(url, witchTitle, Jzvd.SCREEN_FULLSCREEN, JZExoPlayer.class);
-                player.startVideo();
+                play(url);
                 break;
             case 1:
                 Jzvd.releaseAllVideos();
@@ -240,19 +265,44 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
         }
     }
 
+    private void checkPlayUrl(String url) {
+        if (!url.contains("$"))
+            playAnime(url);
+        else
+            snifferPlayUrl(url);
+    }
+
+    /**
+     * 播放视频
+     * @param playUrl
+     */
+    private void play(String playUrl) {
+        Jzvd.releaseAllVideos();
+        player.currentSpeedIndex = 1;
+        player.setUp(playUrl, witchTitle, Jzvd.SCREEN_FULLSCREEN, JZExoPlayer.class);
+        player.startVideo();
+    }
+
     /**
      * 嗅探视频真实连接
      * @param animeUrl
      */
     private void snifferPlayUrl(String animeUrl) {
-        alertDialog = Utils.getProDialog(PlayerActivity.this, R.string.should_be_used_web);
+        alertDialog = Utils.getProDialog(PlayerActivity.this, R.string.should_be_sniffer);
         webUrl = animeUrl;
+        /*
         if (Patterns.WEB_URL.matcher(animeUrl.replace(" ", "")).matches()) {
             if (animeUrl.contains("jx.618g.com")) {
                 cancelDialog();
                 url = animeUrl.replaceAll("http://jx.618g.com/\\?url=", "");
                 VideoUtils.openWebview(false, this, witchTitle, animeTitle, url, BaseModel.getDomain(false) + dramaUrl, this.list);
             } else sniffer(webUrl, true);
+        } else sniffer(webUrl, false);
+        */
+        if (animeUrl.contains("jx.618g.com")) {
+            cancelDialog();
+            url = animeUrl.replaceAll("http://jx.618g.com/\\?url=", "");
+            VideoUtils.openWebview(false, this, witchTitle, animeTitle, url, BaseModel.getDomain(false) + dramaUrl, this.list);
         } else sniffer(webUrl, false);
     }
 
@@ -419,16 +469,16 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
     public void getVideoSuccess(List<String> list) {
         runOnUiThread(() -> {
             hideNavBar();
+            cancelDialog();
             Log.e("playUrl", list.toString());
             if (list.size() == 1)
-                playAnime(list.get(0));
+                checkPlayUrl(list.get(0));
             else
                 VideoUtils.showMultipleVideoSources(this,
                         list,
-                        (dialog, index) -> playAnime(list.get(index)), (dialog, which) -> {
-                            cancelDialog();
-                            dialog.dismiss();
-                        }, 1);
+                        (dialog, index) -> checkPlayUrl(list.get(index)),
+                        null,
+                        1, true);
         });
     }
 
@@ -473,9 +523,15 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
 
     @Override
     public void complete() {
-        application.showSuccessToastMsg("播放完毕");
-        if (!drawerLayout.isDrawerOpen(GravityCompat.END))
-            drawerLayout.openDrawer(GravityCompat.END);
+        if (hasNextVideo) {
+            application.showSuccessToastMsg("开始播放下一集");
+            clickIndex++;
+            changePlayUrl(clickIndex);
+        } else {
+            application.showSuccessToastMsg("全部播放完毕");
+            if (!drawerLayout.isDrawerOpen(GravityCompat.END))
+                drawerLayout.openDrawer(GravityCompat.END);
+        }
     }
 
     @Override
@@ -496,10 +552,10 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
         if (urls.size() > 1)
             VideoUtils.showMultipleVideoSources(this,
                     urls,
-                    (dialog, index) -> playAnime(urls.get(index)),
-                    (dialog, which) -> dialog.dismiss(),
-                    1);
-        else playAnime(urls.get(0));
+                    (dialog, index) -> play(urls.get(index)),
+                    null,
+                    1, true);
+        else play(urls.get(0));
     }
 
     @Override
@@ -539,5 +595,11 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
     @Override
     public void showLog(String url) {
 //        runOnUiThread(() -> application.showToastShortMsg(url));
+    }
+
+    @Override
+    public void showOrHideChangeView() {
+        player.preVideo.setVisibility(hasPreVideo ? View.VISIBLE : View.GONE);
+        player.nextVideo.setVisibility(hasNextVideo ? View.VISIBLE : View.GONE);
     }
 }

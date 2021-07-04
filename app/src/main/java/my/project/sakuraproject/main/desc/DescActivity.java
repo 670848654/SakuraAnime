@@ -353,9 +353,9 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
             case 0:
                 //调用播放器
                 if (isImomoe)
-                    VideoUtils.openImomoePlayer(true, this, witchTitle, animeUrl, animeTitle, dramaUrl, animeDescListBean.getMultipleAnimeDescDetailsBeans(), imomoeBeans, nowSource);
+                    VideoUtils.openImomoePlayer(true, this, witchTitle, animeUrl, animeTitle, dramaUrl, animeDescListBean.getMultipleAnimeDescDetailsBeans(), imomoeBeans, nowSource, clickIndex);
                 else
-                    VideoUtils.openPlayer(true, this, witchTitle, animeUrl, animeTitle, dramaUrl, animeDescListBean.getAnimeDescDetailsBeans());
+                    VideoUtils.openPlayer(true, this, witchTitle, animeUrl, animeTitle, dramaUrl, animeDescListBean.getAnimeDescDetailsBeans(), clickIndex);
                 break;
             case 1:
                 Utils.selectVideoPlayer(this, animeUrl);
@@ -502,6 +502,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
                     animeDescDetailsAdapter.setNewData(animeDescListBean.getMultipleAnimeDescDetailsBeans().get(0));
                     nowSource = 0;
                     if (bean.getMultipleAnimeDescDetailsBeans().size() > 1) {
+                        popupMenu.getMenu().clear();
                         for (int i=1; i<bean.getMultipleAnimeDescDetailsBeans().size()+1; i++) {
                             popupMenu.getMenu().add(android.view.Menu.NONE, i, i, "播放源 " + i);
                         }
@@ -637,10 +638,11 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
             else
                 VideoUtils.showMultipleVideoSources(this,
                         list,
-                        (dialog, index) -> playAnime(list.get(index)), (dialog, which) -> {
+                        (dialog, index) -> playAnime(list.get(index)),
+                        (dialog, which) -> {
                             cancelDialog();
                             dialog.dismiss();
-                        }, 1);
+                        }, 1, false);
         });
     }
 

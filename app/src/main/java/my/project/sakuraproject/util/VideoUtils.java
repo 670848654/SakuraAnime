@@ -67,10 +67,11 @@ public class VideoUtils {
      * @param list
      * @param listener
      * @param type 0 old 1 new
+     * @param isPlayerActivity 是否是播放界面
      */
     public static void showMultipleVideoSources(Context context,
                                                 List<String> list,
-                                                DialogInterface.OnClickListener listener, DialogInterface.OnClickListener listener2, int type) {
+                                                DialogInterface.OnClickListener listener, DialogInterface.OnClickListener listener2, int type, boolean isPlayerActivity) {
         String[] items = new String[list.size()];
         for (int i = 0, size = list.size(); i < size; i++) {
             if (type == 0) items[i] = getVideoUrl(list.get(i));
@@ -80,14 +81,19 @@ public class VideoUtils {
         builder.setTitle(Utils.getString(R.string.select_video_source));
         builder.setCancelable(false);
         builder.setItems(items, listener);
-        builder.setNegativeButton(Utils.getString(R.string.cancel), listener2);
+        if (!isPlayerActivity)
+            builder.setNegativeButton(Utils.getString(R.string.cancel), listener2);
         alertDialog = builder.create();
         alertDialog.show();
     }
 
     public static String getVideoUrl(String url) {
-        String playStr = "";
-        url = url.replaceAll("\\$(.*)", "").replaceAll("changeplay\\('", "").replaceAll("'\\);", "");
+        // String playStr = "";
+        if (!url.contains("$mp4"))
+            return url.replaceAll("changeplay\\('", "").replaceAll("'\\);", "");
+        else
+            return url.replaceAll("\\$(.*)", "").replaceAll("changeplay\\('", "").replaceAll("'\\);", "");
+        /*
         //如果网址
         if (Patterns.WEB_URL.matcher(url.replace(" ", "")).matches()) {
             Matcher m = PLAY_URL_PATTERN.matcher(url);
@@ -97,6 +103,7 @@ public class VideoUtils {
             }
         } else playStr = url;
         return playStr;
+        */
     }
 
     /**
@@ -109,14 +116,17 @@ public class VideoUtils {
      * @param animeTitle
      * @param dramaUrl
      * @param list
+     * @param clickIndex
      */
-    public static void openPlayer(boolean isDescActivity, Activity activity, String witchTitle, String url, String animeTitle, String dramaUrl, List<AnimeDescDetailsBean> list) {
+    public static void openPlayer(boolean isDescActivity, Activity activity, String witchTitle, String url, String animeTitle, String dramaUrl,
+                                  List<AnimeDescDetailsBean> list, int clickIndex) {
         Bundle bundle = new Bundle();
         bundle.putString("title", witchTitle);
         bundle.putString("url", url);
         bundle.putString("animeTitle", animeTitle);
         bundle.putString("dramaUrl", dramaUrl);
         bundle.putSerializable("list", (Serializable) list);
+        bundle.putInt("clickIndex", clickIndex);
         Sakura.destoryActivity("player");
         if (isDescActivity)
             activity.startActivityForResult(new Intent(activity, PlayerActivity.class).putExtras(bundle), 0x10);
@@ -136,8 +146,10 @@ public class VideoUtils {
      * @param dramaUrl
      * @param list
      * @param bean
+     * @param clickIndex
      */
-    public static void openImomoePlayer(boolean isDescActivity, Activity activity, String witchTitle, String url, String animeTitle, String dramaUrl,  List<List<AnimeDescDetailsBean>> list, List<List<ImomoeVideoUrlBean>> bean, int nowSource) {
+    public static void openImomoePlayer(boolean isDescActivity, Activity activity, String witchTitle, String url, String animeTitle, String dramaUrl,
+                                        List<List<AnimeDescDetailsBean>> list, List<List<ImomoeVideoUrlBean>> bean, int nowSource, int clickIndex) {
         Bundle bundle = new Bundle();
         bundle.putString("title", witchTitle);
         bundle.putString("url", url);
@@ -146,6 +158,7 @@ public class VideoUtils {
         bundle.putSerializable("list", (Serializable) list);
         bundle.putSerializable("playList", (Serializable) bean);
         bundle.putInt("nowSource", nowSource);
+        bundle.putInt("clickIndex", clickIndex);
         Sakura.destoryActivity("playerImomoe");
         if (isDescActivity)
             activity.startActivityForResult(new Intent(activity, ImomoePlayerActivity.class).putExtras(bundle), 0x10);

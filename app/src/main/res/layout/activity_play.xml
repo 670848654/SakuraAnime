@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.drawerlayout.widget.DrawerLayout xmlns:tools="http://schemas.android.com/tools"
+    <androidx.drawerlayout.widget.DrawerLayout
         android:id="@+id/drawer_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -114,13 +115,12 @@
 
                         <TextView
                             android:id="@+id/speed"
-                            android:text="15s"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
                             android:layout_alignParentRight="true"
                             android:layout_marginRight="16dp"
-                            android:textColor="@android:color/white"/>
+                            android:text="15s"
+                            android:textColor="@android:color/white" />
 
                     </RelativeLayout>
 
@@ -152,6 +152,7 @@
                             android:layout_height="wrap_content"
                             android:layout_centerVertical="true"
                             android:layout_alignParentRight="true"
+                            android:layout_marginRight="8dp"
                             android:thumbTint="@color/colorAccent"
                             android:textColor="@android:color/white"/>
 

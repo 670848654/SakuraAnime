@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/window_bg">
+
+    <RelativeLayout
+        android:id="@+id/root"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_margin="12dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/select_download_number"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@color/text_color_primary" />
+
+        <com.ctetin.expandabletextviewlibrary.ExpandableTextView
+            android:id="@+id/info"
+            android:layout_below="@+id/title"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="12dp"
+            android:layout_marginBottom="12dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            app:ep_need_link="false"
+            app:ep_need_mention="true"
+            app:ep_max_line="1"
+            android:lineSpacingExtra="4dp"
+            app:ep_need_contract="true"
+            app:ep_need_animation="true"
+            app:ep_expand_text="点击查看"
+            app:ep_expand_color="@color/colorAccent"
+            android:textColor="@color/text_color_primary"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/download_list"
+            android:layout_below="@+id/info"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false" />
+
+    </RelativeLayout>
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/download"
+        android:text="点击下载"
+        app:layout_anchor="@id/root"
+        app:layout_anchorGravity="bottom|end"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/text_color_primary"
+        app:backgroundTint="@color/drama"
+        app:iconTint="@color/text_color_primary"
+        app:icon="@drawable/baseline_download_white_48dp"/>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

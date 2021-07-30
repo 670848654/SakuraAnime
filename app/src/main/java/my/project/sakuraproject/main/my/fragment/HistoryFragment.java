@@ -1,0 +1,389 @@
+package my.project.sakuraproject.main.my.fragment;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ProgressBar;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.PopupMenu;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import my.project.sakuraproject.R;
+import my.project.sakuraproject.adapter.HistoryListAdapter;
+import my.project.sakuraproject.bean.AnimeDescDetailsBean;
+import my.project.sakuraproject.bean.HistoryBean;
+import my.project.sakuraproject.bean.ImomoeVideoUrlBean;
+import my.project.sakuraproject.bean.Refresh;
+import my.project.sakuraproject.custom.CustomLoadMoreView;
+import my.project.sakuraproject.custom.CustomToast;
+import my.project.sakuraproject.database.DatabaseUtil;
+import my.project.sakuraproject.main.base.BaseModel;
+import my.project.sakuraproject.main.desc.DescActivity;
+import my.project.sakuraproject.main.my.HistoryContract;
+import my.project.sakuraproject.main.my.HistoryPresenter;
+import my.project.sakuraproject.main.video.VideoContract;
+import my.project.sakuraproject.main.video.VideoPresenter;
+import my.project.sakuraproject.util.SharedPreferencesUtils;
+import my.project.sakuraproject.util.Utils;
+import my.project.sakuraproject.util.VideoUtils;
+
+public class HistoryFragment extends MyLazyFragment<HistoryContract.View, HistoryPresenter> implements HistoryContract.View, VideoContract.View {
+    @BindView(R.id.rv_list)
+    RecyclerView mRecyclerView;
+    @BindView(R.id.loading)
+    ProgressBar loading;
+    private HistoryListAdapter adapter;
+    private List<HistoryBean> historyBeans = new ArrayList<>();
+    CoordinatorLayout msg;
+    private int limit = 100;
+    private int historyCount = 0;
+    private boolean isMain = true;
+    protected boolean isErr = true;
+    private AlertDialog alertDialog;
+    private VideoPresenter videoPresenter;
+    private String animeId;
+    private String animeTitle;
+    private String dramaUrl;
+    private String dramaTitle;
+    private int playSource;
+    private int source;
+    private List<AnimeDescDetailsBean> yhdmDramasBeans;
+    private List<List<ImomoeVideoUrlBean>> imomoeVideoUrlBeans;
+    private List<List<AnimeDescDetailsBean>> imomoeDramasBeans;
+    private int clickIndex = 0;
+    private View view;
+    private FloatingActionButton fab;
+
+    @Override
+    protected HistoryPresenter createPresenter() {
+        return new HistoryPresenter(historyBeans.size(), limit, this);
+    }
+
+    @Override
+    protected void loadData() {
+        loading.setVisibility(View.VISIBLE);
+        mPresenter.loadData(isMain);
+    }
+
+    @Override
+    protected View initViews(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        if (view == null) {
+            view = inflater.inflate(R.layout.fragment_my, container, false);
+            mUnBinder = ButterKnife.bind(this, view);
+        } else {
+            ViewGroup parent = (ViewGroup) view.getParent();
+            if (parent != null) {
+                parent.removeView(view);
+            }
+        }
+        msg = getActivity().findViewById(R.id.msg);
+        historyCount = DatabaseUtil.queryHistoryCount();
+        fab = getActivity().findViewById(R.id.fab);
+        initAdapter();
+        return view;
+    }
+
+    private void initAdapter() {
+        mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), Utils.isPad() ? 2: 1));
+        adapter = new HistoryListAdapter(getActivity(), historyBeans);
+//        adapter.openLoadAnimation();
+//        adapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
+        adapter.setOnItemClickListener((adapter, view, position) -> {
+            if (!Utils.isFastClick()) return;
+            animeId = historyBeans.get(position).getAnimeId();
+            animeTitle = historyBeans.get(position).getTitle();
+            dramaUrl = historyBeans.get(position).getDramaUrl();
+            dramaTitle = historyBeans.get(position).getDramaNumber();
+            playSource = historyBeans.get(position).getPlaySource();
+            source = historyBeans.get(position).getSource();
+            videoPresenter = new VideoPresenter(
+                    animeTitle,
+                    dramaUrl,
+                    playSource,
+                    historyBeans.get(position).getDramaNumber(),
+                    this
+            );
+            alertDialog = Utils.getProDialog(getActivity(), R.string.get_anime_info);
+            videoPresenter.loadData(true);
+        });
+        adapter.setOnItemChildClickListener((adapter, view, position) -> {
+            if (!Utils.isFastClick()) return;
+            switch (view.getId()) {
+                case R.id.desc_view:
+                    Bundle bundle = new Bundle();
+                    bundle.putString("name", historyBeans.get(position).getTitle());
+                    bundle.putString("url", historyBeans.get(position).getDescUrl());
+                    startActivityForResult(new Intent(getActivity(), DescActivity.class).putExtras(bundle), 3000);
+                    break;
+                case R.id.delete_view:
+                    showDeleteHistoryDialog(position, historyBeans.get(position).getHistoryId(), false);
+                    break;
+            }
+        });
+        adapter.setOnItemLongClickListener((adapter, view, position) -> {
+            if (!Utils.isFastClick()) return false;
+            View v = adapter.getViewByPosition(mRecyclerView, position, R.id.title);
+            final PopupMenu popupMenu = new PopupMenu(getActivity(), v);
+            popupMenu.getMenuInflater().inflate(R.menu.delete_history_menu, popupMenu.getMenu());
+            popupMenu.setOnMenuItemClickListener(menuItem -> {
+                switch (menuItem.getItemId()) {
+                    case R.id.delete_history:
+                        showDeleteHistoryDialog(position, historyBeans.get(position).getHistoryId(), false);
+                        break;
+                }
+                return true;
+            });
+            popupMenu.show();
+            return true;
+        });
+        adapter.setLoadMoreView(new CustomLoadMoreView());
+        adapter.setOnLoadMoreListener(() -> mRecyclerView.postDelayed(() -> {
+            if (historyBeans.size() >= historyCount) {
+                adapter.loadMoreEnd();
+            } else {
+                if (isErr) {
+                    isMain = false;
+                    mPresenter = new HistoryPresenter(historyBeans.size(), limit, this);
+                    mPresenter.loadData(isMain);
+                } else {
+                    isErr = true;
+                    adapter.loadMoreFail();
+                }
+            }
+        }, 500), mRecyclerView);
+        if (Utils.checkHasNavigationBar(getActivity())) mRecyclerView.setPadding(0,0,0, Utils.getNavigationBarHeight(getActivity()));
+        mRecyclerView.setAdapter(adapter);
+    }
+
+    public void setLoadState(boolean loadState) {
+        isErr = loadState;
+        adapter.loadMoreComplete();
+    }
+
+    private void setFabClick() {
+        if (isFragmentVisible && historyBeans.size() > 0)
+            fab.setOnClickListener(view -> showDeleteHistoryDialog(0, null, true));
+    }
+
+    private void loadHistoryData() {
+        isMain = true;
+        historyBeans.clear();
+        mPresenter = createPresenter();
+        loadData();
+    }
+
+    /**
+     * 删除历史记录弹窗
+     * @param position
+     * @param historyId
+     * @param isAll
+     */
+    private void showDeleteHistoryDialog(int position, String historyId, boolean isAll) {
+        AlertDialog alertDialog;
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.DialogStyle);
+        builder.setMessage(isAll ? Utils.getString(R.string.delete_all_history) : Utils.getString(R.string.delete_single_history));
+        builder.setPositiveButton(getString(R.string.page_positive), (dialog, which) -> deleteHistory(position, historyId, isAll));
+        builder.setNegativeButton(getString(R.string.page_negative), (dialog, which) -> dialog.dismiss());
+        alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    /**
+     * 删除历史记录
+     * @param position
+     * @param historyId
+     * @param isAll
+     */
+    private void deleteHistory(int position, String historyId, boolean isAll) {
+        DatabaseUtil.deleteHistory(historyId, isAll);
+        historyCount = DatabaseUtil.queryHistoryCount();
+        if (!isAll)
+            adapter.remove(position);
+        else
+            historyBeans.clear();
+        if (historyBeans.size() <= 0) {
+            adapter.setNewData(historyBeans);
+            errorTitle.setText(Utils.getString(R.string.empty_history));
+            adapter.setEmptyView(errorView);
+            setFabClick();
+        }
+    }
+
+    /**
+     * 播放视频
+     *
+     * @param animeUrl
+     */
+    private void playAnime(String animeUrl) {
+        cancelDialog();
+        switch ((Integer) SharedPreferencesUtils.getParam(getActivity(), "player", 0)) {
+            case 0:
+                //调用播放器
+                switch (source) {
+                    case 0:
+                        // yhdm
+                        VideoUtils.openPlayer(true, getActivity(), animeTitle + " - " + dramaTitle, animeUrl, animeTitle, dramaUrl, yhdmDramasBeans, clickIndex, animeId);
+                        break;
+                    case 1:
+                        // imomoe
+                        VideoUtils.openImomoePlayer(true, getActivity(), animeTitle + " - " +dramaTitle, animeUrl, animeTitle, dramaUrl, imomoeDramasBeans, imomoeVideoUrlBeans, playSource, clickIndex, animeId);
+                        break;
+                }
+                break;
+            case 1:
+                Utils.selectVideoPlayer(getActivity(), animeUrl);
+                break;
+        }
+    }
+
+
+    @Override
+    public void showSuccessView(List<HistoryBean> list) {
+        setLoadState(true);
+        getActivity().runOnUiThread(() -> {
+            if (isMain) {
+                loading.setVisibility(View.GONE);
+                historyBeans = list;
+                setFabClick();
+                adapter.setNewData(historyBeans);
+            } else
+                adapter.addData(list);
+        });
+    }
+
+    @Override
+    public void cancelDialog() {
+        Utils.cancelDialog(alertDialog);
+    }
+
+    @Override
+    public void showYhdmVideoSuccessView(List<String> list) {
+        getActivity().runOnUiThread(() -> {
+            if (list.size() == 1)
+                playAnime(list.get(0));
+            else
+                VideoUtils.showMultipleVideoSources(getActivity(),
+                        list,
+                        (dialog, index) -> playAnime(list.get(index)),
+                        (dialog, which) -> {
+                            cancelDialog();
+                            dialog.dismiss();
+                        }, 1, false);
+        });
+    }
+
+    @Override
+    public void showSuccessYhdmDramasView(List<AnimeDescDetailsBean> list) {
+        yhdmDramasBeans = list;
+        for (int i=0,size=list.size(); i<size; i++) {
+            if (list.get(i).getUrl().equals(dramaUrl)) {
+                clickIndex = i;
+                break;
+            }
+        }
+    }
+
+    @Override
+    public void getVideoEmpty() {
+        getActivity().runOnUiThread(() -> {
+//            application.showToastMsg(Utils.getString(R.string.open_web_view));
+            CustomToast.showToast(getActivity(), Utils.getString(R.string.open_web_view), CustomToast.WARNING);
+            VideoUtils.openDefaultWebview(getActivity(), dramaUrl.contains("/view/") ? BaseModel.getDomain(true) + dramaUrl : BaseModel.getDomain(false) + dramaUrl);
+        });
+    }
+
+    @Override
+    public void getVideoError() {
+        getActivity().runOnUiThread(() -> {
+//            application.showErrorToastMsg(Utils.getString(R.string.error_700));
+            CustomToast.showToast(getActivity(), Utils.getString(R.string.error_700), CustomToast.ERROR);
+        });
+    }
+
+    @Override
+    public void errorDramaView() {
+
+    }
+
+    @Override
+    public void showSuccessImomoeVideoUrlsView(List<List<ImomoeVideoUrlBean>> bean) {
+        imomoeVideoUrlBeans = bean;
+        getActivity().runOnUiThread(() -> {
+            if (imomoeVideoUrlBeans.size() > 0) {
+                ImomoeVideoUrlBean imomoeVideoUrlBean = imomoeVideoUrlBeans.get(playSource).get(clickIndex);
+                playAnime(imomoeVideoUrlBean.getVidOrUrl());
+            }
+        });
+    }
+
+    @Override
+    public void showSuccessImomoeDramasView(List<List<AnimeDescDetailsBean>> bean) {
+        imomoeDramasBeans = bean;
+        for (int i=0,size=bean.get(playSource).size(); i<size; i++) {
+            if (bean.get(playSource).get(i).getUrl().equals(dramaUrl)) {
+                clickIndex = i;
+                break;
+            }
+        }
+    }
+
+    @Override
+    public void showLoadingView() {
+        getActivity().runOnUiThread(() -> {
+            adapter.setNewData(historyBeans);
+        });
+    }
+
+    @Override
+    public void showLoadErrorView(String msg) {
+        setLoadState(false);
+        getActivity().runOnUiThread(() -> {
+            if (isMain) {
+                loading.setVisibility(View.GONE);
+                errorTitle.setText(msg);
+                adapter.setEmptyView(errorView);
+            }
+        });
+    }
+
+    @Override
+    public void showEmptyVIew() {
+        getActivity().runOnUiThread(() -> {
+            adapter.setEmptyView(emptyView);
+        });
+    }
+
+    @Override
+    public void showLog(String url) {
+
+    }
+
+    @Override
+    public void onDestroy() {
+        if (null != videoPresenter) videoPresenter.detachView();
+        super.onDestroy();
+    }
+
+    @Override
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(Refresh refresh) {
+        if (refresh.getIndex() == 2) {
+            loadHistoryData();
+        }
+    }
+}

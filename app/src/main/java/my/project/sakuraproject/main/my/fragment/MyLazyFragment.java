@@ -1,0 +1,118 @@
+package my.project.sakuraproject.main.my.fragment;
+
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
+import androidx.fragment.app.Fragment;
+
+import org.greenrobot.eventbus.EventBus;
+
+import butterknife.Unbinder;
+import my.project.sakuraproject.R;
+import my.project.sakuraproject.application.Sakura;
+import my.project.sakuraproject.bean.Refresh;
+import my.project.sakuraproject.main.base.Presenter;
+
+public abstract class MyLazyFragment<V, P extends Presenter<V>> extends Fragment {
+    protected boolean isFragmentVisible;
+    private boolean isPrepared;
+    private boolean isFirstLoad = true;
+    private boolean forceLoad = false;
+    protected P mPresenter;
+    protected View errorView, emptyView;
+    protected TextView errorTitle;
+    protected Sakura application;
+    protected Unbinder mUnBinder;
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        isFirstLoad = true;
+        mPresenter = createPresenter();
+        initCustomViews();
+        if (application == null) application = (Sakura) getActivity().getApplication();
+        View view = initViews(inflater, container, savedInstanceState);
+        EventBus.getDefault().register(this);
+        isPrepared = true;
+        lazyLoad();
+        return view;
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (getUserVisibleHint()) {
+            onVisible();
+        } else {
+            onInvisible();
+        }
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (!hidden) {
+            onVisible();
+        } else {
+            onInvisible();
+        }
+    }
+
+    protected void onVisible() {
+        isFragmentVisible = true;
+        lazyLoad();
+    }
+
+    protected void onInvisible() {
+        isFragmentVisible = false;
+    }
+
+    protected void lazyLoad() {
+        if (isPrepared() && isFragmentVisible()) {
+            if (forceLoad || isFirstLoad()) {
+                forceLoad = false;
+                isFirstLoad = false;
+                loadData();
+            }
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        //取消View的关联
+        if (null != mPresenter)
+            mPresenter.detachView();
+        isPrepared = false;
+        EventBus.getDefault().unregister(this);
+        mUnBinder.unbind();
+    }
+
+    public void initCustomViews() {
+        errorView = getLayoutInflater().inflate(R.layout.base_error_view, null);
+        errorTitle = errorView.findViewById(R.id.title);
+        emptyView = getLayoutInflater().inflate(R.layout.base_emnty_view, null);
+    }
+
+    protected abstract View initViews(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState);
+
+    protected abstract P createPresenter();
+
+    protected abstract void loadData();
+
+    public boolean isPrepared() {
+        return isPrepared;
+    }
+
+    public boolean isFirstLoad() {
+        return isFirstLoad;
+    }
+
+    public boolean isFragmentVisible() {
+        return isFragmentVisible;
+    }
+
+    public abstract void onEvent(Refresh refresh);
+}

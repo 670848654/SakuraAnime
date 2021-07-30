@@ -9,34 +9,40 @@ import my.project.sakuraproject.main.base.BaseView;
 
 public interface VideoContract {
     interface Model {
-        void getData(String title, String url, LoadDataCallback callback);
+        void getData(String title, String url, int source, String playNumber, LoadDataCallback callback);
+
+        void getVideoUrl(String url, LoadDataCallback callback);
     }
 
     interface View extends BaseView {
         void cancelDialog();
 
-        void getVideoSuccess(List<String> list);
+        void showYhdmVideoSuccessView(List<String> list);
+
+        void showSuccessYhdmDramasView(List<AnimeDescDetailsBean> list);
 
         void getVideoEmpty();
 
         void getVideoError();
 
-        void showSuccessDramaView(List<AnimeDescDetailsBean> list);
-
         void errorDramaView();
 
-        void showSuccessImomoeDramaView(List<List<ImomoeVideoUrlBean>> bean);
+        void showSuccessImomoeVideoUrlsView(List<List<ImomoeVideoUrlBean>> bean);
+
+        void showSuccessImomoeDramasView(List<List<AnimeDescDetailsBean>> bean);
     }
 
     interface LoadDataCallback extends BaseLoadDataCallback {
-        void success(List<String> list);
+        void successYhdmVideoUrls(List<String> list);
+
+        void successYhdmDramas(List<AnimeDescDetailsBean> list);
 
         void error();
 
         void empty();
 
-        void successDrama(List<AnimeDescDetailsBean> list);
+        void successImomoeVideoUrls(List<List<ImomoeVideoUrlBean>> bean);
 
-        void successImomoeDrama(List<List<ImomoeVideoUrlBean>> bean);
+        void successImomoeDramas(List<List<AnimeDescDetailsBean>> bean);
     }
 }

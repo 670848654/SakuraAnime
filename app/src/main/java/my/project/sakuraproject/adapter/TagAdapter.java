@@ -12,6 +12,9 @@ import my.project.sakuraproject.R;
 import my.project.sakuraproject.bean.TagBean;
 import my.project.sakuraproject.bean.TagHeaderBean;
 
+/**
+ * 动漫分类适配器
+ */
 public class TagAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity, BaseViewHolder> {
     public static final int TYPE_LEVEL_0 = 0;
     public static final int TYPE_LEVEL_1 = 1;

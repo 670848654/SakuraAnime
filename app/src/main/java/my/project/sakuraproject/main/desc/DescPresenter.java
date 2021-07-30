@@ -41,6 +41,11 @@ public class DescPresenter extends Presenter<DescContract.View> implements BaseP
     }
 
     @Override
+    public void getAnimeId(String animeId) {
+        view.getAnimeId(animeId);
+    }
+
+    @Override
     public void successDesc(AnimeListBean bean) {
         view.showSuccessDescView(bean);
     }

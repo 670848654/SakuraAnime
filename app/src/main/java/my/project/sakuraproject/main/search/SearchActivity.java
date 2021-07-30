@@ -24,6 +24,7 @@ import my.project.sakuraproject.adapter.AnimeListAdapter;
 import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.bean.AnimeListBean;
 import my.project.sakuraproject.custom.CustomLoadMoreView;
+import my.project.sakuraproject.custom.CustomToast;
 import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.desc.DescActivity;
 import my.project.sakuraproject.util.SwipeBackLayoutUtil;
@@ -115,7 +116,8 @@ public class SearchActivity extends BaseActivity<SearchContract.View, SearchPres
                 //数据全部加载完毕
                 adapter.loadMoreEnd();
                 isSearch = false;
-                application.showSuccessToastMsg(Utils.getString(R.string.no_more));
+//                application.showSuccessToastMsg(Utils.getString(R.string.no_more));
+                CustomToast.showToast(this, Utils.getString(R.string.no_more), CustomToast.SUCCESS);
             } else {
                 if (isErr) {
                     //成功获取更多数据
@@ -171,7 +173,8 @@ public class SearchActivity extends BaseActivity<SearchContract.View, SearchPres
             @Override
             public boolean onQueryTextSubmit(String query) {
                 if (isSearch) {
-                    application.showToastMsg("正在执行搜索操作，请稍后再试！");
+//                    application.showToastMsg("正在执行搜索操作，请稍后再试！");
+                    CustomToast.showToast(SearchActivity.this, "正在执行搜索操作，请稍后再试！", CustomToast.WARNING);
                 }else {
                     title = query.replaceAll(" ", "");
                     if (!title.isEmpty()) {
@@ -251,7 +254,8 @@ public class SearchActivity extends BaseActivity<SearchContract.View, SearchPres
                     adapter.setEmptyView(errorView);
                 } else {
                     setLoadState(false);
-                    application.showErrorToastMsg(msg);
+//                    application.showErrorToastMsg(msg);
+                    CustomToast.showToast(this, msg, CustomToast.ERROR);
                 }
             }
         });

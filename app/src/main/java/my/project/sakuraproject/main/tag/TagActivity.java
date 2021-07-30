@@ -29,10 +29,10 @@ import butterknife.OnClick;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.adapter.AnimeListAdapter;
 import my.project.sakuraproject.adapter.TagAdapter;
-import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.bean.AnimeListBean;
 import my.project.sakuraproject.bean.TagBean;
 import my.project.sakuraproject.custom.CustomLoadMoreView;
+import my.project.sakuraproject.custom.CustomToast;
 import my.project.sakuraproject.main.animeList.AnimeListContract;
 import my.project.sakuraproject.main.animeList.AnimeListPresenter;
 import my.project.sakuraproject.main.base.BaseActivity;
@@ -141,7 +141,8 @@ public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> im
             if (nowPage >= pageCount) {
                 //数据全部加载完毕
                 animeListAdapter.loadMoreEnd();
-                application.showSuccessToastMsg(Utils.getString(R.string.no_more));
+//                application.showSuccessToastMsg(Utils.getString(R.string.no_more));
+                CustomToast.showToast(this, Utils.getString(R.string.no_more), CustomToast.SUCCESS);
             } else {
                 if (isErr) {
                     //成功获取更多数据
@@ -171,7 +172,8 @@ public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> im
         tagAdapter.setOnItemClickListener((adapter, view, position) -> {
             if (!Utils.isFastClick()) return;
             if (mSwipe.isRefreshing()) {
-                Sakura.getInstance().showToastMsg(Utils.getString(R.string.loading_info));
+//                Sakura.getInstance().showToastMsg(Utils.getString(R.string.loading_info));
+                CustomToast.showToast(this, Utils.getString(R.string.loading_info), CustomToast.WARNING);
                 return;
             }
             mBottomSheetDialog.dismiss();
@@ -295,7 +297,8 @@ public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> im
                     animeListAdapter.setEmptyView(errorView);
                 } else {
                     setLoadState(false);
-                    application.showErrorToastMsg(msg);
+//                    application.showErrorToastMsg(msg);
+                    CustomToast.showToast(this, msg, CustomToast.ERROR);
                 }
             }
         });

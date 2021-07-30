@@ -65,25 +65,16 @@
             android:screenOrientation="sensorLandscape"
             android:theme="@style/AppTheme.FullScreenTheme" />
         <activity
-            android:name=".main.webview.normal.NormalWebActivity"
+            android:name=".main.player.LocalPlayerActivity"
             android:configChanges="screenLayout|orientation|screenSize|smallestScreenSize|keyboardHidden|uiMode"
-            android:hardwareAccelerated="true"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme" />
+            android:excludeFromRecents="true"
+            android:resizeableActivity="true"
+            android:launchMode="singleTask"
+            android:supportsPictureInPicture="true"
+            android:screenOrientation="sensorLandscape"
+            android:theme="@style/AppTheme.FullScreenTheme" />
         <activity
             android:name=".main.webview.normal.DefaultNormalWebActivity"
-            android:configChanges="screenLayout|orientation|screenSize|smallestScreenSize|keyboardHidden|uiMode"
-            android:hardwareAccelerated="true"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme" />
-        <activity
-            android:name=".main.webview.x5.DefaultX5WebActivity"
-            android:configChanges="screenLayout|orientation|screenSize|smallestScreenSize|keyboardHidden|uiMode"
-            android:hardwareAccelerated="true"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme" />
-        <activity
-            android:name=".main.webview.x5.X5WebActivity"
             android:configChanges="screenLayout|orientation|screenSize|smallestScreenSize|keyboardHidden|uiMode"
             android:hardwareAccelerated="true"
             android:screenOrientation="portrait"
@@ -109,7 +100,12 @@
             android:screenOrientation="portrait"
             android:theme="@style/TranslucentTheme" />
         <activity
-            android:name=".main.favorite.FavoriteActivity"
+            android:name=".main.my.MyActivity"
+            android:configChanges="screenLayout|orientation|screenSize|smallestScreenSize|keyboardHidden|uiMode"
+            android:screenOrientation="portrait"
+            android:theme="@style/TranslucentTheme" />
+        <activity
+            android:name=".main.my.DownloadDataActivity"
             android:configChanges="screenLayout|orientation|screenSize|smallestScreenSize|keyboardHidden|uiMode"
             android:screenOrientation="portrait"
             android:theme="@style/TranslucentTheme" />
@@ -129,21 +125,14 @@
             android:screenOrientation="portrait"
             android:theme="@style/TranslucentTheme" />
         <activity
-            android:name=".main.setting.user.ApiActivity"
-            android:configChanges="screenLayout|orientation|screenSize|smallestScreenSize|keyboardHidden|uiMode"
-            android:screenOrientation="portrait"
-            android:theme="@style/TranslucentTheme" />
-        <activity
             android:name=".cling.ui.DLNAActivity"
             android:configChanges="screenLayout|orientation|screenSize|smallestScreenSize|keyboardHidden|uiMode"
             android:excludeFromRecents="true"
             android:resizeableActivity="true"
             android:screenOrientation="sensorLandscape"
             android:theme="@style/Theme.NotFullActivity" />
-        <service
-            android:name=".services.ClearVideoCacheService"
-            android:enabled="true"
-            android:exported="true"/>
+        <!-- 下载服务 -->
+        <service android:name=".services.DownloadService"/>
         <!-- 声明upnp服务实现类（服务） -->
         <service android:name=".cling.service.ClingUpnpService" />
         <provider

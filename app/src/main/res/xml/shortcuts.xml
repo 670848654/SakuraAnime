@@ -3,15 +3,15 @@
     <shortcut
         android:shortcutId="favorite"
         android:enabled="true"
-        android:icon="@drawable/ic_shortcut_favorite"
-        android:shortcutShortLabel="@string/favoriteShortName"
-        android:shortcutLongLabel="@string/favoriteLongName"
+        android:icon="@drawable/ic_shortcut_person"
+        android:shortcutShortLabel="@string/my_title"
+        android:shortcutLongLabel="@string/my_title"
         android:shortcutDisabledMessage="@string/disableMsg">
 
         <intent
             android:action="android.intent.action.VIEW"
             android:targetPackage="my.project.sakuraproject"
-            android:targetClass="my.project.sakuraproject.main.favorite.FavoriteActivity" />
+            android:targetClass="my.project.sakuraproject.main.my.MyActivity" />
         <categories android:name="android.shortcut.conversation"/>
     </shortcut>
     <!-- 动漫分类 -->

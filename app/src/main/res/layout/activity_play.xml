@@ -159,13 +159,47 @@
                     </RelativeLayout>
 
                     <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="45dp">
+
+                        <ImageView
+                            android:id="@+id/config_icon3"
+                            android:src="@drawable/baseline_last_page_white_48dp"
+                            android:tint="@android:color/white"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="16dp"
+                            android:layout_marginRight="16dp"
+                            android:layout_width="28dp"
+                            android:layout_height="28dp" />
+
+                        <TextView
+                            android:text="@string/play_next_video"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_toRightOf="@+id/config_icon3"
+                            android:layout_centerVertical="true"
+                            android:textColor="@android:color/white" />
+
+                        <androidx.appcompat.widget.SwitchCompat
+                            android:id="@+id/play_next_video"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_alignParentRight="true"
+                            android:layout_marginRight="8dp"
+                            android:thumbTint="@color/colorAccent"
+                            android:textColor="@android:color/white"/>
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
                         android:id="@+id/pic_config"
                         android:background="?android:attr/selectableItemBackground"
                         android:layout_width="match_parent"
                         android:layout_height="45dp">
 
                         <ImageView
-                            android:id="@+id/config_icon3"
+                            android:id="@+id/config_icon4"
                             android:src="@drawable/baseline_picture_in_picture_alt_white_48dp"
                             android:tint="@android:color/white"
                             android:layout_centerVertical="true"
@@ -178,7 +212,7 @@
                             android:text="@string/picture_in_picture_title"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_toRightOf="@+id/config_icon3"
+                            android:layout_toRightOf="@+id/config_icon4"
                             android:layout_centerVertical="true"
                             android:textColor="@android:color/white" />
 
@@ -203,7 +237,7 @@
                         android:layout_height="45dp">
 
                         <ImageView
-                            android:id="@+id/config_icon4"
+                            android:id="@+id/config_icon5"
                             android:src="@drawable/baseline_open_in_new_white_48dp"
                             android:tint="@android:color/white"
                             android:layout_centerVertical="true"
@@ -216,7 +250,7 @@
                             android:text="@string/play_with_external_player"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_toRightOf="@+id/config_icon4"
+                            android:layout_toRightOf="@+id/config_icon5"
                             android:layout_centerVertical="true"
                             android:textColor="@android:color/white" />
 
@@ -229,7 +263,7 @@
                         android:layout_height="45dp">
 
                         <ImageView
-                            android:id="@+id/config_icon5"
+                            android:id="@+id/config_icon6"
                             android:src="@drawable/baseline_language_white_48dp"
                             android:tint="@android:color/white"
                             android:layout_centerVertical="true"
@@ -242,7 +276,7 @@
                             android:text="@string/open_external_browser"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_toRightOf="@+id/config_icon5"
+                            android:layout_toRightOf="@+id/config_icon6"
                             android:layout_centerVertical="true"
                             android:textColor="@android:color/white" />
 

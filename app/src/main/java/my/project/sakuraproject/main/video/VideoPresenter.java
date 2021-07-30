@@ -12,10 +12,21 @@ public class VideoPresenter extends Presenter<VideoContract.View> implements Bas
     private VideoModel playModel;
     private String title;
     private String url;
+    private int source;
+    private String playNumber;
 
-    public VideoPresenter(String title, String url, VideoContract.View view) {
+    public VideoPresenter(String title, String url, int source, String playNumber, VideoContract.View view) {
         super(view);
         this.title = title;
+        this.url = url;
+        this.source = source;
+        this.playNumber = playNumber;
+        this.view = view;
+        playModel = new VideoModel();
+    }
+
+    public VideoPresenter(String url, VideoContract.View view) {
+        super(view);
         this.url = url;
         this.view = view;
         playModel = new VideoModel();
@@ -23,12 +34,16 @@ public class VideoPresenter extends Presenter<VideoContract.View> implements Bas
 
     @Override
     public void loadData(boolean isMain) {
-        playModel.getData(title, url, this);
+        playModel.getData(title, url, source, playNumber, this);
+    }
+
+    public void loadVideoUrls() {
+        playModel.getVideoUrl(url, this);
     }
 
     @Override
-    public void success(List<String> list) {
-        view.getVideoSuccess(list);
+    public void successYhdmVideoUrls(List<String> list) {
+        view.showYhdmVideoSuccessView(list);
     }
 
     @Override
@@ -44,19 +59,24 @@ public class VideoPresenter extends Presenter<VideoContract.View> implements Bas
     }
 
     @Override
-    public void successDrama(List<AnimeDescDetailsBean> list) {
+    public void successYhdmDramas(List<AnimeDescDetailsBean> list) {
         if (list.size() > 0)
-            view.showSuccessDramaView(list);
+            view.showSuccessYhdmDramasView(list);
         else
             view.errorDramaView();
     }
 
     @Override
-    public void successImomoeDrama(List<List<ImomoeVideoUrlBean>> bean) {
+    public void successImomoeVideoUrls(List<List<ImomoeVideoUrlBean>> bean) {
         if (bean.size() > 0)
-            view.showSuccessImomoeDramaView(bean);
+            view.showSuccessImomoeVideoUrlsView(bean);
         else
             view.errorDramaView();
+    }
+
+    @Override
+    public void successImomoeDramas(List<List<AnimeDescDetailsBean>> bean) {
+        view.showSuccessImomoeDramasView(bean);
     }
 
     @Override

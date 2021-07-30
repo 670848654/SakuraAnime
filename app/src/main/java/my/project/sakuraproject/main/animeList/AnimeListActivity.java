@@ -24,6 +24,7 @@ import my.project.sakuraproject.R;
 import my.project.sakuraproject.adapter.AnimeListAdapter;
 import my.project.sakuraproject.bean.AnimeListBean;
 import my.project.sakuraproject.custom.CustomLoadMoreView;
+import my.project.sakuraproject.custom.CustomToast;
 import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.desc.DescActivity;
 import my.project.sakuraproject.main.search.SearchActivity;
@@ -140,7 +141,8 @@ public class AnimeListActivity extends BaseActivity<AnimeListContract.View, Anim
             if (nowPage >= pageCount) {
                 //数据全部加载完毕
                 adapter.loadMoreEnd();
-                application.showSuccessToastMsg(Utils.getString(R.string.no_more));
+//                application.showSuccessToastMsg(Utils.getString(R.string.no_more));
+                CustomToast.showToast(this, Utils.getString(R.string.no_more), CustomToast.SUCCESS);
             } else {
                 if (isErr) {
                     //成功获取更多数据
@@ -198,7 +200,8 @@ public class AnimeListActivity extends BaseActivity<AnimeListContract.View, Anim
                     adapter.setEmptyView(errorView);
                 } else {
                     setLoadState(false);
-                    application.showErrorToastMsg(msg);
+//                    application.showErrorToastMsg(msg);
+                    CustomToast.showToast(this, msg, CustomToast.ERROR);
                 }
             }
         });

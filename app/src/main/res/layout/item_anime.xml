@@ -48,6 +48,14 @@
             android:textColor="@color/text_color_primary"
             android:textSize="14sp" />
 
+        <ImageView
+            android:id="@+id/new_view"
+            android:visibility="gone"
+            android:layout_width="48dp"
+            android:layout_height="30dp"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/has_update"/>
+
         <TextView
             android:id="@+id/source"
             android:textSize="12sp"

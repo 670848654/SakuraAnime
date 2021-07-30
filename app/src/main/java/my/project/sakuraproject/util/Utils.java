@@ -5,6 +5,7 @@ import android.animation.Keyframe;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -15,7 +16,11 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.Settings;
@@ -33,16 +38,6 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import androidx.annotation.ArrayRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
-import androidx.appcompat.app.AlertDialog;
-import androidx.browser.customtabs.CustomTabsIntent;
-import androidx.cardview.widget.CardView;
-import androidx.core.content.FileProvider;
-import androidx.palette.graphics.Palette;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.load.model.GlideUrl;
@@ -52,20 +47,37 @@ import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
 import com.bumptech.glide.request.transition.Transition;
-import com.fanchen.sniffing.SniffingVideo;
 import com.r0adkll.slidr.model.SlidrConfig;
 import com.r0adkll.slidr.model.SlidrPosition;
 
 import java.io.File;
+import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Formatter;
 import java.util.List;
+import java.util.Locale;
 
+import androidx.annotation.ArrayRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.appcompat.app.AlertDialog;
+import androidx.browser.customtabs.CustomTabsIntent;
+import androidx.cardview.widget.CardView;
+import androidx.core.content.FileProvider;
+import androidx.palette.graphics.Palette;
+import jp.wasabeef.glide.transformations.BlurTransformation;
 import my.project.sakuraproject.BuildConfig;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.application.Sakura;
+import my.project.sakuraproject.custom.CustomToast;
 import my.project.sakuraproject.main.base.BaseModel;
+import my.project.sakuraproject.main.my.MyActivity;
+import my.project.sakuraproject.sniffing.SniffingVideo;
 
 public class Utils {
     private static Context context;
@@ -93,10 +105,13 @@ public class Utils {
         throw new NullPointerException("u should init first");
     }
 
-    public static void creatFile() {
+    public static void createFile() {
         File dataDir = new File(Environment.getExternalStorageDirectory() + "/SakuraAnime/Database");
         if (!dataDir.exists())
             dataDir.mkdirs();
+        File downloadDir = new File(Environment.getExternalStorageDirectory() + "/SakuraAnime/Downloads");
+        if (!downloadDir.exists())
+            downloadDir.mkdirs();
     }
 
     // 两次点击按钮之间的点击间隔不能少于500毫秒
@@ -155,7 +170,8 @@ public class Utils {
         try {
             context.startActivity(Intent.createChooser(intent, "请选择视频播放器"));
         } catch (ActivityNotFoundException e) {
-            Sakura.getInstance().showToastMsg("没有找到匹配的程序");
+//            Sakura.getInstance().showToastMsg("没有找到匹配的程序");
+            CustomToast.showToast(getContext(), "没有找到匹配的程序", CustomToast.WARNING);
         }
     }
 
@@ -172,7 +188,8 @@ public class Utils {
         if (intent.resolveActivity(context.getPackageManager()) != null) {
             context.startActivity(Intent.createChooser(intent, "请通过浏览器打开"));
         } else {
-            Sakura.getInstance().showToastMsg("没有找到匹配的程序");
+//            Sakura.getInstance().showToastMsg("没有找到匹配的程序");
+            CustomToast.showToast(getContext(), "没有找到匹配的程序", CustomToast.WARNING);
         }
     }
 
@@ -360,9 +377,13 @@ public class Utils {
                 .scrimEndAlpha(0f)
                 .velocityThreshold(5f)
                 .distanceThreshold(.35f)
-                .edge(true | false)
+                .edge((Boolean) SharedPreferencesUtils.getParam(getContext(), "slidr_config", false))
                 .edgeSize(0.18f);// The % of the screen that counts as the edge, default 18%;
         return mBuilder.build();
+    }
+
+    public static boolean getSlidrConfig() {
+        return (Boolean) SharedPreferencesUtils.getParam(getContext(), "slidr_config", false);
     }
 
     /**
@@ -404,7 +425,8 @@ public class Utils {
                 .transition(DrawableTransitionOptions.withCrossFade(drawableCrossFadeFactory))
                 .apply(options)
                 .into(imageView);
-        if (setPalette) // 设置Palette
+        if (!(Boolean) SharedPreferencesUtils.getParam(getContext(), "darkTheme", false) && setPalette)
+            // 设置Palette
             Glide.with(context).asBitmap().load(imgUrl).into(new SimpleTarget<Bitmap>() {
                 @Override
                 public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
@@ -422,6 +444,52 @@ public class Utils {
     public static void setCardDefaultBg(Context context, CardView cardView, TextView textView) {
         cardView.setCardBackgroundColor(context.getResources().getColor(R.color.window_bg));
         textView.setTextColor(context.getResources().getColor(R.color.text_color_primary));
+    }
+
+    public static void setImgViewBg(Context context, int source, String img, ImageView imageView) {
+        GlideUrl imgUrl;
+        if (source == 1)
+            imgUrl = new GlideUrl(getImgUrl(img, true));
+        else
+            imgUrl = new GlideUrl(getImgUrl(img, false), new LazyHeaders.Builder()
+                    .addHeader("Referer", BaseModel.getDomain(false) + "/")
+                    .build());
+        DrawableCrossFadeFactory drawableCrossFadeFactory = new DrawableCrossFadeFactory.Builder(300).setCrossFadeEnabled(true).build();
+        RequestOptions options = new RequestOptions()
+                .centerCrop()
+                .format(DecodeFormat.PREFER_RGB_565)
+                .placeholder((Boolean) SharedPreferencesUtils.getParam(getContext(), "darkTheme", false) ? R.drawable.loading_night : R.drawable.loading_light)
+                .error(R.drawable.error);
+        Glide.with(context)
+                .load(imgUrl)
+                .transition(DrawableTransitionOptions.withCrossFade(drawableCrossFadeFactory))
+                .apply(options)
+                .apply(RequestOptions.bitmapTransform( new BlurTransformation(15, 5)))
+                .into(imageView);
+    }
+
+    public static void loadVideoScreenshot(final Context context, String uri, ImageView imageView, long frameTimeMicros) {
+        /*RequestOptions requestOptions = RequestOptions.frameOf(frameTimeMicros);
+        requestOptions.set(FRAME_OPTION, MediaMetadataRetriever.OPTION_CLOSEST);
+        requestOptions.transform(new BitmapTransformation() {
+            @Override
+            protected Bitmap transform(@NonNull BitmapPool pool, @NonNull Bitmap toTransform, int outWidth, int outHeight) {
+                return toTransform;
+            }
+            @Override
+            public void updateDiskCacheKey(MessageDigest messageDigest) {
+                try {
+                    messageDigest.update((context.getPackageName() + "RotateTransform").getBytes("utf-8"));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        Glide.with(context).load(uri).apply(requestOptions).into(imageView);*/
+        RequestOptions options = new RequestOptions().frame(frameTimeMicros);
+        Glide.with(context).asBitmap().load(uri)
+                .apply(options)
+                .into(imageView);
     }
 
     public static String getASVersionName() {
@@ -608,17 +676,17 @@ public class Utils {
      * X5内核加载状态
      * @return
      */
-    public static boolean getX5State() {
+    /*public static boolean getX5State() {
         return (boolean) SharedPreferencesUtils.getParam(getContext(), "X5State", false);
-    }
+    }*/
 
     /**
      * 是否启用x5内核
      * @return
      */
-    public static boolean loadX5() {
+    /*public static boolean loadX5() {
         return (boolean) SharedPreferencesUtils.getParam(getContext(), "loadX5", false);
-    }
+    }*/
 
     public static int getPixelHeight(Activity activity) {
         DisplayMetrics outMetrics = new DisplayMetrics();
@@ -653,5 +721,142 @@ public class Utils {
 
     public static String getImgUrl(String url, boolean isImomoe) {
         return url.contains("http") ? url : BaseModel.getDomain(isImomoe) + url;
+    }
+
+    public static String isYesterday (Date updateTime) throws ParseException {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        SimpleDateFormat format2 = new SimpleDateFormat("HH:mm");
+        String todayStr = format.format(new Date());
+        Date today = format.parse(todayStr);
+        if((today.getTime()-updateTime.getTime())>0 && (today.getTime()-updateTime.getTime())<=86400000) {
+            return "昨天 " + format2.format(updateTime);
+        }
+        else if((today.getTime()-updateTime.getTime())<=0){
+            return "今天 " + format2.format(updateTime);
+        }
+        else{
+            return format1.format(updateTime);
+        }
+    }
+
+    private static String stringForHoursAndMinutes(long timeMs) {
+        if (timeMs > 0L && timeMs < 86400000L) {
+            long totalSeconds = timeMs / 1000L;
+            int minutes = (int)(totalSeconds / 60L % 60L);
+            int hours = (int)(totalSeconds / 3600L);
+            StringBuilder stringBuilder = new StringBuilder();
+            Formatter mFormatter = new Formatter(stringBuilder, Locale.getDefault());
+            return hours > 0 ? mFormatter.format("%d:%02d", hours, minutes).toString() : mFormatter.format("%02d", minutes).toString();
+        } else {
+            return "00:00";
+        }
+    }
+
+    public static boolean videoHasComplete(long playPosition, long videoDuration) {
+        return stringForHoursAndMinutes(playPosition).equals(stringForHoursAndMinutes(videoDuration));
+    }
+
+    public static String getNetFileSizeDescription(long size) {
+        StringBuffer bytes = new StringBuffer();
+        DecimalFormat format = new DecimalFormat("###.0");
+        if (size >= 1024 * 1024 * 1024) {
+            double i = (size / (1024.0 * 1024.0 * 1024.0));
+            bytes.append(format.format(i)).append("GB");
+        }
+        else if (size >= 1024 * 1024) {
+            double i = (size / (1024.0 * 1024.0));
+            bytes.append(format.format(i)).append("MB");
+        }
+        else if (size >= 1024) {
+            double i = (size / (1024.0));
+            bytes.append(format.format(i)).append("KB");
+        }
+        else if (size < 1024) {
+            if (size <= 0) {
+                bytes.append("0B");
+            }
+            else {
+                bytes.append((int) size).append("B");
+            }
+        }
+        return bytes.toString();
+    }
+
+
+    /**
+     * 判断服务是否正在运行
+     *
+     * @param serviceName 服务类的全路径名称 例如： com.jaychan.demo.service.PushService
+     * @param context 上下文对象
+     * @return
+     */
+    public static boolean isServiceRunning(Context context, String serviceName) {
+        //活动管理器
+        ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningServiceInfo> runningServices = am.getRunningServices(100); //获取运行的服务,参数表示最多返回的数量
+
+        for (ActivityManager.RunningServiceInfo runningServiceInfo : runningServices) {
+            String className = runningServiceInfo.service.getClassName();
+            if (className.equals(serviceName)) {
+                return true; //判断服务是否运行
+            }
+        }
+        return false;
+    }
+
+    public static boolean isTopActivity(Activity activity) {
+        ActivityManager manager = (ActivityManager) activity.getSystemService(Context.ACTIVITY_SERVICE);
+        String name = manager.getRunningTasks(1).get(0).topActivity.getClassName();
+        return name.equals(MyActivity.class.getName());
+    }
+
+    /**
+     * 检查网络是否是wifi
+     *
+     * @param context
+     * @return
+     */
+    public static boolean isWifi(Context context) {
+        ConnectivityManager connectivityManager =(ConnectivityManager) context
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo =connectivityManager.getActiveNetworkInfo();
+        if (activeNetworkInfo != null &&activeNetworkInfo.getType() == connectivityManager.TYPE_WIFI){
+            return true;
+        }
+        return false;
+    }
+    /**
+     * 将ip的整数形式转换成ip形式
+     *
+     * @param ipInt
+     * @return
+     */
+    public static String int2ip(int ipInt) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(ipInt & 0xFF).append(".");
+        sb.append((ipInt >> 8) & 0xFF).append(".");
+        sb.append((ipInt >> 16) & 0xFF).append(".");
+        sb.append((ipInt >> 24) & 0xFF);
+        return sb.toString();
+    }
+
+    /**
+     * 获取当前ip地址
+     *
+     * @param context
+     * @return
+     */
+    public static String getLocalIpAddress(Context context) {
+        try {
+            WifiManager wifiManager = (WifiManager) context
+                    .getSystemService(Context.WIFI_SERVICE);
+            WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+            int i = wifiInfo.getIpAddress();
+            return "http://"+int2ip(i)+":8080";
+        } catch (Exception ex) {
+            return null;
+        }
+        // return null;
     }
 }

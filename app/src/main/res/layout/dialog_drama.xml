@@ -17,6 +17,7 @@
             android:layout_centerVertical="true"
             android:text="@string/anthology"
             android:textSize="16sp"
+            android:textStyle="bold"
             android:textColor="@color/text_color_primary" />
 
         <ImageView

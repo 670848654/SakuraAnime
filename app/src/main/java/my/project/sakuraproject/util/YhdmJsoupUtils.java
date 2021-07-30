@@ -21,6 +21,7 @@ import my.project.sakuraproject.bean.AnimeDescDetailsBean;
 import my.project.sakuraproject.bean.AnimeDescListBean;
 import my.project.sakuraproject.bean.AnimeDescRecommendBean;
 import my.project.sakuraproject.bean.AnimeListBean;
+import my.project.sakuraproject.bean.AnimeUpdateInfoBean;
 import my.project.sakuraproject.bean.TagBean;
 import my.project.sakuraproject.bean.TagHeaderBean;
 
@@ -127,6 +128,31 @@ public class YhdmJsoupUtils {
         }
         return jsonArray;
     }
+
+    /**
+     * 获取今日番剧更新
+     * @param source
+     * @return
+     */
+    /*
+    public static List<AnimeUpdateInfoBean> getUpdateInfoList(String source) {
+        List<AnimeUpdateInfoBean> animeUpdateInfoBeans = new ArrayList<>();
+        Document document = Jsoup.parse(source);
+        Elements elements = document.select("div.tlist > ul > li");
+        for (int i=0,size=elements.size(); i<size; i++) {
+            Elements aList = elements.get(i).select("a");
+            if (aList.size() > 1) {
+                AnimeUpdateInfoBean animeUpdateInfoBean = new AnimeUpdateInfoBean();
+                animeUpdateInfoBean.setSource(0);
+                animeUpdateInfoBean.setTitle(elements.get(i).select("a").get(1).text());
+                animeUpdateInfoBean.setPlayNumber(elements.get(i).select("a").get(0).attr("href"));
+                animeUpdateInfoBeans.add(animeUpdateInfoBean);
+                Log.e("YHDM", animeUpdateInfoBean.getTitle() + " > " + animeUpdateInfoBean.getPlayNumber());
+            }
+        }
+        return animeUpdateInfoBeans;
+    }
+    */
     /**************************************  新番时间表解析方法结束  **************************************/
 
     /**************************************  番剧列表&&电影列表&&搜索列表解析方法开始  **************************************/
@@ -312,7 +338,7 @@ public class YhdmJsoupUtils {
     }
     /**************************************  动漫详情解析方法结束  **************************************/
 
-    /**************************************  视频解析方法开始  **************************************/
+    /**************************************  选集解析方法开始  **************************************/
     /**
      * 获取番剧所有剧集（用于 PlayerActivity 选集）
      * @param source
@@ -354,5 +380,30 @@ public class YhdmJsoupUtils {
         else
             return urls;
     }
-    /**************************************  视频解析方法结束  **************************************/
+    /**************************************  选集解析方法结束  **************************************/
+
+    /**************************************  最近更新动漫解析方法开始  **************************************/
+    public static List<AnimeUpdateInfoBean> getUpdateInfoList(String source) {
+        List<AnimeUpdateInfoBean> animeUpdateInfoBeans = new ArrayList<>();
+        Document document = Jsoup.parse(source);
+        Elements elements = document.select("div.topli > ul > li");
+        for (int i=0,size=elements.size(); i<size; i++) {
+            Elements aList = elements.get(i).select("a");
+            AnimeUpdateInfoBean animeUpdateInfoBean = new AnimeUpdateInfoBean();
+            animeUpdateInfoBean.setSource(0);
+            for (Element e : aList) {
+                boolean hasUrl = false;
+                if (e.attr("href").contains("/show/")) {
+                    animeUpdateInfoBean.setTitle(e.text());
+                } else if (e.attr("href").contains("/v/")) {
+                    hasUrl = true;
+                    animeUpdateInfoBean.setPlayNumber(e.attr("href"));
+                }
+                if (hasUrl)
+                    animeUpdateInfoBeans.add(animeUpdateInfoBean);
+            }
+        }
+        return animeUpdateInfoBeans;
+    }
+    /**************************************  最近更新动漫解析方法结束  **************************************/
 }

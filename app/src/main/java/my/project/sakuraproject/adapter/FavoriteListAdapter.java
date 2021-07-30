@@ -13,6 +13,9 @@ import my.project.sakuraproject.R;
 import my.project.sakuraproject.bean.AnimeListBean;
 import my.project.sakuraproject.util.Utils;
 
+/**
+ * 追番列表适配器
+ */
 public class FavoriteListAdapter extends BaseQuickAdapter<AnimeListBean, BaseViewHolder> {
     private Context context;
 
@@ -26,9 +29,10 @@ public class FavoriteListAdapter extends BaseQuickAdapter<AnimeListBean, BaseVie
         Utils.setCardDefaultBg(context, helper.getView(R.id.card_view), helper.getView(R.id.title));
         Utils.setDefaultImage(context, item.getImg(), item.getUrl(), helper.getView(R.id.img), true, helper.getView(R.id.card_view), helper.getView(R.id.title));
         TextView source = helper.getView(R.id.source);
-        source.setBackground(context.getDrawable(item.getUrl().contains("/view/") ? R.drawable.imomoe_bg : R.drawable.yhdm_bg));
-        source.setText(Utils.getString(item.getUrl().contains("/view/") ? R.string.imomoe : R.string.yhdm));
+        source.setBackground(context.getDrawable(item.getSource() == 1 ? R.drawable.imomoe_bg : R.drawable.yhdm_bg));
+        source.setText(Utils.getString(item.getSource() == 1 ? R.string.imomoe : R.string.yhdm));
         source.setVisibility(View.VISIBLE);
-        helper.setText(R.id.title, item.getTitle().replaceAll("imomoe", ""));
+        helper.setText(R.id.title, item.getTitle());
+        helper.getView(R.id.new_view).setVisibility(item.getState() == 1 ? View.VISIBLE : View.GONE);
     }
 }

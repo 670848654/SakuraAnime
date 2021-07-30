@@ -43,13 +43,14 @@ import my.project.sakuraproject.R;
 import my.project.sakuraproject.adapter.WeekAdapter;
 import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.bean.Refresh;
+import my.project.sakuraproject.custom.CustomToast;
 import my.project.sakuraproject.custom.VpSwipeRefreshLayout;
 import my.project.sakuraproject.database.DatabaseUtil;
 import my.project.sakuraproject.main.about.AboutActivity;
 import my.project.sakuraproject.main.animeList.AnimeListActivity;
 import my.project.sakuraproject.main.animeTopic.AnimeTopicActivity;
 import my.project.sakuraproject.main.base.BaseActivity;
-import my.project.sakuraproject.main.favorite.FavoriteActivity;
+import my.project.sakuraproject.main.my.MyActivity;
 import my.project.sakuraproject.main.search.SearchActivity;
 import my.project.sakuraproject.main.setting.SettingActivity;
 import my.project.sakuraproject.main.tag.TagActivity;
@@ -109,6 +110,8 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
         initDrawer();
         initSwipe();
         initFragment();
+//        startService(new Intent(this, MyService.class));
+//        Aria.download(this).removeAllTask(false);
     }
 
     @Override
@@ -121,7 +124,8 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
         toolbar.setOnClickListener(v -> {
             if (!Utils.isFastClick()) return;
             if (mSwipe.isRefreshing()) {
-                Sakura.getInstance().showToastMsg(Utils.getString(R.string.loading_info));
+//                Sakura.getInstance().showToastMsg(Utils.getString(R.string.loading_info));
+                CustomToast.showToast(this, Utils.getString(R.string.loading_info), CustomToast.WARNING);
                 return;
             }
             setDefaultSource();
@@ -264,7 +268,7 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
     public void onBackPressed() {
         if (drawer.isDrawerOpen(GravityCompat.START)) drawer.closeDrawer(GravityCompat.START);
         else if ((System.currentTimeMillis() - exitTime) > 2000) {
-            application.showToastMsg(Utils.getString(R.string.exit_app));
+            CustomToast.showToast(this, Utils.getString(R.string.exit_app), CustomToast.DEFAULT);
             exitTime = System.currentTimeMillis();
         } else {
             application.removeALLActivity();
@@ -290,8 +294,14 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
             case R.id.anime_jcb:
                 openAnimeListActivity(Utils.getString(R.string.home_jcb_title), Sakura.JCB_API, false);
                 break;
-            case R.id.favorite:
+            /*case R.id.favorite:
                 startActivity(new Intent(this, FavoriteActivity.class));
+                break;
+            case R.id.history:
+                startActivity(new Intent(this, HistoryActivity.class));
+                break;*/
+            case R.id.my:
+                startActivity(new Intent(this, MyActivity.class));
                 break;
             case R.id.about:
                 startActivity(new Intent(this, AboutActivity.class));
@@ -333,7 +343,8 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
     public void showLoadErrorView(String msg) {
         runOnUiThread(() -> {
             mSwipe.setRefreshing(false);
-            application.showErrorToastMsg(msg);
+//            application.showErrorToastMsg(msg);
+            CustomToast.showToast(this, msg, CustomToast.ERROR);
             application.error = msg;
             application.week = new JSONObject();
             setWeekAdapter(week);

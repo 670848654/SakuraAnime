@@ -6,6 +6,7 @@ import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
@@ -22,9 +23,6 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.fanchen.sniffing.SniffingUICallback;
-import com.fanchen.sniffing.SniffingVideo;
-import com.fanchen.sniffing.web.SniffingUtil;
 import com.google.android.material.button.MaterialButton;
 
 import org.greenrobot.eventbus.EventBus;
@@ -36,6 +34,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import cn.jzvd.JZUtils;
 import cn.jzvd.Jzvd;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.adapter.DramaAdapter;
@@ -44,18 +43,24 @@ import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.bean.AnimeDescDetailsBean;
 import my.project.sakuraproject.bean.Event;
 import my.project.sakuraproject.bean.ImomoeVideoUrlBean;
+import my.project.sakuraproject.bean.Refresh;
+import my.project.sakuraproject.custom.CustomToast;
 import my.project.sakuraproject.database.DatabaseUtil;
 import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.base.BaseModel;
 import my.project.sakuraproject.main.base.Presenter;
 import my.project.sakuraproject.main.video.ImomoeVideoContract;
 import my.project.sakuraproject.main.video.ImomoeVideoPresenter;
+import my.project.sakuraproject.sniffing.SniffingUICallback;
+import my.project.sakuraproject.sniffing.SniffingVideo;
+import my.project.sakuraproject.sniffing.web.SniffingUtil;
 import my.project.sakuraproject.util.SharedPreferencesUtils;
 import my.project.sakuraproject.util.StatusBarUtil;
 import my.project.sakuraproject.util.Utils;
 import my.project.sakuraproject.util.VideoUtils;
 
-public class ImomoePlayerActivity extends BaseActivity implements JZPlayer.CompleteListener, JZPlayer.TouchListener, SniffingUICallback, JZPlayer.ShowOrHideChangeViewListener, ImomoeVideoContract.View {
+public class ImomoePlayerActivity extends BaseActivity implements JZPlayer.CompleteListener, JZPlayer.TouchListener, SniffingUICallback,
+        JZPlayer.ShowOrHideChangeViewListener, ImomoeVideoContract.View, JZPlayer.OnProgressListener, JZPlayer.PlayingListener, JZPlayer.PauseListener {
     @BindView(R.id.player)
     JZPlayer player;
     private String witchTitle, url, dramaUrl;
@@ -96,6 +101,14 @@ public class ImomoePlayerActivity extends BaseActivity implements JZPlayer.Compl
     SwitchCompat switchCompat;
     private boolean hasPreVideo = false;
     private boolean hasNextVideo = false;
+    private String animeId;
+    private long playPosition;
+    private long videoDuration;
+    private boolean hasPosition = false;
+    private long userSavePosition = 0;
+    @BindView(R.id.play_next_video)
+    SwitchCompat playNextVideoSc;
+    private boolean playNextVideo;
 
     @Override
     protected Presenter createPresenter() {
@@ -145,6 +158,8 @@ public class ImomoePlayerActivity extends BaseActivity implements JZPlayer.Compl
         imomoeBeans = (List<List<ImomoeVideoUrlBean>>) bundle.getSerializable("playList");
         //当前选择源
         nowSource = bundle.getInt("nowSource");
+        //番剧ID
+        animeId = bundle.getString("animeId");
         //禁止冒泡
         linearLayout.setOnClickListener(view -> {
             return;
@@ -206,7 +221,7 @@ public class ImomoePlayerActivity extends BaseActivity implements JZPlayer.Compl
                 drawerLayout.closeDrawer(GravityCompat.END);
             else drawerLayout.openDrawer(GravityCompat.END);
         });
-        player.setListener(this, this, this, this);
+        player.setListener(this,  false, this, this, this, this, this, this);
         player.backButton.setOnClickListener(v -> finish());
         player.preVideo.setOnClickListener(v -> {
             clickIndex--;
@@ -274,9 +289,15 @@ public class ImomoePlayerActivity extends BaseActivity implements JZPlayer.Compl
         materialButton.setTextColor(getResources().getColor(R.color.tabSelectedTextColor));
         bean.setSelected(true);
         EventBus.getDefault().post(new Event(true, nowSource, clickIndex));
-        String fid = DatabaseUtil.getAnimeID(animeTitle+Utils.getString(R.string.imomoe));
-        DatabaseUtil.addIndex(fid, Sakura.DOMAIN + list.get(nowSource).get(clickIndex).getUrl());
-        dramaUrl = VideoUtils.getUrl(bean.getUrl());
+        String fid = DatabaseUtil.getAnimeID(animeTitle, 1);
+        DatabaseUtil.addIndex(
+                fid,
+                Sakura.DOMAIN + list.get(nowSource).get(clickIndex).getUrl(),
+                nowSource,
+                list.get(nowSource).get(clickIndex).getTitle());
+//        dramaUrl = VideoUtils.getUrl(bean.getUrl());
+        saveProgress();
+        dramaUrl = bean.getUrl();
         witchTitle = animeTitle + " - " + bean.getTitle();
         url = imomoeBeans.get(nowSource).get(clickIndex).getVidOrUrl();
         player.playingShow();
@@ -322,6 +343,10 @@ public class ImomoePlayerActivity extends BaseActivity implements JZPlayer.Compl
         player.currentSpeedIndex = 1;
         player.setUp(playUrl, witchTitle, Jzvd.SCREEN_FULLSCREEN, JZExoPlayer.class);
         player.startVideo();
+        userSavePosition = DatabaseUtil.getPlayPosition(animeId, dramaUrl);
+        player.seekToInAdvance = userSavePosition;//跳转到指定的播放进度
+        player.startButton.performClick();//响应点击事件
+        hasPosition = userSavePosition > 0;
     }
 
     /**
@@ -334,7 +359,7 @@ public class ImomoePlayerActivity extends BaseActivity implements JZPlayer.Compl
             SniffingUtil.get().activity(this).referer(webUrl).callback(this).url(webUrl).start();
         } else {
             try {
-              webUrl = String.format(Api.IMOMOE_PARSE_API, imomoeBeans.get(nowSource).get(clickIndex).getParam(), url,  URLEncoder.encode(Sakura.DOMAIN +  list.get(nowSource).get(clickIndex).getUrl(),"GB2312"));
+              webUrl = String.format(Api.IMOMOE_PARSE_API, imomoeBeans.get(nowSource).get(clickIndex).getParam(), url,  URLEncoder.encode(BaseModel.getDomain(true) +  list.get(nowSource).get(clickIndex).getUrl(),"GB2312"));
                 SniffingUtil.get().activity(this).referer(webUrl).callback(this).url(webUrl).start();
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
@@ -361,6 +386,12 @@ public class ImomoePlayerActivity extends BaseActivity implements JZPlayer.Compl
         switchCompat.setChecked((Boolean) SharedPreferencesUtils.getParam(this, "hide_progress", false));
         switchCompat.setOnCheckedChangeListener((buttonView, isChecked) -> {
             SharedPreferencesUtils.setParam(this, "hide_progress", isChecked);
+        });
+        playNextVideo = (Boolean) SharedPreferencesUtils.getParam(this, "play_next_video", false);
+        playNextVideoSc.setChecked(playNextVideo);
+        playNextVideoSc.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            SharedPreferencesUtils.setParam(this, "play_next_video", isChecked);
+            playNextVideo = isChecked;
         });
     }
 
@@ -443,6 +474,16 @@ public class ImomoePlayerActivity extends BaseActivity implements JZPlayer.Compl
         if (isPip) finish();
     }
 
+    private void saveProgress() {
+        if (Utils.videoHasComplete(playPosition, videoDuration)) {
+            playPosition = 0;
+            DatabaseUtil.updateHistory(animeId, dramaUrl, playPosition, videoDuration);
+        }
+        else
+            DatabaseUtil.updateHistory(animeId, dramaUrl, playPosition > 2000 ? playPosition : 0, videoDuration);
+        Log.e("saveProgress", "番剧ID：" + animeId + ",剧集URL：" + dramaUrl + ",播放进度：" + playPosition + ",视频长度：" + videoDuration);
+    }
+
     /**
      * 是否为分屏模式
      *
@@ -506,18 +547,24 @@ public class ImomoePlayerActivity extends BaseActivity implements JZPlayer.Compl
 
     @Override
     protected void onDestroy() {
+        saveProgress();
+        EventBus.getDefault().post(new Refresh(1));
+        EventBus.getDefault().post(new Refresh(2));
         player.releaseAllVideos();
         super.onDestroy();
     }
 
     @Override
     public void complete() {
-        if (hasNextVideo) {
-            application.showSuccessToastMsg("开始播放下一集");
+        saveProgress();
+        if (hasNextVideo && playNextVideo) {
+//            application.showSuccessToastMsg("开始播放下一集");
+            CustomToast.showToast(this, "开始播放下一集", CustomToast.SUCCESS);
             clickIndex++;
             changePlayUrl(clickIndex);
         } else {
-            application.showSuccessToastMsg("播放完毕");
+//            application.showSuccessToastMsg("全部播放完毕");
+            CustomToast.showToast(this, "全部播放完毕", CustomToast.SUCCESS);
             if (!drawerLayout.isDrawerOpen(GravityCompat.END))
                 drawerLayout.openDrawer(GravityCompat.END);
         }
@@ -536,9 +583,11 @@ public class ImomoePlayerActivity extends BaseActivity implements JZPlayer.Compl
     }
 
     @Override
-    public void onSniffingSuccess(View webView, String url, List<SniffingVideo> videos) {
+    public void onSniffingSuccess(View webView, String url, int position, List<SniffingVideo> videos) {
         List<String> urls = Utils.ridRepeat(videos);
-        if (urls.size() > 1)
+        if (urls.size() == 0)
+            GetRealPlayingAddressError(url);
+        else if (urls.size() > 1)
             VideoUtils.showMultipleVideoSources(this,
                     urls,
                     (dialog, index) -> playAnime(urls.get(index)),
@@ -548,9 +597,17 @@ public class ImomoePlayerActivity extends BaseActivity implements JZPlayer.Compl
     }
 
     @Override
-    public void onSniffingError(View webView, String url, int errorCode) {
-        Sakura.getInstance().showToastMsg(Utils.getString(R.string.open_web_view));
-        VideoUtils.openDefaultWebview(this, webUrl);
+    public void onSniffingError(View webView, String url, int position, int errorCode) {
+        GetRealPlayingAddressError(url);
+    }
+
+    /**
+     * 嗅探播放地址失败
+     */
+    private void GetRealPlayingAddressError(String url) {
+//        Sakura.getInstance().showToastMsg(Utils.getString(R.string.open_web_view));
+        CustomToast.showToast(this, Utils.getString(R.string.open_web_view), CustomToast.WARNING);
+        VideoUtils.openDefaultWebview(this, url);
         finish();
     }
 
@@ -583,5 +640,24 @@ public class ImomoePlayerActivity extends BaseActivity implements JZPlayer.Compl
     public void showOrHideChangeView() {
         player.preVideo.setVisibility(hasPreVideo ? View.VISIBLE : View.GONE);
         player.nextVideo.setVisibility(hasNextVideo ? View.VISIBLE : View.GONE);
+    }
+
+    @Override
+    public void getPosition(long position, long duration) {
+        playPosition = position;
+        videoDuration = duration;
+    }
+
+    @Override
+    public void playing() {
+        if (hasPosition) {
+            CustomToast.showToast(this, "已定位到上次观看位置 " + JZUtils.stringForTime(userSavePosition), CustomToast.DEFAULT);
+            hasPosition = false;
+        }
+    }
+
+    @Override
+    public void pause() {
+        saveProgress();
     }
 }

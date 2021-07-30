@@ -4,33 +4,41 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
+
+import java.io.IOException;
 
 import cn.jzvd.JZDataSource;
 import cn.jzvd.JZUtils;
 import cn.jzvd.JzvdStd;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.cling.ui.DLNAActivity;
+import my.project.sakuraproject.custom.CustomToast;
 import my.project.sakuraproject.util.SharedPreferencesUtils;
+import my.project.sakuraproject.util.Utils;
 
 public class JZPlayer extends JzvdStd {
     private Context context;
     private CompleteListener listener;
     private TouchListener touchListener;
     private ShowOrHideChangeViewListener showOrHideChangeViewListener;
+    private OnProgressListener onProgressListener;
+    private PlayingListener playingListener;
+    private PauseListener pauseListener;
     private ImageView ibLock;
     private boolean locked = false;
     public ImageView fastForward, quickRetreat, config, airplay;
     public TextView tvSpeed, snifferBtn, openDrama, preVideo, nextVideo;
     public int currentSpeedIndex = 1;
+    private boolean isLocalVideo;
+    public String localVideoPath;
+    private LocalVideoDLNAServer localVideoDLNAServer;
 
     public JZPlayer(Context context) { super(context); }
 
@@ -38,16 +46,22 @@ public class JZPlayer extends JzvdStd {
         super(context, attrs);
     }
 
-    public void setListener(Context context, CompleteListener listener, TouchListener touchListener, ShowOrHideChangeViewListener showOrHideChangeViewListener) {
+    public void setListener(Context context, boolean isLocalVideo, CompleteListener listener,
+                            TouchListener touchListener, ShowOrHideChangeViewListener showOrHideChangeViewListener,
+                            OnProgressListener onProgressListener, PlayingListener playingListener, PauseListener pauseListener) {
+        this.isLocalVideo = isLocalVideo;
         this.context = context;
         this.listener = listener;
         this.touchListener = touchListener;
+        this.onProgressListener = onProgressListener;
+        this.playingListener = playingListener;
+        this.pauseListener = pauseListener;
         this.showOrHideChangeViewListener = showOrHideChangeViewListener;
     }
 
     @Override
     public int getLayoutId() {
-        return R.layout.jz_layout_std;
+        return R.layout.custom_jz_layout_std;
     }
 
     @Override
@@ -80,12 +94,12 @@ public class JZPlayer extends JzvdStd {
                     // 已经上锁，再次点击解锁
                     changeUiToPlayingShow();
                     ibLock.setImageResource(R.drawable.player_btn_locking);
-                    Toast.makeText(context, "屏幕锁定关闭", Toast.LENGTH_SHORT).show();
+                    CustomToast.showToast(context, "屏幕锁定关闭", CustomToast.SUCCESS);
                 } else {
                     // 上锁
                     changeUiToPlayingClear();
                     ibLock.setImageResource(R.drawable.player_btn_locking_pre);
-                    Toast.makeText(context, "屏幕锁定开启", Toast.LENGTH_SHORT).show();
+                    CustomToast.showToast(context, "屏幕锁定开启", CustomToast.SUCCESS);
 //                    Drawable up = ContextCompat.getDrawable(context,R.drawable.player_btn_locking_pre);
 //                    Drawable drawableUp= DrawableCompat.wrap(up);
 //                    DrawableCompat.setTint(drawableUp, ContextCompat.getColor(context,R.color.colorAccent));
@@ -118,11 +132,23 @@ public class JZPlayer extends JzvdStd {
                 tvSpeed.setText("倍数X" + getSpeedFromIndex(currentSpeedIndex));
                 break;
             case R.id.airplay:
+                if (!Utils.isWifi(context)) {
+                    CustomToast.showToast(context, "投屏需要连接Wifi，确保与投屏设备网络环境一致~", CustomToast.WARNING);
+                    return;
+                }
+                if (isLocalVideo) {
+                    // 本地投屏
+                    if (localVideoDLNAServer != null) localVideoDLNAServer.stop();
+                    localVideoDLNAServer = new LocalVideoDLNAServer(8080, localVideoPath);
+                    try {
+                        localVideoDLNAServer.start();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
                 Bundle bundle = new Bundle();
-                bundle.putString("playUrl", jzDataSource.getCurrentUrl().toString());
+                bundle.putString("playUrl", isLocalVideo ? Utils.getLocalIpAddress(context) : jzDataSource.getCurrentUrl().toString());
                 bundle.putLong("duration", getDuration());
-                Log.e("duration", getDrawingTime() + "");
-                Log.e("playUrl", jzDataSource.getCurrentUrl().toString());
                 context.startActivity(new Intent(context, DLNAActivity.class).putExtras(bundle));
                 break;
         }
@@ -176,8 +202,8 @@ public class JZPlayer extends JzvdStd {
     }
 
     public void playingShow() {
-        setAllControlsVisiblity(View.INVISIBLE, View.INVISIBLE, View.INVISIBLE,
-                View.VISIBLE, View.INVISIBLE, View.INVISIBLE, View.INVISIBLE);
+        setAllControlsVisiblity(View.GONE, View.GONE, View.GONE,
+                View.VISIBLE, View.GONE, View.GONE, View.GONE);
         ibLock.setVisibility(GONE);
         fastForward.setVisibility(GONE);
         quickRetreat.setVisibility(GONE);
@@ -227,6 +253,7 @@ public class JZPlayer extends JzvdStd {
         airplay.setVisibility(VISIBLE);
         preVideo.setVisibility(INVISIBLE);
         nextVideo.setVisibility(INVISIBLE);
+        pauseListener.pause();
     }
 
 
@@ -281,6 +308,14 @@ public class JZPlayer extends JzvdStd {
         tvSpeed.setText("倍数X" + getSpeedFromIndex(currentSpeedIndex));
     }
 
+    public interface PlayingListener {
+        void playing();
+    }
+
+    public interface PauseListener {
+        void pause();
+    }
+
     public interface CompleteListener {
         void complete();
     }
@@ -293,6 +328,10 @@ public class JZPlayer extends JzvdStd {
         void showOrHideChangeView();
     }
 
+    public interface OnProgressListener {
+        void getPosition(long position, long duration);
+    }
+
     @Override
     public void setUp(JZDataSource jzDataSource, int screen, Class mediaInterfaceClass) {
         super.setUp(jzDataSource, screen, mediaInterfaceClass);
@@ -303,8 +342,14 @@ public class JZPlayer extends JzvdStd {
 
     @Override
     public void onAutoCompletion() {
-        onStateAutoComplete();
+        super.onStateAutoComplete();
         listener.complete();
+    }
+
+    @Override
+    public void onStatePlaying() {
+        super.onStatePlaying();
+        playingListener.playing();
     }
 
     @Override
@@ -331,5 +376,17 @@ public class JZPlayer extends JzvdStd {
         });
         builder.setCancelable(false);
         builder.create().show();
+    }
+
+    @Override
+    public void onProgress(int progress, long position, long duration) {
+        super.onProgress(progress, position, duration);
+        onProgressListener.getPosition(position, duration);
+    }
+
+    @Override
+    public void reset() {
+        super.reset();
+        if (localVideoDLNAServer != null) localVideoDLNAServer.stop();
     }
 }

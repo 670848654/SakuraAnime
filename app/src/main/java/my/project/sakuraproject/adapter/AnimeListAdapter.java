@@ -11,6 +11,9 @@ import my.project.sakuraproject.R;
 import my.project.sakuraproject.bean.AnimeListBean;
 import my.project.sakuraproject.util.Utils;
 
+/**
+ * 番剧列表适配器
+ */
 public class AnimeListAdapter extends BaseQuickAdapter<AnimeListBean, BaseViewHolder> {
     private Context context;
 

@@ -5,9 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Patterns;
-
-import androidx.appcompat.app.AlertDialog;
+import android.util.Log;
 
 import com.alibaba.fastjson.JSONArray;
 
@@ -16,12 +14,23 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.Serializable;
+import java.security.spec.AlgorithmParameterSpec;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.crypto.Cipher;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
+
+import androidx.appcompat.app.AlertDialog;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.bean.AnimeDescDetailsBean;
@@ -29,14 +38,9 @@ import my.project.sakuraproject.bean.ImomoeVideoUrlBean;
 import my.project.sakuraproject.main.player.ImomoePlayerActivity;
 import my.project.sakuraproject.main.player.PlayerActivity;
 import my.project.sakuraproject.main.webview.normal.DefaultNormalWebActivity;
-import my.project.sakuraproject.main.webview.normal.NormalWebActivity;
-import my.project.sakuraproject.main.webview.x5.DefaultX5WebActivity;
-import my.project.sakuraproject.main.webview.x5.X5WebActivity;
 
 public class VideoUtils {
     private static AlertDialog alertDialog;
-    private final static Pattern PLAY_URL_PATTERN = Pattern.compile("(https?|ftp|file):\\/\\/[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]");
-
     /**
      * 解析失败提示弹窗
      *
@@ -87,6 +91,21 @@ public class VideoUtils {
         alertDialog.show();
     }
 
+    /**
+     * 网络出错时弹窗
+     *
+     * @param context
+     * @param listener
+     */
+    public static void showPlayerNetworkErrorDialog(Context context, DialogInterface.OnClickListener listener) {
+        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(context, R.style.DialogStyle);
+        builder.setCancelable(false);
+        builder.setMessage(Utils.getString(R.string.error_700));
+        builder.setNegativeButton(Utils.getString(R.string.try_again), listener);
+        alertDialog = builder.create();
+        alertDialog.show();
+    }
+
     public static String getVideoUrl(String url) {
         // String playStr = "";
         if (!url.contains("$mp4"))
@@ -119,7 +138,7 @@ public class VideoUtils {
      * @param clickIndex
      */
     public static void openPlayer(boolean isDescActivity, Activity activity, String witchTitle, String url, String animeTitle, String dramaUrl,
-                                  List<AnimeDescDetailsBean> list, int clickIndex) {
+                                  List<AnimeDescDetailsBean> list, int clickIndex, String animeId) {
         Bundle bundle = new Bundle();
         bundle.putString("title", witchTitle);
         bundle.putString("url", url);
@@ -127,6 +146,7 @@ public class VideoUtils {
         bundle.putString("dramaUrl", dramaUrl);
         bundle.putSerializable("list", (Serializable) list);
         bundle.putInt("clickIndex", clickIndex);
+        bundle.putString("animeId", animeId);
         Sakura.destoryActivity("player");
         if (isDescActivity)
             activity.startActivityForResult(new Intent(activity, PlayerActivity.class).putExtras(bundle), 0x10);
@@ -149,7 +169,7 @@ public class VideoUtils {
      * @param clickIndex
      */
     public static void openImomoePlayer(boolean isDescActivity, Activity activity, String witchTitle, String url, String animeTitle, String dramaUrl,
-                                        List<List<AnimeDescDetailsBean>> list, List<List<ImomoeVideoUrlBean>> bean, int nowSource, int clickIndex) {
+                                        List<List<AnimeDescDetailsBean>> list, List<List<ImomoeVideoUrlBean>> bean, int nowSource, int clickIndex, String animeId) {
         Bundle bundle = new Bundle();
         bundle.putString("title", witchTitle);
         bundle.putString("url", url);
@@ -159,43 +179,12 @@ public class VideoUtils {
         bundle.putSerializable("playList", (Serializable) bean);
         bundle.putInt("nowSource", nowSource);
         bundle.putInt("clickIndex", clickIndex);
+        bundle.putString("animeId", animeId);
         Sakura.destoryActivity("playerImomoe");
         if (isDescActivity)
             activity.startActivityForResult(new Intent(activity, ImomoePlayerActivity.class).putExtras(bundle), 0x10);
         else {
             activity.startActivity(new Intent(activity, ImomoePlayerActivity.class).putExtras(bundle));
-            activity.finish();
-        }
-    }
-
-    /**
-     * 打开webview
-     *
-     * @param isDescActivity
-     * @param activity
-     * @param witchTitle
-     * @param animeTitle
-     * @param url
-     * @param sakuraUrl
-     * @param list
-     */
-    public static void openWebview(boolean isDescActivity, Activity activity, String witchTitle, String animeTitle, String url, String sakuraUrl, List<AnimeDescDetailsBean> list) {
-        Bundle bundle = new Bundle();
-        bundle.putString("witchTitle", witchTitle);
-        bundle.putString("title", animeTitle);
-        bundle.putString("url", url);
-        bundle.putString("sakuraUrl", sakuraUrl);
-        bundle.putSerializable("list", (Serializable) list);
-        if (isDescActivity)
-            if (Utils.loadX5())
-                activity.startActivityForResult(new Intent(activity, X5WebActivity.class).putExtras(bundle), 0x10);
-            else
-                activity.startActivityForResult(new Intent(activity, NormalWebActivity.class).putExtras(bundle), 0x10);
-        else {
-            if (Utils.loadX5())
-                activity.startActivity(new Intent(activity, X5WebActivity.class).putExtras(bundle));
-            else
-                activity.startActivity(new Intent(activity, NormalWebActivity.class).putExtras(bundle));
             activity.finish();
         }
     }
@@ -207,61 +196,97 @@ public class VideoUtils {
      * @param url
      */
     public static void openDefaultWebview(Activity activity, String url) {
-        if (Utils.loadX5())
+        /*if (Utils.loadX5())
             activity.startActivity(new Intent(activity, DefaultX5WebActivity.class).putExtra("url",url));
-        else
-            activity.startActivity(new Intent(activity, DefaultNormalWebActivity.class).putExtra("url",url));
+        else*/
+        activity.startActivity(new Intent(activity, DefaultNormalWebActivity.class).putExtra("url",url));
     }
 
     public static String getUrl(String url) {
         return url.contains(Sakura.DOMAIN) ? url : Sakura.DOMAIN + url;
     }
 
-    /**************************************  imomoe视频解析方法  **************************************/
-    public static List<List<ImomoeVideoUrlBean>> getImomoePlayUrl(String json) {
-        List<List<ImomoeVideoUrlBean>> allList = new ArrayList<>();
-        JSONArray jsonArray = JSONArray.parseArray(json);
-        for (int i=0,size=jsonArray.size(); i<size; i++) {
-            JSONArray sourceArr = JSONArray.parseArray(jsonArray.getJSONArray(i).getString(1));
-            List<ImomoeVideoUrlBean> imomoeVideoUrlBeans = new ArrayList<>();
-            for (int j=0,size2=sourceArr.size(); j<size2; j++) {
-                String str = sourceArr.getString(j);
-                String[] strs = str.split("\\$");
-                Matcher matcher = Pattern.compile("\\$(.*)\\$").matcher(str);
-                if (matcher.find()) {
-                    ImomoeVideoUrlBean imomoeVideoUrlBean = new ImomoeVideoUrlBean();
-                    String find = matcher.group().replaceAll("\\$", "");
-                    if (find.contains("http")) {
-                        // 是http
-                        imomoeVideoUrlBean.setHttp(true);
-                        imomoeVideoUrlBean.setVidOrUrl(find);
-                    } else {
-                        // 非http
-                        imomoeVideoUrlBean.setHttp(false);
-                        imomoeVideoUrlBean.setVidOrUrl(find);
-                        imomoeVideoUrlBean.setParam(strs[strs.length-1]);
-                    }
-                    imomoeVideoUrlBeans.add(imomoeVideoUrlBean);
-                }
+
+
+    /**
+     * 读取key内容
+     * @param file
+     * @return
+     */
+    public static String readKeyInfo(File file){
+        StringBuilder result = new StringBuilder();
+        try{
+            BufferedReader br = new BufferedReader(new FileReader(file));
+            String s = null;
+            while((s = br.readLine())!=null){
+                result.append(System.lineSeparator()+s);
             }
-            allList.add(imomoeVideoUrlBeans);
+            br.close();
+        }catch(Exception e){
+            e.printStackTrace();
         }
-        return allList;
+        return result.toString().replaceAll("\\n", "").replaceAll(" ","");
     }
 
-    public static String getImomoeApiPlayUrl(String source) {
-        String playUrl = "";
-        Document document = Jsoup.parse(source);
-        Elements scripts = document.select("script");
-        for (Element element : scripts) {
-            if (element.html().contains("var video")) {
-                Matcher m = PLAY_URL_PATTERN.matcher(element.html());
-                if (m.find()) {
-                    playUrl = m.group();
-                    break;
-                }
+    /**
+     * 解密ASE-128 ts切片
+     *
+     * @param fileBytes ts文件字节数组
+     * @param key 密钥
+     * @param iv IV标签
+     * @return 解密后的字节数组
+     */
+    public static byte[] decrypt(byte[] fileBytes, String key, byte[] iv) {
+        try {
+            // 判断Key是否正确
+            if (key.isEmpty()) return null;
+            // 判断Key是否为16位
+            if (key.length() != 16) {
+                Log.e("KeyError", "Key长度不是16位");
+                return null;
             }
+            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS7Padding");
+            SecretKeySpec keySpec = new SecretKeySpec(key.getBytes("utf-8"), "AES");
+            // 如果m3u8有IV标签，那么IvParameterSpec构造函数就把IV标签后的内容转成字节数组传进去
+            if (iv.length != 16) iv = new byte[16];
+            AlgorithmParameterSpec paramSpec = new IvParameterSpec(iv);
+            cipher.init(Cipher.DECRYPT_MODE, keySpec, paramSpec);
+            return cipher.doFinal(fileBytes);
+        } catch (Exception ex) {
+            return null;
         }
-        return playUrl;
+    }
+
+    /**
+     * 合并ts
+     * @param savePath
+     * @param fileList
+     * @return
+     */
+    public static boolean merge(String savePath, List<File> fileList) {
+        try {
+            File file = new File(savePath.replaceAll("m3u8", "mp4"));
+            if (file.exists())
+                file.delete();
+            else file.createNewFile();
+            FileOutputStream fs = new FileOutputStream(file);
+            byte[] b = new byte[4096];
+            for (File f : fileList) {
+                FileInputStream fileInputStream = new FileInputStream(f);
+                int len;
+                while ((len = fileInputStream.read(b)) != -1) {
+                    fs.write(b, 0, len);
+                }
+                fileInputStream.close();
+                fs.flush();
+            }
+            fs.close();
+            Log.e("TsMergeHandler", "合并TS成功");
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e("TsMergeHandler", "合并TS失败，请重新下载....");
+            return false;
+        }
     }
 }

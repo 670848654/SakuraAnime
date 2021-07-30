@@ -1,7 +1,5 @@
 package my.project.sakuraproject.main.setting;
 
-import android.content.Intent;
-import android.text.Html;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +13,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 
+import com.arialyy.aria.core.Aria;
 import com.r0adkll.slidr.Slidr;
 
 import org.greenrobot.eventbus.EventBus;
@@ -24,10 +23,9 @@ import butterknife.OnClick;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.bean.Refresh;
-import my.project.sakuraproject.database.DatabaseUtil;
+import my.project.sakuraproject.custom.CustomToast;
 import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.base.Presenter;
-import my.project.sakuraproject.main.setting.user.ApiActivity;
 import my.project.sakuraproject.util.SharedPreferencesUtils;
 import my.project.sakuraproject.util.SwipeBackLayoutUtil;
 import my.project.sakuraproject.util.Utils;
@@ -39,18 +37,25 @@ public class SettingActivity extends BaseActivity {
     TextView domain_default;
     @BindView(R.id.player_default)
     TextView player_default;
-    @BindView(R.id.api)
-    TextView api;
-    @BindView(R.id.x5_state_title)
+    /*@BindView(R.id.x5_state_title)
     TextView x5_state_title;
     @BindView(R.id.x5_state)
-    TextView x5_state;
+    TextView x5_state;*/
     @BindView(R.id.footer)
     LinearLayout footer;
     private String url;
     private String[] playerItems = Utils.getArray(R.array.player);
-    private String [] x5Items = {"启用","禁用"};
+    private String[] x5Items = {"启用","禁用"};
     private boolean isImomoe;
+    @BindView(R.id.check_favorite_update)
+    TextView checkFavoriteUpdateView;
+    private String[] checkFavoriteUpdateItems = {"启用","停用"};
+    @BindView(R.id.download_number)
+    TextView downloadNumber;
+    private String[] downloadNumbers = Utils.getArray(R.array.download_numbers);
+    @BindView(R.id.slidr_config)
+    TextView slidrConfig;
+    private String[] slidrConfigs = Utils.getArray(R.array.slidr_configs);
 
     @Override
     protected Presenter createPresenter() {
@@ -81,7 +86,7 @@ public class SettingActivity extends BaseActivity {
 
     public void initToolbar() {
         toolbar = findViewById(R.id.toolbar);
-        toolbar.setTitle(Utils.getString(R.string.setting_title));
+        toolbar.setTitle(Utils.getString(R.string.home_setting_item_title));
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbar.setNavigationOnClickListener(view -> finish());
@@ -94,7 +99,6 @@ public class SettingActivity extends BaseActivity {
 
     public void getUserCustomSet() {
         isImomoe = Utils.isImomoe();
-        api.setText(DatabaseUtil.queryAllApi().size() + "");
         switch ((Integer) SharedPreferencesUtils.getParam(getApplicationContext(), "player", 0)) {
             case 0:
                 player_default.setText(playerItems[0]);
@@ -103,18 +107,21 @@ public class SettingActivity extends BaseActivity {
                 player_default.setText(playerItems[1]);
                 break;
         }
-        if (Utils.getX5State())
+        /*if (Utils.getX5State())
             x5_state_title.append(Html.fromHtml("<font color=\"#259b24\">加载成功</font>"));
         else
             x5_state_title.append(Html.fromHtml("<font color=\"#e51c23\">加载失败</font>"));
         if (Utils.loadX5())
             x5_state.setText(x5Items[0]);
         else
-            x5_state.setText(x5Items[1]);
+            x5_state.setText(x5Items[1]);*/
+        checkFavoriteUpdateView.setText((Boolean) SharedPreferencesUtils.getParam(this, "check_favorite_update", true) ? checkFavoriteUpdateItems[0] : checkFavoriteUpdateItems[1]);
         domain_default.setText(Sakura.DOMAIN);
+        downloadNumber.setText(((Integer) SharedPreferencesUtils.getParam(this, "download_number", 0) + 1) + "");
+        slidrConfig.setText((Boolean) SharedPreferencesUtils.getParam(this, "slidr_config", false) ? slidrConfigs[1] : slidrConfigs[0]);
     }
 
-    @OnClick({R.id.set_domain, R.id.set_player, R.id.set_api_source,R.id.set_x5})
+    @OnClick({R.id.set_domain, R.id.set_player, R.id.set_favorite_update, R.id.set_download_number, R.id.set_sildr})
     public void onClick(RelativeLayout layout) {
         switch (layout.getId()) {
             case R.id.set_domain:
@@ -123,15 +130,21 @@ public class SettingActivity extends BaseActivity {
             case R.id.set_player:
                 setDefaultPlayer();
                 break;
-            case R.id.set_api_source:
-                startActivity(new Intent(this, ApiActivity.class));
+            case R.id.set_favorite_update:
+                setCheckFavoriteUpdateState();
                 break;
-            case R.id.set_x5:
+            case R.id.set_download_number:
+                setDownloadNumber();
+                break;
+            case R.id.set_sildr:
+                setSildr();
+                break;
+            /*case R.id.set_x5:
                 if (Utils.getX5State())
                     setX5State();
                 else
                     application.showErrorToastMsg("X5内核未能加载成功，无法设置");
-                break;
+                break;*/
         }
     }
 
@@ -176,7 +189,8 @@ public class SettingActivity extends BaseActivity {
                     domain_default.setText(url);
                     alertDialog.dismiss();
                     EventBus.getDefault().post(new Refresh(0));
-                    application.showSuccessToastMsg(Utils.getString(R.string.set_domain_ok));
+//                    application.showSuccessToastMsg(Utils.getString(R.string.set_domain_ok));
+                    CustomToast.showToast(this, Utils.getString(R.string.set_domain_ok), CustomToast.SUCCESS);
                 } else editText.setError(Utils.getString(R.string.set_domain_error2));
             } else editText.setError(Utils.getString(R.string.set_domain_error1));
         });
@@ -213,7 +227,53 @@ public class SettingActivity extends BaseActivity {
         alertDialog.show();
     }
 
-    public void setX5State() {
+    public void setCheckFavoriteUpdateState() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.DialogStyle);
+        builder.setTitle(Utils.getString(R.string.page_title));
+        builder.setSingleChoiceItems(checkFavoriteUpdateItems, (Boolean) SharedPreferencesUtils.getParam(this, "check_favorite_update", true) ? 0 : 1, (dialog, which) -> {
+            switch (which) {
+                case 0:
+                    SharedPreferencesUtils.setParam(getApplicationContext(), "check_favorite_update", true);
+                    checkFavoriteUpdateView.setText(checkFavoriteUpdateItems[0]);
+                    break;
+                case 1:
+                    SharedPreferencesUtils.setParam(getApplicationContext(), "check_favorite_update", false);
+                    checkFavoriteUpdateView.setText(checkFavoriteUpdateItems[1]);
+                    break;
+            }
+            dialog.dismiss();
+        });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    public void setDownloadNumber() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.DialogStyle);
+        builder.setTitle("设置同时下载任务数量");
+        builder.setSingleChoiceItems(downloadNumbers, (Integer) SharedPreferencesUtils.getParam(this, "download_number", 0), (dialog, which) -> {
+            SharedPreferencesUtils.setParam(this, "download_number", which);
+            downloadNumber.setText(downloadNumbers[which]);
+            Aria.get(this).getDownloadConfig().setMaxTaskNum(Integer.valueOf(downloadNumbers[which]));
+            dialog.dismiss();
+        });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    private void setSildr() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.DialogStyle);
+        builder.setTitle("设置滑动返回方式");
+        builder.setSingleChoiceItems(slidrConfigs, (Boolean) SharedPreferencesUtils.getParam(this, "slidr_config", false) ? 1 : 0, (dialog, which) -> {
+            SharedPreferencesUtils.setParam(this, "slidr_config", which == 0 ? false : true);
+            slidrConfig.setText(slidrConfigs[which]);
+            CustomToast.showToast(this, "设置成功，下次打开界面生效~", CustomToast.DEFAULT);
+            dialog.dismiss();
+        });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    /*public void setX5State() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.DialogStyle);
         builder.setTitle("请选择内核状态");
         builder.setSingleChoiceItems(x5Items, Utils.loadX5() ? 0 : 1, (dialog, which) -> {
@@ -231,11 +291,5 @@ public class SettingActivity extends BaseActivity {
         });
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        api.setText(DatabaseUtil.queryAllApi().size() + "");
-    }
+    }*/
 }

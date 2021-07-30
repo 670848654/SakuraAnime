@@ -12,15 +12,14 @@ import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.RenderersFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.source.hls.HlsMediaSource;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
@@ -29,8 +28,10 @@ import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.upstream.BandwidthMeter;
+import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultAllocator;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.video.VideoListener;
@@ -65,25 +66,27 @@ public class JZExoPlayer extends JZMediaInterface implements Player.EventListene
         mMediaHandler = new Handler(mMediaHandlerThread.getLooper());//主线程还是非主线程，就在这里
         handler = new Handler();
         mMediaHandler.post(() -> {
-            BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
             TrackSelection.Factory videoTrackSelectionFactory =
-                    new AdaptiveTrackSelection.Factory(bandwidthMeter);
+                    new AdaptiveTrackSelection.Factory();
             TrackSelector trackSelector =
-                    new DefaultTrackSelector(videoTrackSelectionFactory);
+                    new DefaultTrackSelector(context, videoTrackSelectionFactory);
 
             LoadControl loadControl = new DefaultLoadControl(new DefaultAllocator(true, C.DEFAULT_BUFFER_SEGMENT_SIZE),
                     360000, 600000, 1000, 5000,
                     C.LENGTH_UNSET,
                     false);
+            BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter.Builder(context).build();
 
             // 2. Create the player
-
             RenderersFactory renderersFactory = new DefaultRenderersFactory(context);
-            simpleExoPlayer = ExoPlayerFactory.newSimpleInstance(context, renderersFactory, trackSelector, loadControl);
+            simpleExoPlayer = new SimpleExoPlayer.Builder(context, renderersFactory)
+                    .setTrackSelector(trackSelector)
+                    .setLoadControl(loadControl)
+                    .setBandwidthMeter(bandwidthMeter)
+                    .build();
             // Produces DataSource instances through which media data is loaded.
-/*            DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(context,
-                    Util.getUserAgent(context, context.getResources().getString(R.string.app_name)));*/
-
+            DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(context,
+                    Util.getUserAgent(context, context.getResources().getString(R.string.app_name)));
             String currUrl = jzvd.jzDataSource.getCurrentUrl().toString();
             MediaSource videoSource;
             DefaultHttpDataSourceFactory httpDataSourceFactory = new DefaultHttpDataSourceFactory(
@@ -98,7 +101,7 @@ public class JZExoPlayer extends JZMediaInterface implements Player.EventListene
                 videoSource = new HlsMediaSource.Factory(httpDataSourceFactory)
                         .createMediaSource(Uri.parse(currUrl), handler, null);
             } else {
-                videoSource = new ExtractorMediaSource.Factory(httpDataSourceFactory)
+                videoSource = new ProgressiveMediaSource.Factory(dataSourceFactory)
                         .createMediaSource(Uri.parse(currUrl));
             }
             simpleExoPlayer.addVideoListener(this);
@@ -226,6 +229,7 @@ public class JZExoPlayer extends JZMediaInterface implements Player.EventListene
                 break;
                 case Player.STATE_READY: {
                     if (playWhenReady) {
+                        jzvd.state = Jzvd.STATE_PREPARED;
                         jzvd.onStatePlaying();
                     } else {
                     }

@@ -26,10 +26,18 @@
     <group
         android:id="@+id/group2"
         android:checkableBehavior="single">
-        <item
+        <!--<item
             android:id="@+id/favorite"
             android:icon="@drawable/ic_loyalty_white_48dp"
             android:title="@string/home_my_item_title" />
+        <item
+            android:id="@+id/history"
+            android:icon="@drawable/baseline_history_white_48dp"
+            android:title="@string/history_title" />-->
+        <item
+            android:id="@+id/my"
+            android:icon="@drawable/baseline_person_white_48dp"
+            android:title="@string/my_title" />
     </group>
     <group
         android:id="@+id/group3"
@@ -40,7 +48,7 @@
             android:title="@string/home_setting_item_title" />
         <item
             android:id="@+id/about"
-            android:icon="@drawable/ic_bubble_chart_white_48dp"
+            android:icon="@drawable/baseline_android_white_48dp"
             android:title="@string/home_other_item_title" />
     </group>
 </menu>

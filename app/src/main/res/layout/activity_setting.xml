@@ -106,21 +106,21 @@ android:orientation="vertical">
             </RelativeLayout>
 
             <RelativeLayout
-                android:id="@+id/set_api_source"
-                android:visibility="gone"
+                android:id="@+id/set_favorite_update"
+                android:layout_marginTop="8dp"
                 android:background="?android:attr/selectableItemBackground"
                 android:layout_width="match_parent"
                 android:layout_height="65dp">
 
                 <ImageView
                     android:id="@+id/icon3"
-                    android:src="@drawable/baseline_trending_up_white_48dp"
-                    android:tint="@color/text_color_primary"
-                    android:layout_centerVertical="true"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
                     android:layout_marginLeft="16dp"
                     android:layout_marginRight="16dp"
-                    android:layout_width="28dp"
-                    android:layout_height="28dp" />
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/baseline_update_white_48dp"
+                    android:tint="@color/text_color_primary" />
 
                 <LinearLayout
                     android:layout_toRightOf="@+id/icon3"
@@ -130,16 +130,16 @@ android:orientation="vertical">
                     android:orientation="vertical">
 
                     <TextView
-                        android:text="@string/set_api"
+                        android:text="@string/set_check_favorite_update"
                         android:textColor="@color/text_color_primary"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
 
                     <TextView
-                        android:id="@+id/api"
+                        android:id="@+id/check_favorite_update"
+                        android:text="@string/check_favorite_update_default"
                         android:textColor="#8C8C8C"
                         android:textSize="12sp"
-                        android:text="@string/api"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
                 </LinearLayout>
@@ -147,13 +147,95 @@ android:orientation="vertical">
             </RelativeLayout>
 
             <RelativeLayout
-                android:id="@+id/set_x5"
+                android:id="@+id/set_download_number"
+                android:layout_marginTop="8dp"
                 android:background="?android:attr/selectableItemBackground"
                 android:layout_width="match_parent"
                 android:layout_height="65dp">
 
                 <ImageView
                     android:id="@+id/icon4"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/baseline_save_alt_white_48dp"
+                    android:tint="@color/text_color_primary" />
+
+                <LinearLayout
+                    android:layout_toRightOf="@+id/icon4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:text="@string/set_download_number"
+                        android:textColor="@color/text_color_primary"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:id="@+id/download_number"
+                        android:text="@string/set_download_number_default"
+                        android:textColor="#8C8C8C"
+                        android:textSize="12sp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/set_sildr"
+                android:layout_marginTop="8dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:layout_width="match_parent"
+                android:layout_height="65dp">
+
+                <ImageView
+                    android:id="@+id/icon5"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/baseline_arrow_right_alt_white_48dp"
+                    android:tint="@color/text_color_primary" />
+
+                <LinearLayout
+                    android:layout_toRightOf="@+id/icon5"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:text="@string/set_slidr"
+                        android:textColor="@color/text_color_primary"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:id="@+id/slidr_config"
+                        android:text="@string/set_slidr_default"
+                        android:textColor="#8C8C8C"
+                        android:textSize="12sp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+
+            </RelativeLayout>
+
+            <!--<RelativeLayout
+                android:id="@+id/set_x5"
+                android:background="?android:attr/selectableItemBackground"
+                android:layout_width="match_parent"
+                android:layout_height="65dp">
+
+                <ImageView
+                    android:id="@+id/icon5"
                     android:src="@drawable/baseline_adb_white_48dp"
                     android:tint="@color/text_color_primary"
                     android:layout_centerVertical="true"
@@ -163,7 +245,7 @@ android:orientation="vertical">
                     android:layout_height="28dp" />
 
                 <LinearLayout
-                    android:layout_toRightOf="@+id/icon4"
+                    android:layout_toRightOf="@+id/icon5"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
@@ -185,7 +267,7 @@ android:orientation="vertical">
                         android:layout_height="wrap_content" />
                 </LinearLayout>
 
-            </RelativeLayout>
+            </RelativeLayout>-->
 
             <LinearLayout
                 android:id="@+id/footer"

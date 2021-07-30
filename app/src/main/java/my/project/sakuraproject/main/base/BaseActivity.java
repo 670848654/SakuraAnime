@@ -24,6 +24,7 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.application.Sakura;
+import my.project.sakuraproject.custom.CustomToast;
 import my.project.sakuraproject.database.DatabaseUtil;
 import my.project.sakuraproject.util.SharedPreferencesUtils;
 import my.project.sakuraproject.util.StatusBarUtil;
@@ -165,7 +166,8 @@ public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatA
 
     @Override
     public void onPermissionsDenied(int requestCode, List<String> perms) {
-        application.showErrorToastMsg(Utils.getString(R.string.permissions_error));
+//        application.showErrorToastMsg(Utils.getString(R.string.permissions_error));
+        CustomToast.showToast(this, Utils.getString(R.string.permissions_error), CustomToast.ERROR);
         application.removeALLActivity();
     }
 
@@ -197,6 +199,7 @@ public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatA
         if (!getRunningActivityName().equals("HomeActivity") &&
                 !getRunningActivityName().equals("DescActivity") &&
                 !getRunningActivityName().equals("PlayerActivity") &&
+                !getRunningActivityName().equals("LocalPlayerActivity") &&
                 !getRunningActivityName().equals("ImomoePlayerActivity") &&
                 !getRunningActivityName().equals("DefaultX5WebActivity") &&
                 !getRunningActivityName().equals("X5WebActivity") &&
@@ -221,11 +224,13 @@ public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatA
 
     private void build() {
         //创建database路路径
-        Utils.creatFile();
+        Utils.createFile();
         DatabaseUtil.CREATE_TABLES();
-        init();
+        if (getRunningActivityName().equals("StartActivity"))
+            DatabaseUtil.dataTransfer();
         setStatusBarColor();
         initCustomViews();
+        init();
         mPresenter = createPresenter();
         loadData();
     }

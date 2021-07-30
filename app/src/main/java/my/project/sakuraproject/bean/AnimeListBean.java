@@ -15,6 +15,12 @@ public class AnimeListBean {
     private List<String> tagUrls;
     private String score;
     private String updateTime;
+    // 有无更新 0无更新 1有更新
+    private int state;
+    // 来源 0 yhdm 1 imomoe
+    private int source;
+    // 番剧ID
+    private String animeId;
 
     public String getScore() {
         return score;
@@ -113,5 +119,29 @@ public class AnimeListBean {
 
     public void setBq(String bq) {
         this.bq = bq;
+    }
+
+    public int getState() {
+        return state;
+    }
+
+    public void setState(int state) {
+        this.state = state;
+    }
+
+    public int getSource() {
+        return source;
+    }
+
+    public void setSource(int source) {
+        this.source = source;
+    }
+
+    public String getAnimeId() {
+        return animeId;
+    }
+
+    public void setAnimeId(String animeId) {
+        this.animeId = animeId;
     }
 }

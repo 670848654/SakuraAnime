@@ -1,4 +1,4 @@
-package my.project.sakuraproject.main.favorite;
+package my.project.sakuraproject.main.my;
 
 import java.util.List;
 
@@ -11,13 +11,27 @@ public class FavoritePresenter extends Presenter<FavoriteContract.View> implemen
     private FavoriteModel model;
     private int offset;
     private int limit;
+    private boolean updateOrder;
+    private int source;
 
-    public FavoritePresenter(int offset, int limit, FavoriteContract.View view) {
+    public FavoritePresenter(int offset, int limit, boolean updateOrder, FavoriteContract.View view) {
         super(view);
         this.view = view;
         this.offset = offset;
         this.limit = limit;
+        this.updateOrder = updateOrder;
         model = new FavoriteModel();
+    }
+
+    public FavoritePresenter(int source, FavoriteContract.View view) {
+        super(view);
+        this.view = view;
+        this.source = source;
+        model = new FavoriteModel();
+    }
+
+    public void loadUpdateInfo() {
+        model.getUpdateInfo(source, this);
     }
 
     @Override
@@ -26,12 +40,22 @@ public class FavoritePresenter extends Presenter<FavoriteContract.View> implemen
             view.showLoadingView();
             view.showEmptyVIew();
         }
-        model.getData(offset, limit, this);
+        model.getData(offset, limit, updateOrder, this);
     }
 
     @Override
     public void success(List<AnimeListBean> list) {
         view.showSuccessView(list);
+    }
+
+    @Override
+    public void completion(boolean complete) {
+        view.completionView(complete);
+    }
+
+    @Override
+    public void error(int source) {
+        view.showErrorUpdateInfo(source);
     }
 
     @Override

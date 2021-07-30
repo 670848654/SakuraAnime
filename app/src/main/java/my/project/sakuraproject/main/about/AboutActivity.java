@@ -35,6 +35,7 @@ import my.project.sakuraproject.adapter.LogAdapter;
 import my.project.sakuraproject.api.Api;
 import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.bean.LogBean;
+import my.project.sakuraproject.custom.CustomToast;
 import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.base.Presenter;
 import my.project.sakuraproject.net.HttpGet;
@@ -166,6 +167,7 @@ public class AboutActivity extends BaseActivity {
 
     public List createUpdateLogList() {
         List logsList = new ArrayList();
+        logsList.add(new LogBean("版本：2.1.0", "新增追番更新检测，有更新的番剧将排在列表最前面（仅支持Yhdm源）\n新增观看历史记录\n新增剧集下载功能\n新增保存播放进度"));
         logsList.add(new LogBean("版本：2.0.0", "修复Yhdm源一些剧集无法解析的问题\n修复Imomoe源的一个Bug\n内置播放器添加播放时可隐藏底部进度条的选项（在播放器中设置）\n内置播放器优化相关操作"));
         logsList.add(new LogBean("版本：1.9.9", "Yhdm域名变更为http://www.yhdm.so，Imomoe域名变更为http://www.imomoe.la\n添加1.25、1.75倍速播放\n修复其他已知问题"));
         logsList.add(new LogBean("版本：1.9.8_2", "修复Imomoe源一些番剧播放时崩溃的问题\n修复其他已知问题"));
@@ -239,7 +241,8 @@ public class AboutActivity extends BaseActivity {
                                     (dialog, which) -> {
                                         dialog.dismiss();
                                         Utils.putTextIntoClip(downloadUrl);
-                                        application.showSuccessToastMsg(Utils.getString(R.string.url_copied));
+//                                        application.showSuccessToastMsg(Utils.getString(R.string.url_copied));
+                                        CustomToast.showToast(AboutActivity.this, Utils.getString(R.string.url_copied), CustomToast.SUCCESS);
                                         Utils.viewInBrowser(AboutActivity.this, downloadUrl);
                                     },
                                     (dialog, which) -> dialog.dismiss()
@@ -248,7 +251,8 @@ public class AboutActivity extends BaseActivity {
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    application.showErrorToastMsg(Utils.getString(R.string.ck_error_start));
+//                    application.showErrorToastMsg(Utils.getString(R.string.ck_error_start));
+                    CustomToast.showToast(AboutActivity.this, Utils.getString(R.string.ck_error_start), CustomToast.ERROR);
                     Utils.cancelDialog(alertDialog);
                 }
             }

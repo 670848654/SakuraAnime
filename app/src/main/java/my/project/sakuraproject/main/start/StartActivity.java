@@ -13,6 +13,7 @@ import java.io.IOException;
 import butterknife.BindView;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.api.Api;
+import my.project.sakuraproject.custom.CustomToast;
 import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.base.Presenter;
 import my.project.sakuraproject.main.home.HomeActivity;
@@ -64,7 +65,8 @@ public class StartActivity extends BaseActivity {
             @Override
             public void onFailure(Call call, IOException e) {
                 runOnUiThread(() -> {
-                    application.showErrorToastMsg(Utils.getString(R.string.ck_network_error_start));
+//                    application.showErrorToastMsg(Utils.getString(R.string.ck_network_error_start));
+                    CustomToast.showToast(StartActivity.this, Utils.getString(R.string.ck_network_error_start), CustomToast.ERROR);
                     openMain();
                 });
             }
@@ -86,7 +88,8 @@ public class StartActivity extends BaseActivity {
                                 (dialog, which) -> {
                                     dialog.dismiss();
                                     Utils.putTextIntoClip(downUrl);
-                                    application.showSuccessToastMsg(Utils.getString(R.string.url_copied));
+//                                    application.showSuccessToastMsg(Utils.getString(R.string.url_copied));
+                                    CustomToast.showToast(StartActivity.this, Utils.getString(R.string.url_copied), CustomToast.SUCCESS);
                                     Utils.viewInChrome(StartActivity.this, downUrl);
                                 },
                                 (dialog, which) -> {
@@ -97,7 +100,8 @@ public class StartActivity extends BaseActivity {
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    application.showErrorToastMsg(Utils.getString(R.string.ck_error_start));
+//                    application.showErrorToastMsg(Utils.getString(R.string.ck_error_start));
+                    CustomToast.showToast(StartActivity.this, Utils.getString(R.string.ck_error_start), CustomToast.ERROR);
                     openMain();
                 }
             }

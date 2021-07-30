@@ -10,10 +10,20 @@ public class AnimeDescDetailsBean implements Serializable {
     // 是否选中
     private boolean selected;
 
+    private String downloadDataId;
+
     public AnimeDescDetailsBean(String title, String url, boolean selected) {
         this.title = title;
         this.url = url;
         this.selected = selected;
+    }
+
+    // 本地播放器使用
+    public AnimeDescDetailsBean(String title, String url, boolean selected, String downloadDataId) {
+        this.title = title;
+        this.url = url;
+        this.selected = selected;
+        this.downloadDataId = downloadDataId;
     }
 
     public String getTitle() {
@@ -38,5 +48,13 @@ public class AnimeDescDetailsBean implements Serializable {
 
     public void setSelected(boolean selected) {
         this.selected = selected;
+    }
+
+    public String getDownloadDataId() {
+        return downloadDataId;
+    }
+
+    public void setDownloadDataId(String downloadDataId) {
+        this.downloadDataId = downloadDataId;
     }
 }

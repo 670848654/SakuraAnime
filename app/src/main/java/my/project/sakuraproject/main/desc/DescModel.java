@@ -1,5 +1,7 @@
 package my.project.sakuraproject.main.desc;
 
+import android.util.Log;
+
 import java.io.IOException;
 
 import my.project.sakuraproject.R;
@@ -47,14 +49,17 @@ public class DescModel extends BaseModel implements DescContract.Model {
                     else {
                         AnimeListBean animeListBean = YhdmJsoupUtils.getAinmeInfo(source, url);
                         String animeTitle = animeListBean.getTitle();
-                        //是否收藏
-                        callback.isFavorite(DatabaseUtil.checkFavorite(animeListBean.getTitle()));
                         //创建番剧索引
-                        DatabaseUtil.addAnime(animeTitle);
-                        fid = DatabaseUtil.getAnimeID(animeTitle);
+                        DatabaseUtil.addAnime(animeTitle, 0);
+                        fid = DatabaseUtil.getAnimeID(animeTitle, 0);
+                        // 添加历史记录
+                        DatabaseUtil.addOrUpdateHistory(fid, animeListBean.getUrl(), animeListBean.getImg());
+                        //是否收藏
+                        callback.isFavorite(DatabaseUtil.checkFavorite(fid));
                         dramaStr = DatabaseUtil.queryAllIndex(fid);
                         callback.successDesc(animeListBean);
                         callback.isImomoe(false);
+                        callback.getAnimeId(fid);
                         AnimeDescListBean animeDescListBean = YhdmJsoupUtils.getAnimeDescList(source, dramaStr);
                         if (animeDescListBean != null)
                             callback.successMain(animeDescListBean);
@@ -83,14 +88,18 @@ public class DescModel extends BaseModel implements DescContract.Model {
                     String source = getHtmlBody(response, true);
                     AnimeListBean animeListBean = ImomoeJsoupUtils.getAinmeInfo(source, url);
                     String animeTitle = animeListBean.getTitle();
-                    //是否收藏
-                    callback.isFavorite(DatabaseUtil.checkFavorite(animeListBean.getTitle()+Utils.getString(R.string.imomoe)));
                     //创建番剧索引
-                    DatabaseUtil.addAnime(animeTitle+Utils.getString(R.string.imomoe));
-                    fid = DatabaseUtil.getAnimeID(animeTitle+Utils.getString(R.string.imomoe));
+                    DatabaseUtil.addAnime(animeTitle, 1);
+                    fid = DatabaseUtil.getAnimeID(animeTitle, 1);
+                    // 添加历史记录
+                    DatabaseUtil.addOrUpdateHistory(fid, animeListBean.getUrl(), animeListBean.getImg());
+                    //是否收藏
+                    callback.isFavorite(DatabaseUtil.checkFavorite(fid));
                     dramaStr = DatabaseUtil.queryAllIndex(fid);
+                    Log.e("dramaStr", dramaStr);
                     callback.successDesc(animeListBean);
                     callback.isImomoe(true);
+                    callback.getAnimeId(fid);
                     AnimeDescListBean animeDescListBean = ImomoeJsoupUtils.getAnimeDescList(source, dramaStr);
                     if (animeDescListBean != null)
                         callback.successMain(animeDescListBean);

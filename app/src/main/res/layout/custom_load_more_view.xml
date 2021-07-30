@@ -40,7 +40,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="@string/load_failed"
-            android:textColor="@color/toolbar_layout_bg" />
+            android:textColor="@color/light_toolbar_color_lt23" />
 
     </FrameLayout>
 

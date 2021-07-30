@@ -21,6 +21,8 @@ public interface DescContract {
         void showEmptyDram(String msg);
 
         void isImomoe(boolean isImomoe);
+
+        void getAnimeId(String animeId);
     }
 
     interface LoadDataCallback extends BaseLoadDataCallback {
@@ -33,5 +35,7 @@ public interface DescContract {
         void emptyDram(String msg);
 
         void isImomoe(boolean isImomoe);
+
+        void getAnimeId(String animeId);
     }
 }

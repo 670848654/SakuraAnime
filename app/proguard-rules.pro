@@ -460,3 +460,16 @@
 -dontwarn com.squareup.okhttp3.**
 -keep class com.squareup.okhttp3.** { *;}
 -dontwarn okio.**
+
+#Aria
+-dontwarn com.arialyy.aria.**
+-keep class com.arialyy.aria.**{*;}
+-keep class **$$DownloadListenerProxy{ *; }
+-keep class **$$UploadListenerProxy{ *; }
+-keep class **$$DownloadGroupListenerProxy{ *; }
+-keep class **$$DGSubListenerProxy{ *; }
+-keepclasseswithmembernames class * {
+    @Download.* <methods>;
+    @Upload.* <methods>;
+    @DownloadGroup.* <methods>;
+}

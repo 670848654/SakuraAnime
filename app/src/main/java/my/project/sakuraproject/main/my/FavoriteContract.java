@@ -1,4 +1,4 @@
-package my.project.sakuraproject.main.favorite;
+package my.project.sakuraproject.main.my;
 
 import java.util.List;
 
@@ -8,15 +8,25 @@ import my.project.sakuraproject.main.base.BaseView;
 
 public interface FavoriteContract {
     interface Model {
-        void getData(int offset, int limit, LoadDataCallback callback);
+        void getData(int offset, int limit, boolean updateOrder, LoadDataCallback callback);
+
+        void getUpdateInfo(int source, LoadDataCallback callback);
     }
 
     interface View extends BaseView {
         void showSuccessView(List<AnimeListBean> list);
+
+        void completionView(boolean complete);
+
+        void showErrorUpdateInfo(int source);
     }
 
     interface LoadDataCallback extends BaseLoadDataCallback {
         void success(List<AnimeListBean> list);
+
+        void completion(boolean complete);
+
+        void error(int source);
     }
 
 }

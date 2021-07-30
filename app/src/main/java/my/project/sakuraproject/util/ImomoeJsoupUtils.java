@@ -23,6 +23,8 @@ import my.project.sakuraproject.bean.AnimeDescDetailsBean;
 import my.project.sakuraproject.bean.AnimeDescListBean;
 import my.project.sakuraproject.bean.AnimeDescRecommendBean;
 import my.project.sakuraproject.bean.AnimeListBean;
+import my.project.sakuraproject.bean.AnimeUpdateInfoBean;
+import my.project.sakuraproject.bean.ImomoeVideoUrlBean;
 import my.project.sakuraproject.bean.TagBean;
 import my.project.sakuraproject.bean.TagHeaderBean;
 
@@ -30,8 +32,8 @@ public class ImomoeJsoupUtils {
 
     /** 星期数组 **/
     private static final String[] TABS = Utils.getArray(R.array.week_array);
-
     private final static Pattern PAGE_PATTERN = Pattern.compile("\\/(.*)页");
+    private final static Pattern PLAY_URL_PATTERN = Pattern.compile("(https?|ftp|file):\\/\\/[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]");
 
     /**
      * 获取总页数
@@ -99,6 +101,29 @@ public class ImomoeJsoupUtils {
         }
         return jsonArray;
     }
+    /**
+     * 获取今日番剧更新
+     * @param source
+     * @return
+     */
+    public static List<AnimeUpdateInfoBean> getUpdateInfoList(String source) {
+        List<AnimeUpdateInfoBean> animeUpdateInfoBeans = new ArrayList<>();
+        Document document = Jsoup.parse(source);
+        Elements elements = document.select("div.tists > ul > li");
+        for (int i=0,size=elements.size(); i<size; i++) {
+            Elements aList = elements.get(i).select("a");
+            if (aList.size() > 1) {
+                AnimeUpdateInfoBean animeUpdateInfoBean = new AnimeUpdateInfoBean();
+                animeUpdateInfoBean.setSource(1);
+                animeUpdateInfoBean.setTitle(elements.get(i).select("a").get(1).text());
+                animeUpdateInfoBean.setPlayNumber(elements.get(i).select("a").get(0).attr("href"));
+                animeUpdateInfoBeans.add(animeUpdateInfoBean);
+                Log.e("IMOMOE", animeUpdateInfoBean.getTitle() + " > " + animeUpdateInfoBean.getPlayNumber());
+            }
+        }
+        return animeUpdateInfoBeans;
+    }
+
     /**************************************  新番时间表解析方法结束  **************************************/
 
     /**************************************  动漫分类解析方法开始  **************************************/
@@ -208,6 +233,7 @@ public class ImomoeJsoupUtils {
                 for (Element dramaList : dramaElements) {
                     String name = dramaList.select("a").text();
                     String watchUrl = dramaList.select("a").attr("href");
+                    Log.e("dramaStr - > " , dramaStr + "- > " + watchUrl);
                     if (dramaStr.contains(watchUrl)) select = true;
                     else select = false;
                     animeDescDramasBeans.add(new AnimeDescDetailsBean(name, watchUrl, select));
@@ -247,4 +273,105 @@ public class ImomoeJsoupUtils {
         return js;
     }
     /**************************************  视频解析方法结束  **************************************/
+
+    /**************************************  视频JS解析方法  **************************************/
+    public static List<List<ImomoeVideoUrlBean>> getImomoePlayUrl(String json) {
+        List<List<ImomoeVideoUrlBean>> allList = new ArrayList<>();
+        com.alibaba.fastjson.JSONArray jsonArray = com.alibaba.fastjson.JSONArray.parseArray(json);
+        for (int i=0,size=jsonArray.size(); i<size; i++) {
+            com.alibaba.fastjson.JSONArray sourceArr = com.alibaba.fastjson.JSONArray.parseArray(jsonArray.getJSONArray(i).getString(1));
+            List<ImomoeVideoUrlBean> imomoeVideoUrlBeans = new ArrayList<>();
+            for (int j=0,size2=sourceArr.size(); j<size2; j++) {
+                String str = sourceArr.getString(j);
+                String[] strs = str.split("\\$");
+                Matcher matcher = Pattern.compile("\\$(.*)\\$").matcher(str);
+                if (matcher.find()) {
+                    ImomoeVideoUrlBean imomoeVideoUrlBean = new ImomoeVideoUrlBean();
+                    String find = matcher.group().replaceAll("\\$", "");
+                    if (find.contains("http")) {
+                        // 是http
+                        imomoeVideoUrlBean.setHttp(true);
+                        imomoeVideoUrlBean.setVidOrUrl(find);
+                    } else {
+                        // 非http
+                        imomoeVideoUrlBean.setHttp(false);
+                        imomoeVideoUrlBean.setVidOrUrl(find);
+                        imomoeVideoUrlBean.setParam(strs[strs.length-1]);
+                    }
+                    imomoeVideoUrlBeans.add(imomoeVideoUrlBean);
+                }
+            }
+            allList.add(imomoeVideoUrlBeans);
+        }
+        return allList;
+    }
+
+    public static String getImomoeApiPlayUrl(String source) {
+        String playUrl = "";
+        Document document = Jsoup.parse(source);
+        Elements scripts = document.select("script");
+        for (Element element : scripts) {
+            if (element.html().contains("var video")) {
+                Matcher m = PLAY_URL_PATTERN.matcher(element.html());
+                if (m.find()) {
+                    playUrl = m.group();
+                    break;
+                }
+            }
+        }
+        return playUrl;
+    }
+
+    /**************************************  选集解析方法开始  **************************************/
+    /**
+     * 获取番剧所有剧集（用于 ImomoePlayerActivity 选集）
+     * @param source
+     * @param dramaStr 用户已观看过的url
+     * @return
+     */
+    public static List<List<AnimeDescDetailsBean>> getAllDrama(String source, String dramaStr) {
+        List<List<AnimeDescDetailsBean>> multipleAnimeDescDetailsBeans = new ArrayList<>();
+        Document document = Jsoup.parse(source);
+        Elements playElements = document.select("div.movurls"); //剧集列表
+        for (Element playList : playElements) {
+            Elements dramaElements = playList.select("ul > li");
+            List<AnimeDescDetailsBean> animeDescDramasBeans = new ArrayList<>();
+            for (Element dramaList : dramaElements) {
+                String name = dramaList.select("a").text();
+                String watchUrl = dramaList.select("a").attr("href");
+                animeDescDramasBeans.add(new AnimeDescDetailsBean(name, watchUrl, dramaStr.contains(watchUrl)));
+            }
+            multipleAnimeDescDetailsBeans.add(animeDescDramasBeans);
+        }
+        return multipleAnimeDescDetailsBeans;
+    }
+    /**************************************  选集解析方法开始  **************************************/
+
+    /**************************************  最近更新动漫解析方法开始  **************************************/
+    /*public static List<AnimeUpdateInfoBean> getUpdateInfoList(String source) {
+        List<AnimeUpdateInfoBean> animeUpdateInfoBeans = new ArrayList<>();
+        Document document = Jsoup.parse(source);
+        Elements elements = document.select("div.topli > ul > li");
+        for (int i=0,size=elements.size(); i<size; i++) {
+            Elements aList = elements.get(i).select("a");
+            AnimeUpdateInfoBean animeUpdateInfoBean = new AnimeUpdateInfoBean();
+            animeUpdateInfoBean.setSource(1);
+            animeUpdateInfoBean.setTitle(aList.size() > 2 ? aList.get(1).text() : aList.get(0).text());
+            String playNumber = aList.size() > 2 ? aList.get(2).text(): aList.get(1).text();
+            animeUpdateInfoBean.setPlayNumber(replaceStr(playNumber));
+            animeUpdateInfoBeans.add(animeUpdateInfoBean);
+        }
+        return animeUpdateInfoBeans;
+    }
+
+    // 处理奇葩格式
+    private static String replaceStr(String content) {
+        content = content.split("\\+")[0];
+        Matcher matcher = Pattern.compile("[0-9]*").matcher(content);
+        if (matcher.find()) {
+            content = "第" + matcher.group() + "集";
+        }
+        return content;
+    }*/
+    /**************************************  最近更新动漫解析方法结束  **************************************/
 }

@@ -10,13 +10,6 @@ import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.AppCompatCheckBox;
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import com.alibaba.fastjson.JSONObject;
 import com.arialyy.annotations.Download;
 import com.arialyy.aria.core.Aria;
@@ -33,6 +26,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.AppCompatCheckBox;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.adapter.DownloadDataListAdapter;
@@ -107,7 +106,7 @@ public class DownloadDataActivity extends BaseActivity<DownloadDataContract.View
     }
 
     private void initAdapter() {
-        mRecyclerView.setLayoutManager(new GridLayoutManager(this, Utils.isPad() ? 2 : 1));
+//        mRecyclerView.setLayoutManager(new GridLayoutManager(this, Utils.isPad() ? 2 : 1));
         adapter = new DownloadDataListAdapter(this, downloadDataBeans);
         adapter.setOnItemClickListener((adapter, view, position) -> {
             if (!Utils.isFastClick()) return;
@@ -179,34 +178,45 @@ public class DownloadDataActivity extends BaseActivity<DownloadDataContract.View
     }
 
     private void deleteData(boolean removeFile, DownloadDataBean bean, int position) {
-        String path = bean.getPath();
-        if (path != null && !path.isEmpty()) {
-            path = path.substring(0, path.lastIndexOf('/'));
-            File file = new File(path);
-            if (!file.exists()) file.mkdirs(); // 如果从文件管理器中手动删除整个目录 Aria会报错，在这里重建目录
-        }
-        // 获取所有下载任务
-        List<DownloadEntity> list = Aria.download(this).getTaskList();
-        for (DownloadEntity entity : list) {
-            if (bean.getTaskId() == entity.getId()) {
-                // 如果是m3u8且已完成的任务
-                if (bean.getComplete() == 1) {
-                    File f = new File(bean.getPath());
-                    if (f.exists()) f.delete();
+        downloadDataId = bean.getId();
+        if (bean.getTaskId() == -1) {
+            // -1直接删除
+            adapter.remove(position);
+            DatabaseUtil.deleteDownloadData(bean.getId());
+            CustomToast.showToast(this, "已删除该剧集任务", CustomToast.SUCCESS);
+        } else {
+            String path = bean.getPath();
+            if (path != null && !path.isEmpty()) {
+                path = path.substring(0, path.lastIndexOf('/'));
+                File file = new File(path);
+                if (!file.exists()) file.mkdirs(); // 如果从文件管理器中手动删除整个目录 Aria会报错，在这里重建目录
+            }
+            // 获取所有下载任务
+            List<DownloadEntity> list = Aria.download(this).getTaskList();
+            for (DownloadEntity entity : list) {
+                if (bean.getTaskId() == entity.getId()) {
+                    // 如果是m3u8且已完成的任务
+                    if (bean.getComplete() == 1) {
+                        File f = new File(bean.getPath());
+                        if (f.exists()) f.delete();
+                    }
+                    Aria.download(this).load(bean.getTaskId()).cancel(removeFile);
+                    CustomToast.showToast(this, "已删除该剧集任务", CustomToast.SUCCESS);
+                    adapter.remove(position);
+                    break;
                 }
-                Aria.download(this).load(bean.getTaskId()).cancel(removeFile);
-                CustomToast.showToast(this, "已删除该剧集任务", CustomToast.SUCCESS);
-                adapter.remove(position);
-                break;
             }
         }
-        downloadDataId = bean.getId();
         downloadDataCount = DatabaseUtil.queryDownloadDataCount(downloadId);
         if (downloadDataBeans.size() <= 0) {
+            /*setRecyclerViewView();
             DatabaseUtil.deleteDownload(downloadId);
             adapter.setNewData(downloadDataBeans);
             errorTitle.setText(Utils.getString(R.string.empty_download));
-            adapter.setEmptyView(errorView);
+            adapter.setEmptyView(errorView);*/
+            DatabaseUtil.deleteDownload(downloadId);
+            EventBus.getDefault().post(new Refresh(3));
+            finish();
         }
     }
 
@@ -307,6 +317,7 @@ public class DownloadDataActivity extends BaseActivity<DownloadDataContract.View
         runOnUiThread(() -> {
             if (isMain) {
                 downloadDataBeans = list;
+                setRecyclerViewView();
                 adapter.setNewData(downloadDataBeans);
             } else
                 adapter.addData(list);
@@ -323,6 +334,7 @@ public class DownloadDataActivity extends BaseActivity<DownloadDataContract.View
         setLoadState(false);
         runOnUiThread(() -> {
             if (isMain) {
+                setRecyclerViewView();
                 errorTitle.setText(msg);
                 adapter.setEmptyView(errorView);
             }
@@ -347,6 +359,37 @@ public class DownloadDataActivity extends BaseActivity<DownloadDataContract.View
                 downloadDataBeans.get(i).setDuration(refreshDownloadData.getVideoDuration());
                 adapter.notifyItemChanged(i);
                 break;
+            }
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (Utils.isPad()) setRecyclerViewView();
+    }
+
+    @Override
+    protected void setConfigurationChanged() {
+        if (downloadDataBeans.size() == 0) return;
+        setRecyclerViewView();
+    }
+
+    private void setRecyclerViewView() {
+        String config = this.getResources().getConfiguration().toString();
+        boolean isInMagicWindow = config.contains("miui-magic-windows");
+        if (downloadDataBeans.size() == 0) {
+            mRecyclerView.setLayoutManager(new GridLayoutManager(this, 1));
+            return;
+        }
+        if (!Utils.isPad()) {
+            mRecyclerView.setLayoutManager(new GridLayoutManager(this, 1));
+        }
+        else {
+            if (isInMagicWindow) {
+                mRecyclerView.setLayoutManager(new GridLayoutManager(this, 1));
+            } else {
+                mRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
             }
         }
     }

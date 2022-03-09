@@ -6,15 +6,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import androidx.fragment.app.Fragment;
-
 import org.greenrobot.eventbus.EventBus;
 
+import androidx.fragment.app.Fragment;
 import butterknife.Unbinder;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.bean.Refresh;
 import my.project.sakuraproject.main.base.Presenter;
+import my.project.sakuraproject.main.my.UpdateImgPresenter;
 
 public abstract class MyLazyFragment<V, P extends Presenter<V>> extends Fragment {
     protected boolean isFragmentVisible;
@@ -26,6 +26,7 @@ public abstract class MyLazyFragment<V, P extends Presenter<V>> extends Fragment
     protected TextView errorTitle;
     protected Sakura application;
     protected Unbinder mUnBinder;
+    protected UpdateImgPresenter updateImgPresenter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -85,6 +86,8 @@ public abstract class MyLazyFragment<V, P extends Presenter<V>> extends Fragment
         //取消View的关联
         if (null != mPresenter)
             mPresenter.detachView();
+        if (null != updateImgPresenter)
+            updateImgPresenter.detachView();
         isPrepared = false;
         EventBus.getDefault().unregister(this);
         mUnBinder.unbind();

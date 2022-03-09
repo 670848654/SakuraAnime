@@ -148,6 +148,7 @@ android:orientation="vertical">
 
             <RelativeLayout
                 android:id="@+id/set_download_number"
+                android:visibility="gone"
                 android:layout_marginTop="8dp"
                 android:background="?android:attr/selectableItemBackground"
                 android:layout_width="match_parent"
@@ -228,6 +229,80 @@ android:orientation="vertical">
 
             </RelativeLayout>
 
+            <RelativeLayout
+                android:id="@+id/check_update"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:layout_width="match_parent"
+                android:layout_height="65dp">
+
+                <ImageView
+                    android:id="@+id/icon6"
+                    android:src="@drawable/baseline_cloud_download_white_48dp"
+                    android:tint="@color/text_color_primary"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp" />
+
+                <LinearLayout
+                    android:layout_toRightOf="@+id/icon6"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:text="@string/now_version"
+                        android:textColor="@color/text_color_primary"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:id="@+id/version"
+                        android:textColor="#8C8C8C"
+                        android:textSize="12sp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/about"
+                android:layout_marginTop="8dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:layout_width="match_parent"
+                android:layout_height="65dp">
+
+                <ImageView
+                    android:id="@+id/icon7"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/baseline_android_white_48dp"
+                    android:tint="@color/text_color_primary" />
+
+                <LinearLayout
+                    android:layout_toRightOf="@+id/icon7"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:text="@string/about"
+                        android:textColor="@color/text_color_primary"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+            </RelativeLayout>
+
             <!--<RelativeLayout
                 android:id="@+id/set_x5"
                 android:background="?android:attr/selectableItemBackground"
@@ -278,4 +353,11 @@ android:orientation="vertical">
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/translucent"
+        android:id="@+id/show">
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </LinearLayout>

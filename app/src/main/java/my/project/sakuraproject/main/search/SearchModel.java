@@ -80,7 +80,7 @@ public class SearchModel extends BaseModel implements SearchContract.Model {
                     String source = getBody(response);
                     if (isMain)
                         callback.pageCount(ImomoeJsoupUtils.getPageCount(source));
-                    List<AnimeListBean>  animeListBeans = ImomoeJsoupUtils.getAnimeList(source);
+                    List<AnimeListBean>  animeListBeans = ImomoeJsoupUtils.getAnimeList(source, false);
                     if (animeListBeans.size() > 0)
                         callback.success(isMain, animeListBeans);
                     else

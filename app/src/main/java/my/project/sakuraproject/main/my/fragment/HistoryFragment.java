@@ -1,17 +1,12 @@
 package my.project.sakuraproject.main.my.fragment;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
-
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.PopupMenu;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -21,6 +16,11 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.PopupMenu;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import my.project.sakuraproject.R;
@@ -29,6 +29,7 @@ import my.project.sakuraproject.bean.AnimeDescDetailsBean;
 import my.project.sakuraproject.bean.HistoryBean;
 import my.project.sakuraproject.bean.ImomoeVideoUrlBean;
 import my.project.sakuraproject.bean.Refresh;
+import my.project.sakuraproject.bean.UpdateImgBean;
 import my.project.sakuraproject.custom.CustomLoadMoreView;
 import my.project.sakuraproject.custom.CustomToast;
 import my.project.sakuraproject.database.DatabaseUtil;
@@ -36,13 +37,16 @@ import my.project.sakuraproject.main.base.BaseModel;
 import my.project.sakuraproject.main.desc.DescActivity;
 import my.project.sakuraproject.main.my.HistoryContract;
 import my.project.sakuraproject.main.my.HistoryPresenter;
+import my.project.sakuraproject.main.my.UpdateImgContract;
+import my.project.sakuraproject.main.my.UpdateImgPresenter;
 import my.project.sakuraproject.main.video.VideoContract;
 import my.project.sakuraproject.main.video.VideoPresenter;
 import my.project.sakuraproject.util.SharedPreferencesUtils;
 import my.project.sakuraproject.util.Utils;
 import my.project.sakuraproject.util.VideoUtils;
 
-public class HistoryFragment extends MyLazyFragment<HistoryContract.View, HistoryPresenter> implements HistoryContract.View, VideoContract.View {
+public class HistoryFragment extends MyLazyFragment<HistoryContract.View, HistoryPresenter> implements HistoryContract.View,
+        UpdateImgContract.View, VideoContract.View {
     @BindView(R.id.rv_list)
     RecyclerView mRecyclerView;
     @BindView(R.id.loading)
@@ -99,7 +103,6 @@ public class HistoryFragment extends MyLazyFragment<HistoryContract.View, Histor
     }
 
     private void initAdapter() {
-        mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), Utils.isPad() ? 2: 1));
         adapter = new HistoryListAdapter(getActivity(), historyBeans);
 //        adapter.openLoadAnimation();
 //        adapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
@@ -217,6 +220,7 @@ public class HistoryFragment extends MyLazyFragment<HistoryContract.View, Histor
         else
             historyBeans.clear();
         if (historyBeans.size() <= 0) {
+            setRecyclerViewView();
             adapter.setNewData(historyBeans);
             errorTitle.setText(Utils.getString(R.string.empty_history));
             adapter.setEmptyView(errorView);
@@ -259,6 +263,7 @@ public class HistoryFragment extends MyLazyFragment<HistoryContract.View, Histor
             if (isMain) {
                 loading.setVisibility(View.GONE);
                 historyBeans = list;
+                setRecyclerViewView();
                 setFabClick();
                 adapter.setNewData(historyBeans);
             } else
@@ -354,6 +359,7 @@ public class HistoryFragment extends MyLazyFragment<HistoryContract.View, Histor
         setLoadState(false);
         getActivity().runOnUiThread(() -> {
             if (isMain) {
+                setRecyclerViewView();
                 loading.setVisibility(View.GONE);
                 errorTitle.setText(msg);
                 adapter.setEmptyView(errorView);
@@ -386,4 +392,65 @@ public class HistoryFragment extends MyLazyFragment<HistoryContract.View, Histor
             loadHistoryData();
         }
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (isFragmentVisible && Utils.isPad())
+            setRecyclerViewView();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        setRecyclerViewView();
+    }
+
+    private void setRecyclerViewView() {
+        String config = getActivity().getResources().getConfiguration().toString();
+        boolean isInMagicWindow = config.contains("miui-magic-windows");
+        if (historyBeans.size() == 0) {
+            mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 1));
+            return;
+        }
+        if (!Utils.isPad()) {
+            mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 1));
+        }
+        else {
+            if (isInMagicWindow) {
+                mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 1));
+            } else {
+                mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+            }
+        }
+    }
+
+    @Override
+    public void showSuccessImg(String oldImgUrl, String imgUrl) {
+        if (!isFragmentVisible) return;
+        getActivity().runOnUiThread(() -> {
+            for (int i=0,size=historyBeans.size(); i<size; i++) {
+                if (historyBeans.get(i).getImgUrl().contains(oldImgUrl)) {
+                    historyBeans.get(i).setImgUrl(imgUrl);
+                    adapter.notifyItemChanged(i);
+                    DatabaseUtil.updateImg(historyBeans.get(i).getAnimeId(), imgUrl, 1);
+                    break;
+                }
+            }
+        });
+    }
+
+    @Override
+    public void showErrorImg(String msg) {
+        if (!isFragmentVisible) return;
+        getActivity().runOnUiThread(() -> CustomToast.showToast(getActivity(), msg, CustomToast.ERROR));
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(UpdateImgBean updateImgBean) {
+        if (!isFragmentVisible) return;
+        updateImgPresenter = new UpdateImgPresenter(updateImgBean.getOldImgUrl(), updateImgBean.getDescUrl(), this);
+        updateImgPresenter.loadData();
+    }
+
 }

@@ -1,16 +1,14 @@
-package my.project.sakuraproject.main.home;
+package my.project.sakuraproject.main.week;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 
@@ -21,6 +19,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -77,7 +77,7 @@ public class WeekFragment extends LazyFragment {
 
     public void initAdapter() {
         if (adapter == null) {
-            recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), Utils.isPad() ? 4 : 2));
+//            recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), Utils.isPad() ? 4 : 2));
             adapter = new FragmentAdapter(getActivity(), list);
             adapter.openLoadAnimation();
             adapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
@@ -105,6 +105,7 @@ public class WeekFragment extends LazyFragment {
         loading.setVisibility(View.GONE);
         if (adapter.getData().isEmpty()) {
             list = getList(week);
+            setRecyclerViewView();
             if (list.size() == 0) {
                 if (!application.error.isEmpty()) {
                     errorTitle.setText(application.error);
@@ -140,5 +141,34 @@ public class WeekFragment extends LazyFragment {
     public void onDestroyView() {
         super.onDestroyView();
         mUnBinder.unbind();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+//        setRecyclerViewView();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        setRecyclerViewView();
+    }
+
+    private void setRecyclerViewView() {
+        String config = getActivity().getResources().getConfiguration().toString();
+        boolean isInMagicWindow = config.contains("miui-magic-windows");
+        if (list.size() == 0) {
+            recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 1));
+            return;
+        }
+        if (!Utils.isPad())
+            recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+        else {
+            if (isInMagicWindow) {
+                recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
+            } else
+                recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 4));
+        }
     }
 }

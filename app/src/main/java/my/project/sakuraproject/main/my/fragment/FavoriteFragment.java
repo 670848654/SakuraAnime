@@ -1,16 +1,12 @@
 package my.project.sakuraproject.main.my.fragment;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
-
-import androidx.appcompat.widget.PopupMenu;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 
@@ -20,22 +16,30 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.appcompat.widget.PopupMenu;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.adapter.FavoriteListAdapter;
 import my.project.sakuraproject.bean.AnimeListBean;
+import my.project.sakuraproject.bean.AnimeUpdateInfoBean;
 import my.project.sakuraproject.bean.Refresh;
+import my.project.sakuraproject.bean.UpdateImgBean;
 import my.project.sakuraproject.custom.CustomLoadMoreView;
 import my.project.sakuraproject.custom.CustomToast;
 import my.project.sakuraproject.database.DatabaseUtil;
 import my.project.sakuraproject.main.desc.DescActivity;
 import my.project.sakuraproject.main.my.FavoriteContract;
 import my.project.sakuraproject.main.my.FavoritePresenter;
+import my.project.sakuraproject.main.my.UpdateImgContract;
+import my.project.sakuraproject.main.my.UpdateImgPresenter;
 import my.project.sakuraproject.util.SharedPreferencesUtils;
 import my.project.sakuraproject.util.Utils;
 
-public class FavoriteFragment extends MyLazyFragment<FavoriteContract.View, FavoritePresenter> implements FavoriteContract.View {
+public class FavoriteFragment extends MyLazyFragment<FavoriteContract.View, FavoritePresenter> implements FavoriteContract.View, UpdateImgContract.View {
     @BindView(R.id.rv_list)
     RecyclerView mRecyclerView;
     @BindView(R.id.loading)
@@ -49,6 +53,11 @@ public class FavoriteFragment extends MyLazyFragment<FavoriteContract.View, Favo
     protected boolean isErr = true;
     private boolean updateOrder;
     private View view;
+    private List<AnimeUpdateInfoBean> animeUpdateInfoBeans;
+
+    public FavoriteFragment(List<AnimeUpdateInfoBean> beans) {
+        animeUpdateInfoBeans = beans;
+    }
 
     @Override
     protected FavoritePresenter createPresenter() {
@@ -78,7 +87,6 @@ public class FavoriteFragment extends MyLazyFragment<FavoriteContract.View, Favo
     }
 
     private void initAdapter() {
-        mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), Utils.isPad() ? 5 : 3));
         adapter = new FavoriteListAdapter(getActivity(), favoriteList);
         adapter.openLoadAnimation();
         adapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
@@ -138,7 +146,7 @@ public class FavoriteFragment extends MyLazyFragment<FavoriteContract.View, Favo
         loading.setVisibility(View.VISIBLE);
         if (favoriteCount > 0 && updateOrder) {
 //            application.showSnackbarMsg(msg, Utils.getString(R.string.check_favorite_update));
-            mPresenter = new FavoritePresenter(0, this);
+            mPresenter = new FavoritePresenter(0, animeUpdateInfoBeans, this);
             mPresenter.loadUpdateInfo();
         } else {
             mPresenter = new FavoritePresenter(favoriteList.size(), limit, updateOrder, this);
@@ -153,8 +161,10 @@ public class FavoriteFragment extends MyLazyFragment<FavoriteContract.View, Favo
         DatabaseUtil.deleteFavorite(favoriteList.get(position).getAnimeId());
         adapter.remove(position);
         favoriteCount = DatabaseUtil.queryFavoriteCount();
-        application.showSnackbarMsg(msg, Utils.getString(R.string.join_error));
+//        application.showSnackbarMsg(msg, Utils.getString(R.string.join_error));
+        CustomToast.showToast(getActivity(), Utils.getString(R.string.join_error), CustomToast.SUCCESS);
         if (favoriteList.size() <= 0) {
+            setRecyclerViewView();
             errorTitle.setText(Utils.getString(R.string.empty_favorite));
             adapter.setEmptyView(errorView);
         }
@@ -167,6 +177,7 @@ public class FavoriteFragment extends MyLazyFragment<FavoriteContract.View, Favo
             if (isMain) {
                 loading.setVisibility(View.GONE);
                 favoriteList = list;
+                setRecyclerViewView();
                 adapter.setNewData(favoriteList);
             } else
                 adapter.addData(list);
@@ -176,7 +187,7 @@ public class FavoriteFragment extends MyLazyFragment<FavoriteContract.View, Favo
     @Override
     public void completionView(boolean complete) {
         if (!complete) {
-            mPresenter = new FavoritePresenter(1, this);
+            mPresenter = new FavoritePresenter(1, animeUpdateInfoBeans, this);
             mPresenter.loadUpdateInfo();
         } else {
             int favoriteUpdateCount = DatabaseUtil.queryFavoriteUpdateCount();
@@ -213,6 +224,7 @@ public class FavoriteFragment extends MyLazyFragment<FavoriteContract.View, Favo
         setLoadState(false);
         getActivity().runOnUiThread(() -> {
             if (isMain) {
+                setRecyclerViewView();
                 loading.setVisibility(View.GONE);
                 errorTitle.setText(msg);
                 adapter.setEmptyView(errorView);
@@ -238,5 +250,65 @@ public class FavoriteFragment extends MyLazyFragment<FavoriteContract.View, Favo
         if (refresh.getIndex() == 1) {
             loadFavoriteData();
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (isFragmentVisible && Utils.isPad())
+            setRecyclerViewView();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        setRecyclerViewView();
+    }
+
+    private void setRecyclerViewView() {
+        String config = getActivity().getResources().getConfiguration().toString();
+        boolean isInMagicWindow = config.contains("miui-magic-windows");
+        if (favoriteList.size() == 0) {
+            mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 1));
+            return;
+        }
+        if (!Utils.isPad()) {
+            mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
+        }
+        else {
+            if (isInMagicWindow) {
+                mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 4));
+            } else {
+                mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 5));
+            }
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(UpdateImgBean updateImgBean) {
+        if (!isFragmentVisible) return;
+        updateImgPresenter = new UpdateImgPresenter(updateImgBean.getOldImgUrl(), updateImgBean.getDescUrl(), this);
+        updateImgPresenter.loadData();
+    }
+
+    @Override
+    public void showSuccessImg(String oldImgUrl, String imgUrl) {
+        if (!isFragmentVisible) return;
+        getActivity().runOnUiThread(() -> {
+            for (int i=0,size=favoriteList.size(); i<size; i++) {
+                if (favoriteList.get(i).getImg().contains(oldImgUrl)) {
+                    favoriteList.get(i).setImg(imgUrl);
+                    adapter.notifyItemChanged(i);
+                    DatabaseUtil.updateImg(favoriteList.get(i).getAnimeId(), imgUrl, 0);
+                    break;
+                }
+            }
+        });
+    }
+
+    @Override
+    public void showErrorImg(String msg) {
+        if (!isFragmentVisible) return;
+        getActivity().runOnUiThread(() -> CustomToast.showToast(getActivity(), msg, CustomToast.ERROR));
     }
 }

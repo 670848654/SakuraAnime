@@ -408,7 +408,7 @@ public class DatabaseUtil {
         Cursor cursor = db.rawQuery(Query, new String[] { animeId });
         if (cursor.getCount() > 0) {
             cursor.moveToNext();
-            int id = cursor.getInt(cursor.getColumnIndex("F_ID"));
+            String id = cursor.getString(cursor.getColumnIndex("F_ID"));
             String url =  bean.getUrl().contains(IMOMOE_DOMIAN) ?  bean.getUrl().substring(IMOMOE_DOMIAN.length()) :  bean.getUrl().substring(YHDM_DOMAIN.length());
             db.execSQL("update T_FAVORITE set F_IMG_URL=?, F_URL=?, F_DESC=? where F_ID=?",
                     new Object[]{
@@ -976,5 +976,43 @@ public class DatabaseUtil {
         long progress = cursor.getLong(0);
         cursor.close();
         return progress;
+    }
+
+    /**
+     * 更新图片信息
+     * @param id
+     * @param imgUrl
+     * @param type
+     */
+    public static void updateImg(String id, String imgUrl, int type) {
+        switch (type) {
+            case 0:
+                // 更新收藏夹
+                String Query = "select * from T_FAVORITE where F_LINK_ID =?";
+                Cursor cursor = db.rawQuery(Query, new String[] { id });
+                if (cursor.getCount() > 0) {
+                    cursor.moveToNext();
+                    String favoriteId = cursor.getString(cursor.getColumnIndex("F_ID"));
+                    db.execSQL("update T_FAVORITE set F_IMG_URL=? where F_ID=?",
+                            new Object[]{
+                                    imgUrl,
+                                    favoriteId});
+                }
+                cursor.close();
+                break;
+            case 1:
+                // 更新历史记录
+                db.execSQL("update T_HISTORY set F_IMG_URL =? where F_LINK_ID=?", new Object[]{
+                        imgUrl,
+                        id
+                });
+                break;
+            case 2:
+                db.execSQL("update T_DOWNLOAD set F_IMG_URL =? where F_ID=?", new Object[]{
+                        imgUrl,
+                        id
+                });
+                break;
+        }
     }
 }

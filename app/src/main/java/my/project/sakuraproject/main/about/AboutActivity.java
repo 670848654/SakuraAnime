@@ -3,7 +3,6 @@ package my.project.sakuraproject.main.about;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Environment;
-import android.os.Handler;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -13,53 +12,33 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.Toolbar;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.r0adkll.slidr.Slidr;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.OnClick;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.adapter.LogAdapter;
-import my.project.sakuraproject.api.Api;
 import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.bean.LogBean;
-import my.project.sakuraproject.custom.CustomToast;
 import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.base.Presenter;
-import my.project.sakuraproject.net.HttpGet;
-import my.project.sakuraproject.util.SharedPreferencesUtils;
 import my.project.sakuraproject.util.SwipeBackLayoutUtil;
 import my.project.sakuraproject.util.Utils;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.Response;
 
 public class AboutActivity extends BaseActivity {
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.cache)
     TextView cache;
-    @BindView(R.id.version)
-    TextView version;
-    private AlertDialog alertDialog;
-    private String downloadUrl;
-    private Call downCall;
     @BindView(R.id.footer)
     LinearLayout footer;
-    @BindView(R.id.show)
-    CoordinatorLayout show;
 
     @Override
     protected Presenter createPresenter() {
@@ -87,6 +66,11 @@ public class AboutActivity extends BaseActivity {
         SwipeBackLayoutUtil.convertActivityToTranslucent(this);
     }
 
+    @Override
+    protected void setConfigurationChanged() {
+
+    }
+
     public void initToolbar() {
         toolbar.setTitle(Utils.getString(R.string.about));
         setSupportActionBar(toolbar);
@@ -97,14 +81,10 @@ public class AboutActivity extends BaseActivity {
     private void initViews() {
         LinearLayout.LayoutParams Params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Utils.getNavigationBarHeight(this));
         footer.findViewById(R.id.footer).setLayoutParams(Params);
-        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) show.getLayoutParams();
-        params.setMargins(10, 0, 10, Utils.getNavigationBarHeight(this) - 5);
-        show.setLayoutParams(params);
-        version.setText(Utils.getASVersionName());
         cache.setText(Environment.getExternalStorageDirectory() + Utils.getString(R.string.cache_text));
     }
 
-    @OnClick({R.id.sakura,R.id.github, R.id.check_update})
+    @OnClick({R.id.sakura,R.id.github})
     public void openBrowser(RelativeLayout relativeLayout) {
         switch (relativeLayout.getId()) {
             case R.id.sakura:
@@ -112,9 +92,6 @@ public class AboutActivity extends BaseActivity {
                 break;
             case R.id.github:
                 Utils.viewInChrome(this, Utils.getString(R.string.github_url));
-                break;
-            case R.id.check_update:
-                if (Utils.isFastClick()) checkUpdate();
                 break;
         }
     }
@@ -124,7 +101,7 @@ public class AboutActivity extends BaseActivity {
         getMenuInflater().inflate(R.menu.about_menu, menu);
         MenuItem updateLogItem = menu.findItem(R.id.update_log);
         MenuItem openSourceItem = menu.findItem(R.id.open_source);
-        if (!(Boolean) SharedPreferencesUtils.getParam(this, "darkTheme", false)) {
+        if (!Utils.getTheme()) {
             updateLogItem.setIcon(R.drawable.baseline_insert_chart_outlined_black_48dp);
             openSourceItem.setIcon(R.drawable.baseline_all_inclusive_black_48dp);
         }
@@ -167,6 +144,7 @@ public class AboutActivity extends BaseActivity {
 
     public List createUpdateLogList() {
         List logsList = new ArrayList();
+        logsList.add(new LogBean("版本：2.2.0", "修改首页UI，移除侧滑栏，不再将时间表作为首页展示内容\n修复下载M3U8视频失败时无法删除任务的问题\n移除设置同时下载数量功能（功能存在问题），暂设置默认下载数量为1\n修复投屏功能目前发现的一些问题\n修复我的追番列表、历史记录、下载列表中的番剧图片地址更换而无法显示的问题，更新新的图片地址存入数据库\n修改历史记录、下载列表中列表数据UI呈现样式"));
         logsList.add(new LogBean("版本：2.1.0", "新增追番更新检测，有更新的番剧将排在列表最前面（仅支持Yhdm源）\n新增观看历史记录\n新增剧集下载功能\n新增保存播放进度"));
         logsList.add(new LogBean("版本：2.0.0", "修复Yhdm源一些剧集无法解析的问题\n修复Imomoe源的一个Bug\n内置播放器添加播放时可隐藏底部进度条的选项（在播放器中设置）\n内置播放器优化相关操作"));
         logsList.add(new LogBean("版本：1.9.9", "Yhdm域名变更为http://www.yhdm.so，Imomoe域名变更为http://www.imomoe.la\n添加1.25、1.75倍速播放\n修复其他已知问题"));
@@ -208,54 +186,5 @@ public class AboutActivity extends BaseActivity {
         return logsList;
     }
 
-    public void checkUpdate() {
-        alertDialog = Utils.getProDialog(this, R.string.check_update_text);
-        new Handler().postDelayed(() -> new HttpGet(Api.CHECK_UPDATE, new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                runOnUiThread(() -> {
-                    Utils.cancelDialog(alertDialog);
-                    application.showSnackbarMsgAction(show, Utils.getString(R.string.ck_network_error_start), Utils.getString(R.string.try_again), v -> checkUpdate());
-                });
-            }
 
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                String json = response.body().string();
-                try {
-                    JSONObject obj = new JSONObject(json);
-                    String newVersion = obj.getString("tag_name");
-                    if (newVersion.equals(Utils.getASVersionName()))
-                        runOnUiThread(() -> {
-                            Utils.cancelDialog(alertDialog);
-                            application.showSnackbarMsg(show, Utils.getString(R.string.no_new_version));
-                        });
-                    else {
-                        downloadUrl = obj.getJSONArray("assets").getJSONObject(0).getString("browser_download_url");
-                        String body = obj.getString("body");
-                        runOnUiThread(() -> {
-                            Utils.cancelDialog(alertDialog);
-                            Utils.findNewVersion(AboutActivity.this,
-                                    newVersion,
-                                    body,
-                                    (dialog, which) -> {
-                                        dialog.dismiss();
-                                        Utils.putTextIntoClip(downloadUrl);
-//                                        application.showSuccessToastMsg(Utils.getString(R.string.url_copied));
-                                        CustomToast.showToast(AboutActivity.this, Utils.getString(R.string.url_copied), CustomToast.SUCCESS);
-                                        Utils.viewInBrowser(AboutActivity.this, downloadUrl);
-                                    },
-                                    (dialog, which) -> dialog.dismiss()
-                            );
-                        });
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-//                    application.showErrorToastMsg(Utils.getString(R.string.ck_error_start));
-                    CustomToast.showToast(AboutActivity.this, Utils.getString(R.string.ck_error_start), CustomToast.ERROR);
-                    Utils.cancelDialog(alertDialog);
-                }
-            }
-        }), 1000);
-    }
 }

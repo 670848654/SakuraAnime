@@ -60,6 +60,11 @@ public class StartActivity extends BaseActivity {
         StatusBarUtil.setColorNoTranslucent(this, getResources().getColor(R.color.logo_bg));
     }
 
+    @Override
+    protected void setConfigurationChanged() {
+
+    }
+
     private void checkUpdate() {
         new HttpGet(Api.CHECK_UPDATE, new Callback() {
             @Override

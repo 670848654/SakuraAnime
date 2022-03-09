@@ -112,11 +112,20 @@
             android:paddingLeft="14dp"
             android:textColor="#ffffff" />
 
+        <TextView
+            android:id="@+id/display"
+            android:text="自适应比例"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:paddingLeft="14dp"
+            android:paddingRight="20dp"
+            android:textColor="#ffffff" />
+
         <ImageView
             android:id="@+id/fullscreen"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="14dp"
             android:paddingRight="14dp"
             android:scaleType="centerInside"
             android:src="@drawable/baseline_view_selections_white_48dp" />

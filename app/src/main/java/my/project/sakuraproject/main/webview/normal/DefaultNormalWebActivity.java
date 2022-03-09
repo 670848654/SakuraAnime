@@ -199,6 +199,11 @@ public class DefaultNormalWebActivity extends BaseActivity {
     }
 
     @Override
+    protected void setConfigurationChanged() {
+
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         if (isFullscreen) hideNavBar();

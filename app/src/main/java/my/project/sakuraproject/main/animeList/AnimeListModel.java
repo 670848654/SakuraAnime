@@ -21,9 +21,9 @@ public class AnimeListModel extends BaseModel implements AnimeListContract.Model
 
     @Override
     public void getData(String url, int page, boolean isMain, boolean isMovie, boolean isImomoe, AnimeListContract.LoadDataCallback callback) throws UnsupportedEncodingException {
-        String htmlUrl = getUlr(url, page, isImomoe);
+        String htmlUrl = getUlr(url, page, isImomoe, isMovie);
         if (isImomoe)
-            parserImomoe(htmlUrl, isMain, callback);
+            parserImomoe(htmlUrl, isMain, isMovie, callback);
         else
             parserYhdm(htmlUrl, isMain, isMovie, callback);
     }
@@ -34,12 +34,19 @@ public class AnimeListModel extends BaseModel implements AnimeListContract.Model
      * @param page
      * @return
      */
-    private String getUlr(String url, int page, boolean isImomoe) throws UnsupportedEncodingException {
+    private String getUlr(String url, int page, boolean isImomoe, boolean isMovie) throws UnsupportedEncodingException {
         if (isImomoe) {
-            if (page != 1)
-                return encodeUrl(getDomain(true) + url.replaceAll("page=[0-9]{0,}\\&", String.format(replaceStr, page)));
-            else
-                return encodeUrl(getDomain(true) + url);
+            if (isMovie) {
+                if (page != 1)
+                    return getDomain(true) + String.format(Sakura.MOVIE_API, "1_"+page);
+                else
+                    return getDomain(true) + String.format(Sakura.MOVIE_API, "1");
+            } else {
+                if (page != 1)
+                    return encodeUrl(getDomain(true) + url.replaceAll("page=[0-9]{0,}\\&", String.format(replaceStr, page)));
+                else
+                    return encodeUrl(getDomain(true) + url);
+            }
         } else {
             if (page != 1)
                 return getDomain(false) + url + page + ".html";
@@ -82,7 +89,7 @@ public class AnimeListModel extends BaseModel implements AnimeListContract.Model
         });
     }
 
-    private void parserImomoe(String url,boolean isMain, AnimeListContract.LoadDataCallback callback) {
+    private void parserImomoe(String url,boolean isMain, boolean isMovie, AnimeListContract.LoadDataCallback callback) {
         callback.log(url);
         new HttpGet(url, new Callback() {
             @Override
@@ -96,7 +103,7 @@ public class AnimeListModel extends BaseModel implements AnimeListContract.Model
                     String source = getHtmlBody(response, true);
                     if (isMain)
                         callback.pageCount(ImomoeJsoupUtils.getPageCount(source));
-                    List<AnimeListBean>  animeListBeans = ImomoeJsoupUtils.getAnimeList(source);
+                    List<AnimeListBean>  animeListBeans = ImomoeJsoupUtils.getAnimeList(source, isMovie);
                     if (animeListBeans.size() > 0)
                         callback.success(isMain, animeListBeans);
                     else

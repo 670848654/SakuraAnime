@@ -5,19 +5,18 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import androidx.appcompat.widget.SearchView;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.MenuItemCompat;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.r0adkll.slidr.Slidr;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.MenuItemCompat;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.adapter.AnimeListAdapter;
@@ -98,7 +97,7 @@ public class SearchActivity extends BaseActivity<SearchContract.View, SearchPres
     }
 
     public void initAdapter() {
-        mRecyclerView.setLayoutManager(new GridLayoutManager(this, Utils.isPad() ? 5 : 3));
+//        mRecyclerView.setLayoutManager(new GridLayoutManager(this, Utils.isPad() ? 5 : 3));
         adapter = new AnimeListAdapter(this, searchList, false);
         adapter.openLoadAnimation();
         adapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
@@ -153,10 +152,11 @@ public class SearchActivity extends BaseActivity<SearchContract.View, SearchPres
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.home_menu, menu);
+        getMenuInflater().inflate(R.menu.search_menu, menu);
         final MenuItem item = menu.findItem(R.id.search);
         mSearchView = (SearchView) MenuItemCompat.getActionView(item);
         mSearchView.onActionViewExpanded();
+        mSearchView.setSubmitButtonEnabled(true);
         mSearchView.setQueryHint(Utils.getString(R.string.search_hint));
         mSearchView.setMaxWidth(2000);
         if (!title.isEmpty()) {
@@ -234,6 +234,7 @@ public class SearchActivity extends BaseActivity<SearchContract.View, SearchPres
                 if (isMain) {
                     mSwipe.setRefreshing(false);
                     searchList = list;
+                    setRecyclerViewView();
                     adapter.setNewData(searchList);
                 } else {
                     adapter.addData(list);
@@ -249,6 +250,7 @@ public class SearchActivity extends BaseActivity<SearchContract.View, SearchPres
             isSearch = false;
             if (!mActivityFinish) {
                 if (isMain) {
+                    setRecyclerViewView();
                     mSwipe.setRefreshing(false);
                     errorTitle.setText(msg);
                     adapter.setEmptyView(errorView);
@@ -264,5 +266,35 @@ public class SearchActivity extends BaseActivity<SearchContract.View, SearchPres
     @Override
     public void getPageCount(int pageCount) {
         this.pageCount = pageCount;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (Utils.isPad()) setRecyclerViewView();
+    }
+
+    @Override
+    protected void setConfigurationChanged() {
+        setRecyclerViewView();
+    }
+
+    private void setRecyclerViewView() {
+        String config = this.getResources().getConfiguration().toString();
+        boolean isInMagicWindow = config.contains("miui-magic-windows");
+        if (searchList.size() == 0) {
+            mRecyclerView.setLayoutManager(new GridLayoutManager(this, 1));
+            return;
+        }
+        if (!Utils.isPad()) {
+            mRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
+        }
+        else {
+            if (isInMagicWindow) {
+                mRecyclerView.setLayoutManager(new GridLayoutManager(this, 4));
+            } else {
+                mRecyclerView.setLayoutManager(new GridLayoutManager(this, 5));
+            }
+        }
     }
 }

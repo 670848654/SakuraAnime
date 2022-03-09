@@ -3,11 +3,13 @@ package my.project.sakuraproject.adapter;
 import android.view.ViewGroup;
 
 import java.util.HashMap;
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
+import my.project.sakuraproject.bean.AnimeUpdateInfoBean;
 import my.project.sakuraproject.main.my.fragment.DownloadFragment;
 import my.project.sakuraproject.main.my.fragment.FavoriteFragment;
 import my.project.sakuraproject.main.my.fragment.HistoryFragment;
@@ -15,10 +17,11 @@ import my.project.sakuraproject.main.my.fragment.HistoryFragment;
 public class MyFragmentAdapter extends FragmentStatePagerAdapter {
     private int num;
     private HashMap<Integer, Fragment> mFragmentHashMap = new HashMap<>();
-
-    public MyFragmentAdapter(FragmentManager fm, int num) {
+    private List<AnimeUpdateInfoBean> animeUpdateInfoBeans;
+    public MyFragmentAdapter(FragmentManager fm, int num, List<AnimeUpdateInfoBean> animeUpdateInfoBeans) {
         super(fm);
         this.num = num;
+        this.animeUpdateInfoBeans = animeUpdateInfoBeans;
     }
 
     @Override
@@ -46,7 +49,7 @@ public class MyFragmentAdapter extends FragmentStatePagerAdapter {
                     break;
                  */
                 case 0:
-                    fragment = new FavoriteFragment();
+                    fragment = new FavoriteFragment(animeUpdateInfoBeans);
                     break;
                 case 1:
                     fragment = new HistoryFragment();

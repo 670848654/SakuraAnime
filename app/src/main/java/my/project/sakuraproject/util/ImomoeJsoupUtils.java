@@ -23,7 +23,9 @@ import my.project.sakuraproject.bean.AnimeDescDetailsBean;
 import my.project.sakuraproject.bean.AnimeDescListBean;
 import my.project.sakuraproject.bean.AnimeDescRecommendBean;
 import my.project.sakuraproject.bean.AnimeListBean;
+import my.project.sakuraproject.bean.AnimeUpdateBean;
 import my.project.sakuraproject.bean.AnimeUpdateInfoBean;
+import my.project.sakuraproject.bean.HomeBean;
 import my.project.sakuraproject.bean.ImomoeVideoUrlBean;
 import my.project.sakuraproject.bean.TagBean;
 import my.project.sakuraproject.bean.TagHeaderBean;
@@ -51,7 +53,48 @@ public class ImomoeJsoupUtils {
         return pageCount;
     }
 
-/**************************************  新番时间表解析方法开始  **************************************/
+    /**************************************  获取首页相关信息解析方法开始  **************************************/
+    public static List<HomeBean> getHomeAllData(String source) {
+        Document document = Jsoup.parse(source);
+        Elements titles = document.select("div.firs > div.tame");
+        Log.e("titles", titles.size() + "");
+        Elements data = document.select("div.firs > div.imgs");
+        List<HomeBean> homeBeanList = new ArrayList<>();
+        for (int i=0,size=titles.size(); i<size; i++) {
+            HomeBean homeBean = new HomeBean();
+            String title = titles.get(i).select("h2").text();
+            String moreUrl = titles.get(i).select("span > a").attr("href");
+            if (title.contains("日本动漫"))
+                moreUrl = "/so.asp?page=1&fl=0&dq=%C8%D5%B1%BE";
+            else if (title.contains("国产动漫"))
+                moreUrl = "/so.asp?page=1&fl=0&dq=%B4%F3%C2%BD";
+            else if (title.contains("美国动漫"))
+                moreUrl = "/so.asp?page=1&fl=0&dq=%C3%C0%B9%FA";
+            homeBean.setTitle(title);
+            homeBean.setMoreUrl(moreUrl);
+            List<HomeBean.HomeItemBean> homeItemBeanList = new ArrayList<>();
+            Elements animes = data.get(i).select("ul > li");
+            for (Element anime : animes) {
+                Elements animeInfo = anime.select("a");
+                Elements episodesInfo = anime.select("p");
+                HomeBean.HomeItemBean homeItemBean = new HomeBean.HomeItemBean();
+                String animeTitle = animeInfo.get(1).text();
+                String url = animeInfo.get(1).attr("href");
+                String img = animeInfo.get(0).select("img").attr("src");
+                String episodes = episodesInfo.size() == 2 ? episodesInfo.get(1).text() : "";
+                homeItemBean.setTitle(animeTitle);
+                homeItemBean.setUrl(url);
+                homeItemBean.setImg(img);
+                homeItemBean.setEpisodes(episodes);
+                homeItemBeanList.add(homeItemBean);
+            }
+            homeBean.setData(homeItemBeanList);
+            homeBeanList.add(homeBean);
+        }
+        return homeBeanList;
+    }
+
+    /**************************************  新番时间表解析方法开始  **************************************/
     /**
      * 首页新番时间表解析方法
      * @param source
@@ -165,18 +208,33 @@ public class ImomoeJsoupUtils {
      * @param source
      * @return
      */
-    public static List<AnimeListBean> getAnimeList(String source) {
+    public static List<AnimeListBean> getAnimeList(String source, boolean isMovie) {
         List<AnimeListBean> animeListBeans = new ArrayList<>();
         Document document = Jsoup.parse(source);
-        Elements elements = document.select("div.fire > div.pics > ul > li");
-        if (elements.size() > 0) {
-            for (int i=0,size=elements.size(); i < size; i++) {
-                AnimeListBean bean = new AnimeListBean();
-                bean.setTitle(elements.get(i).select("h2").text());
-                bean.setUrl(elements.get(i).select("h2 > a").attr("href"));
-                bean.setImg(elements.get(i).select("img").attr("src"));
-                bean.setDesc(elements.get(i).select("p").text());
-                animeListBeans.add(bean);
+        if (isMovie) {
+            Elements elements = document.select("div#contrainer > div.img > ul > li");
+            if (elements.size() > 0) {
+                for (int i=0,size=elements.size(); i < size; i++) {
+                    AnimeListBean bean = new AnimeListBean();
+                    Elements info = elements.get(i).select("a");
+                    bean.setTitle(info.get(1).text());
+                    bean.setUrl(info.get(1).attr("href"));
+                    bean.setImg(info.get(0).select("img").attr("src"));
+                    bean.setDesc("");
+                    animeListBeans.add(bean);
+                }
+            }
+        } else {
+            Elements elements = document.select("div.fire > div.pics > ul > li");
+            if (elements.size() > 0) {
+                for (int i=0,size=elements.size(); i < size; i++) {
+                    AnimeListBean bean = new AnimeListBean();
+                    bean.setTitle(elements.get(i).select("h2").text());
+                    bean.setUrl(elements.get(i).select("h2 > a").attr("href"));
+                    bean.setImg(elements.get(i).select("img").attr("src"));
+                    bean.setDesc(elements.get(i).select("p").text());
+                    animeListBeans.add(bean);
+                }
             }
         }
         return animeListBeans;
@@ -374,4 +432,36 @@ public class ImomoeJsoupUtils {
         return content;
     }*/
     /**************************************  最近更新动漫解析方法结束  **************************************/
+
+    /**************************************  最近更新动漫解析方法开始  **************************************/
+    public static List<AnimeUpdateBean> getUpdateInfoList2(String source) {
+        List<AnimeUpdateBean> animeUpdateBeans = new ArrayList<>();
+        Document document = Jsoup.parse(source);
+        Elements elements = document.select("div.topli > ul > li");
+        for (Element li : elements) {
+            Elements aList = li.select("a");
+            AnimeUpdateBean animeUpdateBean = new AnimeUpdateBean();
+            animeUpdateBean.setNumber(li.select("i").text());
+            animeUpdateBean.setRegion(aList.get(0).text());
+            animeUpdateBean.setTitle(aList.get(1).text());
+            animeUpdateBean.setUrl(aList.get(1).attr("href"));
+            animeUpdateBean.setEpisodes(aList.get(2).text());
+            animeUpdateBean.setUpdateTime(li.select("em").text());
+            animeUpdateBeans.add(animeUpdateBean);
+        }
+        return animeUpdateBeans;
+    }
+    /**************************************  最近更新动漫解析方法结束  **************************************/
+
+    /**************************************  更新图片方方法开始  **************************************/
+    /**
+     * 获取番剧图片
+     * @param source
+     * @return
+     */
+    public static String getAinmeImg(String source) {
+        Document document = Jsoup.parse(source);
+        return document.select("div.tpic > img").attr("src");
+    }
+    /**************************************  更新图片方法结束  **************************************/
 }

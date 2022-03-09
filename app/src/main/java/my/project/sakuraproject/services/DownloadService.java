@@ -1,12 +1,13 @@
 package my.project.sakuraproject.services;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
+import android.os.PowerManager;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.arialyy.annotations.Download;
 import com.arialyy.aria.core.Aria;
@@ -26,6 +27,7 @@ import my.project.sakuraproject.util.DownloadNotification;
 public class DownloadService extends Service {
     private DownloadNotification mNotify;
     private Handler handler;
+    PowerManager.WakeLock wakeLock = null;
 
     @Nullable
     @Override
@@ -41,6 +43,11 @@ public class DownloadService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK|PowerManager.ON_AFTER_RELEASE, DownloadService.class.getName());
+        if (null != wakeLock)  {
+            wakeLock.acquire();
+        }
         handler = new Handler(Looper.getMainLooper());
         handler.post(() -> CustomToast.showToast(getApplicationContext(), "下载服务已开启", CustomToast.SUCCESS));
         mNotify = new DownloadNotification(this);
@@ -52,6 +59,10 @@ public class DownloadService extends Service {
 
     @Override
     public void onDestroy() {
+        if (wakeLock != null) {
+            wakeLock.release();
+            wakeLock = null;
+        }
         Aria.download(this).unRegister();
         Log.e("onDestroy", "DownloadService销毁了");
         handler.post(() -> CustomToast.showToast(getApplicationContext(), "下载服务已关闭", CustomToast.SUCCESS));

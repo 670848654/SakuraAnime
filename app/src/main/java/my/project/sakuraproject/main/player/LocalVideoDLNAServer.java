@@ -18,6 +18,69 @@ public class LocalVideoDLNAServer extends NanoHTTPD {
         this.path = path;
     }
 
+    /*@Override
+    public Response serve(IHTTPSession session) {
+        String range = null;
+        Map<String, String> headers = session.getHeaders();
+        for (String key : headers.keySet()) {
+            if ("range".equals(key)) {
+                range = headers.get(key);
+                break;
+            }
+        }
+        if (range != null) {
+            try {
+                return getPartialResponse("video/mp4", range);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            return responseVideoStream(session, path);
+        }
+    }
+
+    public Response responseVideoStream(IHTTPSession session, String videopath) {
+        try {
+            FileInputStream fis = new FileInputStream(videopath);
+            return newChunkedResponse(Response.Status.OK, "video/mp4", fis);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private Response getPartialResponse(String mimeType, String rangeHeader) throws IOException {
+        File file = new File(path);
+        String rangeValue = rangeHeader.trim().substring("bytes=".length());
+        long fileLength = file.length();
+        long start, end;
+        if (rangeValue.startsWith("-")) {
+            end = fileLength - 1;
+            start = fileLength - 1
+                    - Long.parseLong(rangeValue.substring("-".length()));
+        } else {
+            String[] range = rangeValue.split("-");
+            start = Long.parseLong(range[0]);
+            end = range.length > 1 ? Long.parseLong(range[1])
+                    : fileLength - 1;
+        }
+        if (end > fileLength - 1) {
+            end = fileLength - 1;
+        }
+        if (start <= end) {
+            long contentLength = end - start + 1;
+            FileInputStream fileInputStream = new FileInputStream(file);
+            //noinspection ResultOfMethodCallIgnored
+            fileInputStream.skip(start);
+            Response response = newFixedLengthResponse(Response.Status.PARTIAL_CONTENT, mimeType, fileInputStream, contentLength);
+            response.addHeader("Content-Length", contentLength + "");
+            response.addHeader("Content-Range", "bytes " + start + "-" + end + "/" + fileLength);
+            response.addHeader("Content-Type", mimeType);
+            return response;
+        } else {
+            return newChunkedResponse(Response.Status.INTERNAL_ERROR, "text/html", null);
+        }
+    }*/
+
     @Override
     public Response serve(IHTTPSession session) {
         Map<String, String> headers = session.getHeaders();

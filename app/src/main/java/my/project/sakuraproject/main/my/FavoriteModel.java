@@ -29,7 +29,7 @@ public class FavoriteModel extends BaseModel implements FavoriteContract.Model {
     }
 
     @Override
-    public void getUpdateInfo(int source, FavoriteContract.LoadDataCallback callback) {
+    public void getUpdateInfo(int source, List<AnimeUpdateInfoBean> beans, FavoriteContract.LoadDataCallback callback) {
         switch (source) {
             case 0:
                 new HttpGet(Sakura.YHDM_UPDATE, new Callback() {
@@ -44,7 +44,7 @@ public class FavoriteModel extends BaseModel implements FavoriteContract.Model {
                     public void onResponse(Call call, Response response) {
                         try {
                             String source = getHtmlBody(response, false);
-                            List<AnimeUpdateInfoBean> animeUpdateInfoBeans = YhdmJsoupUtils.getUpdateInfoList(source);
+                            List<AnimeUpdateInfoBean> animeUpdateInfoBeans = YhdmJsoupUtils.getUpdateInfoList(source, beans);
                             if (animeUpdateInfoBeans.size() > 0)
                                 DatabaseUtil.updateFavorite(animeUpdateInfoBeans);
 //                            callback.completion(false);
@@ -83,12 +83,13 @@ public class FavoriteModel extends BaseModel implements FavoriteContract.Model {
                         }
                     }
                 });
-                 */
                 parserImomoe(getDomain(true), callback);
+                 */
                 break;
         }
     }
 
+    /*
     private void parserYhdm(String url, FavoriteContract.LoadDataCallback callback, String RedirectedStr) {
         callback.log(url + RedirectedStr);
         new HttpGet(url + RedirectedStr, new Callback() {
@@ -148,4 +149,5 @@ public class FavoriteModel extends BaseModel implements FavoriteContract.Model {
             }
         });
     }
+    */
 }

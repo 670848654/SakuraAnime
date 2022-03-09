@@ -1,12 +1,11 @@
 package my.project.sakuraproject.cling.entity;
 
-import androidx.annotation.Nullable;
-
 import org.fourthline.cling.model.meta.Device;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
+import androidx.annotation.Nullable;
 import my.project.sakuraproject.cling.util.OtherUtils;
 
 /**

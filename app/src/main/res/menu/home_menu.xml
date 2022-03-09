@@ -2,9 +2,27 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/my"
+        android:orderInCategory="60"
+        android:title="@string/my_title"
+        android:icon="@drawable/baseline_account_circle_black_48dp"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/theme"
+        android:orderInCategory="60"
+        android:title="切换主题"
+        android:icon="@drawable/baseline_style_black_48dp"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/setting"
+        android:orderInCategory="60"
+        android:title="@string/home_setting_item_title"
+        android:icon="@drawable/baseline_settings_black_48dp"
+        app:showAsAction="always" />
+    <item
         android:id="@+id/search"
         android:orderInCategory="60"
         android:title="@string/search"
-        app:actionViewClass="androidx.appcompat.widget.SearchView"
+        android:icon="@drawable/baseline_search_black_48dp"
         app:showAsAction="always" />
 </menu>

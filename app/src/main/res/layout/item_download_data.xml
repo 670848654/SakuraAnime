@@ -1,46 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/card_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_gravity="center"
-    android:layout_marginLeft="4dp"
-    android:layout_marginTop="6dp"
-    android:layout_marginRight="4dp"
-    android:layout_marginBottom="2dp"
+    android:padding="5dp"
     android:foreground="?android:attr/selectableItemBackground"
-    app:cardBackgroundColor="@color/window_bg"
-    app:cardCornerRadius="4dp"
-    app:cardElevation="4dp"
-    app:cardUseCompatPadding="false">
+    app:cardBackgroundColor="@color/window_bg">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
+
         <RelativeLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="4">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/img_box"
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                app:cardCornerRadius="8dp"
+                android:layout_marginRight="5dp"
+                app:cardElevation="0dp"
+                app:cardUseCompatPadding="false">
 
-                <ImageView
-                    android:id="@+id/img"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    app:layout_constraintDimensionRatio="W,9:16"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:scaleType="centerCrop"
-                    android:transitionName="sharedImg" />
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/img_box"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                    <ImageView
+                        android:id="@+id/img"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        app:layout_constraintDimensionRatio="W,9:16"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:scaleType="centerCrop"
+                        android:transitionName="sharedImg" />
+
+                    <ProgressBar
+                        android:id="@+id/show_progress"
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:layout_alignParentBottom="true"
+                        android:layout_width="match_parent"
+                        android:layout_height="3dp"
+                        android:max="100"
+                        android:visibility="gone"
+                        app:layout_constraintTop_toBottomOf="@+id/img"
+                        android:progressDrawable="@drawable/progress_bg" />
+
+                    <TextView
+                        android:id="@+id/time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/my_item_gradient"
+                        android:textColor="@color/white"
+                        android:textSize="12sp"
+                        android:layout_margin="3dp"
+                        android:paddingLeft="4dp"
+                        android:paddingRight="4dp"
+                        android:paddingTop="2dp"
+                        android:paddingBottom="2dp"
+                        app:layout_constraintBottom_toTopOf="@+id/show_progress"
+                        app:layout_constraintEnd_toEndOf="@+id/show_progress"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.cardview.widget.CardView>
 
             <TextView
                 android:id="@+id/number"
@@ -51,16 +81,8 @@
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"/>
 
-            <ProgressBar
-                android:id="@+id/show_progress"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_alignParentBottom="true"
-                android:layout_width="match_parent"
-                android:layout_height="3dp"
-                android:max="100"
-                android:visibility="gone"
-                android:progressDrawable="@drawable/progress_bg" />
         </RelativeLayout>
+
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -85,6 +107,7 @@
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:id="@+id/state"
+                android:gravity="bottom"
                 android:textSize="12sp"/>
 
             <RelativeLayout
@@ -102,14 +125,14 @@
                     android:layout_above="@+id/bottom_progress"
                     android:textColor="@color/light_toolbar_color_lt23"/>
 
-                <TextView
+                <!--<TextView
                     android:id="@+id/progress_info"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="12sp"
                     android:layout_alignParentEnd="true"
                     android:layout_above="@+id/bottom_progress"
-                    android:textColor="@color/light_toolbar_color_lt23"/>
+                    android:textColor="@color/light_toolbar_color_lt23"/>-->
 
                 <ProgressBar
                     android:id="@+id/bottom_progress"
@@ -129,6 +152,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1">
+
             <ImageView
                 android:id="@+id/delete_view"
                 android:layout_centerVertical="true"
@@ -137,6 +161,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:tint="@color/colorAccent"/>
+
         </RelativeLayout>
+
     </LinearLayout>
-</androidx.cardview.widget.CardView>
+
+</RelativeLayout>

@@ -37,6 +37,7 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
             android:gravity="center_vertical"
+            android:maxLines="1"
             android:padding="2dp"
             android:textColor="@color/colorAccent"
             android:textSize="12sp" />

@@ -2,8 +2,6 @@ package my.project.sakuraproject.cling.control;
 
 import android.util.Log;
 
-import androidx.annotation.Nullable;
-
 import org.fourthline.cling.controlpoint.ControlPoint;
 import org.fourthline.cling.model.action.ActionInvocation;
 import org.fourthline.cling.model.message.UpnpResponse;
@@ -27,6 +25,7 @@ import org.seamless.util.MimeType;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import androidx.annotation.Nullable;
 import my.project.sakuraproject.cling.control.callback.ControlCallback;
 import my.project.sakuraproject.cling.control.callback.ControlReceiveCallback;
 import my.project.sakuraproject.cling.entity.ClingPositionResponse;
@@ -55,8 +54,13 @@ public class ClingPlayControl implements IPlayControl {
      * 当前状态
      */
     private @DLANPlayState.DLANPlayStates int mCurrentState = DLANPlayState.STOP;
-    private static final String DIDL_LITE_FOOTER = "</DIDL-Lite>";
+   /* private static final String DIDL_LITE_FOOTER = "</DIDL-Lite>";
     private static final String DIDL_LITE_HEADER = "<?xml version=\"1.0\"?>" + "<DIDL-Lite " + "xmlns=\"urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/\" " +
+            "xmlns:dc=\"http://purl.org/dc/elements/1.1/\" " + "xmlns:upnp=\"urn:schemas-upnp-org:metadata-1-0/upnp/\" " +
+            "xmlns:dlna=\"urn:schemas-dlna-org:metadata-1-0/\">";*/
+    private static final String DIDL_LITE_FOOTER = "</DIDL-Lite>";
+    private static final String DIDL_LITE_HEADER = "<?xml version=\"1.0\"?>" +
+            "<DIDL-Lite " + "xmlns=\"urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/\" " +
             "xmlns:dc=\"http://purl.org/dc/elements/1.1/\" " + "xmlns:upnp=\"urn:schemas-upnp-org:metadata-1-0/upnp/\" " +
             "xmlns:dlna=\"urn:schemas-dlna-org:metadata-1-0/\">";
 

@@ -22,6 +22,9 @@
         android:requestLegacyExternalStorage = "true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+        <meta-data
+            android:name="EasyGoClient"
+            android:value="true" />
         <activity
             android:name=".main.start.StartActivity"
             android:configChanges="screenLayout|orientation|screenSize|smallestScreenSize|keyboardHidden|uiMode"
@@ -36,11 +39,22 @@
                 android:name="android.app.shortcuts"
                 android:resource="@xml/shortcuts" />
         </activity>
+
         <activity
             android:name=".main.home.HomeActivity"
             android:configChanges="screenLayout|orientation|screenSize|smallestScreenSize|keyboardHidden|uiMode"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".main.week.WeekActivity"
+            android:configChanges="screenLayout|orientation|screenSize|smallestScreenSize|keyboardHidden|uiMode"
+            android:screenOrientation="portrait"
+            android:theme="@style/TranslucentTheme" />
+        <activity
+            android:name=".main.updateList.UpdateListActivity"
+            android:configChanges="screenLayout|orientation|screenSize|smallestScreenSize|keyboardHidden|uiMode"
+            android:screenOrientation="portrait"
+            android:theme="@style/TranslucentTheme" />
         <activity
             android:name=".main.desc.DescActivity"
             android:configChanges="screenLayout|orientation|screenSize|smallestScreenSize|keyboardHidden|uiMode"
@@ -133,8 +147,10 @@
             android:theme="@style/Theme.NotFullActivity" />
         <!-- 下载服务 -->
         <service android:name=".services.DownloadService"/>
+        <service android:name=".services.DLNAService"/>
         <!-- 声明upnp服务实现类（服务） -->
         <service android:name=".cling.service.ClingUpnpService" />
+<!--        <service android:name="org.fourthline.cling.android.AndroidUpnpServiceImpl" />-->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="my.project.sakuraproject.fileProvider"

@@ -15,8 +15,6 @@ import java.util.Map;
 import androidx.core.app.NotificationCompat;
 import my.project.sakuraproject.R;
 
-import static android.os.Build.VERSION_CODES.LOLLIPOP_MR1;
-
 public class DownloadNotification {
 
     private NotificationManager mManager;

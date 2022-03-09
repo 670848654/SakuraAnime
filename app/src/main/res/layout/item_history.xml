@@ -1,28 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/card_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_gravity="center"
-    android:layout_marginLeft="4dp"
-    android:layout_marginTop="6dp"
-    android:layout_marginRight="4dp"
-    android:layout_marginBottom="2dp"
+    android:padding="5dp"
     android:foreground="?android:attr/selectableItemBackground"
-    app:cardBackgroundColor="@color/window_bg"
-    app:cardCornerRadius="4dp"
-    app:cardElevation="4dp"
-    app:cardUseCompatPadding="false">
+    app:cardBackgroundColor="@color/window_bg">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="120dp"
+        android:layout_height="100dp"
         android:orientation="horizontal">
+
         <RelativeLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="4">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:cardCornerRadius="8dp"
+                android:layout_marginRight="5dp"
+                app:cardElevation="0dp"
+                app:cardUseCompatPadding="false">
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/img_box"
                 android:layout_width="match_parent"
@@ -33,9 +37,35 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop"
+                    android:layout_marginBottom="3dp"
                     android:transitionName="sharedImg" />
 
+                <ProgressBar
+                    android:id="@+id/bottom_progress"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="3dp"
+                    app:layout_constraintTop_toBottomOf="@+id/img"
+                    android:progressDrawable="@drawable/progress_bg" />
+
+                <TextView
+                    android:id="@+id/time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/my_item_gradient"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    android:layout_margin="3dp"
+                    android:paddingLeft="4dp"
+                    android:paddingRight="4dp"
+                    android:paddingTop="2dp"
+                    android:paddingBottom="2dp"
+                    app:layout_constraintBottom_toTopOf="@+id/bottom_progress"
+                    app:layout_constraintEnd_toEndOf="@+id/bottom_progress"/>
+
             </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.cardview.widget.CardView>
 
             <TextView
                 android:id="@+id/source"
@@ -48,32 +78,36 @@
                 android:textColor="@color/white"
                 android:visibility="invisible" />
 
-            <ProgressBar
-                android:id="@+id/bottom_progress"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="match_parent"
-                android:layout_height="3dp"
-                android:layout_alignParentBottom="true"
-                android:progressDrawable="@drawable/progress_bg" />
-
         </RelativeLayout>
+
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="6"
             android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
             android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
             android:orientation="vertical">
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="2"
                 android:id="@+id/title"
+                android:ellipsize="end"
                 android:maxLines="2"
                 android:textColor="@color/text_color_primary"
                 android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/info"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textSize="14sp"
+                android:gravity="left|bottom"
+                android:textColor="@color/light_toolbar_color_lt23" />
 
             <TextView
                 android:id="@+id/play_date"
@@ -84,20 +118,11 @@
                 android:gravity="bottom"
                 android:textColor="@color/light_toolbar_color_lt23" />
 
-            <TextView
-                android:id="@+id/info"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:textSize="14sp"
-                android:gravity="bottom"
-                android:textColor="@color/light_toolbar_color_lt23" />
-
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:gravity="bottom"
                 android:layout_weight="1">
+
                 <TextView
                     android:id="@+id/desc_view"
                     android:layout_alignParentStart="true"
@@ -105,18 +130,20 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/colorAccent"
+                    android:text="@string/history_detail"/>
 
-                    android:text="详情页>>"/>
                 <ImageView
                     android:id="@+id/delete_view"
                     android:layout_alignParentEnd="true"
-                    android:layout_alignParentBottom="true"
                     android:src="@drawable/baseline_delete_white_48dp"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:tint="@color/colorAccent"/>
             </RelativeLayout>
+
+
         </LinearLayout>
 
     </LinearLayout>
-</androidx.cardview.widget.CardView>
+
+</RelativeLayout>

@@ -29,7 +29,7 @@ public class HistoryListAdapter extends BaseQuickAdapter<HistoryBean, BaseViewHo
     @Override
     protected void convert(BaseViewHolder helper, HistoryBean item) {
         helper.addOnClickListener(R.id.desc_view).addOnClickListener(R.id.delete_view);
-        Utils.setDefaultImage(context, item.getImgUrl(), item.getDescUrl(), helper.getView(R.id.img), false, helper.getView(R.id.card_view), helper.getView(R.id.title));
+        Utils.setDefaultImage(context, item.getImgUrl(), item.getDescUrl(), helper.getView(R.id.img), false, null, helper.getView(R.id.title));
         helper.setText(R.id.title, item.getTitle());
         TextView source = helper.getView(R.id.source);
         boolean isImomoe = item.getSource() == 1;
@@ -37,7 +37,8 @@ public class HistoryListAdapter extends BaseQuickAdapter<HistoryBean, BaseViewHo
         source.setText(Utils.getString(isImomoe ? R.string.imomoe : R.string.yhdm));
         source.setVisibility(View.VISIBLE);
         helper.setText(R.id.play_date, item.getUpdateTime());
-        helper.setText(R.id.info, item.getDramaNumber() + " " + JZUtils.stringForTime(item.getProgress()) + "/" + JZUtils.stringForTime(item.getDuration()) + (isImomoe ? " 【源"+ (item.getPlaySource()+1) +"】" : ""));
+        helper.setText(R.id.time, JZUtils.stringForTime(item.getProgress()) + "/" + JZUtils.stringForTime(item.getDuration()));
+        helper.setText(R.id.info, item.getDramaNumber() + (isImomoe ? " <播放源"+ (item.getPlaySource()+1) + ">" : ""));
         ProgressBar progressBar = helper.getView(R.id.bottom_progress);
         progressBar.setMax((int) item.getDuration());
         progressBar.setProgress((int) item.getProgress());

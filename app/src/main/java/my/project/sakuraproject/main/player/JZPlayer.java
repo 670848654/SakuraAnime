@@ -10,12 +10,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AlertDialog;
-
 import java.io.IOException;
 
+import androidx.appcompat.app.AlertDialog;
 import cn.jzvd.JZDataSource;
 import cn.jzvd.JZUtils;
+import cn.jzvd.Jzvd;
 import cn.jzvd.JzvdStd;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.cling.ui.DLNAActivity;
@@ -34,11 +34,12 @@ public class JZPlayer extends JzvdStd {
     private ImageView ibLock;
     private boolean locked = false;
     public ImageView fastForward, quickRetreat, config, airplay;
-    public TextView tvSpeed, snifferBtn, openDrama, preVideo, nextVideo;
+    public TextView tvSpeed, snifferBtn, openDrama, preVideo, nextVideo, display;
     public int currentSpeedIndex = 1;
-    private boolean isLocalVideo;
+    public boolean isLocalVideo;
     public String localVideoPath;
     private LocalVideoDLNAServer localVideoDLNAServer;
+    public int displayIndex = 1;
 
     public JZPlayer(Context context) { super(context); }
 
@@ -46,10 +47,9 @@ public class JZPlayer extends JzvdStd {
         super(context, attrs);
     }
 
-    public void setListener(Context context, boolean isLocalVideo, CompleteListener listener,
+    public void setListener(Context context, CompleteListener listener,
                             TouchListener touchListener, ShowOrHideChangeViewListener showOrHideChangeViewListener,
                             OnProgressListener onProgressListener, PlayingListener playingListener, PauseListener pauseListener) {
-        this.isLocalVideo = isLocalVideo;
         this.context = context;
         this.listener = listener;
         this.touchListener = touchListener;
@@ -83,6 +83,8 @@ public class JZPlayer extends JzvdStd {
         openDrama = findViewById(R.id.open_drama_list);
         preVideo = findViewById(R.id.pre_video);
         nextVideo = findViewById(R.id.next_video);
+        display = findViewById(R.id.display);
+        display.setOnClickListener(this);
     }
 
     @Override
@@ -147,9 +149,16 @@ public class JZPlayer extends JzvdStd {
                     }
                 }
                 Bundle bundle = new Bundle();
-                bundle.putString("playUrl", isLocalVideo ? Utils.getLocalIpAddress(context) : jzDataSource.getCurrentUrl().toString());
+                String videoUrl = jzDataSource.getCurrentUrl().toString().replaceAll("\\\\", "");
+                bundle.putString("playUrl", isLocalVideo ? Utils.getLocalIpAddress(context) : videoUrl);
                 bundle.putLong("duration", getDuration());
+//                CustomToast.showToast(context, videoUrl, CustomToast.SUCCESS);
                 context.startActivity(new Intent(context, DLNAActivity.class).putExtras(bundle));
+                break;
+            case R.id.display:
+                if (displayIndex == 4) displayIndex = 1;
+                else displayIndex += 1;
+                display.setText(getDisplayIndex(displayIndex));
                 break;
         }
     }
@@ -183,6 +192,29 @@ public class JZPlayer extends JzvdStd {
                 break;
         }
         return ret;
+    }
+
+    private String getDisplayIndex(int index) {
+        String text = "";
+        switch (index) {
+            case 1:
+                Jzvd.setVideoImageDisplayType(Jzvd.VIDEO_IMAGE_DISPLAY_TYPE_ADAPTER);
+                text = "自适应比例";
+                break;
+            case 2:
+                Jzvd.setVideoImageDisplayType(Jzvd.VIDEO_IMAGE_DISPLAY_TYPE_FILL_PARENT);
+                text = "拉伸全屏";
+                break;
+            case 3:
+                Jzvd.setVideoImageDisplayType(Jzvd.VIDEO_IMAGE_DISPLAY_TYPE_FILL_SCROP);
+                text = "裁剪全屏";
+                break;
+            case 4:
+                Jzvd.setVideoImageDisplayType(Jzvd.VIDEO_IMAGE_DISPLAY_TYPE_ORIGINAL);
+                text = "原始大小";
+                break;
+        }
+        return text;
     }
 
     //这里是播放的时候点击屏幕出现的UI

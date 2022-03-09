@@ -52,12 +52,12 @@ public class BrowseRegistryListener extends DefaultRegistryListener {
 
     @Override
     public void localDeviceAdded(Registry registry, LocalDevice device) {
-        //        deviceAdded(device); // 本地设备 已加入
+        deviceAdded(device); // 本地设备 已加入
     }
 
     @Override
     public void localDeviceRemoved(Registry registry, LocalDevice device) {
-        //        deviceRemoved(device); // 本地设备 已移除
+        deviceRemoved(device); // 本地设备 已移除
     }
 
     private void deviceAdded(Device device) {

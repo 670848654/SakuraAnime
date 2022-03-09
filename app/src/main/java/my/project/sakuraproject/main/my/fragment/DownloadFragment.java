@@ -1,6 +1,7 @@
 package my.project.sakuraproject.main.my.fragment;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -8,12 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.PopupMenu;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.alibaba.fastjson.JSONObject;
 import com.arialyy.annotations.Download;
@@ -27,6 +22,11 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.PopupMenu;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import my.project.sakuraproject.R;
@@ -34,16 +34,20 @@ import my.project.sakuraproject.adapter.DownloadListAdapter;
 import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.bean.DownloadBean;
 import my.project.sakuraproject.bean.Refresh;
+import my.project.sakuraproject.bean.UpdateImgBean;
 import my.project.sakuraproject.custom.CustomLoadMoreView;
+import my.project.sakuraproject.custom.CustomToast;
 import my.project.sakuraproject.database.DatabaseUtil;
 import my.project.sakuraproject.main.desc.DescActivity;
 import my.project.sakuraproject.main.my.DownloadContract;
 import my.project.sakuraproject.main.my.DownloadDataActivity;
 import my.project.sakuraproject.main.my.DownloadPresenter;
+import my.project.sakuraproject.main.my.UpdateImgContract;
+import my.project.sakuraproject.main.my.UpdateImgPresenter;
 import my.project.sakuraproject.services.DownloadService;
 import my.project.sakuraproject.util.Utils;
 
-public class DownloadFragment extends MyLazyFragment<DownloadContract.View, DownloadPresenter> implements DownloadContract.View {
+public class DownloadFragment extends MyLazyFragment<DownloadContract.View, DownloadPresenter> implements DownloadContract.View, UpdateImgContract.View {
     @BindView(R.id.rv_list)
     RecyclerView mRecyclerView;
     @BindView(R.id.loading)
@@ -94,7 +98,6 @@ public class DownloadFragment extends MyLazyFragment<DownloadContract.View, Down
     }
 
     private void initAdapter() {
-        mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), Utils.isPad() ? 2 : 1));
         adapter = new DownloadListAdapter(getActivity(), downloadList);
         adapter.setOnItemClickListener((adapter, view, position) -> {
             if (!Utils.isFastClick()) return;
@@ -211,6 +214,7 @@ public class DownloadFragment extends MyLazyFragment<DownloadContract.View, Down
             if (isMain) {
                 loading.setVisibility(View.GONE);
                 downloadList = list;
+                setRecyclerViewView();
                 adapter.setNewData(downloadList);
             } else
                 adapter.addData(list);
@@ -229,6 +233,7 @@ public class DownloadFragment extends MyLazyFragment<DownloadContract.View, Down
         setLoadState(false);
         getActivity().runOnUiThread(() -> {
             if (isMain) {
+                setRecyclerViewView();
                 loading.setVisibility(View.GONE);
                 errorTitle.setText(msg);
                 adapter.setEmptyView(errorView);
@@ -259,5 +264,65 @@ public class DownloadFragment extends MyLazyFragment<DownloadContract.View, Down
             alertDialog = builder.create();
             alertDialog.show();
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (isFragmentVisible && Utils.isPad())
+            setRecyclerViewView();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        setRecyclerViewView();
+    }
+
+    private void setRecyclerViewView() {
+        String config = getActivity().getResources().getConfiguration().toString();
+        boolean isInMagicWindow = config.contains("miui-magic-windows");
+        if (downloadList.size() == 0) {
+            mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 1));
+            return;
+        }
+        if (!Utils.isPad()) {
+            mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 1));
+        }
+        else {
+            if (isInMagicWindow) {
+                mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 1));
+            } else {
+                mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+            }
+        }
+    }
+
+    @Override
+    public void showSuccessImg(String oldImgUrl, String imgUrl) {
+        if (!isFragmentVisible) return;
+        getActivity().runOnUiThread(() -> {
+            for (int i=0,size=downloadList.size(); i<size; i++) {
+                if (downloadList.get(i).getImgUrl().contains(oldImgUrl)) {
+                    downloadList.get(i).setImgUrl(imgUrl);
+                    adapter.notifyItemChanged(i);
+                    DatabaseUtil.updateImg(downloadList.get(i).getDownloadId(), imgUrl, 2);
+                    break;
+                }
+            }
+        });
+    }
+
+    @Override
+    public void showErrorImg(String msg) {
+        if (!isFragmentVisible) return;
+        getActivity().runOnUiThread(() -> CustomToast.showToast(getActivity(), msg, CustomToast.ERROR));
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(UpdateImgBean updateImgBean) {
+        if (!isFragmentVisible) return;
+        updateImgPresenter = new UpdateImgPresenter(updateImgBean.getOldImgUrl(), updateImgBean.getDescUrl(), this);
+        updateImgPresenter.loadData();
     }
 }

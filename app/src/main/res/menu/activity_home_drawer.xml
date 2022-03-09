@@ -6,6 +6,10 @@
     <group
         android:id="@+id/group1"
         android:checkableBehavior="single">
+        <item android:id="@+id/item_week"
+            android:icon="@drawable/baseline_calendar_month_white_48dp"
+            android:title="@string/app_sub_name"/>
+
         <item
             android:id="@+id/find_anime"
             android:icon="@drawable/baseline_filter_white_48dp"

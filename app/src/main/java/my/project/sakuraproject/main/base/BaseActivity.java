@@ -2,6 +2,7 @@ package my.project.sakuraproject.main.base;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
@@ -12,21 +13,19 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 
+import java.util.List;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
-
-import java.util.List;
-
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.custom.CustomToast;
 import my.project.sakuraproject.database.DatabaseUtil;
-import my.project.sakuraproject.util.SharedPreferencesUtils;
 import my.project.sakuraproject.util.StatusBarUtil;
 import my.project.sakuraproject.util.Utils;
 import pub.devrel.easypermissions.EasyPermissions;
@@ -42,11 +41,13 @@ public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatA
     protected boolean isDarkTheme;
     protected static String PREVIDEOSTR = "上一集：%s";
     protected static String NEXTVIDEOSTR = "下一集：%s";
+    // 黑暗模式问题
+    private boolean isChanged = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        isDarkTheme = (Boolean) SharedPreferencesUtils.getParam(this, "darkTheme", false);
+        isDarkTheme = Utils.getTheme();
         if (isDarkTheme)
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         else
@@ -196,8 +197,7 @@ public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatA
     }
 
     public void setStatusBarColor() {
-        if (!getRunningActivityName().equals("HomeActivity") &&
-                !getRunningActivityName().equals("DescActivity") &&
+        if (!getRunningActivityName().equals("DescActivity") &&
                 !getRunningActivityName().equals("PlayerActivity") &&
                 !getRunningActivityName().equals("LocalPlayerActivity") &&
                 !getRunningActivityName().equals("ImomoePlayerActivity") &&
@@ -263,4 +263,22 @@ public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatA
         super.finish();
         if (!getRunningActivityName().equals("StartActivity")) overridePendingTransition(R.anim.activity_in, R.anim.activity_out);
     }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if (Utils.isPad()) {
+            if (!isDarkTheme) isChanged = false; // 如果不是黑暗模式则跳过
+            if (isChanged) {
+                // 阻止黑暗模式调用两次
+                isChanged = false;
+                return;
+            } else {
+                isChanged = true;
+                setConfigurationChanged();
+            }
+        }
+    }
+
+    protected abstract void setConfigurationChanged();
 }

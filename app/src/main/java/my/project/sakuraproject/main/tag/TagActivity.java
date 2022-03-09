@@ -7,12 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
@@ -24,6 +18,10 @@ import com.r0adkll.slidr.Slidr;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 import butterknife.OnClick;
 import my.project.sakuraproject.R;
@@ -57,10 +55,11 @@ public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> im
     @BindView(R.id.tag_btn)
     FloatingActionButton tag_btn;
     private AnimeListPresenter animeListPresenter;
-    private String animeUrl;
+    private String animeUrl = "";
     private int nowPage = 1;
     private int pageCount = 1;
     private boolean isErr = true;
+    private String title = "";
 
     @Override
     protected TagPresenter createPresenter() {
@@ -80,6 +79,7 @@ public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> im
     @Override
     protected void init() {
         Slidr.attach(this, Utils.defaultInit());
+        getBundle();
         initToolbar();
         initFab();
         initSwipe();
@@ -91,8 +91,17 @@ public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> im
         SwipeBackLayoutUtil.convertActivityToTranslucent(this);
     }
 
+    public void getBundle() {
+        Bundle bundle = getIntent().getExtras();
+        if (null != bundle && !bundle.isEmpty()) {
+            animeUrl = bundle.getString("url");
+            title = bundle.getString("title");
+        }
+
+    }
+
     public void initToolbar() {
-        toolbar.setTitle(Utils.getString(R.string.tag_title));
+        toolbar.setTitle(title.isEmpty() ? Utils.getString(R.string.tag_title) : title);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbar.setNavigationOnClickListener(view -> finish());
@@ -123,7 +132,6 @@ public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> im
 
     public void initAdapter() {
         // 动漫列表数据
-        animeListRecyclerView.setLayoutManager(new GridLayoutManager(this, Utils.isPad() ? 5 : 3));
         animeListAdapter = new AnimeListAdapter(this, animeLists, false);
         animeListAdapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
         animeListAdapter.setOnItemClickListener((adapter, view, position) -> {
@@ -225,21 +233,18 @@ public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> im
         runOnUiThread(() -> {
             if (!mActivityFinish) {
                 ref.setVisibility(View.GONE);
-                final GridLayoutManager manager = new GridLayoutManager(this, Utils.isPad() ? 12 : 8);
-                manager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-                    @Override
-                    public int getSpanSize(int position) {
-                        return tagAdapter.getItemViewType(position) == TagAdapter.TYPE_LEVEL_1 ? 1 : manager.getSpanCount();
-                    }
-                });
-                // important! setLayoutManager should be called after setAdapter
-                tagRecyclerView.setLayoutManager(manager);
                 mSwipe.setRefreshing(false);
                 tagList = list;
+                setRecyclerViewView();
                 tagAdapter.setNewData(tagList);
                 tagAdapter.expandAll();
-                mBottomSheetDialog.getBehavior().setState(BottomSheetBehavior.STATE_EXPANDED);
-                mBottomSheetDialog.show();
+                if (!animeUrl.isEmpty()) {
+                    animeListPresenter = new AnimeListPresenter(animeUrl, nowPage, this);
+                    animeListPresenter.loadData(true, false, Utils.isImomoe());
+                } else {
+                    mBottomSheetDialog.getBehavior().setState(BottomSheetBehavior.STATE_EXPANDED);
+                    mBottomSheetDialog.show();
+                }
                 tag_btn.show();
             }
         });
@@ -250,7 +255,7 @@ public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> im
         runOnUiThread(() -> {
             if (!mActivityFinish) {
                 ref.setVisibility(View.VISIBLE);
-                tagRecyclerView.setLayoutManager(new LinearLayoutManager(TagActivity.this));
+                setRecyclerViewView();
                 mSwipe.setRefreshing(false);
                 errorTitle.setText(msg);
                 tagAdapter.setEmptyView(errorView);
@@ -278,6 +283,7 @@ public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> im
                 if (isMain) {
                     mSwipe.setRefreshing(false);
                     animeLists = animeList;
+                    setRecyclerViewView();
                     animeListAdapter.setNewData(animeLists);
                 } else {
                     animeListAdapter.addData(animeList);
@@ -292,6 +298,7 @@ public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> im
         runOnUiThread(() -> {
             if (!mActivityFinish) {
                 if (isMain) {
+                    setRecyclerViewView();
                     mSwipe.setRefreshing(false);
                     errorTitle.setText(msg);
                     animeListAdapter.setEmptyView(errorView);
@@ -307,5 +314,53 @@ public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> im
     @Override
     public void getPageCountSuccessView(int count) {
         pageCount = count;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (Utils.isPad()) setRecyclerViewView();
+    }
+
+    @Override
+    protected void setConfigurationChanged() {
+        setRecyclerViewView();
+    }
+
+    private void setRecyclerViewView() {
+        String config = this.getResources().getConfiguration().toString();
+        boolean isInMagicWindow = config.contains("miui-magic-windows");
+        if (tagList.size() == 0) {
+            tagRecyclerView.setLayoutManager(new GridLayoutManager(this, 1));
+            return;
+        }
+        if (!Utils.isPad()) {
+            final GridLayoutManager manager = new GridLayoutManager(this,8);
+            manager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+                @Override
+                public int getSpanSize(int position) {
+                    return tagAdapter.getItemViewType(position) == TagAdapter.TYPE_LEVEL_1 ? 1 : manager.getSpanCount();
+                }
+            });
+            // important! setLayoutManager should be called after setAdapter
+            tagRecyclerView.setLayoutManager(manager);
+            animeListRecyclerView.setLayoutManager(new GridLayoutManager(this, animeLists.size() == 0 ? 1 : 3));
+        }
+        else {
+            if (isInMagicWindow) {
+                animeListRecyclerView.setLayoutManager(new GridLayoutManager(this, animeLists.size() == 0 ? 1 : 4));
+            } else {
+                animeListRecyclerView.setLayoutManager(new GridLayoutManager(this, animeLists.size() == 0 ? 1 : 5));
+            }
+            final GridLayoutManager manager = new GridLayoutManager(this,12);
+            manager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+                @Override
+                public int getSpanSize(int position) {
+                    return tagAdapter.getItemViewType(position) == TagAdapter.TYPE_LEVEL_1 ? 1 : manager.getSpanCount();
+                }
+            });
+            // important! setLayoutManager should be called after setAdapter
+            tagRecyclerView.setLayoutManager(manager);
+        }
     }
 }

@@ -4,10 +4,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 
-import androidx.appcompat.widget.Toolbar;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.viewpager.widget.ViewPager;
-
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.r0adkll.slidr.Slidr;
@@ -17,9 +13,15 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.List;
+
+import androidx.appcompat.widget.Toolbar;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.adapter.MyFragmentAdapter;
+import my.project.sakuraproject.bean.AnimeUpdateInfoBean;
 import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.base.Presenter;
 import my.project.sakuraproject.util.SwipeBackLayoutUtil;
@@ -88,7 +90,7 @@ public class MyActivity extends BaseActivity implements ViewPager.OnPageChangeLi
         tab.setupWithViewPager(viewpager);
         tab.getTabAt(0).select();
         tab.setSelectedTabIndicatorColor(getResources().getColor(R.color.tabSelectedTextColor));
-        myFragmentAdapter = new MyFragmentAdapter(getSupportFragmentManager(), tab.getTabCount());
+        myFragmentAdapter = new MyFragmentAdapter(getSupportFragmentManager(), tab.getTabCount(), (List<AnimeUpdateInfoBean>) getIntent().getExtras().getSerializable("animeUpdateInfoBeans"));
         viewpager.setAdapter(myFragmentAdapter);
         tab.getTabAt(0).setText(tabTitleArr[0]);
         tab.getTabAt(1).setText(tabTitleArr[1]);
@@ -143,5 +145,10 @@ public class MyActivity extends BaseActivity implements ViewPager.OnPageChangeLi
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    protected void setConfigurationChanged() {
+
     }
 }

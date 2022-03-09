@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Intent;
 import android.view.View;
-import android.widget.Toast;
 
 import com.arialyy.aria.core.Aria;
 import com.bumptech.glide.Glide;
@@ -18,8 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import androidx.annotation.ColorRes;
-import androidx.annotation.DrawableRes;
 import androidx.appcompat.app.AppCompatDelegate;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.services.DownloadService;
@@ -31,8 +28,7 @@ public class Sakura extends Application {
     private List<Activity> oList;
     private static Map<String, Activity> destoryMap = new HashMap<>();
     public static String DOMAIN;
-    public static String TAG_API, JCB_API, SEARCH_API;
-    public static String YHDM_MOVIE_API = "/movie/";
+    public static String TAG_API, JCB_API, SEARCH_API, MOVIE_API;
     public static String YHDM_ZT_API = "/topic/";
     public String error;
     public JSONObject week = new JSONObject();
@@ -48,6 +44,7 @@ public class Sakura extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        Utils.init(this);
 //        CrashHandler crashHandler = CrashHandler.getInstance();
 //        crashHandler.init(getApplicationContext());
         if (Utils.isServiceRunning(this, "my.project.sakuraproject.services.DownloadService")) {
@@ -55,7 +52,7 @@ public class Sakura extends Application {
             stopService(new Intent(this, DownloadService.class));
             Aria.download(this).stopAllTask();
         }
-        if ((Boolean) SharedPreferencesUtils.getParam(this, "darkTheme", false))
+        if (Utils.getTheme())
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         else
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
@@ -63,8 +60,9 @@ public class Sakura extends Application {
         appContext = this;
         Utils.init(this);
         setApi();
-//        initTBS();
-        Aria.get(this).getDownloadConfig().setMaxTaskNum((Integer) SharedPreferencesUtils.getParam(this, "download_number", 0) + 1).setConvertSpeed(true).setMaxSpeed(0);
+        // 2022年2月28日18:09:33 默认改为1
+//        Aria.get(this).getDownloadConfig().setMaxTaskNum((Integer) SharedPreferencesUtils.getParam(this, "download_number", 0) + 1).setConvertSpeed(true).setMaxSpeed(0);
+        Aria.get(this).getDownloadConfig().setMaxTaskNum(1);
     }
 
     @Override
@@ -88,48 +86,10 @@ public class Sakura extends Application {
         TAG_API = isImomoe ?  DOMAIN + "/so.asp" : DOMAIN + "/sitemap";
         JCB_API = isImomoe ? "/search.asp?page=1&searchword=%BE%E7%B3%A1" : "/37/";
         SEARCH_API = isImomoe ? DOMAIN + "/search.asp" : DOMAIN + "/search/";
+        MOVIE_API = isImomoe ? "/list/%s.html" : "/movie/";
         YHDM_UPDATE = String.format("%s/new/", SharedPreferencesUtils.getParam(appContext, "domain", Utils.getString(R.string.domain_url)));
         IMOMOE_UPDATE = String.format("%s/top/new.html", SharedPreferencesUtils.getParam(appContext, "imomoe_domain", Utils.getString(R.string.imomoe_url)));
     }
-
-    /*private void initTBS() {
-        //搜集本地tbs内核信息并上报服务器，服务器返回结果决定使用哪个内核。
-        QbSdk.setDownloadWithoutWifi(true);//非wifi条件下允许下载X5内核
-        QbSdk.PreInitCallback cb = new QbSdk.PreInitCallback() {
-            @Override
-            public void onViewInitFinished(boolean arg0) {
-                if (arg0) SharedPreferencesUtils.setParam(appContext, "X5State", true);
-                else SharedPreferencesUtils.setParam(appContext, "X5State", false);
-            }
-
-            @Override
-            public void onCoreInitFinished() {
-            }
-        };
-        //x5内核初始化接口
-        QbSdk.initX5Environment(getApplicationContext(), cb);
-    }*/
-
-    /*public void showToastShortMsg(String msg) {
-        Toasty.warning(getApplicationContext(), "Load data url\n" + msg, Toast.LENGTH_SHORT, true).show();
-    }
-
-    public void showToastMsg(String msg){
-        Toasty.warning(getApplicationContext(), msg, Toast.LENGTH_LONG, true).show();
-    }
-
-    public void showSuccessToastMsg(String msg){
-        Toasty.success(getApplicationContext(), msg, Toast.LENGTH_LONG, true).show();
-    }
-
-    public void showErrorToastMsg(String msg){
-        Toasty.error(getApplicationContext(), msg, Toast.LENGTH_LONG, true).show();
-    }
-
-    public void showCustomToastMsg(String msg, @DrawableRes int iconRes, @ColorRes int color){
-        Toasty.custom(this, msg,
-                iconRes, color, Toast.LENGTH_LONG, true, true).show();
-    }*/
 
     public void showSnackbarMsgAction(View view, String msg, String actionMsg, View.OnClickListener listener) {
         Snackbar.make(view, msg, Snackbar.LENGTH_LONG).setAction(actionMsg, listener).show();

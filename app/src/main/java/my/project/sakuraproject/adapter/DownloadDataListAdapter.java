@@ -8,7 +8,6 @@ import android.widget.ProgressBar;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 
-import java.text.DecimalFormat;
 import java.util.List;
 
 import cn.jzvd.JZUtils;
@@ -46,22 +45,27 @@ public class DownloadDataListAdapter extends BaseQuickAdapter<DownloadDataBean, 
                 break;
         }
         ProgressBar progressBar = helper.getView(R.id.show_progress);
-        if (item.getDuration() != 0) {
-            DecimalFormat df1 = new DecimalFormat("##%");
-            helper.setText(R.id.progress_info, "已观看"+df1.format(((double)item.getProgress()/(double)item.getDuration())));
+        if (item.getDuration() != 0 && item.getProgress() != 0) {
+//            DecimalFormat df1 = new DecimalFormat("##%");
+//            helper.setText(R.id.progress_info, "已观看"+df1.format(((double)item.getProgress()/(double)item.getDuration())));
+            helper.setText(R.id.time, JZUtils.stringForTime(item.getProgress()) + "/" + JZUtils.stringForTime(item.getDuration()));
+            helper.getView(R.id.time).setVisibility(View.VISIBLE);
             progressBar.setMax((int) item.getDuration());
             progressBar.setProgress((int) item.getProgress());
             progressBar.setVisibility(View.VISIBLE);
-        } else
+        } else {
             progressBar.setVisibility(View.GONE);
+            helper.getView(R.id.time).setVisibility(View.GONE);
+        }
         helper.setText(R.id.state, Html.fromHtml(completeText));
         if (item.getComplete() == 1 && !item.getPath().contains(".m3u8")) {
             helper.getView(R.id.img_box).setBackground(null);
             helper.setText(R.id.number, "");
-            Utils.loadVideoScreenshot(context, item.getPath(), helper.getView(R.id.img), 6500 * 1000);
+//            Utils.loadVideoScreenshot(context, item.getPath(), item.getAnimeImg(), helper.getView(R.id.img), 6500 * 1000);
+            Utils.loadVideoScreenshot(context, item.getPath(), item.getAnimeImg(), helper.getView(R.id.img), (item.getProgress() == 0 ? 1000 : item.getProgress()) * 1000);
         } else {
             helper.setBackgroundColor(R.id.img_box, R.drawable.download_img_gradient);
-            Utils.setImgViewBg(context, item.getSource(), item.getAnimeImg(), helper.getView(R.id.img));
+            Utils.setImgViewBg(context, item.getSource(), item.getAnimeImg(), "", helper.getView(R.id.img));
         }
     }
 }

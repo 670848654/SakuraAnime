@@ -1,37 +1,14 @@
 package my.project.sakuraproject.main.player;
 
-import android.app.PictureInPictureParams;
-import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.SwitchCompat;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import com.google.android.material.button.MaterialButton;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.OnClick;
-import cn.jzvd.JZUtils;
-import cn.jzvd.Jzvd;
+import androidx.core.view.GravityCompat;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.adapter.DramaAdapter;
 import my.project.sakuraproject.api.Api;
@@ -39,277 +16,50 @@ import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.bean.AnimeDescDetailsBean;
 import my.project.sakuraproject.bean.Event;
 import my.project.sakuraproject.bean.ImomoeVideoUrlBean;
-import my.project.sakuraproject.bean.Refresh;
 import my.project.sakuraproject.custom.CustomToast;
-import my.project.sakuraproject.database.DatabaseUtil;
-import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.base.BaseModel;
-import my.project.sakuraproject.main.base.Presenter;
 import my.project.sakuraproject.main.video.VideoContract;
 import my.project.sakuraproject.main.video.VideoPresenter;
 import my.project.sakuraproject.sniffing.SniffingUICallback;
 import my.project.sakuraproject.sniffing.SniffingVideo;
 import my.project.sakuraproject.sniffing.web.SniffingUtil;
-import my.project.sakuraproject.util.SharedPreferencesUtils;
-import my.project.sakuraproject.util.StatusBarUtil;
 import my.project.sakuraproject.util.Utils;
 import my.project.sakuraproject.util.VideoUtils;
 
-public class PlayerActivity extends BaseActivity implements VideoContract.View, JZPlayer.CompleteListener, JZPlayer.TouchListener,
-        JZPlayer.ShowOrHideChangeViewListener, JZPlayer.OnProgressListener, JZPlayer.PlayingListener, JZPlayer.PauseListener, SniffingUICallback {
-    @BindView(R.id.player)
-    JZPlayer player;
-    private String witchTitle, url, dramaUrl;
-    @BindView(R.id.rv_list)
-    RecyclerView recyclerView;
-    private List<AnimeDescDetailsBean> list = new ArrayList<>();
-    private DramaAdapter dramaAdapter;
-    private AlertDialog alertDialog;
-    private String animeTitle;
-    @BindView(R.id.nav_view)
-    LinearLayout linearLayout;
-    @BindView(R.id.drawer_layout)
-    DrawerLayout drawerLayout;
-/*    @BindView(R.id.anime_title)
-    TextView titleView;*/
-    @BindView(R.id.pic_config)
-    RelativeLayout picConfig;
-    private VideoPresenter presenter;
-    //播放网址
-    private String webUrl;
-    private boolean isPip = false;
-
-    @BindView(R.id.nav_config_view)
-    LinearLayout navConfigView;
-    @BindView(R.id.speed)
-    TextView speedTextView;
-    private String[] speeds = Utils.getArray(R.array.speed_item);
-    private int userSpeed = 2;
-    @BindView(R.id.hide_progress)
-    SwitchCompat hideProgressSc;
-    private int clickIndex;
-    private boolean hasPreVideo = false;
-    private boolean hasNextVideo = false;
-    private String animeId;
-    private long playPosition;
-    private long videoDuration;
-    private boolean hasPosition = false;
-    private long userSavePosition = 0;
-    @BindView(R.id.play_next_video)
-    SwitchCompat playNextVideoSc;
-    private boolean playNextVideo;
+public class PlayerActivity extends BasePlayerActivity implements VideoContract.View, SniffingUICallback {
 
     @Override
-    protected Presenter createPresenter() {
-        return null;
+    protected boolean isLocalVideo() {
+        return false;
     }
 
     @Override
-    protected void loadData() {
+    protected void setActivityName() {
+        Sakura.addDestoryActivity(this, "player");;
     }
 
     @Override
-    protected int setLayoutRes() {
-        return R.layout.activity_play;
-    }
-
-    @Override
-    protected void init() {
-        Sakura.addDestoryActivity(this, "player");
-        hideGap();
-        Bundle bundle = getIntent().getExtras();
-        init(bundle);
-        initAdapter();
-        initUserConfig();
-    }
-
-    @Override
-    protected void initBeforeView() {
-        StatusBarUtil.setTranslucent(this, 0);
-    }
-
-    private void init(Bundle bundle) {
-        //播放地址
+    protected void setBundleData(Bundle bundle) {
         url = bundle.getString("url");
-        //集数名称
         witchTitle = bundle.getString("title");
-        //番剧名称
         animeTitle = bundle.getString("animeTitle");
-//        titleView.setText(animeTitle);
-        //源地址
         dramaUrl = bundle.getString("dramaUrl");
-        //剧集list
-        list = (List<AnimeDescDetailsBean>) bundle.getSerializable("list");
-        //当前播放剧集下标
+        yhdmDescList = (List<AnimeDescDetailsBean>) bundle.getSerializable("list");
         clickIndex = bundle.getInt("clickIndex");
-        //番剧ID
         animeId = bundle.getString("animeId");
-        //禁止冒泡
-        linearLayout.setOnClickListener(view -> {
-            return;
-        });
-        navConfigView.setOnClickListener(view -> {
-            return;
-        });
-        setPlayerPreNextTag();
-        linearLayout.getBackground().mutate().setAlpha(150);
-        navConfigView.getBackground().mutate().setAlpha(150);
-        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-        drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
-            @Override
-            public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
-
-            }
-
-            @Override
-            public void onDrawerOpened(@NonNull View drawerView) {
-                if (drawerLayout.isDrawerOpen(GravityCompat.START))
-                    player.goOnPlayOnPause();
-            }
-
-            @Override
-            public void onDrawerClosed(@NonNull View drawerView) {
-                if (!drawerLayout.isDrawerOpen(GravityCompat.START))
-                    player.goOnPlayOnResume();
-            }
-
-            @Override
-            public void onDrawerStateChanged(int newState) {
-
-            }
-        });
-        player.config.setOnClickListener(v -> {
-            if (!Utils.isFastClick()) return;
-            if (drawerLayout.isDrawerOpen(GravityCompat.START))
-                drawerLayout.closeDrawer(GravityCompat.START);
-            else drawerLayout.openDrawer(GravityCompat.START);
-        });
-        player.openDrama.setOnClickListener(view -> {
-            if (!Utils.isFastClick()) return;
-            if (drawerLayout.isDrawerOpen(GravityCompat.END))
-                drawerLayout.closeDrawer(GravityCompat.END);
-            else drawerLayout.openDrawer(GravityCompat.END);
-        });
-        player.setListener(this, false, this, this, this, this, this, this);
-        player.backButton.setOnClickListener(v -> finish());
-        player.preVideo.setOnClickListener(v -> {
-            clickIndex--;
-            changePlayUrl(clickIndex);
-        });
-        player.nextVideo.setOnClickListener(v -> {
-            clickIndex++;
-            changePlayUrl(clickIndex);
-        });
-        // 加载视频失败，嗅探视频
-        player.snifferBtn.setOnClickListener(v -> snifferPlayUrl(url));
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) picConfig.setVisibility(View.GONE);
-        else picConfig.setVisibility(View.VISIBLE);
-        if (gtSdk23()) player.tvSpeed.setVisibility(View.VISIBLE);
-        else player.tvSpeed.setVisibility(View.GONE);
-//        player.setUp(url, witchTitle, Jzvd.SCREEN_FULLSCREEN, JZExoPlayer.class);
-        player.fullscreenButton.setOnClickListener(view -> {
-            if (!Utils.isFastClick()) return;
-            if (drawerLayout.isDrawerOpen(GravityCompat.END))
-                drawerLayout.closeDrawer(GravityCompat.END);
-            else drawerLayout.openDrawer(GravityCompat.END);
-        });
-        Jzvd.FULLSCREEN_ORIENTATION = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE;
-        Jzvd.NORMAL_ORIENTATION = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE;
-        player.playingShow();
-//        player.startButton.performClick();
-//        player.startVideo();
-        checkPlayUrl(url);
     }
 
-    public void startPic() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.START))
-            drawerLayout.closeDrawer(GravityCompat.START);
-        new Handler().postDelayed(this::enterPicInPic, 500);
+    @Override
+    protected void setPreNextData() {
+        player.preVideo.setText(hasPreVideo ? String.format(PREVIDEOSTR, yhdmDescList.get(clickIndex-1).getTitle()) : "");
+        hasNextVideo = clickIndex != yhdmDescList.size() - 1;
+        player.nextVideo.setText(hasNextVideo ? String.format(NEXTVIDEOSTR, yhdmDescList.get(clickIndex+1).getTitle()) : "");
     }
 
-    public void initAdapter() {
-        recyclerView.setNestedScrollingEnabled(false);
-        recyclerView.setLayoutManager(new GridLayoutManager(this, 4));
-        dramaAdapter = new DramaAdapter(this, list);
-        recyclerView.setAdapter(dramaAdapter);
-        dramaAdapter.setOnItemClickListener((adapter, view, position) -> {
-            if (!Utils.isFastClick()) return;
-//            setResult(0x20);
-            drawerLayout.closeDrawer(GravityCompat.END);
-            changePlayUrl(position);
-        });
-    }
-
-    private void setPlayerPreNextTag() {
-        hasPreVideo = clickIndex != 0;
-        player.preVideo.setText(hasPreVideo ? String.format(PREVIDEOSTR, list.get(clickIndex-1).getTitle()) : "");
-        hasNextVideo = clickIndex != list.size() - 1;
-        player.nextVideo.setText(hasNextVideo ? String.format(NEXTVIDEOSTR, list.get(clickIndex+1).getTitle()) : "");
-    }
-
-    private void changePlayUrl(int position) {
-        clickIndex = position;
-        setPlayerPreNextTag();
-        AnimeDescDetailsBean bean = (AnimeDescDetailsBean) dramaAdapter.getItem(position);
-        Jzvd.releaseAllVideos();
-        alertDialog = Utils.getProDialog(PlayerActivity.this, R.string.parsing);
-        MaterialButton materialButton = (MaterialButton) dramaAdapter.getViewByPosition(recyclerView, position, R.id.tag_group);
-        materialButton.setTextColor(getResources().getColor(R.color.tabSelectedTextColor));
-        bean.setSelected(true);
-        EventBus.getDefault().post(new Event(false, -1, position));
-        saveProgress();
-        dramaUrl = bean.getUrl();
-        witchTitle = animeTitle + " - " + bean.getTitle();
-        player.playingShow();
-        presenter = new VideoPresenter(animeTitle, dramaUrl, 0, bean.getTitle(), PlayerActivity.this);
-        presenter.loadData(true);
-    }
-
-    private void playAnime(String animeUrl) {
-        cancelDialog();
-        url = animeUrl;
-        switch ((Integer) SharedPreferencesUtils.getParam(getApplicationContext(), "player", 0)) {
-            case 0:
-                //调用播放器
-                play(url);
-                break;
-            case 1:
-                Jzvd.releaseAllVideos();
-                Utils.selectVideoPlayer(PlayerActivity.this, url);
-                break;
-        }
-    }
-
-    private void checkPlayUrl(String url) {
-        if (!url.contains("$"))
-            playAnime(url);
-        else
-            snifferPlayUrl(url);
-    }
-
-
-    /**
-     * 播放视频
-     * @param playUrl
-     */
-    private void play(String playUrl) {
-        Jzvd.releaseAllVideos();
-        player.currentSpeedIndex = 1;
-        player.setUp(playUrl, witchTitle, Jzvd.SCREEN_FULLSCREEN, JZExoPlayer.class);
-        player.startVideo();
-        userSavePosition = DatabaseUtil.getPlayPosition(animeId, dramaUrl);
-        player.seekToInAdvance = userSavePosition;//跳转到指定的播放进度
-        player.startButton.performClick();//响应点击事件
-        hasPosition = userSavePosition > 0;
-    }
-
-    /**
-     * 嗅探视频真实连接
-     * @param animeUrl
-     */
-    private void snifferPlayUrl(String animeUrl) {
+    @Override
+    protected void snifferVideo() {
         alertDialog = Utils.getProDialog(PlayerActivity.this, R.string.should_be_sniffer);
-        webUrl = animeUrl;
+        webUrl = url;
         /*
         if (Patterns.WEB_URL.matcher(animeUrl.replace(" ", "")).matches()) {
             if (animeUrl.contains("jx.618g.com")) {
@@ -322,182 +72,46 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
         if (webUrl.contains("jx.618g.com")) {
             cancelDialog();
             VideoUtils.openDefaultWebview(this, webUrl);
-        } else sniffer(webUrl, false);
-    }
-
-    /**
-     * 嗅探方法
-     * @param url
-     * @param isUrl
-     */
-    private void sniffer(String url, boolean isUrl) {
-        url = isUrl ? url : String.format(Api.PARSE_API, url);
-        SniffingUtil.get().activity(this).referer(url).callback(this).url(url).start();
-    }
-
-    private void initUserConfig() {
-        switch ((Integer) SharedPreferencesUtils.getParam(this, "user_speed", 15)) {
-            case 5:
-                setUserSpeedConfig(speeds[0], 0);
-                break;
-            case 10:
-                setUserSpeedConfig(speeds[1], 1);
-                break;
-            case 15:
-                setUserSpeedConfig(speeds[2], 2);
-                break;
-            case 30:
-                setUserSpeedConfig(speeds[3], 3);
-                break;
-        }
-        hideProgressSc.setChecked((Boolean) SharedPreferencesUtils.getParam(this, "hide_progress", false));
-        hideProgressSc.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            SharedPreferencesUtils.setParam(this, "hide_progress", isChecked);
-        });
-        playNextVideo = (Boolean) SharedPreferencesUtils.getParam(this, "play_next_video", false);
-        playNextVideoSc.setChecked(playNextVideo);
-        playNextVideoSc.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            SharedPreferencesUtils.setParam(this, "play_next_video", isChecked);
-            playNextVideo = isChecked;
-        });
-    }
-
-    private void setUserSpeedConfig(String text, int speed) {
-        speedTextView.setText(text);
-        userSpeed = speed;
-    }
-
-    private void setDefaultSpeed() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(Utils.getString(R.string.set_user_speed));
-        builder.setSingleChoiceItems(speeds, userSpeed, (dialog, which) -> {
-            switch (which) {
-                case 0:
-                    SharedPreferencesUtils.setParam(getApplicationContext(), "user_speed", 5);
-                    setUserSpeedConfig(speeds[0], which);
-                    break;
-                case 1:
-                    SharedPreferencesUtils.setParam(getApplicationContext(), "user_speed", 10);
-                    setUserSpeedConfig(speeds[1], which);
-                    break;
-                case 2:
-                    SharedPreferencesUtils.setParam(getApplicationContext(), "user_speed", 15);
-                    setUserSpeedConfig(speeds[2], which);
-                    break;
-                case 3:
-                    SharedPreferencesUtils.setParam(getApplicationContext(), "user_speed", 30);
-                    setUserSpeedConfig(speeds[3], which);
-                    break;
-            }
-            dialog.dismiss();
-        });
-        AlertDialog alertDialog = builder.create();
-        alertDialog.show();
-    }
-
-    @OnClick({R.id.speed_config, R.id.pic_config, R.id.player_config, R.id.browser_config})
-    public void configBtnClick(RelativeLayout relativeLayout) {
-        switch (relativeLayout.getId()) {
-            case R.id.speed_config:
-                setDefaultSpeed();
-                break;
-            case R.id.pic_config:
-                if (gtSdk26()) startPic();
-                break;
-            case R.id.player_config:
-                Utils.selectVideoPlayer(this, url);
-                break;
-            case R.id.browser_config:
-                Utils.viewInChrome(this, BaseModel.getDomain(false) + dramaUrl);
-                break;
+        } else {
+            url = String.format(Api.PARSE_API, url);
+            SniffingUtil.get().activity(this).referer(url).callback(this).url(url).start();
         }
     }
 
     @Override
-    public void onBackPressed() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.END))
+    protected void playVideo() {
+        checkPlayUrl(url);
+    }
+
+    @Override
+    protected void setAdapter() {
+        dramaAdapter = new DramaAdapter(this, yhdmDescList);
+        recyclerView.setAdapter(dramaAdapter);
+        dramaAdapter.setOnItemClickListener((adapter, view, position) -> {
+            if (!Utils.isFastClick()) return;
             drawerLayout.closeDrawer(GravityCompat.END);
-        if (drawerLayout.isDrawerOpen(GravityCompat.START))
-            drawerLayout.closeDrawer(GravityCompat.START);
-        else finish();
+            changePlayUrl(position);
+        });
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        player.goOnPlayOnPause();
+    protected AnimeDescDetailsBean setAnimeDescDetailsBean(int position) {
+        alertDialog = Utils.getProDialog(this, R.string.parsing);
+        EventBus.getDefault().post(new Event(false, -1, position));
+        return (AnimeDescDetailsBean) dramaAdapter.getItem(position);
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        hideNavBar();
-        if (!inMultiWindow()) player.goOnPlayOnResume();
+    protected void changeVideo(String title) {
+        videoPresenter = new VideoPresenter(animeTitle, dramaUrl, 0, title, this);
+        videoPresenter.loadData(true);
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
-        if (isPip) finish();
-    }
-
-    private void saveProgress() {
-        if (Utils.videoHasComplete(playPosition, videoDuration)) {
-            playPosition = 0;
-            DatabaseUtil.updateHistory(animeId, dramaUrl, playPosition, videoDuration);
-        }
-        else
-            DatabaseUtil.updateHistory(animeId, dramaUrl, playPosition > 2000 ? playPosition : 0, videoDuration);
-        Log.e("saveProgress", "番剧ID：" + animeId + ",剧集URL：" + dramaUrl + ",播放进度：" + playPosition + ",视频长度：" + videoDuration);
-    }
-
-    /**
-     * 是否为分屏模式
-     *
-     * @return
-     */
-    public boolean inMultiWindow() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) return this.isInMultiWindowMode();
-        else return false;
-    }
-
-    /**
-     * Android 8.0 画中画
-     */
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    private void enterPicInPic() {
-//        PictureInPictureParams.Builder builder = new PictureInPictureParams.Builder();
-        // 设置宽高比例值，第一个参数表示分子，第二个参数表示分母
-        // 下面的10/5=2，表示画中画窗口的宽度是高度的两倍
-//        Rational aspectRatio = new Rational(10,5);
-        // 设置画中画窗口的宽高比例
-//        builder.setAspectRatio(aspectRatio);
-        // 进入画中画模式，注意enterPictureInPictureMode是Android8.0之后新增的方法
-//        enterPictureInPictureMode(builder.build());
-        PictureInPictureParams builder = new PictureInPictureParams.Builder().build();
-        enterPictureInPictureMode(builder);
-    }
+    protected void initCustomData() {}
 
     @Override
-    public void onPictureInPictureModeChanged(boolean isInPictureInPictureMode, Configuration newConfig) {
-        super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig);
-        if (isInPictureInPictureMode) {
-            player.startPIP();
-            isPip = true;
-        } else isPip = false;
-    }
-
-    @Override
-    public void onMultiWindowModeChanged(boolean isInMultiWindowMode, Configuration newConfig) {
-        super.onMultiWindowModeChanged(isInMultiWindowMode, newConfig);
-        if (isInMultiWindowMode)
-            player.goOnPlayOnResume();
-    }
-
-    @Override
-    public void cancelDialog() {
-        Utils.cancelDialog(alertDialog);
-    }
+    public void cancelDialog() {Utils.cancelDialog(alertDialog);}
 
     @Override
     public void showYhdmVideoSuccessView(List<String> list) {
@@ -520,7 +134,7 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
     public void getVideoEmpty() {
         runOnUiThread(() -> {
             hideNavBar();
-            VideoUtils.showErrorInfo(PlayerActivity.this, BaseModel.getDomain(false) + dramaUrl);
+            VideoUtils.showErrorInfo(this, BaseModel.getDomain(false) + dramaUrl);
         });
     }
 
@@ -530,14 +144,14 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
         runOnUiThread(() -> {
             hideNavBar();
 //            application.showErrorToastMsg(Utils.getString(R.string.error_700));
-            VideoUtils.showPlayerNetworkErrorDialog(PlayerActivity.this, (dialog, index) -> presenter.loadData(true));
+            VideoUtils.showPlayerNetworkErrorDialog(this, (dialog, index) -> videoPresenter.loadData(true));
         });
     }
 
     @Override
     public void showSuccessYhdmDramasView(List<AnimeDescDetailsBean> dramaList) {
-        list = dramaList;
-        runOnUiThread(() -> dramaAdapter.setNewData(list));
+        yhdmDescList = dramaList;
+        runOnUiThread(() -> dramaAdapter.setNewData(yhdmDescList));
     }
 
     @Override
@@ -553,32 +167,6 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
 
     @Override
     public void showSuccessImomoeDramasView(List<List<AnimeDescDetailsBean>> bean) {}
-
-    @Override
-    protected void onDestroy() {
-        if (null != presenter) presenter.detachView();
-        saveProgress();
-        EventBus.getDefault().post(new Refresh(1));
-        EventBus.getDefault().post(new Refresh(2));
-        player.releaseAllVideos();
-        super.onDestroy();
-    }
-
-    @Override
-    public void complete() {
-        saveProgress();
-        if (hasNextVideo && playNextVideo) {
-//            application.showSuccessToastMsg("开始播放下一集");
-            CustomToast.showToast(this, "开始播放下一集", CustomToast.SUCCESS);
-            clickIndex++;
-            changePlayUrl(clickIndex);
-        } else {
-//            application.showSuccessToastMsg("全部播放完毕");
-            CustomToast.showToast(this, "全部播放完毕", CustomToast.SUCCESS);
-            if (!drawerLayout.isDrawerOpen(GravityCompat.END))
-                drawerLayout.openDrawer(GravityCompat.END);
-        }
-    }
 
     @Override
     public void onSniffingStart(View webView, String url) {
@@ -621,17 +209,6 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
         finish();
     }
 
-    @Override
-    public void touch() {
-        hideNavBar();
-    }
-
-    @Override
-    public void finish() {
-        if (null != presenter) presenter.detachView();
-        player.releaseAllVideos();
-        super.finish();
-    }
 
     @Override
     public void showLoadingView() {
@@ -653,28 +230,35 @@ public class PlayerActivity extends BaseActivity implements VideoContract.View, 
 //        runOnUiThread(() -> application.showToastShortMsg(url));
     }
 
-    @Override
-    public void showOrHideChangeView() {
-        player.preVideo.setVisibility(hasPreVideo ? View.VISIBLE : View.GONE);
-        player.nextVideo.setVisibility(hasNextVideo ? View.VISIBLE : View.GONE);
+    private void checkPlayUrl(String url) {
+        if (!url.contains("$"))
+            play(url);
+        else
+            snifferPlayUrl(url);
     }
 
-    @Override
-    public void getPosition(long position, long duration) {
-        playPosition = position;
-        videoDuration = duration;
-    }
-
-    @Override
-    public void playing() {
-        if (hasPosition) {
-            CustomToast.showToast(this, "已定位到上次观看位置 " + JZUtils.stringForTime(userSavePosition), CustomToast.DEFAULT);
-            hasPosition = false;
+    /**
+     * 嗅探视频真实连接
+     * @param animeUrl
+     */
+    private void snifferPlayUrl(String animeUrl) {
+        alertDialog = Utils.getProDialog(PlayerActivity.this, R.string.should_be_sniffer);
+        webUrl = animeUrl;
+        /*
+        if (Patterns.WEB_URL.matcher(animeUrl.replace(" ", "")).matches()) {
+            if (animeUrl.contains("jx.618g.com")) {
+                cancelDialog();
+                url = animeUrl.replaceAll("http://jx.618g.com/\\?url=", "");
+                VideoUtils.openWebview(false, this, witchTitle, animeTitle, url, BaseModel.getDomain(false) + dramaUrl, this.list);
+            } else sniffer(webUrl, true);
+        } else sniffer(webUrl, false);
+        */
+        if (webUrl.contains("jx.618g.com")) {
+            cancelDialog();
+            VideoUtils.openDefaultWebview(this, webUrl);
+        } else {
+            url = String.format(Api.PARSE_API, url);
+            SniffingUtil.get().activity(this).referer(url).callback(this).url(url).start();
         }
-    }
-
-    @Override
-    public void pause() {
-        saveProgress();
     }
 }

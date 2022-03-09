@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import my.project.sakuraproject.R;
-import my.project.sakuraproject.main.home.WeekFragment;
+import my.project.sakuraproject.main.week.WeekFragment;
 import my.project.sakuraproject.util.Utils;
 
 public class WeekAdapter extends FragmentStatePagerAdapter {

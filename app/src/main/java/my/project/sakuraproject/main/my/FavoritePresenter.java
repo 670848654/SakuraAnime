@@ -3,6 +3,7 @@ package my.project.sakuraproject.main.my;
 import java.util.List;
 
 import my.project.sakuraproject.bean.AnimeListBean;
+import my.project.sakuraproject.bean.AnimeUpdateInfoBean;
 import my.project.sakuraproject.main.base.BasePresenter;
 import my.project.sakuraproject.main.base.Presenter;
 
@@ -13,6 +14,7 @@ public class FavoritePresenter extends Presenter<FavoriteContract.View> implemen
     private int limit;
     private boolean updateOrder;
     private int source;
+    private List<AnimeUpdateInfoBean> animeUpdateInfoBeans;
 
     public FavoritePresenter(int offset, int limit, boolean updateOrder, FavoriteContract.View view) {
         super(view);
@@ -23,15 +25,16 @@ public class FavoritePresenter extends Presenter<FavoriteContract.View> implemen
         model = new FavoriteModel();
     }
 
-    public FavoritePresenter(int source, FavoriteContract.View view) {
+    public FavoritePresenter(int source, List<AnimeUpdateInfoBean> animeUpdateInfoBeans, FavoriteContract.View view) {
         super(view);
         this.view = view;
         this.source = source;
+        this.animeUpdateInfoBeans = animeUpdateInfoBeans;
         model = new FavoriteModel();
     }
 
     public void loadUpdateInfo() {
-        model.getUpdateInfo(source, this);
+        model.getUpdateInfo(source, animeUpdateInfoBeans, this);
     }
 
     @Override

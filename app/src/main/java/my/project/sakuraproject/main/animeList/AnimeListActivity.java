@@ -6,11 +6,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.r0adkll.slidr.Slidr;
@@ -18,6 +13,10 @@ import com.r0adkll.slidr.Slidr;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 import butterknife.OnClick;
 import my.project.sakuraproject.R;
@@ -122,7 +121,6 @@ public class AnimeListActivity extends BaseActivity<AnimeListContract.View, Anim
     }
 
     public void initAdapter() {
-        mRecyclerView.setLayoutManager(new GridLayoutManager(this, Utils.isPad() ? 5 : 3));
         adapter = new AnimeListAdapter(this, list, false);
         adapter.openLoadAnimation();
         adapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
@@ -181,6 +179,7 @@ public class AnimeListActivity extends BaseActivity<AnimeListContract.View, Anim
                 if (isMain) {
                     mSwipe.setRefreshing(false);
                     list = animeList;
+                    setRecyclerViewView();
                     adapter.setNewData(list);
                 } else {
                     adapter.addData(animeList);
@@ -195,6 +194,7 @@ public class AnimeListActivity extends BaseActivity<AnimeListContract.View, Anim
         runOnUiThread(() -> {
             if (!mActivityFinish) {
                 if (isMain) {
+                    setRecyclerViewView();
                     mSwipe.setRefreshing(false);
                     errorTitle.setText(msg);
                     adapter.setEmptyView(errorView);
@@ -224,5 +224,35 @@ public class AnimeListActivity extends BaseActivity<AnimeListContract.View, Anim
     @Override
     public void showLog(String url) {
 //        runOnUiThread(() -> application.showToastShortMsg(url));
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (Utils.isPad()) setRecyclerViewView();
+    }
+
+    @Override
+    protected void setConfigurationChanged() {
+        setRecyclerViewView();
+    }
+
+    private void setRecyclerViewView() {
+        String config = this.getResources().getConfiguration().toString();
+        boolean isInMagicWindow = config.contains("miui-magic-windows");
+        if (list.size() == 0) {
+            mRecyclerView.setLayoutManager(new GridLayoutManager(this, 1));
+            return;
+        }
+        if (!Utils.isPad()) {
+            mRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
+        }
+        else {
+            if (isInMagicWindow) {
+                mRecyclerView.setLayoutManager(new GridLayoutManager(this, 4));
+            } else {
+                mRecyclerView.setLayoutManager(new GridLayoutManager(this, 5));
+            }
+        }
     }
 }

@@ -7,9 +7,9 @@ android {
         applicationId "my.project.sakuraproject"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 37
-        versionName "2.1.0"
-        ndk{abiFilters "armeabi", "x86"}
+        versionCode 38
+        versionName "2.2.0"
+        ndk{abiFilters "arm64-v8a", "x86_64"}
         resConfigs"zh"
     }
     compileOptions {
@@ -19,6 +19,7 @@ android {
     buildTypes {
         release {
             minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -42,11 +43,14 @@ dependencies {
     implementation 'com.google.android.material:material:1.4.0-alpha01'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'androidx.cardview:cardview:1.0.0'
+    implementation 'androidx.navigation:navigation-fragment:2.3.0'
+    implementation 'androidx.navigation:navigation-ui:2.3.0'
     implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.30'
     implementation 'pub.devrel:easypermissions:3.0.0'
     implementation 'com.rengwuxian.materialedittext:library:2.1.4'
     implementation 'com.r0adkll:slidableactivity:2.0.5'
     implementation 'com.jakewharton:butterknife:10.2.1'
+    implementation 'org.jetbrains:annotations:15.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.1'
     implementation 'com.squareup.okhttp3:okhttp:3.12.0'
     implementation 'cn.jzvd:jiaozivideoplayer:7.2.0'

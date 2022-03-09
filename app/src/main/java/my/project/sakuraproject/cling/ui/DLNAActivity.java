@@ -197,6 +197,11 @@ public class DLNAActivity extends BaseActivity implements SeekBar.OnSeekBarChang
         ClingDeviceList.getInstance().destroy();
     }
 
+    @Override
+    protected void setConfigurationChanged() {
+
+    }
+
     private void initView() {
         mDevicesAdapter = new DevicesAdapter(mContext);
         mDeviceList.setAdapter(mDevicesAdapter);
@@ -347,6 +352,8 @@ public class DLNAActivity extends BaseActivity implements SeekBar.OnSeekBarChang
 
         if (currentState == DLANPlayState.STOP) {
             isMain = true;
+            mSeekProgress.setMax((int) duration);
+            durationText.setText(String.format(refTimeText, "00:00:00", OtherUtils.getStringTime((int) duration)));
             mClingPlayControl.playNew(playUrl, new ControlCallback() {
 
                 @Override
@@ -508,9 +515,12 @@ public class DLNAActivity extends BaseActivity implements SeekBar.OnSeekBarChang
                 @Override
                 public void receive(IResponse response) {
                     if (response != null) {
-                        PositionInfo positionInfo = (PositionInfo) response.getResponse();
-                        mSeekProgress.setProgress(OtherUtils.getIntTime(positionInfo.getRelTime()));
-                        durationText.setText(String.format(refTimeText, positionInfo.getRelTime(), positionInfo.getTrackDuration()));
+                        runOnUiThread(() -> {
+                            PositionInfo positionInfo = (PositionInfo) response.getResponse();
+                            if (OtherUtils.getIntTime(positionInfo.getRelTime()) == 0) return;
+                            mSeekProgress.setProgress(OtherUtils.getIntTime(positionInfo.getRelTime()));
+                            durationText.setText(String.format(refTimeText, positionInfo.getRelTime(), positionInfo.getTrackDuration()));
+                        });
                     }
                 }
 
@@ -532,5 +542,13 @@ public class DLNAActivity extends BaseActivity implements SeekBar.OnSeekBarChang
     protected void onResume() {
         super.onResume();
         hideNavBar();
+        postHandler.post(positionRunnable);
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        postHandler.removeCallbacksAndMessages(null);
     }
 }

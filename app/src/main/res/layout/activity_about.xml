@@ -225,47 +225,6 @@
                 </RelativeLayout>
 
                 <RelativeLayout
-                    android:id="@+id/check_update"
-
-                    android:background="?android:attr/selectableItemBackground"
-                    android:clickable="true"
-                    android:layout_width="match_parent"
-                    android:layout_height="65dp">
-
-                    <ImageView
-                        android:id="@+id/icon6"
-                        android:src="@drawable/baseline_cloud_download_white_48dp"
-                        android:tint="@color/text_color_primary"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="16dp"
-                        android:layout_marginRight="16dp"
-                        android:layout_width="28dp"
-                        android:layout_height="28dp" />
-
-                    <LinearLayout
-                        android:layout_toRightOf="@+id/icon6"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:text="@string/now_version"
-                            android:textColor="@color/text_color_primary"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
-
-                        <TextView
-                            android:id="@+id/version"
-                            android:textColor="#8C8C8C"
-                            android:textSize="12sp"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
-                    </LinearLayout>
-
-                </RelativeLayout>
-
-                <RelativeLayout
                     android:id="@+id/github"
                     android:background="?android:attr/selectableItemBackground"
                     android:layout_width="match_parent"

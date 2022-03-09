@@ -21,7 +21,9 @@ import my.project.sakuraproject.bean.AnimeDescDetailsBean;
 import my.project.sakuraproject.bean.AnimeDescListBean;
 import my.project.sakuraproject.bean.AnimeDescRecommendBean;
 import my.project.sakuraproject.bean.AnimeListBean;
+import my.project.sakuraproject.bean.AnimeUpdateBean;
 import my.project.sakuraproject.bean.AnimeUpdateInfoBean;
+import my.project.sakuraproject.bean.HomeBean;
 import my.project.sakuraproject.bean.TagBean;
 import my.project.sakuraproject.bean.TagHeaderBean;
 
@@ -76,6 +78,69 @@ public class YhdmJsoupUtils {
         Document document = Jsoup.parse(source);
         Elements pages = document.select("div.pages");
         return pages.size() > 0 ? Integer.parseInt(document.getElementById("lastn").text()) : 0;
+    }
+
+    /**************************************  获取首页相关信息解析方法开始  **************************************/
+    public static List<HomeBean> getHomeAllData(String source) {
+        Document document = Jsoup.parse(source);
+        Elements titles = document.select("div.firs > div.dtit");
+        Log.e("titles", titles.size() + "");
+        Elements data = document.select("div.firs > div.img");
+        List<HomeBean> homeBeanList = new ArrayList<>();
+        for (int i=0,size=titles.size(); i<size; i++) {
+            HomeBean homeBean = new HomeBean();
+            String title = titles.get(i).select("h2 > a").text();
+            String moreUrl = titles.get(i).select("h2 > a").attr("href");
+            homeBean.setTitle(title);
+            homeBean.setMoreUrl(moreUrl);
+            List<HomeBean.HomeItemBean> homeItemBeanList = new ArrayList<>();
+            Elements animes = data.get(i).select("ul > li");
+            for (Element anime : animes) {
+                Elements animeInfo = anime.select("a");
+                HomeBean.HomeItemBean homeItemBean = new HomeBean.HomeItemBean();
+                String animeTitle = animeInfo.get(1).text();
+                String url = animeInfo.get(1).attr("href");
+                String img = animeInfo.get(0).select("img").attr("src");
+                String episodes = animeInfo.size() == 3 ? animeInfo.get(2).text() : "";
+                homeItemBean.setTitle(animeTitle);
+                homeItemBean.setUrl(url);
+                homeItemBean.setImg(img);
+                homeItemBean.setEpisodes(episodes);
+                homeItemBeanList.add(homeItemBean);
+            }
+            homeBean.setData(homeItemBeanList);
+            homeBeanList.add(homeBean);
+        }
+        return homeBeanList;
+    }
+
+    /**
+     * 获取首页最近更新信息
+     * @param source
+     * @return
+     */
+    public static List<AnimeUpdateInfoBean> getHomeUpdateInfo(String source) {
+        List<AnimeUpdateInfoBean> animeUpdateInfoBeans = new ArrayList<>();
+        Document document = Jsoup.parse(source);
+        Elements data = document.select("div.firs > div.img");
+        Elements animes = data.get(0).select("ul > li");
+        for (Element anime : animes) {
+            Elements animeInfo = anime.select("a");
+            AnimeUpdateInfoBean animeUpdateInfoBean = new AnimeUpdateInfoBean();
+            animeUpdateInfoBean.setSource(0);
+            for (Element e : animeInfo) {
+                boolean hasUrl = false;
+                if (e.attr("href").contains("/show/")) {
+                    animeUpdateInfoBean.setTitle(e.text());
+                } else if (e.attr("href").contains("/v/")) {
+                    hasUrl = true;
+                    animeUpdateInfoBean.setPlayNumber(e.attr("href"));
+                }
+                if (hasUrl)
+                    animeUpdateInfoBeans.add(animeUpdateInfoBean);
+            }
+        }
+        return animeUpdateInfoBeans;
     }
 
     /**************************************  新番时间表解析方法开始  **************************************/
@@ -383,8 +448,9 @@ public class YhdmJsoupUtils {
     /**************************************  选集解析方法结束  **************************************/
 
     /**************************************  最近更新动漫解析方法开始  **************************************/
-    public static List<AnimeUpdateInfoBean> getUpdateInfoList(String source) {
-        List<AnimeUpdateInfoBean> animeUpdateInfoBeans = new ArrayList<>();
+    public static List<AnimeUpdateInfoBean> getUpdateInfoList(String source, List<AnimeUpdateInfoBean> animeUpdateInfoBeans) {
+        if (animeUpdateInfoBeans == null)
+            animeUpdateInfoBeans = new ArrayList<>();
         Document document = Jsoup.parse(source);
         Elements elements = document.select("div.topli > ul > li");
         for (int i=0,size=elements.size(); i<size; i++) {
@@ -406,4 +472,44 @@ public class YhdmJsoupUtils {
         return animeUpdateInfoBeans;
     }
     /**************************************  最近更新动漫解析方法结束  **************************************/
+
+    /**************************************  最近更新动漫解析方法开始  **************************************/
+    public static List<AnimeUpdateBean> getUpdateInfoList2(String source) {
+        List<AnimeUpdateBean> animeUpdateBeans = new ArrayList<>();
+        Document document = Jsoup.parse(source);
+        Elements elements = document.select("div.topli > ul > li");
+        for (Element li : elements) {
+            Elements aList = li.select("a");
+            AnimeUpdateBean animeUpdateBean = new AnimeUpdateBean();
+            animeUpdateBean.setNumber(li.select("i").text());
+            Elements span = li.select("span > a");
+            if (span.size() > 0) {
+                animeUpdateBean.setRegion(aList.get(0).text());
+                animeUpdateBean.setTitle(aList.get(1).text());
+                animeUpdateBean.setUrl(aList.get(1).attr("href"));
+                animeUpdateBean.setEpisodes(aList.get(2).text());
+            } else {
+                animeUpdateBean.setRegion("");
+                animeUpdateBean.setTitle(aList.get(0).text());
+                animeUpdateBean.setUrl(aList.get(0).attr("href"));
+                animeUpdateBean.setEpisodes(aList.get(1).text());
+            }
+            animeUpdateBean.setUpdateTime(li.select("em").text());
+            animeUpdateBeans.add(animeUpdateBean);
+        }
+        return animeUpdateBeans;
+    }
+    /**************************************  最近更新动漫解析方法结束  **************************************/
+
+    /**************************************  更新图片方法开始  **************************************/
+    /**
+     * 获取番剧图片
+     * @param source
+     * @return
+     */
+    public static String getAinmeImg(String source) {
+        Document document = Jsoup.parse(source);
+        return document.select("div.thumb > img").attr("src");
+    }
+    /**************************************  更新图片方法结束  **************************************/
 }

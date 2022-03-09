@@ -1,0 +1,25 @@
+{
+  "easyGoVersion": "1.0",
+  "client": "my.project.sakuraproject",
+  "logicEntities": [
+    {
+      "head": {
+        "function": "magicwindow",
+        "required": "true"
+      },
+      "body": {
+        "mode": "0",
+        "activityPairs": [
+          {
+            "from": "my.project.sakuraproject.main.home.HomeActivity",
+            "to": "*"
+          }
+        ],
+        "UX": {
+          "supportRotationUxCompat": "false",
+          "isDraggable": "false"
+        }
+      }
+    }
+  ]
+}

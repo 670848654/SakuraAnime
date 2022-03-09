@@ -16,17 +16,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.AppCompatTextView;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.core.content.ContextCompat;
-import androidx.core.widget.NestedScrollView;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import com.alibaba.fastjson.JSONObject;
 import com.arialyy.aria.core.Aria;
 import com.arialyy.aria.core.download.M3U8Entity;
@@ -68,6 +57,16 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.AppCompatTextView;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.content.ContextCompat;
+import androidx.core.widget.NestedScrollView;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.lujun.androidtagview.TagContainerLayout;
@@ -310,7 +309,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
 
         View dramaView = LayoutInflater.from(this).inflate(R.layout.dialog_drama, null);
         lineRecyclerView = dramaView.findViewById(R.id.drama_list);
-        lineRecyclerView.setLayoutManager(new GridLayoutManager(this, Utils.isPad() ? 8 : 4));
+
         animeDescDramaAdapter = new AnimeDescDramaAdapter(this, new ArrayList<>());
         animeDescDramaAdapter.setOnItemClickListener((adapter, view, position) -> {
             if (!Utils.isFastClick()) return;
@@ -328,7 +327,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         expandableTextView.setContent(Utils.getString(R.string.download_info));
         expandableTextView.setNeedExpend(true);
         downloadRecyclerView = downloadView.findViewById(R.id.download_list);
-        downloadRecyclerView.setLayoutManager(new GridLayoutManager(this, Utils.isPad() ? 8 : 4));
+
         downloadAdapter = new DownloadDramaAdapter(this, new ArrayList<>());
         downloadAdapter.setOnItemClickListener((adapter, view, position) -> {
             DownloadDramaBean bean = (DownloadDramaBean) adapter.getItem(position);
@@ -908,6 +907,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         jsonObject.put("imomoePlaySource", nowSource);
         // m3u8下载配置
         m3U8VodOption = new M3U8VodOption();
+        m3U8VodOption.ignoreFailureTs();
         m3U8VodOption.setUseDefConvert(false);
         m3U8VodOption.setBandWidthUrlConverter(new BandWidthUrlConverter());
         m3U8VodOption.setVodTsUrlConvert(new VodTsUrlConverter());
@@ -1116,6 +1116,8 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
      * @return
      */
     private long createDownloadTask(boolean isM3u8, String url, String savePath) {
+        url = url.replaceAll("\\\\", "");
+        Log.e("url", url);
         if (isM3u8)
             return Aria.download(this)
                     .load(url)
@@ -1200,5 +1202,34 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         bean.setShouldParse(false);
         downloadAdapter.notifyItemChanged(position);
         runOnUiThread(() -> Toast.makeText(getApplicationContext(), bean.getTitle() + " -> 下载出错，解析视频地址失败" , Toast.LENGTH_SHORT).show());
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        setRecyclerViewView();
+    }
+
+    @Override
+    protected void setConfigurationChanged() {
+        setRecyclerViewView();
+    }
+
+    private void setRecyclerViewView() {
+        String config = this.getResources().getConfiguration().toString();
+        boolean isInMagicWindow = config.contains("miui-magic-windows");
+        if (!Utils.isPad()) {
+            lineRecyclerView.setLayoutManager(new GridLayoutManager(this, 4));
+            downloadRecyclerView.setLayoutManager(new GridLayoutManager(this,  4));
+        }
+        else {
+            if (isInMagicWindow) {
+                lineRecyclerView.setLayoutManager(new GridLayoutManager(this, 6));
+                downloadRecyclerView.setLayoutManager(new GridLayoutManager(this, 6));
+            } else {
+                lineRecyclerView.setLayoutManager(new GridLayoutManager(this, 8));
+                downloadRecyclerView.setLayoutManager(new GridLayoutManager(this, 8));
+            }
+        }
     }
 }

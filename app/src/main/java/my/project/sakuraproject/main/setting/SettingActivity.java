@@ -1,5 +1,7 @@
 package my.project.sakuraproject.main.setting;
 
+import android.content.Intent;
+import android.os.Handler;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,25 +12,35 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.Toolbar;
-
 import com.arialyy.aria.core.Aria;
 import com.r0adkll.slidr.Slidr;
 
 import org.greenrobot.eventbus.EventBus;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.IOException;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.Toolbar;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import butterknife.BindView;
 import butterknife.OnClick;
 import my.project.sakuraproject.R;
+import my.project.sakuraproject.api.Api;
 import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.bean.Refresh;
 import my.project.sakuraproject.custom.CustomToast;
+import my.project.sakuraproject.main.about.AboutActivity;
 import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.base.Presenter;
+import my.project.sakuraproject.net.HttpGet;
 import my.project.sakuraproject.util.SharedPreferencesUtils;
 import my.project.sakuraproject.util.SwipeBackLayoutUtil;
 import my.project.sakuraproject.util.Utils;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 public class SettingActivity extends BaseActivity {
     @BindView(R.id.toolbar)
@@ -56,6 +68,13 @@ public class SettingActivity extends BaseActivity {
     @BindView(R.id.slidr_config)
     TextView slidrConfig;
     private String[] slidrConfigs = Utils.getArray(R.array.slidr_configs);
+    @BindView(R.id.version)
+    TextView version;
+    private AlertDialog alertDialog;
+    private String downloadUrl;
+    private Call downCall;
+    @BindView(R.id.show)
+    CoordinatorLayout show;
 
     @Override
     protected Presenter createPresenter() {
@@ -84,6 +103,11 @@ public class SettingActivity extends BaseActivity {
         SwipeBackLayoutUtil.convertActivityToTranslucent(this);
     }
 
+    @Override
+    protected void setConfigurationChanged() {
+
+    }
+
     public void initToolbar() {
         toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle(Utils.getString(R.string.home_setting_item_title));
@@ -95,6 +119,10 @@ public class SettingActivity extends BaseActivity {
     public void initViews() {
         LinearLayout.LayoutParams Params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Utils.getNavigationBarHeight(this));
         footer.findViewById(R.id.footer).setLayoutParams(Params);
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) show.getLayoutParams();
+        params.setMargins(10, 0, 10, Utils.getNavigationBarHeight(this) - 5);
+        show.setLayoutParams(params);
+        version.setText(Utils.getASVersionName());
     }
 
     public void getUserCustomSet() {
@@ -121,7 +149,7 @@ public class SettingActivity extends BaseActivity {
         slidrConfig.setText((Boolean) SharedPreferencesUtils.getParam(this, "slidr_config", false) ? slidrConfigs[1] : slidrConfigs[0]);
     }
 
-    @OnClick({R.id.set_domain, R.id.set_player, R.id.set_favorite_update, R.id.set_download_number, R.id.set_sildr})
+    @OnClick({R.id.set_domain, R.id.set_player, R.id.set_favorite_update, R.id.set_download_number, R.id.set_sildr, R.id.check_update, R.id.about})
     public void onClick(RelativeLayout layout) {
         switch (layout.getId()) {
             case R.id.set_domain:
@@ -145,6 +173,12 @@ public class SettingActivity extends BaseActivity {
                 else
                     application.showErrorToastMsg("X5内核未能加载成功，无法设置");
                 break;*/
+            case  R.id.check_update:
+                checkUpdate();
+                break;
+            case R.id.about:
+                startActivity(new Intent(this, AboutActivity.class));
+                break;
         }
     }
 
@@ -292,4 +326,55 @@ public class SettingActivity extends BaseActivity {
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }*/
+
+    public void checkUpdate() {
+        alertDialog = Utils.getProDialog(this, R.string.check_update_text);
+        new Handler().postDelayed(() -> new HttpGet(Api.CHECK_UPDATE, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                runOnUiThread(() -> {
+                    Utils.cancelDialog(alertDialog);
+                    application.showSnackbarMsgAction(show, Utils.getString(R.string.ck_network_error_start), Utils.getString(R.string.try_again), v -> checkUpdate());
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String json = response.body().string();
+                try {
+                    JSONObject obj = new JSONObject(json);
+                    String newVersion = obj.getString("tag_name");
+                    if (newVersion.equals(Utils.getASVersionName()))
+                        runOnUiThread(() -> {
+                            Utils.cancelDialog(alertDialog);
+                            CustomToast.showToast(SettingActivity.this, Utils.getString(R.string.no_new_version), CustomToast.SUCCESS);
+                        });
+                    else {
+                        downloadUrl = obj.getJSONArray("assets").getJSONObject(0).getString("browser_download_url");
+                        String body = obj.getString("body");
+                        runOnUiThread(() -> {
+                            Utils.cancelDialog(alertDialog);
+                            Utils.findNewVersion(SettingActivity.this,
+                                    newVersion,
+                                    body,
+                                    (dialog, which) -> {
+                                        dialog.dismiss();
+                                        Utils.putTextIntoClip(downloadUrl);
+//                                        application.showSuccessToastMsg(Utils.getString(R.string.url_copied));
+                                        CustomToast.showToast(SettingActivity.this, Utils.getString(R.string.url_copied), CustomToast.SUCCESS);
+                                        Utils.viewInBrowser(SettingActivity.this, downloadUrl);
+                                    },
+                                    (dialog, which) -> dialog.dismiss()
+                            );
+                        });
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+//                    application.showErrorToastMsg(Utils.getString(R.string.ck_error_start));
+                    CustomToast.showToast(SettingActivity.this, Utils.getString(R.string.ck_error_start), CustomToast.ERROR);
+                    Utils.cancelDialog(alertDialog);
+                }
+            }
+        }), 1000);
+    }
 }

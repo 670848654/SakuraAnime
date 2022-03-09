@@ -16,6 +16,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -42,13 +43,14 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.model.LazyHeaders;
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
 import com.bumptech.glide.request.transition.Transition;
 import com.r0adkll.slidr.model.SlidrConfig;
 import com.r0adkll.slidr.model.SlidrPosition;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.text.DecimalFormat;
@@ -73,7 +75,7 @@ import androidx.palette.graphics.Palette;
 import jp.wasabeef.glide.transformations.BlurTransformation;
 import my.project.sakuraproject.BuildConfig;
 import my.project.sakuraproject.R;
-import my.project.sakuraproject.application.Sakura;
+import my.project.sakuraproject.bean.UpdateImgBean;
 import my.project.sakuraproject.custom.CustomToast;
 import my.project.sakuraproject.main.base.BaseModel;
 import my.project.sakuraproject.main.my.MyActivity;
@@ -418,14 +420,26 @@ public class Utils {
         RequestOptions options = new RequestOptions()
                 .centerCrop()
                 .format(DecodeFormat.PREFER_RGB_565)
-                .placeholder((Boolean) SharedPreferencesUtils.getParam(getContext(), "darkTheme", false) ? R.drawable.loading_night : R.drawable.loading_light)
+                .placeholder(getTheme() ? R.drawable.loading_night : R.drawable.loading_light)
                 .error(R.drawable.error);
         Glide.with(context)
+                .asBitmap()
                 .load(imgUrl)
-                .transition(DrawableTransitionOptions.withCrossFade(drawableCrossFadeFactory))
+//                .transition(DrawableTransitionOptions.withCrossFade(drawableCrossFadeFactory))
                 .apply(options)
-                .into(imageView);
-        if (!(Boolean) SharedPreferencesUtils.getParam(getContext(), "darkTheme", false) && setPalette)
+//                .into(imageView);
+                .into(new SimpleTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                        imageView.setImageBitmap(resource);
+                    }
+
+                    @Override
+                    public void onLoadFailed(@Nullable Drawable errorDrawable) {
+                        EventBus.getDefault().post(new UpdateImgBean(url, htmlUrl));
+                    }
+                });
+        if (!getTheme() && setPalette)
             // 设置Palette
             Glide.with(context).asBitmap().load(imgUrl).into(new SimpleTarget<Bitmap>() {
                 @Override
@@ -438,6 +452,11 @@ public class Utils {
                         }
                     });
                 }
+
+                @Override
+                public void onLoadFailed(@Nullable @org.jetbrains.annotations.Nullable Drawable errorDrawable) {
+                    EventBus.getDefault().post(new UpdateImgBean(url, htmlUrl));
+                }
             });
     }
 
@@ -446,7 +465,7 @@ public class Utils {
         textView.setTextColor(context.getResources().getColor(R.color.text_color_primary));
     }
 
-    public static void setImgViewBg(Context context, int source, String img, ImageView imageView) {
+    public static void setImgViewBg(Context context, int source, String img, String descUrl, ImageView imageView) {
         GlideUrl imgUrl;
         if (source == 1)
             imgUrl = new GlideUrl(getImgUrl(img, true));
@@ -458,17 +477,29 @@ public class Utils {
         RequestOptions options = new RequestOptions()
                 .centerCrop()
                 .format(DecodeFormat.PREFER_RGB_565)
-                .placeholder((Boolean) SharedPreferencesUtils.getParam(getContext(), "darkTheme", false) ? R.drawable.loading_night : R.drawable.loading_light)
+                .placeholder(getTheme() ? R.drawable.loading_light : R.drawable.loading_night)
                 .error(R.drawable.error);
         Glide.with(context)
+                .asBitmap()
                 .load(imgUrl)
-                .transition(DrawableTransitionOptions.withCrossFade(drawableCrossFadeFactory))
+//                .transition(DrawableTransitionOptions.withCrossFade(drawableCrossFadeFactory))
                 .apply(options)
                 .apply(RequestOptions.bitmapTransform( new BlurTransformation(15, 5)))
-                .into(imageView);
+//                .into(imageView);
+                .into(new SimpleTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                        imageView.setImageBitmap(resource);
+                    }
+
+                    @Override
+                    public void onLoadFailed(@Nullable @org.jetbrains.annotations.Nullable Drawable errorDrawable) {
+                        EventBus.getDefault().post(new UpdateImgBean(img, descUrl));
+                    }
+                });
     }
 
-    public static void loadVideoScreenshot(final Context context, String uri, ImageView imageView, long frameTimeMicros) {
+    public static void loadVideoScreenshot(final Context context, String uri, String defaultImg, ImageView imageView, long frameTimeMicros) {
         /*RequestOptions requestOptions = RequestOptions.frameOf(frameTimeMicros);
         requestOptions.set(FRAME_OPTION, MediaMetadataRetriever.OPTION_CLOSEST);
         requestOptions.transform(new BitmapTransformation() {
@@ -489,7 +520,20 @@ public class Utils {
         RequestOptions options = new RequestOptions().frame(frameTimeMicros);
         Glide.with(context).asBitmap().load(uri)
                 .apply(options)
-                .into(imageView);
+                .into(new SimpleTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                        if (resource.getAllocationByteCount() > 100)
+                            imageView.setImageBitmap(resource);
+                        else
+                            onLoadFailed(null);
+                    }
+
+                    @Override
+                    public void onLoadFailed(@Nullable @org.jetbrains.annotations.Nullable Drawable errorDrawable) {
+                        Glide.with(context).load(defaultImg).apply(RequestOptions.bitmapTransform( new BlurTransformation(15, 5))).into(imageView);
+                    }
+                });
     }
 
     public static String getASVersionName() {
@@ -787,7 +831,7 @@ public class Utils {
     /**
      * 判断服务是否正在运行
      *
-     * @param serviceName 服务类的全路径名称 例如： com.jaychan.demo.service.PushService
+     * @param serviceName 服务类的全路径名称
      * @param context 上下文对象
      * @return
      */
@@ -858,5 +902,13 @@ public class Utils {
             return null;
         }
         // return null;
+    }
+
+    /**
+     * 获取当前主题
+     * @return true 黑夜主题 false 白天主题
+     */
+    public static boolean getTheme() {
+        return (boolean) SharedPreferencesUtils.getParam(getContext(), "darkTheme", false);
     }
 }

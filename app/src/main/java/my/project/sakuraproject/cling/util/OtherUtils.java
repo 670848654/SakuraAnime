@@ -51,6 +51,8 @@ public class OtherUtils {
         if (tmp.length < 3) {
             return 0;
         }
+        if (tmp[0].contains(".") || tmp[1].contains(".") || tmp[2].contains("."))
+            return 0;
         int second = Integer.valueOf(tmp[0]) * 3600 + Integer.valueOf(tmp[1]) * 60 + Integer.valueOf(tmp[2]);
 
         return second * 1000;

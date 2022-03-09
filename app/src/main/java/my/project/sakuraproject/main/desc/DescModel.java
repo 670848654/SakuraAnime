@@ -32,6 +32,7 @@ public class DescModel extends BaseModel implements DescContract.Model {
 
     private void parserYhdm(String url, DescContract.LoadDataCallback callback) {
         callback.log(url);
+        Log.e("url", url);
         new HttpGet(url, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {

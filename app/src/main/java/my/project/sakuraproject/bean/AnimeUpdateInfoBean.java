@@ -1,9 +1,11 @@
 package my.project.sakuraproject.bean;
 
+import java.io.Serializable;
+
 /**
  * 动漫更新列表实体
  */
-public class AnimeUpdateInfoBean {
+public class AnimeUpdateInfoBean implements Serializable {
     private String title; // 番剧标题
     private String playNumber; // 最新一集播放剧集地址
     private int source; // 来源 0 yhdm 1 imomoe

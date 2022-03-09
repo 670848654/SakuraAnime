@@ -1,13 +1,9 @@
 <resources>
     <string name="app_name">樱花动漫</string>
-    <string name="yhdm_name">樱花动漫 Yhdm</string>
-    <string name="imomoe_name">樱花动漫 Imomoe</string>
     <string name="yhdm">Yhdm</string>
     <string name="imomoe">Imomoe</string>
     <string name="app_sub_name">新番时间表</string>
     <string name="search">搜索</string>
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
     <!-- 权限文本 -->
     <string name="permissions">为了正常使用，需要以下权限!</string>
     <string name="permissions_error">未能获取到相关权限</string>
@@ -53,6 +49,7 @@
     <string name="should_be_sniffer">非可播放视频地址，尝试嗅探获取播放地址&#8230;</string>
     <string name="should_be_used_web">尝试嗅探获取播放地址&#8230;</string>
     <string name="open_web_view">解析视频地址失败，尝试使用WebView打开</string>
+    <string name="loading_video__failed">视频地址无法访问，加载失败！</string>
     <!-- 详情界面文本 -->
     <string name="online">在线</string>
     <string name="multi">多季</string>
@@ -83,8 +80,8 @@
     <string name="player_default">内置</string>
     <string name="domain">域名设置（备用）</string>
     <string name="domain_msg">该功能用于网站域名变更导致应用获取数据异常，应用未及时更新时使用。\n如果网站仅变更域名，网页布局无变动，你可在此输入相关站点的新域名保存即可。</string>
-    <string name="domain_url">http://www.yhdm.so</string>
-    <string name="imomoe_url">http://www.imomoe.la</string>
+    <string name="domain_url">http://www.yinghuacd.com</string>
+    <string name="imomoe_url">http://www.imomoe.live</string>
     <string name="set_check_favorite_update">追番更新检测（仅支持YHDM源）</string>
     <string name="check_favorite_update_default">启用</string>
     <string name="set_download_number">同时下载任务数</string>
@@ -123,10 +120,10 @@
     <string name="statement">声明</string>
     <string name="statement_desc">仅供学习交流\n禁止非法传播或用于商业用途</string>
     <string name="test_model">测试</string>
-    <string name="test_model_desc">OnePlus 8 Pro\nAndroid 11</string>
+    <string name="test_model_desc">OnePlus 8 Pro\nAndroid 12</string>
     <string name="now_version">当前版本</string>
     <string name="final_compile">最后编译日期</string>
-    <string name="final_compile_time">2021年7月30日</string>
+    <string name="final_compile_time">2022年3月9日</string>
     <string name="cache">缓存目录</string>
     <string name="cache_text">/SakuraAnime/\n卸载后自行删除此目录</string>
     <string name="github">Github仓库</string>
@@ -160,8 +157,9 @@
     <string name="download_anime_desc">转到番剧详情页</string>
     <string name="create_download_task">创建下载任务中，请稍后&#8230;</string>
     <string name="create_parse_download_task">解析视频真实地址中，请稍后&#8230;</string>
+    <string name="download_m3u8_error">该</string>
     <string name="select_download_number">选择需要下载的剧集</string>
-    <string name="download_info">下载须知 >> \n下载标识：\n\u3000红色→ 表示该剧集需要解析后才能下载（点击剧集即可开始解析下载，只支持单任务操作）。\n\u3000绿色→ 表示该剧集已存在下载任务。\n\u3000【不建议一次性下载太多剧集】\nm3u8格式：\n\u3000虽然支持m3u8格式的下载，由于m3u8存在各种加密、二级域名等情况，鉴于大部分资源都是使用AES-128加密，默认使用AES-128解密并合并文件为mp4格式，所以不一定能执行成功，如果下载失败自行删除下载任务~\n\u3000下载的视频仅在 我的→ 下载列表中进行播放，其他界面播放还是使用网络解析播放！</string>
+    <string name="download_info">下载须知&#187; \n下载标识：\n\u3000红色→ 表示该剧集需要解析后才能下载（点击剧集即可开始解析下载，只支持单任务操作）。\n\u3000绿色→ 表示该剧集已存在下载任务。\n\u3000【不建议一次性下载太多剧集】\nm3u8格式：\n\u3000虽然支持m3u8格式的下载，由于m3u8存在各种加密、二级域名等情况，鉴于大部分资源都是使用AES-128加密，默认使用AES-128解密并合并文件为mp4格式，所以不一定能执行成功，如果下载失败自行删除下载任务~\n\u3000下载的视频仅在 我的→ 下载列表中进行播放，其他界面播放还是使用网络解析播放！</string>
     <string name="delete_single_download">是否删除该剧集任务？</string>
     <string name="remove_download_file">同时删除文件</string>
     <string name="download_positive">继续下载</string>
@@ -193,7 +191,7 @@
     <string name="open_drama_list">打开选集列表</string>
     <string name="authorize_msg">点击前往授权</string>
     <string name="authorize_title_msg">缺少必要权限</string>
-    <string name="file_manger_msg">Android 11 需要授予所有文件的管理权限</string>
+    <string name="file_manger_msg">Android 11 以上需要授予所有文件的管理权限</string>
 
     <string name="device_title">设备列表</string>
     <string name="notice">请选择连接设备，连接设备后才可播放</string>
@@ -206,7 +204,9 @@
     <string name="stop">停止</string>
     <string name="exit">退出</string>
     <string name="my_title">我的</string>
-
+    <string name="history_detail">详情页&#187;</string>
+    <string name="download_anime_list_content_title">共 %s 个内容</string>
+    <string name="download_anime_list_size">空间占用: %s</string>
     <string-array name="speed_item">
         <item>5s</item>
         <item>10s</item>

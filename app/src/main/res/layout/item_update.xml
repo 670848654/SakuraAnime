@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingRight="8dp"
+    android:paddingLeft="8dp"
+    android:paddingTop="5dp"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:background="@color/window_bg">
+
+    <TextView
+        android:id="@+id/number"
+        android:text="01."
+        android:textSize="16sp"
+        android:layout_centerVertical="true"
+        android:textColor="@color/text_color_primary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/title"
+        android:paddingLeft="5dp"
+        android:paddingBottom="10dp"
+        android:text="不是真正同伴的我被逐出了勇者队伍，因此决定在边境过上慢生活"
+        android:layout_toRightOf="@+id/number"
+        android:textColor="@color/text_color_primary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/region"
+        android:text="日本动画"
+        android:paddingLeft="5dp"
+        android:layout_below="@+id/title"
+        android:layout_toRightOf="@id/number"
+        android:textColor="@color/text_color_primary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/episodes"
+        android:text="第13集"
+        android:paddingRight="10dp"
+        android:layout_below="@+id/title"
+        android:layout_toLeftOf="@+id/update_time"
+        android:textColor="@color/logo_bg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/update_time"
+        android:text="2022-02-18"
+        android:layout_below="@+id/title"
+        android:layout_alignParentRight="true"
+        android:textColor="@color/text_color_primary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <View
+        android:layout_marginTop="5dp"
+        android:layout_below="@+id/update_time"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/head"/>
+</RelativeLayout>

@@ -29,7 +29,7 @@
             android:name=".main.start.StartActivity"
             android:configChanges="screenLayout|orientation|screenSize|smallestScreenSize|keyboardHidden|uiMode"
             android:label="@string/app_name"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@style/startTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -43,22 +43,22 @@
         <activity
             android:name=".main.home.HomeActivity"
             android:configChanges="screenLayout|orientation|screenSize|smallestScreenSize|keyboardHidden|uiMode"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".main.week.WeekActivity"
             android:configChanges="screenLayout|orientation|screenSize|smallestScreenSize|keyboardHidden|uiMode"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@style/TranslucentTheme" />
         <activity
             android:name=".main.updateList.UpdateListActivity"
             android:configChanges="screenLayout|orientation|screenSize|smallestScreenSize|keyboardHidden|uiMode"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@style/TranslucentTheme" />
         <activity
             android:name=".main.desc.DescActivity"
             android:configChanges="screenLayout|orientation|screenSize|smallestScreenSize|keyboardHidden|uiMode"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@style/TranslucentTheme" />
         <activity
             android:name=".main.player.PlayerActivity"
@@ -91,52 +91,52 @@
             android:name=".main.webview.normal.DefaultNormalWebActivity"
             android:configChanges="screenLayout|orientation|screenSize|smallestScreenSize|keyboardHidden|uiMode"
             android:hardwareAccelerated="true"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@style/AppTheme" />
         <activity
             android:name=".main.tag.TagActivity"
             android:configChanges="screenLayout|orientation|screenSize|smallestScreenSize|keyboardHidden|uiMode"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@style/TranslucentTheme" />
         <activity
             android:name=".main.animeList.AnimeListActivity"
             android:configChanges="screenLayout|orientation|screenSize|smallestScreenSize|keyboardHidden|uiMode"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@style/TranslucentTheme" />
         <activity
             android:name=".main.animeTopic.AnimeTopicActivity"
             android:configChanges="screenLayout|orientation|screenSize|smallestScreenSize|keyboardHidden|uiMode"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@style/TranslucentTheme" />
         <activity
             android:name=".main.search.SearchActivity"
             android:configChanges="screenLayout|orientation|screenSize|smallestScreenSize|keyboardHidden|uiMode"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@style/TranslucentTheme" />
         <activity
             android:name=".main.my.MyActivity"
             android:configChanges="screenLayout|orientation|screenSize|smallestScreenSize|keyboardHidden|uiMode"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@style/TranslucentTheme" />
         <activity
             android:name=".main.my.DownloadDataActivity"
             android:configChanges="screenLayout|orientation|screenSize|smallestScreenSize|keyboardHidden|uiMode"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@style/TranslucentTheme" />
         <activity
             android:name=".main.setting.SettingActivity"
             android:configChanges="screenLayout|orientation|screenSize|smallestScreenSize|keyboardHidden|uiMode"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@style/TranslucentTheme" />
         <activity
             android:name=".main.about.AboutActivity"
             android:configChanges="screenLayout|orientation|screenSize|smallestScreenSize|keyboardHidden|uiMode"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@style/TranslucentTheme" />
         <activity
             android:name=".main.about.OpenSourceActivity"
             android:configChanges="screenLayout|orientation|screenSize|smallestScreenSize|keyboardHidden|uiMode"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@style/TranslucentTheme" />
         <activity
             android:name=".cling.ui.DLNAActivity"
@@ -150,7 +150,7 @@
         <service android:name=".services.DLNAService"/>
         <!-- 声明upnp服务实现类（服务） -->
         <service android:name=".cling.service.ClingUpnpService" />
-<!--        <service android:name="org.fourthline.cling.android.AndroidUpnpServiceImpl" />-->
+        <!--        <service android:name="org.fourthline.cling.android.AndroidUpnpServiceImpl" />-->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="my.project.sakuraproject.fileProvider"

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Users/96212/StudioProjects/SakuraAnime/app/src/main/res/layout/activity_about.xml" value="0.25" />
+        <entry key="..\:/Users/96212/StudioProjects/SakuraAnime/app/src/main/res/layout/activity_anime.xml" value="0.27219202898550726" />
+        <entry key="..\:/Users/96212/StudioProjects/SakuraAnime/app/src/main/res/layout/activity_api.xml" value="0.27219202898550726" />
+        <entry key="..\:/Users/96212/StudioProjects/SakuraAnime/app/src/main/res/layout/activity_default_webview_normal.xml" value="0.27219202898550726" />
+        <entry key="..\:/Users/96212/StudioProjects/SakuraAnime/app/src/main/res/layout/activity_desc.xml" value="0.27219202898550726" />
+        <entry key="..\:/Users/96212/StudioProjects/SakuraAnime/app/src/main/res/layout/activity_home.xml" value="0.27219202898550726" />
+        <entry key="..\:/Users/96212/StudioProjects/SakuraAnime/app/src/main/res/layout/content_home.xml" value="0.11145833333333334" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>

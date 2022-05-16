@@ -29,7 +29,7 @@
                     android:layout_marginTop="8dp"
                     android:background="?android:attr/selectableItemBackground"
                     android:layout_width="match_parent"
-                    android:layout_height="65dp">
+                    android:layout_height="80dp">
 
                     <ImageView
                         android:id="@+id/icon1"
@@ -46,18 +46,21 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        >
 
                         <TextView
                             android:text="@string/source"
                             android:textColor="@color/text_color_primary"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:textSize="20sp"
+                            />
 
                         <TextView
                             android:text="@string/app_name"
                             android:textColor="#8C8C8C"
-                            android:textSize="12sp"
+                            android:textSize="18sp"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content" />
                     </LinearLayout>
@@ -69,7 +72,7 @@
                     android:background="?android:attr/selectableItemBackground"
                     android:clickable="true"
                     android:layout_width="match_parent"
-                    android:layout_height="65dp">
+                    android:layout_height="85dp">
 
                     <ImageView
                         android:id="@+id/icon2"
@@ -86,18 +89,21 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        >
 
                         <TextView
                             android:text="@string/statement"
                             android:textColor="@color/text_color_primary"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:textSize="20sp"
+                            />
 
                         <TextView
                             android:text="@string/statement_desc"
                             android:textColor="#8C8C8C"
-                            android:textSize="12sp"
+                            android:textSize="18sp"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content" />
                     </LinearLayout>
@@ -109,7 +115,7 @@
                     android:background="?android:attr/selectableItemBackground"
                     android:clickable="true"
                     android:layout_width="match_parent"
-                    android:layout_height="65dp">
+                    android:layout_height="80dp">
 
                     <ImageView
                         android:id="@+id/icon3"
@@ -132,12 +138,14 @@
                             android:text="@string/test_model"
                             android:textColor="@color/text_color_primary"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:textSize="20sp"
+                            />
 
                         <TextView
                             android:text="@string/test_model_desc"
                             android:textColor="#8C8C8C"
-                            android:textSize="12sp"
+                            android:textSize="18sp"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content" />
                     </LinearLayout>
@@ -149,7 +157,7 @@
                     android:background="?android:attr/selectableItemBackground"
                     android:clickable="true"
                     android:layout_width="match_parent"
-                    android:layout_height="65dp">
+                    android:layout_height="80dp">
 
                     <ImageView
                         android:id="@+id/icon5"
@@ -172,12 +180,14 @@
                             android:text="@string/cache"
                             android:textColor="@color/text_color_primary"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:textSize="20sp"
+                            />
 
                         <TextView
                             android:id="@+id/cache"
                             android:textColor="#8C8C8C"
-                            android:textSize="12sp"
+                            android:textSize="18sp"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content" />
                     </LinearLayout>
@@ -189,7 +199,7 @@
                     android:background="?android:attr/selectableItemBackground"
                     android:clickable="true"
                     android:layout_width="match_parent"
-                    android:layout_height="65dp">
+                    android:layout_height="80dp">
 
                     <ImageView
                         android:id="@+id/icon4"
@@ -212,12 +222,14 @@
                             android:text="@string/final_compile"
                             android:textColor="@color/text_color_primary"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:textSize="20sp"
+                            />
 
                         <TextView
                             android:text="@string/final_compile_time"
                             android:textColor="#8C8C8C"
-                            android:textSize="12sp"
+                            android:textSize="18sp"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content" />
                     </LinearLayout>
@@ -228,7 +240,7 @@
                     android:id="@+id/github"
                     android:background="?android:attr/selectableItemBackground"
                     android:layout_width="match_parent"
-                    android:layout_height="65dp">
+                    android:layout_height="80dp">
 
                     <ImageView
                         android:id="@+id/icon7"
@@ -251,12 +263,14 @@
                             android:text="@string/github"
                             android:textColor="@color/text_color_primary"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:textSize="20sp"
+                            />
 
                         <TextView
                             android:text="@string/github_info"
                             android:textColor="#8C8C8C"
-                            android:textSize="12sp"
+                            android:textSize="18sp"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content" />
                     </LinearLayout>

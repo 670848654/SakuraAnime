@@ -65,7 +65,7 @@
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/img_box"
                         android:layout_width="match_parent"
-                        android:layout_height="203dp">
+                        android:layout_height="220dp">
 
                         <ImageView
                             android:id="@+id/exit"
@@ -84,12 +84,12 @@
                             app:cardBackgroundColor="@android:color/transparent"
                             app:cardCornerRadius="4dp"
                             app:cardElevation="4dp"
-                            app:layout_constraintDimensionRatio="W,1:1.4"
+                            app:cardUseCompatPadding="false"
                             app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintDimensionRatio="W,1:1.4"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:cardUseCompatPadding="false">
+                            app:layout_constraintTop_toTopOf="parent">
 
                             <RelativeLayout
                                 android:layout_width="match_parent"
@@ -98,21 +98,21 @@
                                 <ImageView
                                     android:id="@+id/anime_img"
                                     android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
+                                    android:layout_height="fill_parent"
                                     android:scaleType="centerCrop" />
 
                                 <androidx.appcompat.widget.AppCompatTextView
                                     android:id="@+id/score_view"
-                                    android:visibility="gone"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_alignParentLeft="true"
                                     android:background="@drawable/score_bg"
-                                    android:padding="4dp"
                                     android:gravity="center_vertical"
+                                    android:padding="4dp"
+                                    android:textColor="@color/white"
+                                    android:textSize="20sp"
                                     android:textStyle="bold"
-                                    android:textSize="12sp"
-                                    android:textColor="@color/white" />
+                                    android:visibility="gone" />
 
                                 <LinearLayout
                                     android:layout_width="match_parent"
@@ -126,19 +126,19 @@
                                         android:id="@+id/update_time"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:gravity="right"
+                                        android:ellipsize="marquee"
                                         android:focusable="true"
                                         android:focusableInTouchMode="true"
+                                        android:gravity="right"
                                         android:marqueeRepeatLimit="marquee_forever"
-                                        android:ellipsize="marquee"
+                                        android:paddingLeft="2dp"
+                                        android:paddingTop="5dp"
+                                        android:paddingRight="2dp"
+                                        android:paddingBottom="2dp"
                                         android:scrollHorizontally="true"
                                         android:singleLine="true"
-                                        android:paddingTop="5dp"
-                                        android:paddingBottom="2dp"
-                                        android:paddingRight="2dp"
-                                        android:paddingLeft="2dp"
-                                        android:textSize="12sp"
-                                        android:textColor="#f3f3f3" />
+                                        android:textColor="#f3f3f3"
+                                        android:textSize="20sp" />
 
                                 </LinearLayout>
 
@@ -186,7 +186,7 @@
                                 android:shadowDy="1.0"
                                 android:shadowRadius="2.0"
                                 android:textColor="@color/white"
-                                android:textSize="18sp" />
+                                android:textSize="20sp" />
 
                             <LinearLayout
                                 android:id="@+id/btn_view"
@@ -201,7 +201,7 @@
                                     style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:textSize="14sp"
+                                    android:textSize="25sp"
                                     app:strokeColor="@color/mtrl_btn_stroke_color_selector"
                                     android:textColor="@color/white"
                                     app:iconTint="@color/white"/>
@@ -212,7 +212,7 @@
                                     style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:textSize="14sp"
+                                    android:textSize="25sp"
                                     app:icon="@drawable/baseline_language_white_48dp"
                                     android:text="@string/open_browser"
                                     app:strokeColor="@color/mtrl_btn_stroke_color_selector"
@@ -220,41 +220,42 @@
                                     app:iconTint="@color/white"/>
 
                             </LinearLayout>
-
+                            <!-- 标签 -->
                             <co.lujun.androidtagview.TagContainerLayout
-                                android:layout_below="@+id/btn_view"
                                 android:id="@+id/tag_view"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:layout_below="@+id/btn_view"
                                 android:layout_marginTop="5dp"
-                                app:container_border_color="@color/translucent"
+                                android:textSize="18sp"
                                 app:container_background_color="@color/translucent"
-                                app:tag_corner_radius="4dp"
+                                app:container_border_color="@color/translucent"
                                 app:container_gravity="center"
-                                app:tag_text_color="@color/white"
-                                app:tag_border_color="#73e55578"
                                 app:tag_background_color="#73e55578"
+                                app:tag_border_color="#73e55578"
                                 app:tag_clickable="true"
+                                app:tag_corner_radius="4dp"
                                 app:tag_horizontal_padding="10dp"
-                                app:tag_theme="none"/>
-
+                                app:tag_text_color="@color/white"
+                                app:tag_theme="none" />
+                            <!-- 描述 -->
                             <com.ctetin.expandabletextviewlibrary.ExpandableTextView
                                 android:id="@+id/desc"
-                                android:layout_below="@id/tag_view"
-                                android:layout_marginTop="10dp"
-                                android:layout_marginLeft="10dp"
-                                android:layout_marginRight="10dp"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                app:ep_need_link="false"
-                                app:ep_need_mention="true"
-                                app:ep_max_line="4"
+                                android:layout_below="@id/tag_view"
+                                android:layout_marginLeft="10dp"
+                                android:layout_marginTop="10dp"
+                                android:layout_marginRight="10dp"
                                 android:lineSpacingExtra="4dp"
-                                app:ep_need_contract="true"
-                                app:ep_need_animation="true"
-                                app:ep_expand_color="@color/colorAccent"
                                 android:textColor="@color/white"
-                                android:textSize="14sp" />
+                                android:textSize="25sp"
+                                app:ep_expand_color="@color/colorAccent"
+                                app:ep_max_line="2"
+                                app:ep_need_animation="true"
+                                app:ep_need_contract="true"
+                                app:ep_need_link="false"
+                                app:ep_need_mention="true" />
 
                         </RelativeLayout>
 
@@ -286,7 +287,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="8dp"
                             android:text="选集"
-                            android:textSize="16sp"
+                            android:textSize="28sp"
                             android:textColor="@color/white"
                             android:textStyle="bold"/>
 
@@ -301,6 +302,7 @@
                             android:layout_centerVertical="true"
                             android:drawableRight="@drawable/baseline_arrow_drop_down_white_48dp"
                             android:drawablePadding="5dp"
+                            android:textSize="25sp"
                             android:layout_marginLeft="8dp"/>
                     </RelativeLayout>
 
@@ -356,7 +358,7 @@
                         android:layout_marginLeft="8dp"
                         android:layout_marginBottom="8dp"
                         android:text="多季"
-                        android:textSize="16sp"
+                        android:textSize="20sp"
                         android:textColor="@color/white"
                         android:textStyle="bold">
                     </androidx.appcompat.widget.AppCompatTextView>
@@ -384,7 +386,7 @@
                         android:layout_marginLeft="8dp"
                         android:layout_marginBottom="8dp"
                         android:text="相关推荐"
-                        android:textSize="16sp"
+                        android:textSize="20sp"
                         android:textColor="@color/white"
                         android:textStyle="bold"/>
 
@@ -416,7 +418,7 @@
                         android:lineSpacingExtra="10dp"
                         android:padding="10dp"
                         android:textColor="#333"
-                        android:textSize="16sp" />
+                        android:textSize="20sp" />
                     <!--android:background="#f4f5f7"-->
                 </RelativeLayout>
 

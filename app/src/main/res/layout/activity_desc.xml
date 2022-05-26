@@ -290,7 +290,7 @@
                             android:textColor="@color/white"
                             android:textStyle="bold"/>
 
-                        <TextView
+                        <!--<TextView
                             android:visibility="gone"
                             android:layout_toRightOf="@id/selected_text"
                             android:id="@+id/spinner"
@@ -301,7 +301,7 @@
                             android:layout_centerVertical="true"
                             android:drawableRight="@drawable/baseline_arrow_drop_down_white_48dp"
                             android:drawablePadding="5dp"
-                            android:layout_marginLeft="8dp"/>
+                            android:layout_marginLeft="8dp"/>-->
                     </RelativeLayout>
 
                     <androidx.recyclerview.widget.RecyclerView

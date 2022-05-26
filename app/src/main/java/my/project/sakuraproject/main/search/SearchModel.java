@@ -1,10 +1,13 @@
 package my.project.sakuraproject.main.search;
 
+import android.util.Log;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import my.project.sakuraproject.R;
+import my.project.sakuraproject.api.Api;
 import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.bean.AnimeListBean;
 import my.project.sakuraproject.main.base.BaseModel;
@@ -17,12 +20,12 @@ import okhttp3.Callback;
 import okhttp3.Response;
 
 public class SearchModel extends BaseModel implements SearchContract.Model {
-    private static String IMOMOE_SEARCH_PARAM = "?page=%s&searchword=%s&searchtype=-1";
 
     @Override
     public void getData(String url, int page, boolean isMain, String imomoeParam, SearchContract.LoadDataCallback callback) throws UnsupportedEncodingException {
         if (isImomoe()) {
-            url = url + String.format(IMOMOE_SEARCH_PARAM, page, encodeUrl(imomoeParam));
+            url = url + String.format(Api.MALIMALI_SEARCH, imomoeParam, page);
+            Log.e("url", url);
             parserImomoe(url, isMain, callback);
         } else {
             if (page != 1)
@@ -80,7 +83,7 @@ public class SearchModel extends BaseModel implements SearchContract.Model {
                     String source = getBody(response);
                     if (isMain)
                         callback.pageCount(ImomoeJsoupUtils.getPageCount(source));
-                    List<AnimeListBean>  animeListBeans = ImomoeJsoupUtils.getAnimeList(source, false);
+                    List<AnimeListBean>  animeListBeans = ImomoeJsoupUtils.getAnimeList(source);
                     if (animeListBeans.size() > 0)
                         callback.success(isMain, animeListBeans);
                     else

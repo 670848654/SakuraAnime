@@ -67,8 +67,6 @@ public class HistoryFragment extends MyLazyFragment<HistoryContract.View, Histor
     private int playSource;
     private int source;
     private List<AnimeDescDetailsBean> yhdmDramasBeans;
-    private List<List<ImomoeVideoUrlBean>> imomoeVideoUrlBeans;
-    private List<List<AnimeDescDetailsBean>> imomoeDramasBeans;
     private int clickIndex = 0;
     private View view;
     private FloatingActionButton fab;
@@ -238,7 +236,7 @@ public class HistoryFragment extends MyLazyFragment<HistoryContract.View, Histor
         switch ((Integer) SharedPreferencesUtils.getParam(getActivity(), "player", 0)) {
             case 0:
                 //调用播放器
-                switch (source) {
+                /*switch (source) {
                     case 0:
                         // yhdm
                         VideoUtils.openPlayer(true, getActivity(), animeTitle + " - " + dramaTitle, animeUrl, animeTitle, dramaUrl, yhdmDramasBeans, clickIndex, animeId);
@@ -247,7 +245,9 @@ public class HistoryFragment extends MyLazyFragment<HistoryContract.View, Histor
                         // imomoe
                         VideoUtils.openImomoePlayer(true, getActivity(), animeTitle + " - " +dramaTitle, animeUrl, animeTitle, dramaUrl, imomoeDramasBeans, imomoeVideoUrlBeans, playSource, clickIndex, animeId);
                         break;
-                }
+                }*/
+                VideoUtils.openPlayer(true, getActivity(), animeTitle + " - " + dramaTitle, animeUrl, animeTitle, dramaUrl, yhdmDramasBeans, clickIndex, animeId, source == 1);
+
                 break;
             case 1:
                 Utils.selectVideoPlayer(getActivity(), animeUrl);
@@ -308,7 +308,7 @@ public class HistoryFragment extends MyLazyFragment<HistoryContract.View, Histor
         getActivity().runOnUiThread(() -> {
 //            application.showToastMsg(Utils.getString(R.string.open_web_view));
             CustomToast.showToast(getActivity(), Utils.getString(R.string.open_web_view), CustomToast.WARNING);
-            VideoUtils.openDefaultWebview(getActivity(), dramaUrl.contains("/view/") ? BaseModel.getDomain(true) + dramaUrl : BaseModel.getDomain(false) + dramaUrl);
+            VideoUtils.openDefaultWebview(getActivity(), dramaUrl.contains("/voddetail/") ? BaseModel.getDomain(true) + dramaUrl : BaseModel.getDomain(false) + dramaUrl);
         });
     }
 
@@ -326,21 +326,29 @@ public class HistoryFragment extends MyLazyFragment<HistoryContract.View, Histor
     }
 
     @Override
-    public void showSuccessImomoeVideoUrlsView(List<List<ImomoeVideoUrlBean>> bean) {
-        imomoeVideoUrlBeans = bean;
+    public void showSuccessImomoeVideoUrlView(String playUrl) {
+       /* imomoeVideoUrlBeans = bean;
         getActivity().runOnUiThread(() -> {
             if (imomoeVideoUrlBeans.size() > 0) {
                 ImomoeVideoUrlBean imomoeVideoUrlBean = imomoeVideoUrlBeans.get(playSource).get(clickIndex);
                 playAnime(imomoeVideoUrlBean.getVidOrUrl());
             }
-        });
+        });*/
+        playAnime(playUrl);
     }
 
     @Override
-    public void showSuccessImomoeDramasView(List<List<AnimeDescDetailsBean>> bean) {
-        imomoeDramasBeans = bean;
+    public void showSuccessImomoeDramasView(List<AnimeDescDetailsBean> bean) {
+        /*imomoeDramasBeans = bean;
         for (int i=0,size=bean.get(playSource).size(); i<size; i++) {
             if (bean.get(playSource).get(i).getUrl().equals(dramaUrl)) {
+                clickIndex = i;
+                break;
+            }
+        }*/
+        yhdmDramasBeans = bean;
+        for (int i=0,size=bean.size(); i<size; i++) {
+            if (bean.get(i).getUrl().equals(dramaUrl)) {
                 clickIndex = i;
                 break;
             }

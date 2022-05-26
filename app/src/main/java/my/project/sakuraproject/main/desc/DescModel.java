@@ -24,7 +24,7 @@ public class DescModel extends BaseModel implements DescContract.Model {
 
     @Override
     public void getData(String url, DescContract.LoadDataCallback callback) {
-        if (url.contains("/view/"))
+        if (url.contains("/voddetail/"))
             parserImomoe(getDomain(true) + url, callback);
         else
             parserYhdm(getDomain(false) + url, callback);

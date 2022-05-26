@@ -22,7 +22,8 @@ public class BaseModel {
      * @throws IOException
      */
     protected String getBody(Response response) throws IOException {
-        return new String(response.body().bytes(), isImomoe() ? "gb2312" : "UTF-8");
+//        return new String(response.body().bytes(), isImomoe() ? "gb2312" : "UTF-8");
+        return new String(response.body().bytes(), "UTF-8");
     }
 
     /**
@@ -62,7 +63,8 @@ public class BaseModel {
      * @throws IOException
      */
     protected String getHtmlBody(Response response, boolean isImomoe) throws IOException {
-        return new String(response.body().bytes(), isImomoe ? "gb2312" : "UTF-8");
+//        return new String(response.body().bytes(), isImomoe ? "gb2312" : "UTF-8");
+        return new String(response.body().bytes(), "UTF-8");
     }
 
     /**

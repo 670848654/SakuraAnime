@@ -4,6 +4,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Environment;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.io.File;
@@ -679,6 +680,7 @@ public class DatabaseUtil {
      * @param descUrl
      */
     public static void insertDownload(String animeTitle, int source, String imgUrl, String descUrl) {
+        Log.e("info", animeTitle+">"+source);
         String animeId = getAnimeID(animeTitle, source);
         if (checkDownload(animeId))
             db.execSQL("update T_DOWNLOAD set F_UPDATE_TIME =? where F_LINK_ID=?", new Object[]{
@@ -930,6 +932,7 @@ public class DatabaseUtil {
         cursor.moveToNext();
         objects.add(cursor.getString(0));
         objects.add(cursor.getInt(1));
+        Log.e("????" , cursor.getString(0) + cursor.getInt(1));
         cursor.close();
         return objects;
     }

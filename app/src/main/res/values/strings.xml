@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">樱花动漫</string>
     <string name="yhdm">Yhdm</string>
-    <string name="imomoe">Imomoe</string>
+    <string name="imomoe">MaliMali</string>
     <string name="app_sub_name">新番时间表</string>
     <string name="search">搜索</string>
     <!-- 权限文本 -->
@@ -24,7 +24,7 @@
     <string name="exit_app">再按一次退出程序</string>
     <!-- 主页dialog文本 -->
     <string name="x5_info_title">注意事项</string>
-    <string name="x5_info">本应用只是爬取樱花动漫（Yhdm、Imomoe）网站部分内容编写的第三方APP，官方并未发布APP，仅供学习交流。\n一些番剧可能需要使用WebView播放。\n新番多数可以直接使用内置播放器或外部播放器播放(某些可能第一次播放失败，需多尝试几次)。\n注：并不是所有番剧都能正常播放（多为网站本身原因）~</string>
+    <string name="x5_info">本应用只是爬取樱花动漫（Yhdm、MaliMali）网站部分内容编写的第三方APP，官方并未发布APP，仅供学习交流。\n一些番剧可能需要使用WebView播放。\n新番多数可以直接使用内置播放器或外部播放器播放(某些可能第一次播放失败，需多尝试几次)。\n注：并不是所有番剧都能正常播放（多为网站本身原因）~</string>
     <string name="x5_info_positive">OJBK</string>
     <!-- 空文本 -->
     <string name="empty">未能获取到任何信息</string>
@@ -38,7 +38,7 @@
     <string name="select_player">请选择视频播放器</string>
     <string name="select_video_source">选择播放源</string>
     <string name="parsing">解析中，请稍后&#8230;</string>
-    <string name="error_700">网络错误，请重试</string>
+    <string name="error_700">下载出错，无法获取视频地址！</string>
     <string name="error_800">未能获取到播放地址\n1、解析方法不支持\n2、播放地址不存在\n3、可以尝试打开原页面去播放</string>
     <string name="join_ok">(´・ω・`) 自己追的番就要好好看完哦！</string>
     <string name="join_error">(﹁"﹁) 哼！竟然真的抛弃了人家。</string>
@@ -81,7 +81,7 @@
     <string name="domain">域名设置（备用）</string>
     <string name="domain_msg">该功能用于网站域名变更导致应用获取数据异常，应用未及时更新时使用。\n如果网站仅变更域名，网页布局无变动，你可在此输入相关站点的新域名保存即可。</string>
     <string name="domain_url">http://www.yinghuacd.com</string>
-    <string name="imomoe_url">http://www.imomoe.live</string>
+    <string name="imomoe_url">https://www.malimali4.com/</string>
     <string name="set_check_favorite_update">追番更新检测（仅支持YHDM源）</string>
     <string name="check_favorite_update_default">启用</string>
     <string name="set_download_number">同时下载任务数</string>

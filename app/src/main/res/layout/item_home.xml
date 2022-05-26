@@ -13,7 +13,7 @@
         android:padding="10dp"
         android:background="@color/window_bg"
         android:foreground="?android:attr/selectableItemBackground"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="48dp">
 
         <TextView
@@ -26,11 +26,11 @@
 
         <ImageView
             android:id="@+id/img"
-            android:src="@drawable/baseline_arrow_forward_white_48dp"
-            android:layout_centerVertical="true"
-            android:layout_alignParentRight="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/baseline_arrow_forward_white_48dp"
             app:tint="@color/text_color_primary" />
 
     </RelativeLayout>

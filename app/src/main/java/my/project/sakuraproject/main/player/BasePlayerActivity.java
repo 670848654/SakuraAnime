@@ -474,6 +474,7 @@ public abstract class BasePlayerActivity extends BaseActivity implements JZPlaye
         if (isPip) finish();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public void startPic() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START))
             drawerLayout.closeDrawer(GravityCompat.START);

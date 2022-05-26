@@ -1,5 +1,7 @@
 package my.project.sakuraproject.main.video;
 
+import android.util.Log;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -22,21 +24,21 @@ public class VideoModel extends BaseModel implements VideoContract.Model {
     private boolean isImomoe;
     @Override
     public void getData(String title, String url, int source, String playNumber, VideoContract.LoadDataCallback callback) {
-        isImomoe = url.contains("/player/");
+        isImomoe = url.contains("/play/");
         if (isImomoe)
             parserImomoe(title, BaseModel.getDomain(true) + url, source, playNumber, false, callback);
         else
             parserYhdm(title, BaseModel.getDomain(false) + url, source, playNumber, callback);
     }
 
-    @Override
+    /*@Override
     public void getVideoUrl(String url, VideoContract.LoadDataCallback callback) {
         isImomoe = url.contains("/player/");
         if (isImomoe)
             parserImomoeVideoUrls(url, false, callback);
         else
             parserYhdmVideoUrls(url, callback);
-    }
+    }*/
 
     private void parserYhdm(String title, String url, int playSource, String playNumber, VideoContract.LoadDataCallback callback) {
         callback.log(url);
@@ -70,6 +72,7 @@ public class VideoModel extends BaseModel implements VideoContract.Model {
 
     private void parserImomoe(String title, String url, int playSource, String playNumber, boolean isJs, VideoContract.LoadDataCallback callback) {
         callback.log(url);
+        Log.e("url", url);
         new HttpGet(url, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -79,7 +82,17 @@ public class VideoModel extends BaseModel implements VideoContract.Model {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String source = getHtmlBody(response, true);
-                String js = "";
+                String fid = DatabaseUtil.getAnimeID(title, 1);
+                DatabaseUtil.addIndex(fid, url, playSource, playNumber);
+                String dataBaseDrama = DatabaseUtil.queryAllIndex(fid);
+                List< AnimeDescDetailsBean > bean = ImomoeJsoupUtils.getAllDrama(source, dataBaseDrama);
+                callback.successImomoeDramas(bean);
+                String playUrl = ImomoeJsoupUtils.getImomoePlayUrl(source);
+                if (!playUrl.isEmpty())
+                    callback.successImomoeVideoUrl(playUrl);
+                else
+                    callback.empty();
+                /*String js = "";
                 if (!isJs) {
                     String fid = DatabaseUtil.getAnimeID(title, 1);
                     DatabaseUtil.addIndex(fid, url, playSource, playNumber);
@@ -103,12 +116,12 @@ public class VideoModel extends BaseModel implements VideoContract.Model {
                         else
                             callback.empty();
                     }
-                }
+                }*/
             }
         });
     }
 
-    private void parserYhdmVideoUrls(String url, VideoContract.LoadDataCallback callback ) {
+    /*private void parserYhdmVideoUrls(String url, VideoContract.LoadDataCallback callback ) {
         new HttpGet(url, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -166,5 +179,5 @@ public class VideoModel extends BaseModel implements VideoContract.Model {
                 }
             }
         });
-    }
+    }*/
 }

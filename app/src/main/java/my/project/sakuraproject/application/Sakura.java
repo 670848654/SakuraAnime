@@ -85,7 +85,7 @@ public class Sakura extends Application {
         DOMAIN = isImomoe ? (String) SharedPreferencesUtils.getParam(appContext, "imomoe_domain", Utils.getString(R.string.imomoe_url)) : (String) SharedPreferencesUtils.getParam(appContext, "domain", Utils.getString(R.string.domain_url));
         TAG_API = isImomoe ?  DOMAIN + "/so.asp" : DOMAIN + "/sitemap";
         JCB_API = isImomoe ? "/search.asp?page=1&searchword=%BE%E7%B3%A1" : "/37/";
-        SEARCH_API = isImomoe ? DOMAIN + "/search.asp" : DOMAIN + "/search/";
+        SEARCH_API = isImomoe ? DOMAIN : DOMAIN + "/search/";
         MOVIE_API = isImomoe ? "/list/%s.html" : "/movie/";
         YHDM_UPDATE = String.format("%s/new/", SharedPreferencesUtils.getParam(appContext, "domain", Utils.getString(R.string.domain_url)));
         IMOMOE_UPDATE = String.format("%s/top/new.html", SharedPreferencesUtils.getParam(appContext, "imomoe_domain", Utils.getString(R.string.imomoe_url)));

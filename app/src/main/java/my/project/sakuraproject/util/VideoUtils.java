@@ -10,9 +10,15 @@ import android.util.Log;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Serializable;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.spec.AlgorithmParameterSpec;
 import java.util.List;
 
@@ -25,7 +31,6 @@ import my.project.sakuraproject.R;
 import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.bean.AnimeDescDetailsBean;
 import my.project.sakuraproject.bean.ImomoeVideoUrlBean;
-import my.project.sakuraproject.main.player.ImomoePlayerActivity;
 import my.project.sakuraproject.main.player.PlayerActivity;
 import my.project.sakuraproject.main.webview.normal.DefaultNormalWebActivity;
 
@@ -128,7 +133,7 @@ public class VideoUtils {
      * @param clickIndex
      */
     public static void openPlayer(boolean isDescActivity, Activity activity, String witchTitle, String url, String animeTitle, String dramaUrl,
-                                  List<AnimeDescDetailsBean> list, int clickIndex, String animeId) {
+                                  List<AnimeDescDetailsBean> list, int clickIndex, String animeId, boolean isMaliMali) {
         Bundle bundle = new Bundle();
         bundle.putString("title", witchTitle);
         bundle.putString("url", url);
@@ -137,6 +142,7 @@ public class VideoUtils {
         bundle.putSerializable("list", (Serializable) list);
         bundle.putInt("clickIndex", clickIndex);
         bundle.putString("animeId", animeId);
+        bundle.putBoolean("isMaliMali", isMaliMali);
         Sakura.destoryActivity("player");
         if (isDescActivity)
             activity.startActivityForResult(new Intent(activity, PlayerActivity.class).putExtras(bundle), 0x10);
@@ -158,7 +164,7 @@ public class VideoUtils {
      * @param bean
      * @param clickIndex
      */
-    public static void openImomoePlayer(boolean isDescActivity, Activity activity, String witchTitle, String url, String animeTitle, String dramaUrl,
+    /*public static void openImomoePlayer(boolean isDescActivity, Activity activity, String witchTitle, String url, String animeTitle, String dramaUrl,
                                         List<List<AnimeDescDetailsBean>> list, List<List<ImomoeVideoUrlBean>> bean, int nowSource, int clickIndex, String animeId) {
         Bundle bundle = new Bundle();
         bundle.putString("title", witchTitle);
@@ -177,7 +183,7 @@ public class VideoUtils {
             activity.startActivity(new Intent(activity, ImomoePlayerActivity.class).putExtras(bundle));
             activity.finish();
         }
-    }
+    }*/
 
     /**
      * 打开常规webview
@@ -256,8 +262,7 @@ public class VideoUtils {
     public static boolean merge(String savePath, List<File> fileList) {
         try {
             File file = new File(savePath.replaceAll("m3u8", "mp4"));
-            if (file.exists())
-                file.delete();
+            if (file.exists()) file.delete();
             else file.createNewFile();
             FileOutputStream fs = new FileOutputStream(file);
             byte[] b = new byte[4096];
@@ -279,4 +284,5 @@ public class VideoUtils {
             return false;
         }
     }
+
 }

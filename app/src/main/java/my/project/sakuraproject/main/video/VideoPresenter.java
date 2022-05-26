@@ -37,9 +37,9 @@ public class VideoPresenter extends Presenter<VideoContract.View> implements Bas
         playModel.getData(title, url, source, playNumber, this);
     }
 
-    public void loadVideoUrls() {
+    /*public void loadVideoUrls() {
         playModel.getVideoUrl(url, this);
-    }
+    }*/
 
     @Override
     public void successYhdmVideoUrls(List<String> list) {
@@ -67,16 +67,19 @@ public class VideoPresenter extends Presenter<VideoContract.View> implements Bas
     }
 
     @Override
-    public void successImomoeVideoUrls(List<List<ImomoeVideoUrlBean>> bean) {
-        if (bean.size() > 0)
-            view.showSuccessImomoeVideoUrlsView(bean);
+    public void successImomoeVideoUrl(String playUrl) {
+        if (!playUrl.isEmpty())
+            view.showSuccessImomoeVideoUrlView(playUrl);
         else
             view.errorDramaView();
     }
 
     @Override
-    public void successImomoeDramas(List<List<AnimeDescDetailsBean>> bean) {
-        view.showSuccessImomoeDramasView(bean);
+    public void successImomoeDramas(List<AnimeDescDetailsBean> bean) {
+        if (bean.size() > 0)
+            view.showSuccessImomoeDramasView(bean);
+        else
+            view.errorDramaView();
     }
 
     @Override

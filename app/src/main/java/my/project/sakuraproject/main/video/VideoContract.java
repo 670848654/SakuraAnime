@@ -11,7 +11,7 @@ public interface VideoContract {
     interface Model {
         void getData(String title, String url, int source, String playNumber, LoadDataCallback callback);
 
-        void getVideoUrl(String url, LoadDataCallback callback);
+//        void getVideoUrl(String url, LoadDataCallback callback);
     }
 
     interface View extends BaseView {
@@ -27,9 +27,9 @@ public interface VideoContract {
 
         void errorDramaView();
 
-        void showSuccessImomoeVideoUrlsView(List<List<ImomoeVideoUrlBean>> bean);
+        void showSuccessImomoeVideoUrlView(String playUrl);
 
-        void showSuccessImomoeDramasView(List<List<AnimeDescDetailsBean>> bean);
+        void showSuccessImomoeDramasView(List<AnimeDescDetailsBean> bean);
     }
 
     interface LoadDataCallback extends BaseLoadDataCallback {
@@ -41,8 +41,8 @@ public interface VideoContract {
 
         void empty();
 
-        void successImomoeVideoUrls(List<List<ImomoeVideoUrlBean>> bean);
+        void successImomoeVideoUrl(String playUrl);
 
-        void successImomoeDramas(List<List<AnimeDescDetailsBean>> bean);
+        void successImomoeDramas(List<AnimeDescDetailsBean> bean);
     }
 }

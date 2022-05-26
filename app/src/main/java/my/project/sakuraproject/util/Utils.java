@@ -402,21 +402,25 @@ public class Utils {
     /**
      * 设置默认图片
      * @param context
-     * @param url
+     * @param img
      * @param imageView
      * @param setPalette
      * @param cardView
      * @param textView
      */
-    public static void setDefaultImage(Context context, String url, String htmlUrl, ImageView imageView, boolean setPalette, CardView cardView, TextView textView) {
+    public static void setDefaultImage(Context context, String img, String htmlUrl, ImageView imageView, boolean setPalette, CardView cardView, TextView textView) {
         DrawableCrossFadeFactory drawableCrossFadeFactory = new DrawableCrossFadeFactory.Builder(300).setCrossFadeEnabled(true).build();
         GlideUrl imgUrl;
-        if (!htmlUrl.contains("/view/"))
-            imgUrl = new GlideUrl(getImgUrl(url, false), new LazyHeaders.Builder()
+        /*if (img.contains("yhdmtu"))
+            imgUrl = new GlideUrl(getImgUrl(img, false), new LazyHeaders.Builder()
                 .addHeader("Referer", BaseModel.getDomain(false) + "/")
                 .build());
         else
-            imgUrl = new GlideUrl(getImgUrl(url, true));
+            imgUrl = new GlideUrl(getImgUrl(img, true));*/
+        if (img.contains("yhdmtu"))
+            imgUrl = new GlideUrl(getImgUrl(img, false));
+        else
+            imgUrl = new GlideUrl(getImgUrl(img, true));
         RequestOptions options = new RequestOptions()
                 .centerCrop()
                 .format(DecodeFormat.PREFER_RGB_565)
@@ -436,7 +440,8 @@ public class Utils {
 
                     @Override
                     public void onLoadFailed(@Nullable Drawable errorDrawable) {
-                        EventBus.getDefault().post(new UpdateImgBean(url, htmlUrl));
+                        imageView.setImageDrawable(context.getDrawable(R.drawable.error));
+                        EventBus.getDefault().post(new UpdateImgBean(img, htmlUrl));
                     }
                 });
         if (!getTheme() && setPalette)
@@ -455,7 +460,8 @@ public class Utils {
 
                 @Override
                 public void onLoadFailed(@Nullable @org.jetbrains.annotations.Nullable Drawable errorDrawable) {
-                    EventBus.getDefault().post(new UpdateImgBean(url, htmlUrl));
+                    imageView.setImageDrawable(context.getDrawable(R.drawable.error));
+                    EventBus.getDefault().post(new UpdateImgBean(img, htmlUrl));
                 }
             });
     }

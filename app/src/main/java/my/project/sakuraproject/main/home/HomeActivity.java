@@ -53,7 +53,7 @@ import my.project.sakuraproject.main.week.WeekActivity;
 import my.project.sakuraproject.util.SharedPreferencesUtils;
 import my.project.sakuraproject.util.Utils;
 
-public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter> implements NavigationView.OnNavigationItemSelectedListener, HomeContract.View, HomeAdapter.OnItemClick {
+public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter> implements HomeContract.View, HomeAdapter.OnItemClick {
     @BindView(R.id.root)
     RelativeLayout root;
     @BindView(R.id.toolbar)
@@ -75,14 +75,19 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
     private HomeAdapter adapter;
     private List<AnimeUpdateInfoBean> animeUpdateInfoBeans;
 
+    private String maliHtml = "";
+
     @Override
     protected HomePresenter createPresenter() {
-        return new HomePresenter(false, this);
+        return new HomePresenter(false, "", this);
     }
 
     @Override
     protected void loadData() {
-        mPresenter.loadData(true);
+        if (Utils.isImomoe())
+            mPresenter.loadMailiHtmlData();
+        else
+            mPresenter.loadData(true);
     }
 
     @Override
@@ -145,7 +150,7 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
         Sakura.setApi();
         multiItemEntities.clear();
         adapter.setNewData(multiItemEntities);
-        mPresenter.loadData(true);
+        loadData();
     }
 
     public void initDialog() {
@@ -156,7 +161,7 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
     public void initSwipe() {
         mSwipe.setColorSchemeResources(R.color.pink500, R.color.blue500, R.color.purple500);
         mSwipe.setOnRefreshListener(() -> {
-            mPresenter.loadData(true);
+            loadData();
             multiItemEntities.clear();
             adapter.setNewData(multiItemEntities);
         });
@@ -169,6 +174,7 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
             switch (adapter.getItemViewType(position)) {
                 case HomeAdapter.TYPE_LEVEL_1:
                     HomeBean homeBean = (HomeBean) adapter.getData().get(position);
+                    if (homeBean.getMoreUrl().isEmpty()) return;
                     onMoreClick(homeBean.getTitle(), homeBean.getMoreUrl());
                     break;
             }
@@ -228,48 +234,6 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
         }
     }
 
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        if (!Utils.isFastClick()) return false;
-        switch (item.getItemId()) {
-            case R.id.item_week:
-                startActivity(new Intent(this, WeekActivity.class));
-                break;
-            case R.id.find_anime:
-                startActivity(new Intent(this, TagActivity.class));
-                break;
-            case R.id.anime_movie:
-                openAnimeListActivity(Utils.getString(R.string.home_movie_title), Sakura.MOVIE_API, true);
-                break;
-            case R.id.anime_zt:
-                Bundle bundle = new Bundle();
-                bundle.putString("title", Utils.getString(R.string.home_zt_title));
-                bundle.putString("url", Sakura.YHDM_ZT_API);
-                startActivity(new Intent(this, AnimeTopicActivity.class).putExtras(bundle));
-                break;
-            case R.id.anime_jcb:
-                openAnimeListActivity(Utils.getString(R.string.home_jcb_title), Sakura.JCB_API, false);
-                break;
-            /*case R.id.favorite:
-                startActivity(new Intent(this, FavoriteActivity.class));
-                break;
-            case R.id.history:
-                startActivity(new Intent(this, HistoryActivity.class));
-                break;*/
-            case R.id.my:
-                startActivity(new Intent(this, MyActivity.class));
-                break;
-            case R.id.about:
-                startActivity(new Intent(this, AboutActivity.class));
-                break;
-            case R.id.setting:
-                startActivityForResult(new Intent(this, SettingActivity.class), 0x10);
-                break;
-        }
-//        drawer.closeDrawer(GravityCompat.START);
-        return true;
-    }
-
     private void openAnimeListActivity(String title, String url, boolean isMovie) {
         Bundle bundle = new Bundle();
         bundle.putString("title", title);
@@ -327,11 +291,16 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
             multiItemEntities = new ArrayList<>();
             headerDataBeans = new ArrayList<>();
             headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("新番时间表", R.drawable.ic_xfsjb, HomeHeaderBean.TYPE_XFSJB));
-            headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("动漫分类", R.drawable.ic_dmfl, HomeHeaderBean.TYPE_DMFL));
-            headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("动漫电影", R.drawable.ic_dmdy, HomeHeaderBean.TYPE_DMDY));
-            if (!Utils.isImomoe())
+            headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("动漫分类", R.drawable.ic_dmfl, HomeHeaderBean.TYPE_DMFL_MALIMALI));
+            if (!Utils.isImomoe()) {
+                headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("动漫电影", R.drawable.ic_dmdy, HomeHeaderBean.TYPE_DMDY));
                 headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("动漫专题", R.drawable.ic_dmzt, HomeHeaderBean.TYPE_DMZT));
-            headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("剧场版", R.drawable.ic_jcb, HomeHeaderBean.TYPE_JCB));
+                headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("剧场版", R.drawable.ic_jcb, HomeHeaderBean.TYPE_JCB));
+            } else {
+                headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("日韩动漫", R.drawable.ic_dmdy, HomeHeaderBean.TYPE_DMFL_MALIMALI));
+                headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("国产动漫", R.drawable.ic_dmzt, HomeHeaderBean.TYPE_DMFL_MALIMALI));
+                headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("欧美动漫", R.drawable.ic_jcb, HomeHeaderBean.TYPE_DMFL_MALIMALI));
+            }
             multiItemEntities.add(new HomeHeaderBean(headerDataBeans));
             for (HomeBean homeBean : beans) {
                 multiItemEntities.add(homeBean);
@@ -343,6 +312,13 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
     @Override
     public void showUpdateInfoSuccess(List<AnimeUpdateInfoBean> beans) {
         animeUpdateInfoBeans = beans;
+    }
+
+    @Override
+    public void showMaliWeekInfoSuccess(String html) {
+        maliHtml = html;
+        mPresenter = new HomePresenter(false, html, this);
+        mPresenter.loadData(true);
     }
 
     private void setTheme(boolean isDark) {
@@ -426,9 +402,10 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
     public void onHeaderClick(HomeHeaderBean.HeaderDataBean bean) {
         switch (bean.getType()) {
             case HomeHeaderBean.TYPE_XFSJB:
-                startActivity(new Intent(this, WeekActivity.class));
+                startActivity(new Intent(this, WeekActivity.class).putExtra("html", maliHtml));
                 break;
             case HomeHeaderBean.TYPE_DMFL:
+            case HomeHeaderBean.TYPE_DMFL_MALIMALI:
                 startActivity(new Intent(this, TagActivity.class));
                 break;
             case HomeHeaderBean.TYPE_DMDY:

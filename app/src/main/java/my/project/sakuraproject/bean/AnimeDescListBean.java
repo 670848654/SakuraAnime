@@ -12,7 +12,7 @@ public class AnimeDescListBean implements Serializable {
     // 番剧推荐集合
     private List<AnimeDescRecommendBean> animeDescRecommendBeans = new ArrayList<>();
     // 用于imomoe多个播放地址
-    private List<List<AnimeDescDetailsBean>> multipleAnimeDescDetailsBeans;
+//    private List<List<AnimeDescDetailsBean>> multipleAnimeDescDetailsBeans;
 
     public List<AnimeDescDetailsBean> getAnimeDescDetailsBeans() {
         return animeDescDetailsBeans;
@@ -38,11 +38,11 @@ public class AnimeDescListBean implements Serializable {
         this.animeDescRecommendBeans = animeDescRecommendBeans;
     }
 
-    public List<List<AnimeDescDetailsBean>> getMultipleAnimeDescDetailsBeans() {
+    /*public List<List<AnimeDescDetailsBean>> getMultipleAnimeDescDetailsBeans() {
         return multipleAnimeDescDetailsBeans;
     }
 
     public void setMultipleAnimeDescDetailsBeans(List<List<AnimeDescDetailsBean>> multipleAnimeDescDetailsBeans) {
         this.multipleAnimeDescDetailsBeans = multipleAnimeDescDetailsBeans;
-    }
+    }*/
 }

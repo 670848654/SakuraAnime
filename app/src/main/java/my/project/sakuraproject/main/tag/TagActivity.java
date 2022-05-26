@@ -188,10 +188,19 @@ public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> im
             TextView textView = (TextView) adapter.getViewByPosition(tagRecyclerView, position, R.id.tag_group);
             textView.setTextColor(getResources().getColor(R.color.colorAccent));
             final TagBean bean = (TagBean) adapter.getItem(position);
-            for (MultiItemEntity entity : tagList) {
-                if (entity.getItemType()  == TagAdapter.TYPE_LEVEL_1) {
-                    TagBean tagBean = (TagBean) entity;
-                    tagBean.setSelected(false);
+            if (Utils.isImomoe()) {
+                for (MultiItemEntity entity : tagList) {
+                    if (entity.getItemType()  == TagAdapter.TYPE_LEVEL_1) {
+                        TagBean tagBean = (TagBean) entity;
+                        tagBean.setSelected(false);
+                    }
+                }
+            } else {
+                for (MultiItemEntity entity : tagList) {
+                    if (entity.getItemType()  == TagAdapter.TYPE_LEVEL_1) {
+                        TagBean tagBean = (TagBean) entity;
+                        tagBean.setSelected(false);
+                    }
                 }
             }
             bean.setSelected(true);
@@ -335,7 +344,7 @@ public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> im
             return;
         }
         if (!Utils.isPad()) {
-            final GridLayoutManager manager = new GridLayoutManager(this,8);
+            final GridLayoutManager manager = new GridLayoutManager(this,6);
             manager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
                 @Override
                 public int getSpanSize(int position) {

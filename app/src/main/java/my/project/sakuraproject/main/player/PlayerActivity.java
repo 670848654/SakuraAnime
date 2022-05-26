@@ -27,7 +27,7 @@ import my.project.sakuraproject.util.Utils;
 import my.project.sakuraproject.util.VideoUtils;
 
 public class PlayerActivity extends BasePlayerActivity implements VideoContract.View, SniffingUICallback {
-
+    private boolean isMaliMali = false;
     @Override
     protected boolean isLocalVideo() {
         return false;
@@ -47,6 +47,7 @@ public class PlayerActivity extends BasePlayerActivity implements VideoContract.
         yhdmDescList = (List<AnimeDescDetailsBean>) bundle.getSerializable("list");
         clickIndex = bundle.getInt("clickIndex");
         animeId = bundle.getString("animeId");
+        isMaliMali = bundle.getBoolean("isMaliMali");
     }
 
     @Override
@@ -98,7 +99,7 @@ public class PlayerActivity extends BasePlayerActivity implements VideoContract.
     protected AnimeDescDetailsBean setAnimeDescDetailsBean(int position) {
         alertDialog = Utils.getProDialog(this, R.string.parsing);
         EventBus.getDefault().post(new Event(false, -1, position));
-        return (AnimeDescDetailsBean) dramaAdapter.getItem(position);
+        return dramaAdapter.getItem(position);
     }
 
     @Override
@@ -163,10 +164,19 @@ public class PlayerActivity extends BasePlayerActivity implements VideoContract.
     }
 
     @Override
-    public void showSuccessImomoeVideoUrlsView(List<List<ImomoeVideoUrlBean>> bean) {}
+    public void showSuccessImomoeVideoUrlView(String playUrl) {
+        runOnUiThread(() -> {
+            hideNavBar();
+            cancelDialog();
+            play(playUrl);
+        });
+    }
 
     @Override
-    public void showSuccessImomoeDramasView(List<List<AnimeDescDetailsBean>> bean) {}
+    public void showSuccessImomoeDramasView(List<AnimeDescDetailsBean> bean) {
+        yhdmDescList = bean;
+        runOnUiThread(() -> dramaAdapter.setNewData(yhdmDescList));
+    }
 
     @Override
     public void onSniffingStart(View webView, String url) {

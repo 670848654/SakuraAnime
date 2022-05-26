@@ -3,7 +3,7 @@ package my.project.sakuraproject.main.video;
 import java.util.List;
 
 import my.project.sakuraproject.bean.ImomoeVideoUrlBean;
-import my.project.sakuraproject.bean.YhdmViideoUrlBean;
+import my.project.sakuraproject.bean.YhdmVideoUrlBean;
 import my.project.sakuraproject.main.base.BasePresenter;
 import my.project.sakuraproject.main.base.Presenter;
 
@@ -30,7 +30,7 @@ public class DownloadVideoPresenter extends Presenter<DownloadVideoContract.View
     }
 
     @Override
-    public void successYhdmVideoUrls(YhdmViideoUrlBean yhdmViideoUrlBean, String playNumber) {
+    public void successYhdmVideoUrls(YhdmVideoUrlBean yhdmViideoUrlBean, String playNumber) {
         view.showYhdmVideoSuccessView(yhdmViideoUrlBean, playNumber);
     }
 
@@ -40,8 +40,8 @@ public class DownloadVideoPresenter extends Presenter<DownloadVideoContract.View
     }
 
     @Override
-    public void successImomoeVideoUrls(List<List<ImomoeVideoUrlBean>> bean, String playNumber) {
-        view.showSuccessImomoeVideoUrlsView(bean, playNumber);
+    public void successImomoeVideoUrls(String url, String playNumber) {
+        view.showSuccessImomoeVideoUrlsView(url, playNumber);
     }
 
 

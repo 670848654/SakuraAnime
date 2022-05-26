@@ -1,11 +1,14 @@
 package my.project.sakuraproject.main.tag;
 
+import android.util.Log;
+
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 
 import java.io.IOException;
 import java.util.List;
 
 import my.project.sakuraproject.R;
+import my.project.sakuraproject.api.Api;
 import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.main.base.BaseModel;
 import my.project.sakuraproject.net.HttpGet;
@@ -17,6 +20,7 @@ import okhttp3.Callback;
 import okhttp3.Response;
 
 public class TagModel extends BaseModel implements TagContract.Model {
+
     @Override
     public void getData(TagContract.LoadDataCallback callback) {
         if (isImomoe())
@@ -59,7 +63,9 @@ public class TagModel extends BaseModel implements TagContract.Model {
 
     private void parserImomoe(TagContract.LoadDataCallback callback) {
         callback.log(Sakura.TAG_API);
-        new HttpGet(Sakura.TAG_API, new Callback() {
+        String url = getDomain(true) + String.format(Api.MALIMALI_TAG, Api.MALIMALI_JAPAN, "", "", "", "", "");
+        Log.e("url", url);
+        new HttpGet(url, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 callback.error(e.getMessage());

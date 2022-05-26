@@ -1,6 +1,7 @@
 package my.project.sakuraproject.adapter;
 
 import android.content.Context;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
@@ -54,6 +55,10 @@ public class HomeAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity, Base
                 helper.setTextColor(R.id.title, context.getResources().getColor(R.color.text_color_primary));
                 helper.setBackgroundColor(R.id.root, context.getResources().getColor(R.color.window_bg));
                 helper.setBackgroundColor(R.id.more, context.getResources().getColor(R.color.window_bg));
+                if (homeBean.getMoreUrl().isEmpty())
+                    helper.getView(R.id.img).setVisibility(View.GONE);
+                else
+                    helper.getView(R.id.img).setVisibility(View.VISIBLE);
                 ImageView img = helper.getView(R.id.img);
                 img.setColorFilter(context.getResources().getColor(R.color.text_color_primary));
                 helper.addOnClickListener(R.id.more);

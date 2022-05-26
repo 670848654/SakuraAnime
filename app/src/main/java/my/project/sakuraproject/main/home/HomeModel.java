@@ -5,6 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import my.project.sakuraproject.R;
+import my.project.sakuraproject.api.Api;
 import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.bean.AnimeUpdateInfoBean;
 import my.project.sakuraproject.bean.HomeBean;
@@ -18,15 +19,21 @@ import okhttp3.Callback;
 import okhttp3.Response;
 
 public class HomeModel extends BaseModel implements HomeContract.Model {
+
     @Override
-    public void getData(boolean isWeek, HomeContract.LoadDataCallback callback) {
+    public void getData(boolean isWeek, String mailiHtml, HomeContract.LoadDataCallback callback) {
         if (isImomoe())
-            parserImomoe(isWeek, callback);
+            parserImomoe(isWeek, mailiHtml, callback);
         else
-            parserYhdm(isWeek, callback, "");
+            parserYhdm(isWeek, mailiHtml, callback, "");
     }
 
-    private void parserYhdm(boolean isWeek, HomeContract.LoadDataCallback callback, String RedirectedStr) {
+    @Override
+    public void getMaliWeek(HomeContract.LoadDataCallback callback) {
+        getJapanWeekData(callback);
+    }
+
+    private void parserYhdm(boolean isWeek, String mailiHtml, HomeContract.LoadDataCallback callback, String RedirectedStr) {
         callback.log(Sakura.DOMAIN + RedirectedStr);
         new HttpGet(Sakura.DOMAIN + RedirectedStr, new Callback() {
             @Override
@@ -39,10 +46,10 @@ public class HomeModel extends BaseModel implements HomeContract.Model {
                 try {
                     String source = getBody(response);
                     if (YhdmJsoupUtils.hasRedirected(source)) // 如果有重定向
-                        parserYhdm(isWeek, callback, YhdmJsoupUtils.getRedirectedStr(source));
+                        parserYhdm(isWeek, mailiHtml, callback, YhdmJsoupUtils.getRedirectedStr(source));
                     else {
                         if (YhdmJsoupUtils.hasRefresh(source)) // 如果有定时跳转
-                            parserYhdm(isWeek, callback, "");
+                            parserYhdm(isWeek, mailiHtml, callback, "");
                         else {
                             if (isWeek) {
                                 LinkedHashMap map = YhdmJsoupUtils.getHomeData(source);
@@ -71,7 +78,7 @@ public class HomeModel extends BaseModel implements HomeContract.Model {
         });
     }
 
-    private void parserImomoe(boolean isWeek, HomeContract.LoadDataCallback callback) {
+    private void parserImomoe(boolean isWeek, String mailiHtml, HomeContract.LoadDataCallback callback) {
         callback.log(Sakura.DOMAIN);
         new HttpGet(Sakura.DOMAIN, new Callback() {
             @Override
@@ -84,7 +91,7 @@ public class HomeModel extends BaseModel implements HomeContract.Model {
                 try {
                     String source = getBody(response);
                     if (isWeek) {
-                        LinkedHashMap map = ImomoeJsoupUtils.getHomeData(source);
+                        LinkedHashMap map = ImomoeJsoupUtils.getHomeData(mailiHtml, source);
                         if ((boolean) map.get("success"))
                             callback.success(map);
                         else
@@ -100,6 +107,27 @@ public class HomeModel extends BaseModel implements HomeContract.Model {
                 } catch (Exception e) {
                     e.printStackTrace();
                     callback.error(e.getMessage());
+                }
+            }
+        });
+    }
+
+    private void getJapanWeekData(HomeContract.LoadDataCallback callback) {
+        new HttpGet(Sakura.DOMAIN + Api.MALIMALI_JAPAN_WEEK, new Callback() {
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+                callback.maliWeekInfoSuccess("");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) {
+                try {
+                    String japanSource = getBody(response);
+                    callback.maliWeekInfoSuccess(japanSource);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    callback.maliWeekInfoSuccess("");
                 }
             }
         });

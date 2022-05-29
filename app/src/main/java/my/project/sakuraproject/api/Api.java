@@ -10,9 +10,10 @@ public class Api {
     // malimali 首页新番时间表
     public final static String MALIMALI_JAPAN_WEEK = "/index.php/label/week.html";
     // malimali 搜索
-    public final static String MALIMALI_SEARCH = "vodsearch/%s----------%s---.html";
+    public final static String MALIMALI_SEARCH = "/vodsearch/%s----------%s---.html";
     // malimali 分类
-    public final static String MALIMALI_TAG = "vodshow/%s-%s-%s-%s-%s-%s.html"; // 10, 排序, 分类, 字母, 分页, 年代
+    public final static String MALIMALI_TAG = "/vodshow/%s-%s-%s-%s-%s-%s.html"; // 1, 排序, 分类, 字母, 分页, 年代
+    public final static String MALIMALI_TAG_DEFAULT = "1";
     public final static String MALIMALI_CHINA = "9";
     public final static String MALIMALI_JAPAN = "10";
     public final static String MALIMALI_EUROPE = "11";

@@ -1,7 +1,5 @@
 package my.project.sakuraproject.main.updateList;
 
-import android.util.Log;
-
 import java.io.IOException;
 import java.util.List;
 
@@ -10,7 +8,6 @@ import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.bean.AnimeUpdateBean;
 import my.project.sakuraproject.main.base.BaseModel;
 import my.project.sakuraproject.net.HttpGet;
-import my.project.sakuraproject.util.ImomoeJsoupUtils;
 import my.project.sakuraproject.util.Utils;
 import my.project.sakuraproject.util.YhdmJsoupUtils;
 import okhttp3.Call;
@@ -60,7 +57,8 @@ public class UpdateListModel extends BaseModel implements UpdateListContract.Mod
     }
 
     private void parserImomoe(String url, UpdateListContract.LoadDataCallback callback) {
-        callback.log(url);
+        // 暂不支持
+        /*callback.log(url);
         Log.e("url", url);
         new HttpGet(url, new Callback() {
             @Override
@@ -82,6 +80,6 @@ public class UpdateListModel extends BaseModel implements UpdateListContract.Mod
                     callback.error(e.getMessage());
                 }
             }
-        });
+        });*/
     }
 }

@@ -12,11 +12,20 @@ public class AnimeListPresenter extends Presenter<AnimeListContract.View> implem
     private AnimeListContract.View view;
     private AnimeListModel model;
 
+    private String[] params;
+
     public AnimeListPresenter(String url, int page, AnimeListContract.View view) {
         super(view);
         this.url = url;
         this.view = view;
         this.page = page;
+        model = new AnimeListModel();
+    }
+
+    public AnimeListPresenter(String[] params, AnimeListContract.View view) {
+        super(view);
+        this.params = params;
+        this.view = view;
         model = new AnimeListModel();
     }
 
@@ -30,6 +39,14 @@ public class AnimeListPresenter extends Presenter<AnimeListContract.View> implem
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
+    }
+
+    public void loadMaliData(boolean isMain) {
+        if (isMain) {
+            view.showLoadingView();
+            view.showEmptyVIew();
+        }
+        model.getData(params, isMain, this);
     }
 
     @Override

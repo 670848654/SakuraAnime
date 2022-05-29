@@ -226,8 +226,10 @@ public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatA
         //创建database路路径
         Utils.createFile();
         DatabaseUtil.CREATE_TABLES();
-        if (getRunningActivityName().equals("StartActivity"))
+        if (getRunningActivityName().equals("StartActivity")) {
             DatabaseUtil.dataTransfer();
+            DatabaseUtil.deleteImomoeData();
+        }
         setStatusBarColor();
         initCustomViews();
         init();

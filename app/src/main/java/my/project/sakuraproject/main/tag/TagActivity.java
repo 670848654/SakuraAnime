@@ -28,6 +28,7 @@ import my.project.sakuraproject.R;
 import my.project.sakuraproject.adapter.AnimeListAdapter;
 import my.project.sakuraproject.adapter.TagAdapter;
 import my.project.sakuraproject.bean.AnimeListBean;
+import my.project.sakuraproject.bean.MaliTagBean;
 import my.project.sakuraproject.bean.TagBean;
 import my.project.sakuraproject.custom.CustomLoadMoreView;
 import my.project.sakuraproject.custom.CustomToast;
@@ -208,6 +209,7 @@ public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> im
             mSwipe.setEnabled(true);
             toolbar.setTitle(bean.getTitle());
             animeUrl = bean.getItemUrl();
+            animeLists.clear();
             animeListAdapter.setNewData(null);
             animeListAdapter.setEmptyView(getLayoutInflater().inflate(R.layout.base_emnty_view, null));
             nowPage = 1;
@@ -257,6 +259,11 @@ public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> im
                 tag_btn.show();
             }
         });
+    }
+
+    @Override
+    public void showMaliSuccessView(List<MaliTagBean> list) {
+
     }
 
     @Override

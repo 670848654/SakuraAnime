@@ -80,7 +80,6 @@ import my.project.sakuraproject.bean.AnimeDescRecommendBean;
 import my.project.sakuraproject.bean.AnimeListBean;
 import my.project.sakuraproject.bean.DownloadDramaBean;
 import my.project.sakuraproject.bean.Event;
-import my.project.sakuraproject.bean.ImomoeVideoUrlBean;
 import my.project.sakuraproject.bean.Refresh;
 import my.project.sakuraproject.bean.YhdmVideoUrlBean;
 import my.project.sakuraproject.custom.CustomToast;
@@ -89,6 +88,8 @@ import my.project.sakuraproject.database.DatabaseUtil;
 import my.project.sakuraproject.main.animeList.AnimeListActivity;
 import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.base.BaseModel;
+import my.project.sakuraproject.main.search.SearchActivity;
+import my.project.sakuraproject.main.tag.MaliTagActivity;
 import my.project.sakuraproject.main.video.DownloadVideoContract;
 import my.project.sakuraproject.main.video.DownloadVideoPresenter;
 import my.project.sakuraproject.main.video.VideoContract;
@@ -396,10 +397,26 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
                 bundle.putBoolean("isImomoe", isImomoe);
                 if (!isImomoe)
                     startActivity(new Intent(DescActivity.this, AnimeListActivity.class).putExtras(bundle));
-                else if (sakuraUrl.contains("/voddetail/") && animeListBean.getTagUrls().get(position).contains("-"))
-                    startActivity(new Intent(DescActivity.this, AnimeListActivity.class).putExtras(bundle));
-                else
-                    return; // TODO 应该为TAG_ACTIVITY
+                else {
+                    if (sakuraUrl.contains("/voddetail/") && animeListBean.getTagUrls().get(position).contains("-"))
+                        startActivity(new Intent(DescActivity.this, SearchActivity.class).putExtras(bundle));
+                    else {
+                        Bundle tagBundle = new Bundle();
+                        tagBundle.putString("title", animeListBean.getTagTitles().get(position));
+                        switch (animeListBean.getTagTitles().get(position)) {
+                            case MaliTagActivity.FL_JAPAN:
+                                tagBundle.putString("homeParam", Api.MALIMALI_JAPAN);
+                                break;
+                            case MaliTagActivity.FL_CHINA:
+                                tagBundle.putString("homeParam", Api.MALIMALI_CHINA);
+                                break;
+                            case MaliTagActivity.FL_EUROPE:
+                                tagBundle.putString("homeParam", Api.MALIMALI_EUROPE);
+                                break;
+                        }
+                        startActivity(new Intent(DescActivity.this, MaliTagActivity.class).putExtras(tagBundle));
+                    }
+                }
             }
 
             @Override

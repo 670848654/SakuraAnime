@@ -10,7 +10,6 @@ import my.project.sakuraproject.bean.AnimeUpdateInfoBean;
 import my.project.sakuraproject.database.DatabaseUtil;
 import my.project.sakuraproject.main.base.BaseModel;
 import my.project.sakuraproject.net.HttpGet;
-import my.project.sakuraproject.util.ImomoeJsoupUtils;
 import my.project.sakuraproject.util.Utils;
 import my.project.sakuraproject.util.YhdmJsoupUtils;
 import okhttp3.Call;

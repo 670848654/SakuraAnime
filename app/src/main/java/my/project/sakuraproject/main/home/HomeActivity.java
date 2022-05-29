@@ -9,7 +9,6 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.chad.library.adapter.base.entity.MultiItemEntity;
-import com.google.android.material.navigation.NavigationView;
 import com.wuyr.rippleanimation.RippleAnimation;
 
 import org.greenrobot.eventbus.EventBus;
@@ -22,7 +21,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
@@ -32,6 +30,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.adapter.HomeAdapter;
+import my.project.sakuraproject.api.Api;
 import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.bean.AnimeUpdateInfoBean;
 import my.project.sakuraproject.bean.HomeBean;
@@ -39,7 +38,6 @@ import my.project.sakuraproject.bean.HomeHeaderBean;
 import my.project.sakuraproject.bean.Refresh;
 import my.project.sakuraproject.custom.CustomToast;
 import my.project.sakuraproject.database.DatabaseUtil;
-import my.project.sakuraproject.main.about.AboutActivity;
 import my.project.sakuraproject.main.animeList.AnimeListActivity;
 import my.project.sakuraproject.main.animeTopic.AnimeTopicActivity;
 import my.project.sakuraproject.main.base.BaseActivity;
@@ -47,6 +45,7 @@ import my.project.sakuraproject.main.desc.DescActivity;
 import my.project.sakuraproject.main.my.MyActivity;
 import my.project.sakuraproject.main.search.SearchActivity;
 import my.project.sakuraproject.main.setting.SettingActivity;
+import my.project.sakuraproject.main.tag.MaliTagActivity;
 import my.project.sakuraproject.main.tag.TagActivity;
 import my.project.sakuraproject.main.updateList.UpdateListActivity;
 import my.project.sakuraproject.main.week.WeekActivity;
@@ -112,7 +111,9 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
     public void initToolbar() {
         toolbar.setTitle(getResources().getString(R.string.app_name));
         toolbar.setSubtitle(Utils.isImomoe() ? getResources().getString(R.string.imomoe) : getResources().getString(R.string.yhdm));
-        toolbar.setOnClickListener(v -> {
+        toolbar.setNavigationIcon(isDarkTheme ? getResources().getDrawable(R.drawable.baseline_sync_alt_white_48dp) : getResources().getDrawable(R.drawable.baseline_sync_alt_black_48dp));
+        setSupportActionBar(toolbar);
+        toolbar.setNavigationOnClickListener(v -> {
             if (!Utils.isFastClick()) return;
             if (mSwipe.isRefreshing()) {
 //                Sakura.getInstance().showToastMsg(Utils.getString(R.string.loading_info));
@@ -121,7 +122,6 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
             }
             setDefaultSource();
         });
-        setSupportActionBar(toolbar);
     }
 
     private void setDefaultSource() {
@@ -291,15 +291,16 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
             multiItemEntities = new ArrayList<>();
             headerDataBeans = new ArrayList<>();
             headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("新番时间表", R.drawable.ic_xfsjb, HomeHeaderBean.TYPE_XFSJB));
-            headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("动漫分类", R.drawable.ic_dmfl, HomeHeaderBean.TYPE_DMFL_MALIMALI));
             if (!Utils.isImomoe()) {
+                headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("动漫分类", R.drawable.ic_dmfl, HomeHeaderBean.TYPE_DMFL));
                 headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("动漫电影", R.drawable.ic_dmdy, HomeHeaderBean.TYPE_DMDY));
                 headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("动漫专题", R.drawable.ic_dmzt, HomeHeaderBean.TYPE_DMZT));
                 headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("剧场版", R.drawable.ic_jcb, HomeHeaderBean.TYPE_JCB));
             } else {
-                headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("日韩动漫", R.drawable.ic_dmdy, HomeHeaderBean.TYPE_DMFL_MALIMALI));
-                headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("国产动漫", R.drawable.ic_dmzt, HomeHeaderBean.TYPE_DMFL_MALIMALI));
-                headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("欧美动漫", R.drawable.ic_jcb, HomeHeaderBean.TYPE_DMFL_MALIMALI));
+                headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("动漫分类", R.drawable.ic_dmfl, HomeHeaderBean.TYPE_DMFL_MALIMALI_TAG));
+                headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("日韩动漫", R.drawable.ic_dmdy, HomeHeaderBean.TYPE_DMFL_MALIMALI_JAPAN));
+                headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("国产动漫", R.drawable.ic_dmzt, HomeHeaderBean.TYPE_DMFL_MALIMALI_CHINA));
+                headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("欧美动漫", R.drawable.ic_jcb, HomeHeaderBean.TYPE_DMFL_MALIMALI_EUROPE));
             }
             multiItemEntities.add(new HomeHeaderBean(headerDataBeans));
             for (HomeBean homeBean : beans) {
@@ -362,6 +363,7 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
             navigationView.setItemIconTintList(csl);
             drawer.setBackgroundColor(isDarkTheme ? getResources().getColor(R.color.dark_navigation_color) : getResources().getColor(R.color.light_navigation_color));*/
             /** 设置Toolbar相关颜色 **/
+            toolbar.setNavigationIcon(isDarkTheme ? getResources().getDrawable(R.drawable.baseline_sync_alt_white_48dp) : getResources().getDrawable(R.drawable.baseline_sync_alt_black_48dp));
             toolbar.setBackgroundColor(isDarkTheme ? getResources().getColor(R.color.dark_toolbar_color) : getResources().getColor(R.color.light_toolbar_color));
             toolbar.setTitleTextColor(isDarkTheme ? getResources().getColor(R.color.light_toolbar_color) : getResources().getColor(R.color.dark_toolbar_color));
             toolbar.setSubtitleTextColor(isDarkTheme ? getResources().getColor(R.color.light_toolbar_color) : getResources().getColor(R.color.dark_toolbar_color));
@@ -400,25 +402,43 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
 
     @Override
     public void onHeaderClick(HomeHeaderBean.HeaderDataBean bean) {
+        Bundle bundle = new Bundle();
         switch (bean.getType()) {
             case HomeHeaderBean.TYPE_XFSJB:
                 startActivity(new Intent(this, WeekActivity.class).putExtra("html", maliHtml));
                 break;
             case HomeHeaderBean.TYPE_DMFL:
-            case HomeHeaderBean.TYPE_DMFL_MALIMALI:
                 startActivity(new Intent(this, TagActivity.class));
                 break;
             case HomeHeaderBean.TYPE_DMDY:
                 openAnimeListActivity(Utils.getString(R.string.home_movie_title), Sakura.MOVIE_API, true);
                 break;
             case HomeHeaderBean.TYPE_DMZT:
-                Bundle bundle = new Bundle();
                 bundle.putString("title", Utils.getString(R.string.home_zt_title));
                 bundle.putString("url", Sakura.YHDM_ZT_API);
                 startActivity(new Intent(this, AnimeTopicActivity.class).putExtras(bundle));
                 break;
             case HomeHeaderBean.TYPE_JCB:
                 openAnimeListActivity(Utils.getString(R.string.home_jcb_title), Sakura.JCB_API, false);
+                break;
+            //===========================================================
+            case HomeHeaderBean.TYPE_DMFL_MALIMALI_TAG:
+                startActivity(new Intent(this, MaliTagActivity.class));
+                break;
+            case HomeHeaderBean.TYPE_DMFL_MALIMALI_JAPAN:
+                bundle.putString("homeParam", Api.MALIMALI_JAPAN);
+                bundle.putString("title", bean.getTitle());
+                startActivity(new Intent(this, MaliTagActivity.class).putExtras(bundle));
+                break;
+            case HomeHeaderBean.TYPE_DMFL_MALIMALI_CHINA:
+                bundle.putString("homeParam", Api.MALIMALI_CHINA);
+                bundle.putString("title", bean.getTitle());
+                startActivity(new Intent(this, MaliTagActivity.class).putExtras(bundle));
+                break;
+            case HomeHeaderBean.TYPE_DMFL_MALIMALI_EUROPE:
+                bundle.putString("homeParam", Api.MALIMALI_EUROPE);
+                bundle.putString("title", bean.getTitle());
+                startActivity(new Intent(this, MaliTagActivity.class).putExtras(bundle));
                 break;
         }
     }

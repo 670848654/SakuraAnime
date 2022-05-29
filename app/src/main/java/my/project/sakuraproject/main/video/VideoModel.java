@@ -4,12 +4,10 @@ import android.util.Log;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.bean.AnimeDescDetailsBean;
-import my.project.sakuraproject.bean.ImomoeVideoUrlBean;
 import my.project.sakuraproject.database.DatabaseUtil;
 import my.project.sakuraproject.main.base.BaseModel;
 import my.project.sakuraproject.net.HttpGet;

@@ -2,8 +2,6 @@ package my.project.sakuraproject.util;
 
 import android.util.Log;
 
-import com.chad.library.adapter.base.entity.MultiItemEntity;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -23,12 +21,8 @@ import my.project.sakuraproject.bean.AnimeDescDetailsBean;
 import my.project.sakuraproject.bean.AnimeDescListBean;
 import my.project.sakuraproject.bean.AnimeDescRecommendBean;
 import my.project.sakuraproject.bean.AnimeListBean;
-import my.project.sakuraproject.bean.AnimeUpdateBean;
-import my.project.sakuraproject.bean.AnimeUpdateInfoBean;
 import my.project.sakuraproject.bean.HomeBean;
-import my.project.sakuraproject.bean.ImomoeVideoUrlBean;
-import my.project.sakuraproject.bean.TagBean;
-import my.project.sakuraproject.bean.TagHeaderBean;
+import my.project.sakuraproject.bean.MaliTagBean;
 
 public class ImomoeJsoupUtils {
 
@@ -45,6 +39,8 @@ public class ImomoeJsoupUtils {
      */
     public static int getPageCount(String source) {
         Document document = Jsoup.parse(source);
+        if (document.select("div.pagebox.clearfix > a").size() == 0)
+            return 0;
         int pageCount = 0;
         Matcher m = PAGE_PATTERN.matcher(document.select("div.pagebox.clearfix > a.pagelink_b").get(0).text().replaceAll("&nbsp;", ""));
         while (m.find()) {
@@ -111,7 +107,8 @@ public class ImomoeJsoupUtils {
     private static HomeBean getHomeListData(boolean isHot, String title, String moreUrl, Elements hotsLi) {
         HomeBean homeBean = new HomeBean();
         homeBean.setTitle(title);
-        homeBean.setMoreUrl(moreUrl);
+//        homeBean.setMoreUrl(moreUrl);
+        homeBean.setMoreUrl("");
         List<HomeBean.HomeItemBean> homeItemBeanList = new ArrayList<>();
         for (Element hot : hotsLi) {
             HomeBean.HomeItemBean homeItemBean = new HomeBean.HomeItemBean();
@@ -191,40 +188,17 @@ public class ImomoeJsoupUtils {
         }
         return jsonArray;
     }
-    /**
-     * 获取今日番剧更新
-     * @param source
-     * @return
-     *//*
-    public static List<AnimeUpdateInfoBean> getUpdateInfoList(String source) {
-        List<AnimeUpdateInfoBean> animeUpdateInfoBeans = new ArrayList<>();
-        Document document = Jsoup.parse(source);
-        Elements elements = document.select("div.tists > ul > li");
-        for (int i=0,size=elements.size(); i<size; i++) {
-            Elements aList = elements.get(i).select("a");
-            if (aList.size() > 1) {
-                AnimeUpdateInfoBean animeUpdateInfoBean = new AnimeUpdateInfoBean();
-                animeUpdateInfoBean.setSource(1);
-                animeUpdateInfoBean.setTitle(elements.get(i).select("a").get(1).text());
-                animeUpdateInfoBean.setPlayNumber(elements.get(i).select("a").get(0).attr("href"));
-                animeUpdateInfoBeans.add(animeUpdateInfoBean);
-                Log.e("IMOMOE", animeUpdateInfoBean.getTitle() + " > " + animeUpdateInfoBean.getPlayNumber());
-            }
-        }
-        return animeUpdateInfoBeans;
-    }*/
 
     /**************************************  新番时间表解析方法结束  **************************************/
 
     /**************************************  动漫分类解析方法开始  **************************************/
     /**
      * 获取动漫分类列表
-     * TODO
      * @param source
      * @return
      */
-    public static List<MultiItemEntity> getTagList(String source) {
-        List<MultiItemEntity> tagList = new ArrayList<>();
+    public static List<MaliTagBean> getTagList(String source) {
+        List<MaliTagBean> tagList = new ArrayList<>();
         Document document = Jsoup.parse(source);
         Elements titles = document.getElementById("content").select("div.typebox.board").select("span");
         Elements items = document.getElementById("content").select("div.typebox.board").select("ul");
@@ -233,19 +207,24 @@ public class ImomoeJsoupUtils {
                 if (i == tagSize-1) {
                     // 排序
                 } else {
-                    TagHeaderBean tagHeaderBean = new TagHeaderBean(titles.get(i).text().replaceAll("：", ""));
+//                    TagHeaderBean tagHeaderBean = new TagHeaderBean(titles.get(i).text().replaceAll("：", ""));
+                    String title = titles.get(i).text().replaceAll("：", "");
+                    List<MaliTagBean.MaliTagList> maliTagListBeans = new ArrayList<>();
                     Elements itemElements = items.get(i).select("a");
                     for (int j = 0, itemSize = itemElements.size(); j < itemSize; j++) {
-                        tagHeaderBean.addSubItem(
+                        /*tagHeaderBean.addSubItem(
                                 new TagBean(
                                         tagHeaderBean.getTitle() + " - " + itemElements.get(j).text(),
                                         itemElements.get(j).text(),
                                         itemElements.get(j).attr("href")
                                 )
-                        );
-
+                        )*/
+                        maliTagListBeans.add(new MaliTagBean.MaliTagList(title + " - " + itemElements.get(j).text(),
+                                itemElements.get(j).text(),
+                                itemElements.get(j).attr("href")));
                     }
-                    tagList.add(tagHeaderBean);
+                    tagList.add(new MaliTagBean(title,maliTagListBeans ));
+//                    tagList.add(tagHeaderBean);
                 }
             }
         }
@@ -255,15 +234,38 @@ public class ImomoeJsoupUtils {
 
     /**************************************  番剧列表&&搜索列表解析方法开始  **************************************/
     /**
-     *  获取番剧列表集合(搜索)
+     *  获取番剧列表集合(搜索界面)
      *  2022年5月25日 修改
+     * @param source
+     * @return
+     */
+    public static List<AnimeListBean> getSearchAnimeList(String source) {
+        List<AnimeListBean> animeListBeans = new ArrayList<>();
+        Document document = Jsoup.parse(source);
+        Elements elements = document.select("div.searchbox > ul > li");
+        if (elements.size() > 0) {
+            for (int i=0,size=elements.size(); i < size; i++) {
+                AnimeListBean bean = new AnimeListBean();
+                bean.setTitle(elements.get(i).select("a").get(0).attr("title"));
+                bean.setUrl(elements.get(i).select("a").get(0).attr("href"));
+                bean.setImg(elements.get(i).select("img").attr("data-echo"));
+                bean.setDesc(elements.get(i).select("span.listbox-mask").text());
+                animeListBeans.add(bean);
+            }
+        }
+        return animeListBeans;
+    }
+
+    /**
+     *  获取番剧列表集合(分类界面)
+     *  2022年5月29日 修改
      * @param source
      * @return
      */
     public static List<AnimeListBean> getAnimeList(String source) {
         List<AnimeListBean> animeListBeans = new ArrayList<>();
         Document document = Jsoup.parse(source);
-        Elements elements = document.select("div.searchbox > ul > li");
+        Elements elements = document.select("div.listbox > ul > li");
         if (elements.size() > 0) {
             for (int i=0,size=elements.size(); i < size; i++) {
                 AnimeListBean bean = new AnimeListBean();
@@ -324,7 +326,7 @@ public class ImomoeJsoupUtils {
         AnimeDescListBean animeDescListBean = new AnimeDescListBean();
         Document document = Jsoup.parse(source);
 //        List<List<AnimeDescDetailsBean>> multipleAnimeDescDetailsBeans = new ArrayList<>();
-        // 该网站存在多各播放地址，只获取主线路
+        // 该网站存在多各播放地址，推荐使用主路线，故只获取主线路剧集列表
         Elements playElements = document.select("div#vlink_1 > ul > li"); //剧集列表
         if (playElements.size() > 0) {
             boolean select;
@@ -359,6 +361,12 @@ public class ImomoeJsoupUtils {
     /**************************************  动漫详情解析方法结束  **************************************/
 
     /**************************************  视频JS解析方法  **************************************/
+    /**
+     * 获取播放地址
+     * 2022年5月29日
+     * @param source
+     * @return
+     */
     public static String getImomoePlayUrl(String source) {
         Document document = Jsoup.parse(source);
         Element element = document.getElementById("player");
@@ -370,55 +378,12 @@ public class ImomoeJsoupUtils {
             return jsonObject.getString("url");
         }
         return "";
-        /*List<List<ImomoeVideoUrlBean>> allList = new ArrayList<>();
-        com.alibaba.fastjson.JSONArray jsonArray = com.alibaba.fastjson.JSONArray.parseArray(json);
-        for (int i=0,size=jsonArray.size(); i<size; i++) {
-            com.alibaba.fastjson.JSONArray sourceArr = com.alibaba.fastjson.JSONArray.parseArray(jsonArray.getJSONArray(i).getString(1));
-            List<ImomoeVideoUrlBean> imomoeVideoUrlBeans = new ArrayList<>();
-            for (int j=0,size2=sourceArr.size(); j<size2; j++) {
-                String str = sourceArr.getString(j);
-                String[] strs = str.split("\\$");
-                Matcher matcher = Pattern.compile("\\$(.*)\\$").matcher(str);
-                if (matcher.find()) {
-                    ImomoeVideoUrlBean imomoeVideoUrlBean = new ImomoeVideoUrlBean();
-                    String find = matcher.group().replaceAll("\\$", "");
-                    if (find.contains("http")) {
-                        // 是http
-                        imomoeVideoUrlBean.setHttp(true);
-                        imomoeVideoUrlBean.setVidOrUrl(find);
-                    } else {
-                        // 非http
-                        imomoeVideoUrlBean.setHttp(false);
-                        imomoeVideoUrlBean.setVidOrUrl(find);
-                        imomoeVideoUrlBean.setParam(strs[strs.length-1]);
-                    }
-                    imomoeVideoUrlBeans.add(imomoeVideoUrlBean);
-                }
-            }
-            allList.add(imomoeVideoUrlBeans);
-        }
-        return allList;*/
-    }
-
-    public static String getImomoeApiPlayUrl(String source) {
-        String playUrl = "";
-        Document document = Jsoup.parse(source);
-        Elements scripts = document.select("script");
-        for (Element element : scripts) {
-            if (element.html().contains("var video")) {
-                Matcher m = PLAY_URL_PATTERN.matcher(element.html());
-                if (m.find()) {
-                    playUrl = m.group();
-                    break;
-                }
-            }
-        }
-        return playUrl;
     }
 
     /**************************************  选集解析方法开始  **************************************/
     /**
-     * 获取番剧所有剧集（用于 ImomoePlayerActivity 选集）
+     * 获取番剧所有剧集(用于播放界面选集)
+     * 2022年5月29日
      * @param source
      * @param dramaStr 用户已观看过的url
      * @return
@@ -434,65 +399,19 @@ public class ImomoeJsoupUtils {
         }
         return animeDescDramasBeans;
     }
-    /**************************************  选集解析方法开始  **************************************/
+    /**************************************  选集解析方法结束  **************************************/
 
-    /**************************************  最近更新动漫解析方法开始  **************************************/
-    /*public static List<AnimeUpdateInfoBean> getUpdateInfoList(String source) {
-        List<AnimeUpdateInfoBean> animeUpdateInfoBeans = new ArrayList<>();
-        Document document = Jsoup.parse(source);
-        Elements elements = document.select("div.topli > ul > li");
-        for (int i=0,size=elements.size(); i<size; i++) {
-            Elements aList = elements.get(i).select("a");
-            AnimeUpdateInfoBean animeUpdateInfoBean = new AnimeUpdateInfoBean();
-            animeUpdateInfoBean.setSource(1);
-            animeUpdateInfoBean.setTitle(aList.size() > 2 ? aList.get(1).text() : aList.get(0).text());
-            String playNumber = aList.size() > 2 ? aList.get(2).text(): aList.get(1).text();
-            animeUpdateInfoBean.setPlayNumber(replaceStr(playNumber));
-            animeUpdateInfoBeans.add(animeUpdateInfoBean);
-        }
-        return animeUpdateInfoBeans;
-    }
-
-    // 处理奇葩格式
-    private static String replaceStr(String content) {
-        content = content.split("\\+")[0];
-        Matcher matcher = Pattern.compile("[0-9]*").matcher(content);
-        if (matcher.find()) {
-            content = "第" + matcher.group() + "集";
-        }
-        return content;
-    }*/
-    /**************************************  最近更新动漫解析方法结束  **************************************/
-
-    /**************************************  最近更新动漫解析方法开始  **************************************/
-    public static List<AnimeUpdateBean> getUpdateInfoList2(String source) {
-        List<AnimeUpdateBean> animeUpdateBeans = new ArrayList<>();
-        Document document = Jsoup.parse(source);
-        Elements elements = document.select("div.topli > ul > li");
-        for (Element li : elements) {
-            Elements aList = li.select("a");
-            AnimeUpdateBean animeUpdateBean = new AnimeUpdateBean();
-            animeUpdateBean.setNumber(li.select("i").text());
-            animeUpdateBean.setRegion(aList.get(0).text());
-            animeUpdateBean.setTitle(aList.get(1).text());
-            animeUpdateBean.setUrl(aList.get(1).attr("href"));
-            animeUpdateBean.setEpisodes(aList.get(2).text());
-            animeUpdateBean.setUpdateTime(li.select("em").text());
-            animeUpdateBeans.add(animeUpdateBean);
-        }
-        return animeUpdateBeans;
-    }
-    /**************************************  最近更新动漫解析方法结束  **************************************/
 
     /**************************************  更新图片方方法开始  **************************************/
     /**
      * 获取番剧图片
+     * 2022年5月29日 修改
      * @param source
      * @return
      */
     public static String getAinmeImg(String source) {
         Document document = Jsoup.parse(source);
-        return document.select("div.tpic > img").attr("src");
+        return document.select("div.drama-box > div#thumb > img").attr("src");
     }
     /**************************************  更新图片方法结束  **************************************/
 }

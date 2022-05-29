@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/window_bg"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/list_view"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp">
+
+            <TextView
+                android:id="@+id/fl_text"
+                android:text="分类"
+                android:background="@drawable/mali_tag_bg"
+                android:textSize="12sp"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:layout_centerVertical="true" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/fl_list"
+                android:layout_marginLeft="10dp"
+                android:layout_toRightOf="@+id/fl_text"
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp">
+
+            <TextView
+                android:id="@+id/lx_text"
+                android:text="类型"
+                android:background="@drawable/mali_tag_bg"
+                android:textSize="12sp"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:layout_centerVertical="true"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/lx_list"
+                android:layout_marginLeft="10dp"
+                android:layout_toRightOf="@+id/lx_text"
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp">
+
+            <TextView
+                android:id="@+id/nf_text"
+                android:text="年份"
+                android:background="@drawable/mali_tag_bg"
+                android:textSize="12sp"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:layout_centerVertical="true"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/nf_list"
+                android:layout_marginLeft="10dp"
+                android:layout_toRightOf="@+id/nf_text"
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp">
+
+            <TextView
+                android:id="@+id/zm_text"
+                android:text="字母"
+                android:background="@drawable/mali_tag_bg"
+                android:textSize="12sp"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:layout_centerVertical="true"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/zm_list"
+                android:layout_marginLeft="10dp"
+                android:layout_toRightOf="@+id/zm_text"
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/ref"
+        android:visibility="gone"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:backgroundTint="@color/drama"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="点击重新加载数据"
+        android:textColor="@color/text_color_primary" />
+</LinearLayout>

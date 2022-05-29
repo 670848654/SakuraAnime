@@ -13,7 +13,10 @@ public class HomeHeaderBean implements MultiItemEntity {
     public static final int TYPE_DMDY = 2;
     public static final int TYPE_DMZT = 3;
     public static final int TYPE_JCB = 4;
-    public static final int TYPE_DMFL_MALIMALI = 5;
+    public static final int TYPE_DMFL_MALIMALI_TAG = 5;
+    public static final int TYPE_DMFL_MALIMALI_JAPAN = 6;
+    public static final int TYPE_DMFL_MALIMALI_CHINA = 7;
+    public static final int TYPE_DMFL_MALIMALI_EUROPE  = 8;
 
     private List<HeaderDataBean> data;
 

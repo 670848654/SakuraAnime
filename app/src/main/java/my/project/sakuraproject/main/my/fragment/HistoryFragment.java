@@ -27,7 +27,6 @@ import my.project.sakuraproject.R;
 import my.project.sakuraproject.adapter.HistoryListAdapter;
 import my.project.sakuraproject.bean.AnimeDescDetailsBean;
 import my.project.sakuraproject.bean.HistoryBean;
-import my.project.sakuraproject.bean.ImomoeVideoUrlBean;
 import my.project.sakuraproject.bean.Refresh;
 import my.project.sakuraproject.bean.UpdateImgBean;
 import my.project.sakuraproject.custom.CustomLoadMoreView;

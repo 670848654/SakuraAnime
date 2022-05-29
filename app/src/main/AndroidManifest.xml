@@ -90,6 +90,11 @@
             android:screenOrientation="portrait"
             android:theme="@style/TranslucentTheme" />
         <activity
+            android:name=".main.tag.MaliTagActivity"
+            android:configChanges="screenLayout|orientation|screenSize|smallestScreenSize|keyboardHidden|uiMode"
+            android:screenOrientation="portrait"
+            android:theme="@style/TranslucentTheme" />
+        <activity
             android:name=".main.animeList.AnimeListActivity"
             android:configChanges="screenLayout|orientation|screenSize|smallestScreenSize|keyboardHidden|uiMode"
             android:screenOrientation="portrait"

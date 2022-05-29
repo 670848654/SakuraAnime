@@ -3,7 +3,6 @@ package my.project.sakuraproject.main.video;
 import java.util.List;
 
 import my.project.sakuraproject.bean.AnimeDescDetailsBean;
-import my.project.sakuraproject.bean.ImomoeVideoUrlBean;
 import my.project.sakuraproject.main.base.BasePresenter;
 import my.project.sakuraproject.main.base.Presenter;
 

@@ -15,7 +15,6 @@ import my.project.sakuraproject.api.Api;
 import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.bean.AnimeDescDetailsBean;
 import my.project.sakuraproject.bean.Event;
-import my.project.sakuraproject.bean.ImomoeVideoUrlBean;
 import my.project.sakuraproject.custom.CustomToast;
 import my.project.sakuraproject.main.base.BaseModel;
 import my.project.sakuraproject.main.video.VideoContract;

@@ -10,6 +10,7 @@ import java.util.List;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.api.Api;
 import my.project.sakuraproject.application.Sakura;
+import my.project.sakuraproject.bean.MaliTagBean;
 import my.project.sakuraproject.main.base.BaseModel;
 import my.project.sakuraproject.net.HttpGet;
 import my.project.sakuraproject.util.ImomoeJsoupUtils;
@@ -63,7 +64,7 @@ public class TagModel extends BaseModel implements TagContract.Model {
 
     private void parserImomoe(TagContract.LoadDataCallback callback) {
         callback.log(Sakura.TAG_API);
-        String url = getDomain(true) + String.format(Api.MALIMALI_TAG, Api.MALIMALI_JAPAN, "", "", "", "", "");
+        String url = getDomain(true) + String.format(Api.MALIMALI_TAG, Api.MALIMALI_TAG_DEFAULT, "", "", "", "", "");
         Log.e("url", url);
         new HttpGet(url, new Callback() {
             @Override
@@ -75,9 +76,9 @@ public class TagModel extends BaseModel implements TagContract.Model {
             public void onResponse(Call call, Response response) {
                 try {
                     String source = getBody(response);
-                    List<MultiItemEntity> tagList = ImomoeJsoupUtils.getTagList(source);
+                    List<MaliTagBean> tagList = ImomoeJsoupUtils.getTagList(source);
                     if (tagList.size() > 0)
-                        callback.success(tagList);
+                        callback.maliSuccess(tagList);
                     else
                         callback.error(Utils.getString(R.string.parsing_error));
                 } catch (Exception e) {

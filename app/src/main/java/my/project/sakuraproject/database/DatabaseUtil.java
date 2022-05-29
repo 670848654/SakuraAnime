@@ -7,6 +7,8 @@ import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.android.exoplayer2.C;
+
 import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -41,6 +43,30 @@ public class DatabaseUtil {
         db.execSQL("create table if not exists T_HISTORY_DATA(F_INDEX integer primary key autoincrement, F_ID text, F_LINK_ID text, F_PLAY_SOURCE integer, F_PLAY_URL text, F_PLAY_NUMBER text, F_PROGRESS integer, F_DURATION integer, F_UPDATE_TIME text)");
         db.execSQL("create table if not exists T_DOWNLOAD(F_INDEX integer primary key autoincrement, F_ID text, F_LINK_ID text, F_IMG_URL text, F_DESC_URL, F_CREATE_TIME text, F_UPDATE_TIME text)");
         db.execSQL("create table if not exists T_DOWNLOAD_DATA(F_INDEX integer primary key autoincrement, F_ID text, F_LINK_ID text, F_PLAY_NUMBER text, F_COMPLETE integer, F_PATH text, F_FILE_SIZE integer, F_IMOMOE_SOURCE integer, F_TASK_ID integer, F_CREATE_TIME text, F_PROGRESS integer, F_DURATION integer)");
+    }
+    
+    public static void deleteImomoeData() {
+        // 2022年5月29日20:39:00 清空imomoe的所有收藏、历史观看数据，不清除下载记录
+        Cursor cursor = db.rawQuery("select * from T_FAVORITE where F_URL like '%/view/%' ", new String[]{});
+        if (cursor.getCount() > 0) {
+            while (cursor.moveToNext()) {
+                String animeId = cursor.getString(2);
+                // 删除收藏夹
+                db.execSQL("delete from T_FAVORITE where F_LINK_ID =?", new String[]{animeId});
+            }
+            cursor.close();
+        }
+        Cursor historyCursor = db.rawQuery("select * from T_HISTORY where F_DESC_URL like '%/view/%'", new String[]{});
+        if (historyCursor.getCount() > 0) {
+            while (historyCursor.moveToNext()) {
+                String historyId = historyCursor.getString(1);
+                // 删除历史记录字表
+                db.execSQL("delete from T_HISTORY_DATA where F_LINK_ID =?", new String[]{historyId});
+                // 删除历史记录主表
+                db.execSQL("delete from T_HISTORY where F_ID =?", new String[]{historyId});
+            }
+            historyCursor.close();
+        }
     }
 
     /**

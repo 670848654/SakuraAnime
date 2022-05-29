@@ -46,7 +46,6 @@ import my.project.sakuraproject.database.DatabaseUtil;
 import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.base.BaseModel;
 import my.project.sakuraproject.main.base.Presenter;
-import my.project.sakuraproject.main.video.ImomoeVideoPresenter;
 import my.project.sakuraproject.main.video.VideoPresenter;
 import my.project.sakuraproject.services.DLNAService;
 import my.project.sakuraproject.util.SharedPreferencesUtils;
@@ -105,9 +104,7 @@ public abstract class BasePlayerActivity extends BaseActivity implements JZPlaye
     protected List<AnimeDescDetailsBean> yhdmDescList = new ArrayList<>();
     protected VideoPresenter videoPresenter;
     // IMOMOE源相关属性
-    protected List<List<AnimeDescDetailsBean>> imomoeDescList = new ArrayList<>();
     protected List<List<ImomoeVideoUrlBean>> imomoeVideoUrls = new ArrayList<>();
-    protected ImomoeVideoPresenter imomoeVideoPresenter;
     protected int nowSource = 0; // 当前源
     // Local相关属性
     protected List<AnimeDescDetailsBean> dramaList = new ArrayList<>();
@@ -537,7 +534,6 @@ public abstract class BasePlayerActivity extends BaseActivity implements JZPlaye
     @Override
     public void finish() {
         if (null != videoPresenter) videoPresenter.detachView();
-        if (null != imomoeVideoPresenter) imomoeVideoPresenter.detachView();
         player.releaseAllVideos();
         super.finish();
     }
@@ -557,7 +553,6 @@ public abstract class BasePlayerActivity extends BaseActivity implements JZPlaye
     @Override
     protected void onDestroy() {
         if (null != videoPresenter) videoPresenter.detachView();
-        if (null != imomoeVideoPresenter) imomoeVideoPresenter.detachView();
         stopService(new Intent(this, DLNAService.class));
         saveProgress();
         if (!isLocalVideo) {

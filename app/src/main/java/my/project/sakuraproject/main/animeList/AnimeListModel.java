@@ -33,6 +33,12 @@ public class AnimeListModel extends BaseModel implements AnimeListContract.Model
             parserYhdm(htmlUrl, isMain, isMovie, callback);
     }
 
+    @Override
+    public void getData(String[] params, boolean isMain, AnimeListContract.LoadDataCallback callback) {
+        String url = getDomain(true) + String.format(Api.MALIMALI_TAG, params[0], params[1], params[2], params[3], params[4], params[5]);
+        parserImomoe(url, isMain, callback);
+    }
+
     /**
      * 获取网页链接
      * @param url

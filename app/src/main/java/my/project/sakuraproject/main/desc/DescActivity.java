@@ -453,12 +453,12 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     public void openAnimeDesc() {
         downloadView.setVisibility(View.GONE);
         animeImg.setImageDrawable(getDrawable(isDarkTheme ? R.drawable.loading_night : R.drawable.loading_light));
-        tagContainerLayout.setVisibility(View.GONE);
+        hideView(tagContainerLayout);
         tagContainerLayout.setTags("");
-        score_view.setVisibility(View.GONE);
+        hideView(score_view);
         setTextviewEmpty(desc);
         animeDescListBean = new AnimeDescListBean();
-        favorite.setVisibility(View.GONE);
+        hideView(favorite);
         bg.setImageDrawable(getResources().getDrawable(R.drawable.default_bg));
         mPresenter = new DescPresenter(sakuraUrl, this);
         mPresenter.loadData(true);
@@ -548,19 +548,19 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         title.setText(animeListBean.getTitle());
         if (animeListBean.getTagTitles() != null) {
             tagContainerLayout.setTags(animeListBean.getTagTitles());
-            tagContainerLayout.setVisibility(View.VISIBLE);
+            showView(tagContainerLayout);
         }else
-            tagContainerLayout.setVisibility(View.GONE);
+            hideView(tagContainerLayout);
         if (animeListBean.getDesc().isEmpty())
-            desc.setVisibility(View.GONE);
+            hideView(desc);
         else {
             desc.setContent(animeListBean.getDesc());
-            desc.setVisibility(View.VISIBLE);
+            showView(desc);
         }
         update_time.setText(animeListBean.getUpdateTime());
         if (!isImomoe) {
             score_view.setText(animeListBean.getScore()+"分");
-            score_view.setVisibility(View.VISIBLE);
+            showView(score_view);
         }
     }
 
@@ -593,26 +593,36 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
             if (!mActivityFinish) {
                 downloadView.setVisibility(View.GONE);
                 mSwipe.setRefreshing(false);
-                desc_view.setVisibility(View.GONE);
-                playLinearLayout.setVisibility(View.GONE);
-                multiLinearLayout.setVisibility(View.GONE);
-                recommendLinearLayout.setVisibility(View.GONE);
+                hideView(desc_view);
+                hideView(playLinearLayout);
+                hideView(multiLinearLayout);
+                hideView(recommendLinearLayout);
                 error_msg.setText(msg);
-                errorBg.setVisibility(View.VISIBLE);
+                showView(errorBg);
             }
         });
+    }
+
+    private void hideView(View view) {
+        Utils.fadeOut(view);
+        view.setVisibility(View.GONE);
+    }
+
+    private void showView(View view) {
+        Utils.fadeIn(view);
+        view.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void showEmptyVIew() {
         mSwipe.setRefreshing(true);
-        if ( favorite.isShown())
-            favorite.setVisibility(View.GONE);
-        desc_view.setVisibility(View.GONE);
-        playLinearLayout.setVisibility(View.GONE);
-        multiLinearLayout.setVisibility(View.GONE);
-        recommendLinearLayout.setVisibility(View.GONE);
-        errorBg.setVisibility(View.GONE);
+        downloadView.setVisibility(View.GONE);
+        hideView(favorite);
+        hideView(desc_view);
+        hideView(playLinearLayout);
+        hideView(multiLinearLayout);
+        hideView(recommendLinearLayout);
+        hideView(errorBg);
     }
 
     @Override
@@ -640,24 +650,24 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
                     downloadBean.add(downloadDramaBean);
                 }
                 if (bean.getAnimeDescMultiBeans().size() > 0)
-                    multiLinearLayout.setVisibility(View.VISIBLE);
+                    showView(multiLinearLayout);
                 else
-                    multiLinearLayout.setVisibility(View.GONE);
+                    hideView(multiLinearLayout);
                 animeDescMultiAdapter.setNewData(bean.getAnimeDescMultiBeans());
                 animeDescRecommendAdapter.setNewData(bean.getAnimeDescRecommendBeans());
                 setAnimeDescDramaAdapter(0);
-                desc_view.setVisibility(View.VISIBLE);
-                playLinearLayout.setVisibility(View.VISIBLE);
-                recommendLinearLayout.setVisibility(View.VISIBLE);
+                showView(desc_view);
+                showView(playLinearLayout);
+                showView(recommendLinearLayout);
             }
         });
     }
 
     private void setAnimeDescDramaAdapter(int sourceIndex) {
         if (animeDescListBean.getAnimeDescDetailsBeans().size() > 4)
-            openDrama.setVisibility(View.VISIBLE);
+            showView(openDrama);
         else
-            openDrama.setVisibility(View.GONE);
+            hideView(openDrama);
         animeDescDramaAdapter.setNewData(animeDescListBean.getAnimeDescDetailsBeans());
         downloadAdapter.setNewData(downloadBean);
     }
@@ -677,7 +687,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
                 if (!favorite.isShown()) {
                     favorite.setIcon(ContextCompat.getDrawable(this, isFavorite ? R.drawable.baseline_favorite_white_48dp : R.drawable.baseline_favorite_border_white_48dp));
                     favorite.setText(isFavorite ? Utils.getString(R.string.has_favorite) : Utils.getString(R.string.favorite));
-                    favorite.setVisibility(View.VISIBLE);
+                    showView(favorite);
                 }
             }
         });
@@ -689,12 +699,12 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
             if (!mActivityFinish) {
                 mSwipe.setRefreshing(false);
                 setCollapsingToolbar();
-                desc_view.setVisibility(View.VISIBLE);
-                playLinearLayout.setVisibility(View.GONE);
-                multiLinearLayout.setVisibility(View.GONE);
-                recommendLinearLayout.setVisibility(View.GONE);
+                showView(desc_view);
+                hideView(playLinearLayout);
+                hideView(multiLinearLayout);
+                hideView(recommendLinearLayout);
                 error_msg.setText(msg);
-                errorBg.setVisibility(View.VISIBLE);
+                showView(errorBg);
             }
         });
     }

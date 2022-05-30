@@ -32,6 +32,7 @@ import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.view.inputmethod.InputMethodManager;
@@ -898,5 +899,49 @@ public class Utils {
      */
     public static boolean getTheme() {
         return (boolean) SharedPreferencesUtils.getParam(getContext(), "darkTheme", false);
+    }
+
+    public static void fadeIn( View view) {
+        if (view.getVisibility() == View.VISIBLE) {
+            return;
+        }
+        Animation animation = new AlphaAnimation(0F, 1F);
+        animation.setDuration(800);
+        animation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                view.setEnabled(true);
+            }
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+        });
+        view.startAnimation(animation);
+        view.setVisibility(View.VISIBLE);
+    }
+
+    public static void fadeOut(final View view) {
+        if (view.getVisibility() != View.VISIBLE) {
+            return;
+        }
+        view.setEnabled(false);
+        Animation animation = new AlphaAnimation(1F, 0F);
+        animation.setDuration(800);
+        animation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                view.setVisibility(View.GONE);
+            }
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+        });
+        view.startAnimation(animation);
     }
 }

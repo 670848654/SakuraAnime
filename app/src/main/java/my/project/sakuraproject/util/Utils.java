@@ -39,10 +39,20 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.ArrayRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.appcompat.app.AlertDialog;
+import androidx.browser.customtabs.CustomTabsIntent;
+import androidx.cardview.widget.CardView;
+import androidx.core.content.FileProvider;
+import androidx.palette.graphics.Palette;
+
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.model.LazyHeaders;
+import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
@@ -63,15 +73,6 @@ import java.util.Formatter;
 import java.util.List;
 import java.util.Locale;
 
-import androidx.annotation.ArrayRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
-import androidx.appcompat.app.AlertDialog;
-import androidx.browser.customtabs.CustomTabsIntent;
-import androidx.cardview.widget.CardView;
-import androidx.core.content.FileProvider;
-import androidx.palette.graphics.Palette;
 import jp.wasabeef.glide.transformations.BlurTransformation;
 import my.project.sakuraproject.BuildConfig;
 import my.project.sakuraproject.R;
@@ -409,29 +410,17 @@ public class Utils {
      * @param textView
      */
     public static void setDefaultImage(Context context, String img, String htmlUrl, ImageView imageView, boolean setPalette, CardView cardView, TextView textView) {
+        imageView.setImageDrawable(getTheme() ? context.getDrawable(R.drawable.loading_night) : context.getDrawable(R.drawable.loading_light));
         DrawableCrossFadeFactory drawableCrossFadeFactory = new DrawableCrossFadeFactory.Builder(300).setCrossFadeEnabled(true).build();
         GlideUrl imgUrl;
-        /*if (img.contains("yhdmtu"))
-            imgUrl = new GlideUrl(getImgUrl(img, false), new LazyHeaders.Builder()
-                .addHeader("Referer", BaseModel.getDomain(false) + "/")
-                .build());
-        else
-            imgUrl = new GlideUrl(getImgUrl(img, true));*/
         if (img.contains("yhdmtu"))
             imgUrl = new GlideUrl(getImgUrl(img, false));
         else
             imgUrl = new GlideUrl(getImgUrl(img, true));
-        RequestOptions options = new RequestOptions()
-                .centerCrop()
-                .format(DecodeFormat.PREFER_RGB_565)
-                .placeholder(getTheme() ? R.drawable.loading_night : R.drawable.loading_light)
-                .error(R.drawable.error);
         Glide.with(context)
                 .asBitmap()
+                .transition(BitmapTransitionOptions.withCrossFade())
                 .load(imgUrl)
-//                .transition(DrawableTransitionOptions.withCrossFade(drawableCrossFadeFactory))
-                .apply(options)
-//                .into(imageView);
                 .into(new SimpleTarget<Bitmap>() {
                     @Override
                     public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
@@ -472,6 +461,7 @@ public class Utils {
     }
 
     public static void setImgViewBg(Context context, int source, String img, String descUrl, ImageView imageView) {
+        imageView.setImageDrawable(getTheme() ? context.getDrawable(R.drawable.loading_night) : context.getDrawable(R.drawable.loading_light));
         GlideUrl imgUrl;
         if (source == 1)
             imgUrl = new GlideUrl(getImgUrl(img, true));
@@ -479,19 +469,11 @@ public class Utils {
             imgUrl = new GlideUrl(getImgUrl(img, false), new LazyHeaders.Builder()
                     .addHeader("Referer", BaseModel.getDomain(false) + "/")
                     .build());
-        DrawableCrossFadeFactory drawableCrossFadeFactory = new DrawableCrossFadeFactory.Builder(300).setCrossFadeEnabled(true).build();
-        RequestOptions options = new RequestOptions()
-                .centerCrop()
-                .format(DecodeFormat.PREFER_RGB_565)
-                .placeholder(getTheme() ? R.drawable.loading_light : R.drawable.loading_night)
-                .error(R.drawable.error);
         Glide.with(context)
                 .asBitmap()
+                .transition(BitmapTransitionOptions.withCrossFade())
                 .load(imgUrl)
-//                .transition(DrawableTransitionOptions.withCrossFade(drawableCrossFadeFactory))
-                .apply(options)
                 .apply(RequestOptions.bitmapTransform( new BlurTransformation(15, 5)))
-//                .into(imageView);
                 .into(new SimpleTarget<Bitmap>() {
                     @Override
                     public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {

@@ -423,7 +423,9 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
                 break;
             //===========================================================
             case HomeHeaderBean.TYPE_DMFL_MALIMALI_TAG:
-                startActivity(new Intent(this, MaliTagActivity.class));
+                bundle.putString("homeParam", Api.MALIMALI_TAG_DEFAULT);
+                bundle.putString("title", "全部");
+                startActivity(new Intent(this, MaliTagActivity.class).putExtras(bundle));
                 break;
             case HomeHeaderBean.TYPE_DMFL_MALIMALI_JAPAN:
                 bundle.putString("homeParam", Api.MALIMALI_JAPAN);

@@ -15,7 +15,7 @@
         <categories android:name="android.shortcut.conversation"/>
     </shortcut>
     <!-- 动漫分类 -->
-    <shortcut
+    <!--<shortcut
         android:shortcutId="tag"
         android:enabled="true"
         android:icon="@drawable/ic_shortcut_dashboard"
@@ -28,7 +28,7 @@
             android:targetPackage="my.project.sakuraproject"
             android:targetClass="my.project.sakuraproject.main.tag.TagActivity" />
         <categories android:name="android.shortcut.conversation"/>
-    </shortcut>
+    </shortcut>-->
     <!-- 搜索动漫 -->
     <shortcut
         android:shortcutId="search"

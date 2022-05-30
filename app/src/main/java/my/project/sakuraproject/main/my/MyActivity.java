@@ -90,7 +90,7 @@ public class MyActivity extends BaseActivity implements ViewPager.OnPageChangeLi
         tab.setupWithViewPager(viewpager);
         tab.getTabAt(0).select();
         tab.setSelectedTabIndicatorColor(getResources().getColor(R.color.tabSelectedTextColor));
-        myFragmentAdapter = new MyFragmentAdapter(getSupportFragmentManager(), tab.getTabCount(), (List<AnimeUpdateInfoBean>) getIntent().getExtras().getSerializable("animeUpdateInfoBeans"));
+        myFragmentAdapter = new MyFragmentAdapter(getSupportFragmentManager(), tab.getTabCount(), getIntent().getExtras() != null ? (List<AnimeUpdateInfoBean>) getIntent().getExtras().getSerializable("animeUpdateInfoBeans") : null);
         viewpager.setAdapter(myFragmentAdapter);
         tab.getTabAt(0).setText(tabTitleArr[0]);
         tab.getTabAt(1).setText(tabTitleArr[1]);

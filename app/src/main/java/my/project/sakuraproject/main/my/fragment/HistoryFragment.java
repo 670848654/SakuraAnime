@@ -139,10 +139,10 @@ public class HistoryFragment extends MyLazyFragment<HistoryContract.View, Histor
             if (!Utils.isFastClick()) return false;
             View v = adapter.getViewByPosition(mRecyclerView, position, R.id.title);
             final PopupMenu popupMenu = new PopupMenu(getActivity(), v);
-            popupMenu.getMenuInflater().inflate(R.menu.delete_history_menu, popupMenu.getMenu());
+            popupMenu.getMenuInflater().inflate(R.menu.delete_menu, popupMenu.getMenu());
             popupMenu.setOnMenuItemClickListener(menuItem -> {
                 switch (menuItem.getItemId()) {
-                    case R.id.delete_history:
+                    case R.id.delete:
                         showDeleteHistoryDialog(position, historyBeans.get(position).getHistoryId(), false);
                         break;
                 }

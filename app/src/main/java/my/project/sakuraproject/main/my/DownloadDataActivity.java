@@ -144,6 +144,22 @@ public class DownloadDataActivity extends BaseActivity<DownloadDataContract.View
                     break;
             }
         });
+        adapter.setOnItemLongClickListener((adapter, view, position) -> {
+            if (!Utils.isFastClick()) return false;
+            View v = adapter.getViewByPosition(mRecyclerView, position, R.id.title);
+            final androidx.appcompat.widget.PopupMenu popupMenu = new androidx.appcompat.widget.PopupMenu(this, v);
+            popupMenu.getMenuInflater().inflate(R.menu.delete_menu, popupMenu.getMenu());
+            popupMenu.setOnMenuItemClickListener(menuItem -> {
+                switch (menuItem.getItemId()) {
+                    case R.id.delete:
+                        showDeleteDataDialog(downloadDataBeans.get(position), position);
+                        break;
+                }
+                return true;
+            });
+            popupMenu.show();
+            return true;
+        });
         if (Utils.checkHasNavigationBar(this)) mRecyclerView.setPadding(0,0,0, Utils.getNavigationBarHeight(this));
         adapter.setLoadMoreView(new CustomLoadMoreView());
         adapter.setOnLoadMoreListener(() -> mRecyclerView.postDelayed(() -> {

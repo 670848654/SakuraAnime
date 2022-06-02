@@ -15,6 +15,7 @@ import com.arialyy.annotations.Download;
 import com.arialyy.aria.core.Aria;
 import com.arialyy.aria.core.download.DownloadEntity;
 import com.arialyy.aria.core.task.DownloadTask;
+import com.chad.library.adapter.base.BaseQuickAdapter;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -99,6 +100,8 @@ public class DownloadFragment extends MyLazyFragment<DownloadContract.View, Down
 
     private void initAdapter() {
         adapter = new DownloadListAdapter(getActivity(), downloadList);
+        adapter.openLoadAnimation();
+        adapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
         adapter.setOnItemClickListener((adapter, view, position) -> {
             if (!Utils.isFastClick()) return;
             Bundle bundle = new Bundle();

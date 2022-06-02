@@ -15,6 +15,7 @@ import com.arialyy.annotations.Download;
 import com.arialyy.aria.core.Aria;
 import com.arialyy.aria.core.download.DownloadEntity;
 import com.arialyy.aria.core.task.DownloadTask;
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.r0adkll.slidr.Slidr;
 
 import org.greenrobot.eventbus.EventBus;
@@ -108,6 +109,8 @@ public class DownloadDataActivity extends BaseActivity<DownloadDataContract.View
     private void initAdapter() {
 //        mRecyclerView.setLayoutManager(new GridLayoutManager(this, Utils.isPad() ? 2 : 1));
         adapter = new DownloadDataListAdapter(this, downloadDataBeans);
+        adapter.openLoadAnimation();
+        adapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
         adapter.setOnItemClickListener((adapter, view, position) -> {
             if (!Utils.isFastClick()) return;
             if (downloadDataBeans.get(position).getComplete() != 1) {

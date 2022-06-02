@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.greenrobot.eventbus.Subscribe;
@@ -101,8 +102,8 @@ public class HistoryFragment extends MyLazyFragment<HistoryContract.View, Histor
 
     private void initAdapter() {
         adapter = new HistoryListAdapter(getActivity(), historyBeans);
-//        adapter.openLoadAnimation();
-//        adapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
+        adapter.openLoadAnimation();
+        adapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
         adapter.setOnItemClickListener((adapter, view, position) -> {
             if (!Utils.isFastClick()) return;
             animeId = historyBeans.get(position).getAnimeId();

@@ -144,6 +144,7 @@ public class AboutActivity extends BaseActivity {
 
     public List createUpdateLogList() {
         List logsList = new ArrayList();
+        logsList.add(new LogBean("版本：2.3.0", "由于imomoe源访问变成dmh8.com（怕是凉了），番剧画质差且视频中夹带非法广告，现移除imomoe源解析替换为质量不错的malimali源，更新后将清空所有imomoe源的存储信息（下载除外）。\n修复伪装为图片格式的M3U8下载完成后合并的文件无法播放的问题。"));
         logsList.add(new LogBean("版本：2.2.0", "修改首页UI，移除侧滑栏，不再将时间表作为首页展示内容\n修复下载M3U8视频失败时无法删除任务的问题\n移除设置同时下载数量功能（功能存在问题），暂设置默认下载数量为1\n修复投屏功能目前发现的一些问题\n修复我的追番列表、历史记录、下载列表中的番剧图片地址更换而无法显示的问题，更新新的图片地址存入数据库\n修改历史记录、下载列表中列表数据UI呈现样式"));
         logsList.add(new LogBean("版本：2.1.0", "新增追番更新检测，有更新的番剧将排在列表最前面（仅支持Yhdm源）\n新增观看历史记录\n新增剧集下载功能\n新增保存播放进度"));
         logsList.add(new LogBean("版本：2.0.0", "修复Yhdm源一些剧集无法解析的问题\n修复Imomoe源的一个Bug\n内置播放器添加播放时可隐藏底部进度条的选项（在播放器中设置）\n内置播放器优化相关操作"));

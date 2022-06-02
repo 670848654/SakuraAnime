@@ -634,8 +634,9 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     public void showSuccessMainView(AnimeDescListBean bean) {
         runOnUiThread(() -> {
             if (!mActivityFinish) {
-                if (!isImomoe)
-                    downloadView.setVisibility(View.VISIBLE);
+                /*if (!isImomoe)
+                    downloadView.setVisibility(View.VISIBLE);*/
+                downloadView.setVisibility(View.VISIBLE);
                 setCollapsingToolbar();
                 mSwipe.setRefreshing(false);
                 if (isFavorite) DatabaseUtil.updateFavorite(animeListBean, animeId);
@@ -820,7 +821,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         jsonObject = new JSONObject();
         jsonObject.put("title", animeTitle);
         jsonObject.put("source", source);
-//        jsonObject.put("imomoePlaySource", 0);
+        jsonObject.put("imomoePlaySource", 0);
         // m3u8下载配置
         m3U8VodOption = new M3U8VodOption();
         m3U8VodOption.ignoreFailureTs();
@@ -828,7 +829,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         m3U8VodOption.setBandWidthUrlConverter(new BandWidthUrlConverter());
         m3U8VodOption.setVodTsUrlConvert(new VodTsUrlConverter());
         m3U8VodOption.setMergeHandler(new TsMergeHandler());
-        m3U8VodOption.generateIndexFile();
+//        m3U8VodOption.generateIndexFile();
     }
 
     /**

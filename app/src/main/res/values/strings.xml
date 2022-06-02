@@ -238,7 +238,7 @@
 
     <string-array name="source">
         <item>Yhdm</item>
-        <item>MaliMali [不支持下载]</item>
+        <item>MaliMali</item>
     </string-array>
 
     <string-array name="my_titles">

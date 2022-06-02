@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -15,6 +16,8 @@ import java.io.FileReader;
 import java.io.Serializable;
 import java.security.spec.AlgorithmParameterSpec;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
@@ -261,7 +264,19 @@ public class VideoUtils {
             byte[] b = new byte[4096];
             for (File f : fileList) {
                 FileInputStream fileInputStream = new FileInputStream(f);
-                int len;
+                ByteArrayOutputStream temp = new ByteArrayOutputStream();
+                int len = 0;
+                int position = 0;
+                while ((len = fileInputStream.read(b)) != -1) {
+                    if (len == b.length) {
+                        temp.write(b, 0, len);
+                        position = getPosition(temp.toByteArray());
+                        break;
+                    }
+                }
+                fileInputStream.close();
+                fileInputStream = new FileInputStream(f);
+                if (position != 0) fileInputStream.skip(position);
                 while ((len = fileInputStream.read(b)) != -1) {
                     fs.write(b, 0, len);
                 }
@@ -276,6 +291,34 @@ public class VideoUtils {
             Log.e("TsMergeHandler", "合并TS失败，请重新下载....");
             return false;
         }
+    }
+
+    /**
+     * 获取标准mpeg-ts开始的位置，需要记住位置跳过TS伪装成图片的文件头
+     * 2022年6月1日22:07:50
+     * 参考 https://blog.csdn.net/feiyu361/article/details/121196667
+     * @param src
+     * @return
+     */
+    public static int getPosition (byte[] src) {
+        int position = 0;
+        StringBuffer sb = new StringBuffer("");
+        if (src == null || src.length <= 0) {
+            return position;
+        }
+        for (int i = 0; i < src.length; i++) {
+            int v = src[i] & 0xFF;
+            String hv = Integer.toHexString(v).toUpperCase();
+            if (hv.length() < 2) {
+                sb.append(0);
+            }
+            sb.append(hv);
+        }
+        Matcher matcher = Pattern.compile("47401110").matcher(sb.toString());
+        if(matcher.find()){
+            position = matcher.start()/2;
+        }
+        return position;
     }
 
 }

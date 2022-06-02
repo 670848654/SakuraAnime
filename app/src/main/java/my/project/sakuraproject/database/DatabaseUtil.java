@@ -7,7 +7,6 @@ import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.google.android.exoplayer2.C;
 
 import java.io.File;
 import java.text.ParseException;

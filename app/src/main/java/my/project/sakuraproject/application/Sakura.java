@@ -38,8 +38,6 @@ public class Sakura extends Application {
     }
     // yhdm最近更新动漫
     public static String YHDM_UPDATE;
-    // imomoe最近更新动漫
-    public static String IMOMOE_UPDATE;
 
     @Override
     public void onCreate() {
@@ -63,6 +61,7 @@ public class Sakura extends Application {
         // 2022年2月28日18:09:33 默认改为1
 //        Aria.get(this).getDownloadConfig().setMaxTaskNum((Integer) SharedPreferencesUtils.getParam(this, "download_number", 0) + 1).setConvertSpeed(true).setMaxSpeed(0);
         Aria.get(this).getDownloadConfig().setMaxTaskNum(1);
+        Aria.get(this).getDownloadConfig().setConvertSpeed(true);
     }
 
     @Override
@@ -83,12 +82,11 @@ public class Sakura extends Application {
     public static void setApi() {
         isImomoe = Utils.isImomoe();
         DOMAIN = isImomoe ? (String) SharedPreferencesUtils.getParam(appContext, "imomoe_domain", Utils.getString(R.string.imomoe_url)) : (String) SharedPreferencesUtils.getParam(appContext, "domain", Utils.getString(R.string.domain_url));
-        TAG_API = isImomoe ?  DOMAIN + "/so.asp" : DOMAIN + "/sitemap";
-        JCB_API = isImomoe ? "/search.asp?page=1&searchword=%BE%E7%B3%A1" : "/37/";
-        SEARCH_API = isImomoe ? DOMAIN : DOMAIN + "/search/";
-        MOVIE_API = isImomoe ? "/list/%s.html" : "/movie/";
+        TAG_API = DOMAIN + "/sitemap";
+        JCB_API =  "/37/";
+        SEARCH_API = DOMAIN + "/search/";
+        MOVIE_API = "/movie/";
         YHDM_UPDATE = String.format("%s/new/", SharedPreferencesUtils.getParam(appContext, "domain", Utils.getString(R.string.domain_url)));
-        IMOMOE_UPDATE = String.format("%s/top/new.html", SharedPreferencesUtils.getParam(appContext, "imomoe_domain", Utils.getString(R.string.imomoe_url)));
     }
 
     public void showSnackbarMsgAction(View view, String msg, String actionMsg, View.OnClickListener listener) {

@@ -51,7 +51,7 @@ public class DownloadService extends Service {
         handler = new Handler(Looper.getMainLooper());
         handler.post(() -> CustomToast.showToast(getApplicationContext(), "下载服务已开启", CustomToast.SUCCESS));
         mNotify = new DownloadNotification(this);
-        Log.e("onCreate", "DownloadService开始运行");
+        Log.e("Service onCreate", "DownloadService开始运行");
         EventBus.getDefault().post(new Refresh(3));
         Aria.download(this).resumeAllTask();
         Aria.download(this).register();
@@ -64,20 +64,20 @@ public class DownloadService extends Service {
             wakeLock = null;
         }
         Aria.download(this).unRegister();
-        Log.e("onDestroy", "DownloadService销毁了");
+        Log.e("Service onDestroy", "DownloadService销毁了");
         handler.post(() -> CustomToast.showToast(getApplicationContext(), "下载服务已关闭", CustomToast.SUCCESS));
         super.onDestroy();
     }
 
     @Download.onWait
     public void onTaskWait(DownloadTask downloadTask) {
-        Log.e("onTaskWait", downloadTask.getTaskName() + "，等待处理");
+        Log.e("Service onTaskWait", downloadTask.getTaskName() + "，等待处理");
         EventBus.getDefault().post(new Refresh(3));
     }
 
     @Download.onTaskResume
     public void onTaskResume(DownloadTask downloadTask) {
-        Log.e("onTaskStart", downloadTask.getTaskName() + "，恢复下载");
+        Log.e("Service onTaskStart", downloadTask.getTaskName() + "，恢复下载");
         mNotify.showNotification(new Long(downloadTask.getEntity().getId()).intValue(), (String) getAnimeInfo(downloadTask, 0), downloadTask.getTaskName());
 //        EventBus.getDefault().post(new Refresh(3));
     }
@@ -85,38 +85,38 @@ public class DownloadService extends Service {
 
     @Download.onTaskStart
     public void onTaskStart(DownloadTask downloadTask) {
-        Log.e("onTaskStart", downloadTask.getTaskName() + "，开始下载");
+        Log.e("Service onTaskStart", downloadTask.getTaskName() + "，开始下载");
         mNotify.showNotification(new Long(downloadTask.getEntity().getId()).intValue(), (String) getAnimeInfo(downloadTask, 0), downloadTask.getTaskName());
 //        EventBus.getDefault().post(new Refresh(3));
     }
 
     @Download.onTaskStop
     public void onTaskStop(DownloadTask downloadTask) {
-        Log.e("onTaskStop", downloadTask.getTaskName() + "，停止下载");
-        shouldDestroy();
+        Log.e("Service onTaskStop", downloadTask.getTaskName() + "，停止下载");
+//        shouldDestroy();
     }
 
     @Download.onTaskCancel
     public void onTaskCancel(DownloadTask downloadTask) {
-        Log.e("onTaskCancel", downloadTask.getTaskName() + "，取消下载");
+        Log.e("Service onTaskCancel", downloadTask.getTaskName() + "，取消下载");
 //        showInfo(downloadTask, "取消下载");
-        shouldDestroy();
+//        shouldDestroy();
     }
 
     @Download.onTaskFail
     public void onTaskFail(DownloadTask downloadTask) {
-        Log.e("onTaskFail", downloadTask.getTaskName() + "，下载失败");
+        Log.e("Service onTaskFail", downloadTask.getTaskName() + "，下载失败");
         DatabaseUtil.updateDownloadError((String) getAnimeInfo(downloadTask, 0), (Integer) getAnimeInfo(downloadTask, 1), downloadTask.getFilePath(), downloadTask.getEntity().getId(), downloadTask.getFileSize());
         mNotify.uploadInfo(new Long(downloadTask.getEntity().getId()).intValue(), false);
-        shouldDestroy();
+//        shouldDestroy();
     }
 
     @Download.onTaskComplete
     public void onTaskComplete(DownloadTask downloadTask) {
-        Log.e("onTaskComplete", downloadTask.getTaskName() + "，下载完成");
+        Log.e("Service onTaskComplete", downloadTask.getTaskName() + "，下载完成");
         mNotify.uploadInfo(new Long(downloadTask.getEntity().getId()).intValue(), true);
         DatabaseUtil.updateDownloadSuccess((String) getAnimeInfo(downloadTask, 0), (Integer) getAnimeInfo(downloadTask, 1), downloadTask.getFilePath(), downloadTask.getEntity().getId(), downloadTask.getFileSize());
-        shouldDestroy();
+//        shouldDestroy();
     }
 
     @Download.onTaskRunning

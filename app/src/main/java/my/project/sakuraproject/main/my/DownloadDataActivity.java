@@ -278,6 +278,7 @@ public class DownloadDataActivity extends BaseActivity<DownloadDataContract.View
 
     @Download.onTaskComplete
     public void onTaskComplete(DownloadTask downloadTask) {
+        Log.e("Activity onTaskComplete", downloadTask.getTaskName() + "，下载完成");
         JSONObject obj = JSONObject.parseObject(Aria.download(this).load(downloadTask.getEntity().getId()).getExtendField());
         for (int i = 0, size = downloadDataBeans.size(); i < size; i++) {
             if (downloadDataBeans.get(i).getAnimeTitle().equals(obj.getString("title")) && downloadTask.getTaskName().contains(downloadDataBeans.get(i).getPlayNumber())) {
@@ -300,7 +301,7 @@ public class DownloadDataActivity extends BaseActivity<DownloadDataContract.View
 
     @Download.onTaskCancel
     public void onTaskCancel(DownloadTask downloadTask) {
-        Log.e("onTaskCancel", downloadTask.getTaskName() + "，取消下载");
+        Log.e("Service onTaskCancel", downloadTask.getTaskName() + "，取消下载");
         List<Object> objects = DatabaseUtil.queryDownloadAnimeInfo(downloadTask.getEntity().getId());
         DatabaseUtil.deleteDownloadData(downloadDataId);
         EventBus.getDefault().post(new Refresh(3));
@@ -308,6 +309,7 @@ public class DownloadDataActivity extends BaseActivity<DownloadDataContract.View
 
     @Download.onTaskFail
     public void onTaskFail(DownloadTask downloadTask) {
+        Log.e("Service onTaskCancel", downloadTask.getTaskName() + "，下载失败");
         JSONObject obj = JSONObject.parseObject(Aria.download(this).load(downloadTask.getEntity().getId()).getExtendField());
         for (int i = 0, size = downloadDataBeans.size(); i < size; i++) {
             if (downloadDataBeans.get(i).getAnimeTitle().equals(obj.getString("title")) && downloadTask.getTaskName().contains(downloadDataBeans.get(i).getPlayNumber())) {

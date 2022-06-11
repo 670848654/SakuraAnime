@@ -167,9 +167,10 @@ public class DownloadFragment extends MyLazyFragment<DownloadContract.View, Down
 
     @Download.onTaskRunning
     protected void running(DownloadTask downloadTask) {
-        JSONObject obj = JSONObject.parseObject(Aria.download(this).load(downloadTask.getEntity().getId()).getExtendField());
+//        JSONObject obj = JSONObject.parseObject(Aria.download(this).load(downloadTask.getEntity().getId()).getExtendField());
         for (int i = 0, size = downloadList.size(); i < size; i++) {
-            if (downloadList.get(i).getAnimeTitle().equals(obj.getString("title"))) {
+            String title = (String) DatabaseUtil.queryDownloadAnimeInfo(downloadTask.getEntity().getId()).get(0);
+            if (downloadList.get(i).getAnimeTitle().equals(title)) {
                 TextView number = (TextView) adapter.getViewByPosition(i, R.id.number);
                 if (number != null) {
                     String speed = downloadTask.getConvertSpeed() == null ? "0kb/s" : downloadTask.getConvertSpeed();
@@ -191,10 +192,11 @@ public class DownloadFragment extends MyLazyFragment<DownloadContract.View, Down
 
     @Download.onTaskComplete
     public void onTaskComplete(DownloadTask downloadTask) {
-        JSONObject obj = JSONObject.parseObject(Aria.download(this).load(downloadTask.getEntity().getId()).getExtendField());
+//        JSONObject obj = JSONObject.parseObject(Aria.download(this).load(downloadTask.getEntity().getId()).getExtendField());
         new Handler().postDelayed(() -> {
             for (int i = 0, size = downloadList.size(); i < size; i++) {
-                if (downloadList.get(i).getAnimeTitle().equals(obj.getString("title"))) {
+                String title = (String) DatabaseUtil.queryDownloadAnimeInfo(downloadTask.getEntity().getId()).get(0);
+                if (downloadList.get(i).getAnimeTitle().equals(title)) {
                     downloadList.get(i).setFilesSize(DatabaseUtil.queryDownloadFilesSize(downloadList.get(i).getDownloadId()));
                     downloadList.get(i).setNoCompleteSize(DatabaseUtil.queryDownloadNotCompleteCount(downloadList.get(i).getDownloadId()));
                     adapter.notifyItemChanged(i);

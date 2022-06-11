@@ -1,5 +1,6 @@
 package my.project.sakuraproject.database;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
@@ -7,6 +8,8 @@ import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
 
+
+import com.arialyy.aria.core.Aria;
 
 import java.io.File;
 import java.text.ParseException;
@@ -1042,5 +1045,22 @@ public class DatabaseUtil {
                 });
                 break;
         }
+    }
+
+    /**
+     * 删除重复taskID的错误数据
+     * @param context
+     */
+    public static void deleteDistinctData(Context context) {
+        Cursor cursor = db.rawQuery("select F_TASK_ID from T_DOWNLOAD_DATA where F_TASK_ID in (select F_TASK_ID from T_DOWNLOAD_DATA group by F_TASK_ID having count(*) > 1) group by F_TASK_ID", null);
+        if (cursor.getCount() > 0) {
+            while (cursor.moveToNext()) {
+                int taskId = cursor.getInt(0);
+                Aria.download(context).load(taskId).cancel();
+            }
+            cursor.close();
+        }
+        db.execSQL("delete from T_DOWNLOAD_DATA where F_TASK_ID in (select F_TASK_ID from T_DOWNLOAD_DATA group by F_TASK_ID having count(*) > 1) and F_COMPLETE = 0", new String[]{});
+        db.execSQL("delete from T_DOWNLOAD where F_ID not in (select F_LINK_ID from T_DOWNLOAD_DATA group by F_LINK_ID)", new String[]{});
     }
 }

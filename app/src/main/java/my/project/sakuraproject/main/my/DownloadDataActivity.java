@@ -252,9 +252,9 @@ public class DownloadDataActivity extends BaseActivity<DownloadDataContract.View
 
     @Download.onTaskRunning
     protected void running(DownloadTask downloadTask) {
-        JSONObject obj = JSONObject.parseObject(Aria.download(this).load(downloadTask.getEntity().getId()).getExtendField());
+        String title = (String) DatabaseUtil.queryDownloadAnimeInfo(downloadTask.getEntity().getId()).get(0);
         for (int i = 0, size = downloadDataBeans.size(); i < size; i++) {
-            if (downloadDataBeans.get(i).getAnimeTitle().equals(obj.getString("title")) && downloadTask.getTaskName().contains(downloadDataBeans.get(i).getPlayNumber())) {
+            if (downloadDataBeans.get(i).getAnimeTitle().equals(title) && downloadTask.getTaskName().contains(downloadDataBeans.get(i).getPlayNumber())) {
                 TextView number = (TextView) adapter.getViewByPosition(i, R.id.number);
                 if (number != null)
                     number.setText(downloadTask.getConvertSpeed() == null ? "0kb/s" : downloadTask.getConvertSpeed());
@@ -279,9 +279,9 @@ public class DownloadDataActivity extends BaseActivity<DownloadDataContract.View
     @Download.onTaskComplete
     public void onTaskComplete(DownloadTask downloadTask) {
         Log.e("Activity onTaskComplete", downloadTask.getTaskName() + "，下载完成");
-        JSONObject obj = JSONObject.parseObject(Aria.download(this).load(downloadTask.getEntity().getId()).getExtendField());
+        String title = (String) DatabaseUtil.queryDownloadAnimeInfo(downloadTask.getEntity().getId()).get(0);
         for (int i = 0, size = downloadDataBeans.size(); i < size; i++) {
-            if (downloadDataBeans.get(i).getAnimeTitle().equals(obj.getString("title")) && downloadTask.getTaskName().contains(downloadDataBeans.get(i).getPlayNumber())) {
+            if (downloadDataBeans.get(i).getAnimeTitle().equals(title) && downloadTask.getTaskName().contains(downloadDataBeans.get(i).getPlayNumber())) {
                 downloadDataBeans.get(i).setComplete(1);
                 String path = downloadTask.getFilePath();
                 if (path.contains("m3u8")) {

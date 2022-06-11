@@ -1008,7 +1008,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
                     .setFilePath(savePath + ".m3u8")
                     .ignoreCheckPermissions()
                     .ignoreFilePathOccupy()
-                    .setExtendField(jsonObject.toString())
+//                    .setExtendField(jsonObject.toString())
                     .m3u8VodOption(m3U8VodOption)   // 调整下载模式为m3u8点播
                     .create();
          else
@@ -1017,7 +1017,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
                     .setFilePath(savePath + ".mp4")
                     .ignoreCheckPermissions()
                     .ignoreFilePathOccupy()
-                    .setExtendField(jsonObject.toString())
+//                    .setExtendField(jsonObject.toString())
                     .create();
     }
 

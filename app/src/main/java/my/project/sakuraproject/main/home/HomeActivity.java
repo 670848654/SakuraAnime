@@ -98,6 +98,7 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
     @Override
     protected void init() {
         hideGap();
+        DatabaseUtil.deleteDistinctData(this);
         EventBus.getDefault().register(this);
         initToolbar();
         initDialog();

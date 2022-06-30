@@ -69,10 +69,10 @@ public class MaliTagActivity extends BaseActivity<TagContract.View, TagPresenter
     public final static String FL_CHINA = "国产动漫";
     public final static String FL_JAPAN = "日韩动漫";
     public final static String FL_EUROPE = "欧美动漫";
-    private final static String FL = "分类";
-    private final static String LX = "类型";
-    private final static String NF = "年份";
-    private final static String ZM = "字母";
+    private final static String FL = "全部类型";
+    private final static String LX = "全部剧情";
+    private final static String NF = "全部时间";
+    private final static String ZM = "全部字母";
     private String homeParam = "";
     private String title = "";
     private LinearLayout listView;
@@ -251,7 +251,7 @@ public class MaliTagActivity extends BaseActivity<TagContract.View, TagPresenter
                 adapter.setNewData(maliTagLists);
                 mSwipe.setEnabled(true);
                 // 刷新动漫列表
-                params[2] = bean.getItemTitle().equals("全部") ? "" :  bean.getItemTitle();
+                params[2] = bean.getItemTitle().contains("全部") ? "" :  bean.getItemTitle();
                 nowPage = 1;
                 params[4] = nowPage + "";
                 getTagData();
@@ -278,7 +278,7 @@ public class MaliTagActivity extends BaseActivity<TagContract.View, TagPresenter
                 adapter.setNewData(maliTagLists);
                 mSwipe.setEnabled(true);
                 // 刷新动漫列表
-                params[5] = bean.getItemTitle().equals("全部") ? "" :  bean.getItemTitle();
+                params[5] = bean.getItemTitle().contains("全部") ? "" :  bean.getItemTitle();
                 nowPage = 1;
                 params[4] = nowPage + "";
                 getTagData();
@@ -305,7 +305,7 @@ public class MaliTagActivity extends BaseActivity<TagContract.View, TagPresenter
                 adapter.setNewData(maliTagLists);
                 mSwipe.setEnabled(true);
                 // 刷新动漫列表
-                params[3] = bean.getItemTitle().equals("全部") ? "" :  bean.getItemTitle();
+                params[3] = bean.getItemTitle().contains("全部") ? "" :  bean.getItemTitle();
                 nowPage = 1;
                 params[4] = nowPage + "";
                 getTagData();

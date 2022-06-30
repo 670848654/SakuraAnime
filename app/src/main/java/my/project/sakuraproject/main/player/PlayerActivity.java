@@ -1,8 +1,10 @@
 package my.project.sakuraproject.main.player;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -72,6 +74,18 @@ public class PlayerActivity extends BasePlayerActivity implements VideoContract.
         if (webUrl.contains("jx.618g.com")) {
             cancelDialog();
             VideoUtils.openDefaultWebview(this, webUrl);
+        } else if (webUrl.contains("html")) {
+            VideoUtils.showParseAlert(this, (dialog, index) -> {
+                dialog.dismiss();
+                url = String.format(Api.PARSE_INTERFACE[index], url);
+                if (index == Api.PARSE_INTERFACE.length -1) {
+                    VideoUtils.openDefaultWebview(this, url);
+                    this.finish();
+                } else {
+                    SniffingUtil.get().activity(this).referer(url).callback(this).url(url).start();
+                    Toast.makeText(this, Utils.getString(R.string.select_parse_interface_msg), Toast.LENGTH_LONG).show();
+                }
+            });
         } else {
             url = String.format(Api.PARSE_API, url);
             SniffingUtil.get().activity(this).referer(url).callback(this).url(url).start();

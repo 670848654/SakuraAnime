@@ -83,7 +83,7 @@
             android:configChanges="screenLayout|orientation|screenSize|smallestScreenSize|keyboardHidden|uiMode"
             android:hardwareAccelerated="true"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/TranslucentTheme" />
         <activity
             android:name=".main.tag.TagActivity"
             android:configChanges="screenLayout|orientation|screenSize|smallestScreenSize|keyboardHidden|uiMode"

@@ -84,12 +84,17 @@ public class VideoModel extends BaseModel implements VideoContract.Model {
                 DatabaseUtil.addIndex(fid, url, playSource, playNumber);
                 String dataBaseDrama = DatabaseUtil.queryAllIndex(fid);
                 List< AnimeDescDetailsBean > bean = ImomoeJsoupUtils.getAllDrama(source, dataBaseDrama);
-                callback.successImomoeDramas(bean);
-                String playUrl = ImomoeJsoupUtils.getImomoePlayUrl(source);
-                if (!playUrl.isEmpty())
-                    callback.successImomoeVideoUrl(playUrl);
-                else
-                    callback.empty();
+                if (bean.size() == 0) {
+                    callback.error();
+
+                } else {
+                    callback.successImomoeDramas(bean);
+                    String playUrl = ImomoeJsoupUtils.getImomoePlayUrl(source);
+                    if (!playUrl.isEmpty())
+                        callback.successImomoeVideoUrl(playUrl);
+                    else
+                        callback.empty();
+                }
                 /*String js = "";
                 if (!isJs) {
                     String fid = DatabaseUtil.getAnimeID(title, 1);

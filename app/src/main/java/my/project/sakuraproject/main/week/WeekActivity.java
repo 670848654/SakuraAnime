@@ -52,7 +52,7 @@ public class WeekActivity extends BaseActivity<HomeContract.View, HomePresenter>
 
     @Override
     protected HomePresenter createPresenter() {
-        return new HomePresenter(true, getIntent().getExtras().getString("html"), this);
+        return new HomePresenter(true, this);
     }
 
     @Override
@@ -157,12 +157,6 @@ public class WeekActivity extends BaseActivity<HomeContract.View, HomePresenter>
     @Override
     public void showUpdateInfoSuccess(List<AnimeUpdateInfoBean> animeUpdateInfoBeans) {
 
-    }
-
-    @Override
-    public void showMaliWeekInfoSuccess(String html) {
-        mPresenter = new HomePresenter(false, html, this);
-        mPresenter.loadData(false);
     }
 
     public void setWeekAdapter(int pos) {

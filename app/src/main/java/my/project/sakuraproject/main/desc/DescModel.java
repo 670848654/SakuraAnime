@@ -92,6 +92,7 @@ public class DescModel extends BaseModel implements DescContract.Model {
                     //创建番剧索引
                     DatabaseUtil.addAnime(animeTitle, 1);
                     fid = DatabaseUtil.getAnimeID(animeTitle, 1);
+                    Log.e("fid", fid);
                     // 添加历史记录
                     DatabaseUtil.addOrUpdateHistory(fid, animeListBean.getUrl(), animeListBean.getImg());
                     //是否收藏

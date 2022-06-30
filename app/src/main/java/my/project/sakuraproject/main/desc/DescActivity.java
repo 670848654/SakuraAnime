@@ -398,7 +398,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
                 if (!isImomoe)
                     startActivity(new Intent(DescActivity.this, AnimeListActivity.class).putExtras(bundle));
                 else {
-                    if (sakuraUrl.contains("/voddetail/") && animeListBean.getTagUrls().get(position).contains("-"))
+                    /*if (sakuraUrl.contains("/voddetail/") && animeListBean.getTagUrls().get(position).contains("-") || animeListBean.getTagTitles().equals("动漫"))
                         startActivity(new Intent(DescActivity.this, SearchActivity.class).putExtras(bundle));
                     else {
                         Bundle tagBundle = new Bundle();
@@ -415,7 +415,8 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
                                 break;
                         }
                         startActivity(new Intent(DescActivity.this, MaliTagActivity.class).putExtras(tagBundle));
-                    }
+                    }*/
+                    CustomToast.showToast(DescActivity.this, "暂不支持", CustomToast.WARNING);
                 }
             }
 
@@ -836,14 +837,23 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
      * 单集解析下载
      */
     private void downloadSingleParse(int position) {
+        alertDialog = Utils.getProDialog(DescActivity.this, R.string.create_parse_download_task);
+        createDownloadConfig();
         if (!isImomoe) {
-            alertDialog = Utils.getProDialog(DescActivity.this, R.string.create_parse_download_task);
-            createDownloadConfig();
-            String yhdmUrl = downloadBean.get(position).getYhdmUrl();
-            yhdmUrl = String.format(Api.PARSE_API, yhdmUrl);
-            SniffingUtil.get().activity(this).referer(yhdmUrl).callback(this).url(yhdmUrl).position(position).start();
+            String url = String.format(Api.PARSE_API, downloadBean.get(position).getYhdmUrl());
+            SniffingUtil.get().activity(this).referer(url).callback(this).url(url).position(position).start();
         } else {
-            CustomToast.showToast(this, "不支持的下载格式", CustomToast.ERROR);
+            VideoUtils.showParseAlert(this, (dialog, index) -> {
+                dialog.dismiss();
+                String url = String.format(Api.PARSE_INTERFACE[index], downloadBean.get(position).getYhdmUrl());
+                if (index == Api.PARSE_INTERFACE.length -1) {
+                    cancelDialog();
+                    Toast.makeText(this, "该接口仅用于WebView播放！", Toast.LENGTH_SHORT).show();
+                } else  {
+                    SniffingUtil.get().activity(this).referer(url).callback(this).url(url).start();
+                    Toast.makeText(this, Utils.getString(R.string.select_parse_interface_msg), Toast.LENGTH_LONG).show();
+                }
+            });
         }
     }
 
@@ -884,7 +894,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
                         break;
                     }
                 }
-                Toast.makeText(getApplicationContext(), playNumber + " -> 下载出错，可能需要解析后才能下载~" , Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), playNumber + " -> 下载出错，可能需要解析后才能下载" , Toast.LENGTH_SHORT).show();
             }
             cancelDialog();
         });
@@ -911,6 +921,19 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     @Override
     public void showSuccessImomoeVideoUrlsView(String url, String playNumber) {
         runOnUiThread(() -> {
+            cancelDialog();
+            if (url.endsWith("html")) {
+                for (DownloadDramaBean downloadDramaBean : downloadBean) {
+                    if (downloadDramaBean.getTitle().equals(playNumber)) {
+                        downloadDramaBean.setYhdmUrl(url);
+                        downloadDramaBean.setShouldParse(true);
+                        downloadDramaBean.setSelected(false);
+                        break;
+                    }
+                }
+                Toast.makeText(getApplicationContext(), playNumber + " -> 下载出错，可能需要解析后才能下载" , Toast.LENGTH_SHORT).show();
+                return;
+            }
             long taskId;
             String fileSavePath = savePath + playNumber;
             taskId = createDownloadTask(url.endsWith(".m3u8"), url, fileSavePath);
@@ -918,7 +941,6 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
             DatabaseUtil.insertDownloadData(animeTitle, source, playNumber, 0, taskId);
             Log.e("Malimali", animeTitle + "," + source + "," + animeListBean.getImg() + "," + sakuraUrl + ","+ playNumber + "," + taskId);
             startDownloadService();
-            cancelDialog();
         });
     }
     /************************************************************ m3u8下载配置 START ************************************************************/

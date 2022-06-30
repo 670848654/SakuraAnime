@@ -352,8 +352,10 @@ public class SniffingWebViewClient extends WebViewClient implements SniffingUICa
             mConnTimeout = null;
             if (mVideos.isEmpty()) {
                 LogUtil.e("SniffingUtil", "FinishedRunnable( postDelayed  【alert ，confirm】 )  --> " + url);
-                //mH.postDelayed(new ParserHtmlRunnable(view, "alert"), 5000);
-                //mH.postDelayed(mJSRunnable = new ParserHtmlRunnable(view, "confirm"), 6000);
+
+                mH.postDelayed(new ParserHtmlRunnable(view, "alert"), 5000);
+                mH.postDelayed(mJSRunnable = new ParserHtmlRunnable(view, "confirm"), 6000);
+
                 SniffingWebViewClient.this.onSniffingError(view, url, mPosition,  READ_TIME_OUT);
                 SniffingWebViewClient.this.onSniffingFinish(view, url);
             } else {
@@ -386,8 +388,10 @@ public class SniffingWebViewClient extends WebViewClient implements SniffingUICa
                 if (mConnTimeout == null) return;
                 mH.removeCallbacks(mConnTimeout);
                 mConnTimeout = null;
-                //mH.postDelayed(new ParserHtmlRunnable(view, "alert"), 5000);
-                //mH.postDelayed(mJSRunnable = new ParserHtmlRunnable(view, "confirm"), 8000);
+
+                mH.postDelayed(new ParserHtmlRunnable(view, "alert"), 5000);
+                mH.postDelayed(mJSRunnable = new ParserHtmlRunnable(view, "confirm"), 8000);
+
                 SniffingWebViewClient.this.onSniffingError(view, url, mPosition, READ_TIME_OUT);
                 SniffingWebViewClient.this.onSniffingFinish(view, url);
             } else if (type == TYPE_READ) {

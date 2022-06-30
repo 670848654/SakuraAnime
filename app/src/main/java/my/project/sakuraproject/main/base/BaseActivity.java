@@ -201,9 +201,6 @@ public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatA
                 !getRunningActivityName().equals("PlayerActivity") &&
                 !getRunningActivityName().equals("LocalPlayerActivity") &&
                 !getRunningActivityName().equals("ImomoePlayerActivity") &&
-                !getRunningActivityName().equals("DefaultX5WebActivity") &&
-                !getRunningActivityName().equals("X5WebActivity") &&
-                !getRunningActivityName().equals("DefaultNormalWebActivity") &&
                 !getRunningActivityName().equals("NormalWebActivity") &&
                 !getRunningActivityName().equals("DLNAActivity")) {
             if (gtSdk23()) {

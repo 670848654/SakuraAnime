@@ -25,6 +25,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 import androidx.appcompat.app.AlertDialog;
 import my.project.sakuraproject.R;
+import my.project.sakuraproject.api.Api;
 import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.bean.AnimeDescDetailsBean;
 import my.project.sakuraproject.main.player.PlayerActivity;
@@ -319,6 +320,15 @@ public class VideoUtils {
             position = matcher.start()/2;
         }
         return position;
+    }
+
+    public static void showParseAlert(Context context, DialogInterface.OnClickListener listener) {
+        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(context, R.style.DialogStyle);
+        builder.setTitle(Utils.getString(R.string.select_parse_interface));
+        builder.setCancelable(false);
+        builder.setItems(Api.PARSE_TITLES, listener);
+        alertDialog = builder.create();
+        alertDialog.show();
     }
 
 }

@@ -316,7 +316,7 @@ public class HistoryFragment extends MyLazyFragment<HistoryContract.View, Histor
     public void getVideoError() {
         getActivity().runOnUiThread(() -> {
 //            application.showErrorToastMsg(Utils.getString(R.string.error_700));
-            CustomToast.showToast(getActivity(), Utils.getString(R.string.error_700), CustomToast.ERROR);
+            CustomToast.showToast(getActivity(), Utils.getString(R.string.loading_video__failed), CustomToast.ERROR);
         });
     }
 

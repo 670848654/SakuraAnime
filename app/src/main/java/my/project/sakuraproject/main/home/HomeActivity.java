@@ -79,15 +79,12 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
 
     @Override
     protected HomePresenter createPresenter() {
-        return new HomePresenter(false, "", this);
+        return new HomePresenter(false, this);
     }
 
     @Override
     protected void loadData() {
-        if (Utils.isImomoe())
-            mPresenter.loadMailiHtmlData();
-        else
-            mPresenter.loadData(true);
+        mPresenter.loadData(true);
     }
 
     @Override
@@ -319,13 +316,6 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
         animeUpdateInfoBeans = beans;
     }
 
-    @Override
-    public void showMaliWeekInfoSuccess(String html) {
-        maliHtml = html;
-        mPresenter = new HomePresenter(false, html, this);
-        mPresenter.loadData(true);
-    }
-
     private void setTheme(boolean isDark) {
         isChangingTheme = true;
         if (isDark) {
@@ -428,7 +418,7 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
             //===========================================================
             case HomeHeaderBean.TYPE_DMFL_MALIMALI_TAG:
                 bundle.putString("homeParam", Api.MALIMALI_TAG_DEFAULT);
-                bundle.putString("title", "全部");
+                bundle.putString("title", "全部类型");
                 startActivity(new Intent(this, MaliTagActivity.class).putExtras(bundle));
                 break;
             case HomeHeaderBean.TYPE_DMFL_MALIMALI_JAPAN:

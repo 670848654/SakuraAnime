@@ -28,7 +28,8 @@ public class ImomoeJsoupUtils {
 
     /** 星期数组 **/
     private static final String[] TABS = Utils.getArray(R.array.week_array);
-    private final static Pattern PAGE_PATTERN = Pattern.compile("-[0-9].*?-");
+    private final static Pattern PAGE_PATTERN = Pattern.compile("\\/(.*)页");
+//    private final static Pattern PAGE_PATTERN = Pattern.compile("-[0-9].*?-");
     private final static Pattern PLAY_URL_PATTERN = Pattern.compile("(https?|ftp|file):\\/\\/[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]");
 
     /**
@@ -39,12 +40,20 @@ public class ImomoeJsoupUtils {
      */
     public static int getPageCount(String source) {
         Document document = Jsoup.parse(source);
-        if (document.getElementById("page") == null)
+        /*if (document.getElementById("page") == null)
             return 0;
         int pageCount = 0;
         Matcher m = PAGE_PATTERN.matcher(document.getElementById("page").select("a").last().attr("href"));
         while (m.find()) {
             pageCount = Integer.parseInt(m.group().replaceAll("-", ""));
+            break;
+        }*/
+        if (document.select("div.pagebox.clearfix > a").size() == 0)
+            return 0;
+        int pageCount = 0;
+        Matcher m = PAGE_PATTERN.matcher(document.select("div.pagebox.clearfix > a.pagelink_b").get(0).text().replaceAll("&nbsp;", ""));
+        while (m.find()) {
+            pageCount = Integer.parseInt(m.group().replaceAll("/", "").replaceAll("页", ""));
             break;
         }
         return pageCount;
@@ -60,12 +69,47 @@ public class ImomoeJsoupUtils {
     public static List<HomeBean> getHomeAllData(String source) {
         Document document = Jsoup.parse(source);
         List<HomeBean> homeBeanList = new ArrayList<>();
-        Elements elements = document.select("div.module-lines-list");
+        /*Elements elements = document.select("div.module-lines-list");
         homeBeanList.add(getHomeListData(elements, 0, "小编推荐"));
         homeBeanList.add(getHomeListData(elements, 2, "日本动漫"));
         homeBeanList.add(getHomeListData(elements, 4, "国产动漫"));
         homeBeanList.add(getHomeListData(elements, 5, "欧美动漫"));
-        homeBeanList.add(getHomeListData(elements, 6, "OVA剧场版"));
+        homeBeanList.add(getHomeListData(elements, 6, "OVA剧场版"));*/
+        // 热门推荐
+        Elements hotsLi = document.getElementById("movie_content_div").select("li");
+        homeBeanList.add(getHomeListData(
+                true,
+                document.getElementById("movie_content_div").parent().select("h3 > span").text(),
+                "",
+                hotsLi));
+        // 日本动漫
+        Elements japanLi = document.getElementById("mytab3").select("li");
+        homeBeanList.add(getHomeListData(
+                false,
+                document.getElementById("mytab3").parent().select("h3 > span").text(),
+                document.getElementById("mytab3").parent().select("a.aMore").attr("href"),
+                japanLi));
+        // 国产动漫
+        Elements chinaLi = document.getElementById("mytab2").select("li");
+        homeBeanList.add(getHomeListData(
+                false,
+                document.getElementById("mytab2").parent().select("h3 > span").text(),
+                document.getElementById("mytab2").parent().select("a.aMore").attr("href"),
+                chinaLi));
+        // 欧美动漫
+        Elements europeLi = document.getElementById("mytab").select("li");
+        homeBeanList.add(getHomeListData(
+                false,
+                document.getElementById("mytab").parent().select("h3 > span").text(),
+                document.getElementById("mytab").parent().select("a.aMore").attr("href"),
+                europeLi));
+        // OVA动漫
+        Elements ovaLi = document.getElementById("mytab4").select("li");
+        homeBeanList.add(getHomeListData(
+                false,
+                document.getElementById("mytab4").parent().select("h3 > span").text(),
+                document.getElementById("mytab4").parent().select("a.aMore").attr("href"),
+                ovaLi));
         return homeBeanList;
     }
 
@@ -77,7 +121,7 @@ public class ImomoeJsoupUtils {
      * @param title
      * @return
      */
-    private static HomeBean getHomeListData(Elements elements, int index, String title) {
+    /*private static HomeBean getHomeListData(Elements elements, int index, String title) {
         // 小编推荐
         Element items = elements.get(index);
         Elements list = items.select("div.module-item");
@@ -99,6 +143,36 @@ public class ImomoeJsoupUtils {
         }
         homeBean.setData(homeItemBeanList);
         return homeBean;
+    }*/
+
+    /**
+     * 首页 > 动漫数据
+     * 2022年7月14日09:30:17 修改
+     * @param isHot
+     * @param title
+     * @param moreUrl
+     * @param hotsLi
+     * @return
+     */
+    private static HomeBean getHomeListData(boolean isHot, String title, String moreUrl, Elements hotsLi) {
+        HomeBean homeBean = new HomeBean();
+        homeBean.setTitle(title);
+        homeBean.setMoreUrl("");
+        List<HomeBean.HomeItemBean> homeItemBeanList = new ArrayList<>();
+        for (Element hot : hotsLi) {
+            HomeBean.HomeItemBean homeItemBean = new HomeBean.HomeItemBean();
+            String animeTitle = hot.select("figcaption.block-title > b").text();
+            String url = hot.select("a").attr("href");
+            String img = hot.select("img").attr(isHot ? "src" : "data-echo");
+            String episodes = hot.select(isHot ? "p.otherinfo" : "p.block-clearfix").text();
+            homeItemBean.setTitle(animeTitle);
+            homeItemBean.setUrl(url);
+            homeItemBean.setImg(img);
+            homeItemBean.setEpisodes(episodes);
+            homeItemBeanList.add(homeItemBean);
+        }
+        homeBean.setData(homeItemBeanList);
+        return homeBean;
     }
 
     /**************************************  新番时间表解析方法开始  **************************************/
@@ -109,7 +183,7 @@ public class ImomoeJsoupUtils {
      * @return
      * @throws JSONException
      */
-    public static LinkedHashMap getHomeData(String source) throws JSONException {
+    /*public static LinkedHashMap getHomeData(String source) throws JSONException {
         LinkedHashMap homeMap = new LinkedHashMap();
         JSONObject weekObj = new JSONObject();
         Document document = Jsoup.parse(source);
@@ -120,6 +194,30 @@ public class ImomoeJsoupUtils {
                 weekObj.put(TABS[i], setWeekJsonArray(
                         japanWeekItem.get(i).select("div.module-item"),
                         chinaWeekItem.get(i).select("div.module-item")));
+            }
+            Log.e("week", weekObj.toString());
+            homeMap.put("success", weekObj.length() > 0 ? true : false);
+            homeMap.put("week", weekObj);
+        }
+        else
+            homeMap.put("success", false);
+        return homeMap;
+    }*/
+
+    public static LinkedHashMap getHomeData(String japanHtml, String chinaHtml) throws JSONException {
+        LinkedHashMap homeMap = new LinkedHashMap();
+        JSONObject weekObj = new JSONObject();
+        Document japanDocument = Jsoup.parse(japanHtml);
+        Document chinaDocument = Jsoup.parse(chinaHtml);
+        Elements japanWeekItem = japanDocument.getElementById("mytabweek").select("ul.tab-content");
+        Log.e("japanWeekItem", japanWeekItem.html());
+        Elements chinaWeekItem = chinaDocument.getElementById("mytabweek1").select("ul.tab-content");
+        if (japanWeekItem.size() > 0 && chinaWeekItem.size() > 0) {
+            for (int i=0,size=TABS.length; i<size; i++) {
+                weekObj.put(TABS[i], setWeekJsonArray(
+                        japanWeekItem.get(i).select("li"),
+                        chinaWeekItem.get(i).select("li"))
+                );
             }
             Log.e("week", weekObj.toString());
             homeMap.put("success", weekObj.length() > 0 ? true : false);
@@ -142,17 +240,23 @@ public class ImomoeJsoupUtils {
         try {
             for (int i = 0, size = japanLi.size(); i < size; i++) {
                 JSONObject object = new JSONObject();
-                object.put("title", japanLi.get(i).select("div.module-item-cover > div.module-item-pic > a").attr("title"));
+                /*object.put("title", japanLi.get(i).select("div.module-item-cover > div.module-item-pic > a").attr("title"));
                 object.put("url", japanLi.get(i).select("div.module-item-cover > div.module-item-pic > a").attr("href"));
-                object.put("drama", japanLi.get(i).select("div.module-item-text").text());
+                object.put("drama", japanLi.get(i).select("div.module-item-text").text());*/
+                object.put("title", japanLi.get(i).select("a.item-cover").attr("title"));
+                object.put("url", japanLi.get(i).select("a.item-cover").attr("href"));
+                object.put("drama", japanLi.get(i).select("p.num").text());
                 object.put("dramaUrl", "");
                 jsonArray.put(object);
             }
             for (int i = 0, size = chinaLi.size(); i < size; i++) {
                 JSONObject object = new JSONObject();
-                object.put("title", chinaLi.get(i).select("div.module-item-cover > div.module-item-pic > a").attr("title"));
+               /* object.put("title", chinaLi.get(i).select("div.module-item-cover > div.module-item-pic > a").attr("title"));
                 object.put("url", chinaLi.get(i).select("div.module-item-cover > div.module-item-pic > a").attr("href"));
-                object.put("drama", chinaLi.get(i).select("div.module-item-text").text());
+                object.put("drama", chinaLi.get(i).select("div.module-item-text").text());*/
+                object.put("title", chinaLi.get(i).select("a.item-cover").attr("title"));
+                object.put("url", chinaLi.get(i).select("a.item-cover").attr("href"));
+                object.put("drama", chinaLi.get(i).select("p.num").text());
                 object.put("dramaUrl", "");
                 jsonArray.put(object);
             }
@@ -173,7 +277,35 @@ public class ImomoeJsoupUtils {
     public static List<MaliTagBean> getTagList(String source) {
         List<MaliTagBean> tagList = new ArrayList<>();
         Document document = Jsoup.parse(source);
-        Elements elements = document.select("div.box > div.scroll-box");
+        Elements titles = document.getElementById("content").select("div.typebox.board").select("span");
+        Elements items = document.getElementById("content").select("div.typebox.board").select("ul");
+        if (titles.size() -1 == items.size()) {
+            for (int i = 0, tagSize = titles.size(); i < tagSize; i++) {
+                if (i == tagSize - 1) {
+                    // 排序
+                } else {
+//                    TagHeaderBean tagHeaderBean = new TagHeaderBean(titles.get(i).text().replaceAll("：", ""));
+                    String title = titles.get(i).text().replaceAll("：", "");
+                    List<MaliTagBean.MaliTagList> maliTagListBeans = new ArrayList<>();
+                    Elements itemElements = items.get(i).select("a");
+                    for (int j = 0, itemSize = itemElements.size(); j < itemSize; j++) {
+                        /*tagHeaderBean.addSubItem(
+                                new TagBean(
+                                        tagHeaderBean.getTitle() + " - " + itemElements.get(j).text(),
+                                        itemElements.get(j).text(),
+                                        itemElements.get(j).attr("href")
+                                )
+                        )*/
+                        maliTagListBeans.add(new MaliTagBean.MaliTagList(title + " - " + itemElements.get(j).text(),
+                                itemElements.get(j).text(),
+                                itemElements.get(j).attr("href")));
+                    }
+                    tagList.add(new MaliTagBean(title, maliTagListBeans));
+//                    tagList.add(tagHeaderBean);
+                }
+            }
+        }
+        /*Elements elements = document.select("div.box > div.scroll-box");
         for (int i=0,size=elements.size(); i<size; i++) {
             if (i == 0)
                 continue;
@@ -195,7 +327,7 @@ public class ImomoeJsoupUtils {
                 tagList.add(new MaliTagBean(title,maliTagListBeans ));
 //                    tagList.add(tagHeaderBean);
             }
-        }
+        }*/
         return tagList;
     }
     /**************************************  动漫分类解析方法结束  **************************************/
@@ -210,7 +342,18 @@ public class ImomoeJsoupUtils {
     public static List<AnimeListBean> getSearchAnimeList(String source) {
         List<AnimeListBean> animeListBeans = new ArrayList<>();
         Document document = Jsoup.parse(source);
-        Elements elements = document.select("div.module-items > div.module-search-item");
+        Elements elements = document.select("div.searchbox > ul > li");
+        if (elements.size() > 0) {
+            for (int i = 0, size = elements.size(); i < size; i++) {
+                AnimeListBean bean = new AnimeListBean();
+                bean.setTitle(elements.get(i).select("a").get(0).attr("title"));
+                bean.setUrl(elements.get(i).select("a").get(0).attr("href"));
+                bean.setImg(elements.get(i).select("img").attr("data-echo"));
+                bean.setDesc(elements.get(i).select("span.listbox-mask").text());
+                animeListBeans.add(bean);
+            }
+        }
+        /*Elements elements = document.select("div.module-items > div.module-search-item");
         if (elements.size() > 0) {
             for (int i=0,size=elements.size(); i < size; i++) {
                 AnimeListBean bean = new AnimeListBean();
@@ -220,7 +363,7 @@ public class ImomoeJsoupUtils {
                 bean.setDesc(elements.get(i).select("a.video-serial").text());
                 animeListBeans.add(bean);
             }
-        }
+        }*/
         return animeListBeans;
     }
 
@@ -233,7 +376,18 @@ public class ImomoeJsoupUtils {
     public static List<AnimeListBean> getAnimeList(String source) {
         List<AnimeListBean> animeListBeans = new ArrayList<>();
         Document document = Jsoup.parse(source);
-        Elements elements = document.select("div.module-list > div.module-items > div.module-item");
+        Elements elements = document.select("div.listbox > ul > li");
+        if (elements.size() > 0) {
+            for (int i = 0, size = elements.size(); i < size; i++) {
+                AnimeListBean bean = new AnimeListBean();
+                bean.setTitle(elements.get(i).select("a").get(0).attr("title"));
+                bean.setUrl(elements.get(i).select("a").get(0).attr("href"));
+                bean.setImg(elements.get(i).select("img").attr("data-echo"));
+                bean.setDesc(elements.get(i).select("span.listbox-mask").text());
+                animeListBeans.add(bean);
+            }
+        }
+        /*Elements elements = document.select("div.module-list > div.module-items > div.module-item");
         if (elements.size() > 0) {
             for (int i=0,size=elements.size(); i < size; i++) {
                 AnimeListBean bean = new AnimeListBean();
@@ -243,7 +397,7 @@ public class ImomoeJsoupUtils {
                 bean.setDesc(elements.get(i).select("div.module-item-text").text());
                 animeListBeans.add(bean);
             }
-        }
+        }*/
         return animeListBeans;
     }
     /**************************************  番剧列表&&电影列表&&搜索列表解析方法结束  **************************************/
@@ -260,16 +414,37 @@ public class ImomoeJsoupUtils {
         Log.e("url", url);
         AnimeListBean animeListBean = new AnimeListBean();
         Document document = Jsoup.parse(source);
-        animeListBean.setTitle(document.select("div.box div.video-info > div.video-info-header > h1.page-title").text());
+        animeListBean.setTitle(document.select("div.drama-box > div#thumb > img").attr("alt"));
         //番剧图片
-        animeListBean.setImg(document.select("div.box > div.video-cover > div.module-item-cover > div.module-item-pic > img").attr("data-src"));
-        /*Elements labels = document.select("div.drama-box").select("label");
+        animeListBean.setImg(document.select("div.drama-box > div#thumb > img").attr("src"));
+        Elements labels = document.select("div.drama-box").select("label");
         for (Element label : labels) {
             if (label.text().contains("动漫剧情"))
                 animeListBean.setDesc(label.text().replaceAll("动漫剧情：", ""));
             if (label.text().contains("时间"))
                 animeListBean.setUpdateTime(label.text().replaceAll("时间：", ""));
-        }*/
+        }
+        //番剧地址
+        animeListBean.setUrl(url);
+        Elements tagElements = labels.select("a");
+        List<String> tagTitles = new ArrayList<>();
+        List<String> tagUrls = new ArrayList<>();
+        for (int i=0,size=tagElements.size(); i<size; i++) {
+            tagTitles.add(tagElements.get(i).text().toUpperCase());
+            tagUrls.add(tagElements.get(i).attr("href"));
+        }
+        animeListBean.setTagTitles(tagTitles);
+        animeListBean.setTagUrls(tagUrls);
+        /*animeListBean.setTitle(document.select("div.box div.video-info > div.video-info-header > h1.page-title").text());
+        //番剧图片
+        animeListBean.setImg(document.select("div.box > div.video-cover > div.module-item-cover > div.module-item-pic > img").attr("data-src"));
+        *//*Elements labels = document.select("div.drama-box").select("label");
+        for (Element label : labels) {
+            if (label.text().contains("动漫剧情"))
+                animeListBean.setDesc(label.text().replaceAll("动漫剧情：", ""));
+            if (label.text().contains("时间"))
+                animeListBean.setUpdateTime(label.text().replaceAll("时间：", ""));
+        }*//*
         animeListBean.setDesc(document.select("div.vod_content").text());
         animeListBean.setUpdateTime(document.select("div.video-info-main > div.video-info-items").get(3).select("div.video-info-item").text());
         //番剧地址
@@ -283,7 +458,7 @@ public class ImomoeJsoupUtils {
             tagUrls.add(tagElements.get(i).attr("href"));
         }
         animeListBean.setTagTitles(tagTitles);
-        animeListBean.setTagUrls(tagUrls);
+        animeListBean.setTagUrls(tagUrls);*/
         return animeListBean;
     }
 
@@ -299,7 +474,7 @@ public class ImomoeJsoupUtils {
         Document document = Jsoup.parse(source);
 //        List<List<AnimeDescDetailsBean>> multipleAnimeDescDetailsBeans = new ArrayList<>();
         // 该网站存在多各播放地址，推荐使用主路线，故只获取主线路剧集列表
-        Elements playElements = document.select("div#sort-item-1 > a"); //剧集列表
+        Elements playElements = document.select("div#vlink_1 > ul > li"); //剧集列表
         if (playElements.size() > 0) {
             boolean select;
             List<AnimeDescDetailsBean> animeDescDramasBeans = new ArrayList<>();
@@ -315,13 +490,13 @@ public class ImomoeJsoupUtils {
             animeDescListBean.setMultipleAnimeDescDetailsBeans(multipleAnimeDescDetailsBeans);*/
             animeDescListBean.setAnimeDescDetailsBeans(animeDescDramasBeans);
             //** 封装推荐 **//
-            Elements recommendElements = document.select("div.module-lines-list > div.module-items > div.module-item"); //相关推荐
+            Elements recommendElements = document.select("div#mytab8r").select("li"); //相关推荐
             if (recommendElements.size() > 0) {
                 List<AnimeDescRecommendBean> animeDescRecommendBeans = new ArrayList<>();
                 for (int i = 0, size = recommendElements.size(); i < size; i++) {
-                    String title = recommendElements.get(i).select("div.module-item-cover > div.module-item-pic > a").attr("title");
-                    String img = recommendElements.get(i).select("div.module-item-pic > img").attr("data-src");
-                    String url = recommendElements.get(i).select("div.module-item-cover > div.module-item-pic > a").attr("href");
+                    String title = recommendElements.get(i).select("b").text();
+                    String img = recommendElements.get(i).select("img").attr("data-echo");
+                    String url = recommendElements.get(i).select("a").attr("href");
                     animeDescRecommendBeans.add(new AnimeDescRecommendBean(title, img, url));
                 }
                 animeDescListBean.setAnimeDescRecommendBeans(animeDescRecommendBeans);
@@ -329,6 +504,36 @@ public class ImomoeJsoupUtils {
             return animeDescListBean;
         } else
             return null;
+//        Elements playElements = document.select("div#sort-item-1 > a"); //剧集列表
+//        if (playElements.size() > 0) {
+//            boolean select;
+//            List<AnimeDescDetailsBean> animeDescDramasBeans = new ArrayList<>();
+//            for (Element dramaList : playElements) {
+//                String name = dramaList.select("a").text();
+//                String watchUrl = dramaList.select("a").attr("href");
+//                Log.e("dramaStr - > " , dramaStr + "- > " + watchUrl);
+//                if (dramaStr.contains(watchUrl)) select = true;
+//                else select = false;
+//                animeDescDramasBeans.add(new AnimeDescDetailsBean(name, watchUrl, select));
+//            }
+//           /* multipleAnimeDescDetailsBeans.add(animeDescDramasBeans);
+//            animeDescListBean.setMultipleAnimeDescDetailsBeans(multipleAnimeDescDetailsBeans);*/
+//            animeDescListBean.setAnimeDescDetailsBeans(animeDescDramasBeans);
+//            //** 封装推荐 **//
+//            Elements recommendElements = document.select("div.module-lines-list > div.module-items > div.module-item"); //相关推荐
+//            if (recommendElements.size() > 0) {
+//                List<AnimeDescRecommendBean> animeDescRecommendBeans = new ArrayList<>();
+//                for (int i = 0, size = recommendElements.size(); i < size; i++) {
+//                    String title = recommendElements.get(i).select("div.module-item-cover > div.module-item-pic > a").attr("title");
+//                    String img = recommendElements.get(i).select("div.module-item-pic > img").attr("data-src");
+//                    String url = recommendElements.get(i).select("div.module-item-cover > div.module-item-pic > a").attr("href");
+//                    animeDescRecommendBeans.add(new AnimeDescRecommendBean(title, img, url));
+//                }
+//                animeDescListBean.setAnimeDescRecommendBeans(animeDescRecommendBeans);
+//            }
+//            return animeDescListBean;
+//        } else
+//            return null;
     }
     /**************************************  动漫详情解析方法结束  **************************************/
 
@@ -362,13 +567,20 @@ public class ImomoeJsoupUtils {
      */
     public static List<AnimeDescDetailsBean> getAllDrama(String source, String dramaStr) {
         Document document = Jsoup.parse(source);
-        Elements playElements = document.select("div#sort-item-1 > a"); //剧集列表
+        Elements playElements = document.select("div#tabDatelist").select("ul").get(0).select("a"); //剧集列表
+        List<AnimeDescDetailsBean> animeDescDramasBeans = new ArrayList<>();
+        for (Element dramaList : playElements) {
+            String name = dramaList.text();
+            String watchUrl = dramaList.attr("href");
+            animeDescDramasBeans.add(new AnimeDescDetailsBean(name, watchUrl, dramaStr.contains(watchUrl)));
+        }
+        /*Elements playElements = document.select("div#sort-item-1 > a"); //剧集列表
         List<AnimeDescDetailsBean> animeDescDramasBeans = new ArrayList<>();
         for (Element dramaList : playElements) {
             String name = dramaList.select("span").text();
             String watchUrl = dramaList.attr("href");
             animeDescDramasBeans.add(new AnimeDescDetailsBean(name, watchUrl, dramaStr.contains(watchUrl)));
-        }
+        }*/
         Log.e("size", animeDescDramasBeans.size() + "");
         return animeDescDramasBeans;
     }
@@ -384,7 +596,8 @@ public class ImomoeJsoupUtils {
      */
     public static String getAinmeImg(String source) {
         Document document = Jsoup.parse(source);
-        return document.select("div.box > div.video-cover > div.module-item-cover > div.module-item-pic > img").attr("data-src");
+        return document.select("div.drama-box > div#thumb > img").attr("src");
+//        return document.select("div.box > div.video-cover > div.module-item-cover > div.module-item-pic > img").attr("data-src");
     }
     /**************************************  更新图片方法结束  **************************************/
 }

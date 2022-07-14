@@ -24,10 +24,14 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 import androidx.appcompat.app.AlertDialog;
+
+import com.arialyy.aria.core.task.DownloadTask;
+
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.api.Api;
 import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.bean.AnimeDescDetailsBean;
+import my.project.sakuraproject.database.DatabaseUtil;
 import my.project.sakuraproject.main.player.PlayerActivity;
 import my.project.sakuraproject.main.webview.normal.DefaultNormalWebActivity;
 
@@ -331,4 +335,14 @@ public class VideoUtils {
         alertDialog.show();
     }
 
+    /**
+     * 根据任务ID查询数据库信息
+     * @param downloadTask
+     * @param choose 0 返回番剧标题 1 返回番剧来源
+     * @return
+     */
+    public static Object getAnimeInfo(DownloadTask downloadTask, int choose) {
+        List<Object> objects = DatabaseUtil.queryDownloadAnimeInfo(downloadTask.getEntity().getId());
+        return objects.get(choose);
+    }
 }

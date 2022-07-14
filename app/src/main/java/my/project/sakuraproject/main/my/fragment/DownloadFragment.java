@@ -47,6 +47,7 @@ import my.project.sakuraproject.main.my.UpdateImgContract;
 import my.project.sakuraproject.main.my.UpdateImgPresenter;
 import my.project.sakuraproject.services.DownloadService;
 import my.project.sakuraproject.util.Utils;
+import my.project.sakuraproject.util.VideoUtils;
 
 public class DownloadFragment extends MyLazyFragment<DownloadContract.View, DownloadPresenter> implements DownloadContract.View, UpdateImgContract.View {
     @BindView(R.id.rv_list)
@@ -200,6 +201,7 @@ public class DownloadFragment extends MyLazyFragment<DownloadContract.View, Down
                     downloadList.get(i).setFilesSize(DatabaseUtil.queryDownloadFilesSize(downloadList.get(i).getDownloadId()));
                     downloadList.get(i).setNoCompleteSize(DatabaseUtil.queryDownloadNotCompleteCount(downloadList.get(i).getDownloadId()));
                     adapter.notifyItemChanged(i);
+                    DatabaseUtil.updateDownloadSuccess((String) VideoUtils.getAnimeInfo(downloadTask, 0), (Integer) VideoUtils.getAnimeInfo(downloadTask, 1), downloadTask.getFilePath(), downloadTask.getEntity().getId(), downloadTask.getFileSize());
                     break;
                 }
             }

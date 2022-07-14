@@ -2,7 +2,7 @@
     <string name="app_name">樱花动漫</string>
     <string name="yhdm">Yhdm</string>
     <string name="imomoe">MaliMali</string>
-    <string name="app_sub_name">新番时间表</string>
+    <string name="app_sub_name">时间表</string>
     <string name="search">搜索</string>
     <!-- 权限文本 -->
     <string name="permissions">为了正常使用，需要以下权限!</string>
@@ -125,7 +125,7 @@
     <string name="test_model_desc">OnePlus 8 Pro\nAndroid 12</string>
     <string name="now_version">当前版本</string>
     <string name="final_compile">最后编译日期</string>
-    <string name="final_compile_time">2022年6月30日</string>
+    <string name="final_compile_time">2022年7月14日</string>
     <string name="cache">缓存目录</string>
     <string name="cache_text">/SakuraAnime/\n卸载后自行删除此目录</string>
     <string name="github">Github仓库</string>

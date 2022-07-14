@@ -46,6 +46,7 @@ import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.player.LocalPlayerActivity;
 import my.project.sakuraproject.util.SwipeBackLayoutUtil;
 import my.project.sakuraproject.util.Utils;
+import my.project.sakuraproject.util.VideoUtils;
 
 public class DownloadDataActivity extends BaseActivity<DownloadDataContract.View, DownloadDataPresenter> implements DownloadDataContract.View {
     @BindView(R.id.rv_list)
@@ -294,6 +295,7 @@ public class DownloadDataActivity extends BaseActivity<DownloadDataContract.View
                     downloadDataBeans.get(i).setPath(downloadTask.getFilePath());
                 }
                 adapter.notifyItemChanged(i);
+                DatabaseUtil.updateDownloadSuccess((String) VideoUtils.getAnimeInfo(downloadTask, 0), (Integer) VideoUtils.getAnimeInfo(downloadTask, 1), downloadTask.getFilePath(), downloadTask.getEntity().getId(), downloadTask.getFileSize());
                 break;
             }
         }

@@ -187,7 +187,7 @@ public class DownloadService extends Service {
     @Download.onTaskResume
     public void onTaskResume(DownloadTask downloadTask) {
         Log.e("Service onTaskStart", downloadTask.getTaskName() + "，恢复下载");
-        mNotify.showNotification(new Long(downloadTask.getEntity().getId()).intValue(), (String) getAnimeInfo(downloadTask, 0), downloadTask.getTaskName());
+        mNotify.showNotification(new Long(downloadTask.getEntity().getId()).intValue(), (String) VideoUtils.getAnimeInfo(downloadTask, 0), downloadTask.getTaskName());
 //        EventBus.getDefault().post(new Refresh(3));
     }
 
@@ -195,7 +195,7 @@ public class DownloadService extends Service {
     @Download.onTaskStart
     public void onTaskStart(DownloadTask downloadTask) {
         Log.e("Service onTaskStart", downloadTask.getTaskName() + "，开始下载");
-        mNotify.showNotification(new Long(downloadTask.getEntity().getId()).intValue(), (String) getAnimeInfo(downloadTask, 0), downloadTask.getTaskName());
+        mNotify.showNotification(new Long(downloadTask.getEntity().getId()).intValue(), (String) VideoUtils.getAnimeInfo(downloadTask, 0), downloadTask.getTaskName());
 //        EventBus.getDefault().post(new Refresh(3));
     }
 
@@ -215,7 +215,7 @@ public class DownloadService extends Service {
     @Download.onTaskFail
     public void onTaskFail(DownloadTask downloadTask) {
         Log.e("Service onTaskFail", downloadTask.getTaskName() + "，下载失败");
-        DatabaseUtil.updateDownloadError((String) getAnimeInfo(downloadTask, 0), (Integer) getAnimeInfo(downloadTask, 1), downloadTask.getFilePath(), downloadTask.getEntity().getId(), downloadTask.getFileSize());
+        DatabaseUtil.updateDownloadError((String) VideoUtils.getAnimeInfo(downloadTask, 0), (Integer) VideoUtils.getAnimeInfo(downloadTask, 1), downloadTask.getFilePath(), downloadTask.getEntity().getId(), downloadTask.getFileSize());
         mNotify.uploadInfo(new Long(downloadTask.getEntity().getId()).intValue(), false);
         shouldUnRegister();
     }
@@ -224,7 +224,7 @@ public class DownloadService extends Service {
     public void onTaskComplete(DownloadTask downloadTask) {
         Log.e("Service onTaskComplete", downloadTask.getTaskName() + "，下载完成");
         mNotify.uploadInfo(new Long(downloadTask.getEntity().getId()).intValue(), true);
-        DatabaseUtil.updateDownloadSuccess((String) getAnimeInfo(downloadTask, 0), (Integer) getAnimeInfo(downloadTask, 1), downloadTask.getFilePath(), downloadTask.getEntity().getId(), downloadTask.getFileSize());
+        DatabaseUtil.updateDownloadSuccess((String) VideoUtils.getAnimeInfo(downloadTask, 0), (Integer) VideoUtils.getAnimeInfo(downloadTask, 1), downloadTask.getFilePath(), downloadTask.getEntity().getId(), downloadTask.getFileSize());
         shouldUnRegister();
     }
 
@@ -239,16 +239,5 @@ public class DownloadService extends Service {
             Aria.download(this).unRegister();
             Log.e("Service onTaskFail", "Aria取消注册");
         }
-    }
-
-    /**
-     * 根据任务ID查询数据库信息
-     * @param downloadTask
-     * @param choose 0 返回番剧标题 1 返回番剧来源
-     * @return
-     */
-    private Object getAnimeInfo(DownloadTask downloadTask, int choose) {
-        List<Object> objects = DatabaseUtil.queryDownloadAnimeInfo(downloadTask.getEntity().getId());
-        return objects.get(choose);
     }
 }

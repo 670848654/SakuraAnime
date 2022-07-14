@@ -79,12 +79,17 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
 
     @Override
     protected HomePresenter createPresenter() {
-        return new HomePresenter(false, this);
+        return new HomePresenter(false, "", this);
+//        return new HomePresenter(false, this);
     }
 
     @Override
     protected void loadData() {
-        mPresenter.loadData(true);
+        if (Utils.isImomoe())
+            mPresenter.loadMailiHtmlData();
+        else
+            mPresenter.loadData(true);
+//        mPresenter.loadData(true);
     }
 
     @Override
@@ -291,7 +296,7 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
             mSwipe.setRefreshing(false);
             multiItemEntities = new ArrayList<>();
             headerDataBeans = new ArrayList<>();
-            headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("新番时间表", R.drawable.ic_xfsjb, HomeHeaderBean.TYPE_XFSJB));
+            headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("时间表", R.drawable.ic_xfsjb, HomeHeaderBean.TYPE_XFSJB));
             if (!Utils.isImomoe()) {
                 headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("动漫分类", R.drawable.ic_dmfl, HomeHeaderBean.TYPE_DMFL));
                 headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("动漫电影", R.drawable.ic_dmdy, HomeHeaderBean.TYPE_DMDY));
@@ -314,6 +319,13 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
     @Override
     public void showUpdateInfoSuccess(List<AnimeUpdateInfoBean> beans) {
         animeUpdateInfoBeans = beans;
+    }
+
+    @Override
+    public void showMaliWeekInfoSuccess(String html) {
+        maliHtml = html;
+        mPresenter = new HomePresenter(false, html, this);
+        mPresenter.loadData(true);
     }
 
     private void setTheme(boolean isDark) {
@@ -418,7 +430,8 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
             //===========================================================
             case HomeHeaderBean.TYPE_DMFL_MALIMALI_TAG:
                 bundle.putString("homeParam", Api.MALIMALI_TAG_DEFAULT);
-                bundle.putString("title", "全部类型");
+//                bundle.putString("title", "全部类型");
+                bundle.putString("title", "全部");
                 startActivity(new Intent(this, MaliTagActivity.class).putExtras(bundle));
                 break;
             case HomeHeaderBean.TYPE_DMFL_MALIMALI_JAPAN:

@@ -98,7 +98,7 @@
                 android:layout_weight="2"
                 android:id="@+id/title"
                 android:ellipsize="end"
-                android:maxLines="2"
+                android:maxLines="1"
                 android:textColor="@color/text_color_primary"
                 android:textSize="16sp" />
 

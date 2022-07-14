@@ -10,7 +10,11 @@ import my.project.sakuraproject.main.base.BaseView;
 
 public interface HomeContract {
     interface Model {
-        void getData(boolean isWeek, LoadDataCallback callback);
+        void getData(boolean isWeek, String mailiHtml, LoadDataCallback callback);
+
+        void getMaliWeek(LoadDataCallback callback);
+
+//        void getData(boolean isWeek, LoadDataCallback callback);
     }
 
     interface View extends BaseView {
@@ -19,6 +23,8 @@ public interface HomeContract {
         void showHomeLoadSuccess(List<HomeBean> beans);
 
         void showUpdateInfoSuccess(List<AnimeUpdateInfoBean> animeUpdateInfoBeans);
+
+        void showMaliWeekInfoSuccess(String html);
     }
 
     interface LoadDataCallback extends BaseLoadDataCallback {
@@ -27,5 +33,7 @@ public interface HomeContract {
         void homeSuccess(List<HomeBean> beans);
 
         void updateInfoSuccess(List<AnimeUpdateInfoBean> animeUpdateInfoBeans);
+
+        void maliWeekInfoSuccess(String html);
     }
 }

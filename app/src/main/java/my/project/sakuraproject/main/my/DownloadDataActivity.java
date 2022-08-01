@@ -2,6 +2,7 @@ package my.project.sakuraproject.main.my;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -37,6 +38,7 @@ import butterknife.BindView;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.adapter.DownloadDataListAdapter;
 import my.project.sakuraproject.bean.DownloadDataBean;
+import my.project.sakuraproject.bean.DownloadEvent;
 import my.project.sakuraproject.bean.Refresh;
 import my.project.sakuraproject.bean.RefreshDownloadData;
 import my.project.sakuraproject.custom.CustomLoadMoreView;
@@ -277,7 +279,7 @@ public class DownloadDataActivity extends BaseActivity<DownloadDataContract.View
         }
     }
 
-    @Download.onTaskComplete
+    /*@Download.onTaskComplete
     public void onTaskComplete(DownloadTask downloadTask) {
         Log.e("Activity onTaskComplete", downloadTask.getTaskName() + "，下载完成");
         String title = (String) DatabaseUtil.queryDownloadAnimeInfo(downloadTask.getEntity().getId()).get(0);
@@ -299,7 +301,7 @@ public class DownloadDataActivity extends BaseActivity<DownloadDataContract.View
                 break;
             }
         }
-    }
+    }*/
 
     @Download.onTaskCancel
     public void onTaskCancel(DownloadTask downloadTask) {
@@ -384,6 +386,29 @@ public class DownloadDataActivity extends BaseActivity<DownloadDataContract.View
                 break;
             }
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onDownloadEvent(DownloadEvent downloadEvent) {
+        new Handler().postDelayed(() -> {
+            for (int i = 0, size = downloadDataBeans.size(); i < size; i++) {
+                if (downloadDataBeans.get(i).getAnimeTitle().equals(downloadEvent.getTitle()) && downloadEvent.getDrama().contains(downloadDataBeans.get(i).getPlayNumber())) {
+                    downloadDataBeans.get(i).setComplete(1);
+                    String path = downloadEvent.getFilePath();
+                    if (path.contains("m3u8")) {
+                        path = path.replaceAll("m3u8", "mp4");
+                        File file = new File(path);
+                        downloadDataBeans.get(i).setFileSize(file == null ? 0 : file.length());
+                        downloadDataBeans.get(i).setPath(path);
+                    } else {
+                        downloadDataBeans.get(i).setFileSize(downloadEvent.getFileSize());
+                        downloadDataBeans.get(i).setPath(downloadEvent.getFilePath());
+                    }
+                    adapter.notifyItemChanged(i);
+                    break;
+                }
+            }
+        }, 1000);
     }
 
     @Override

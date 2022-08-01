@@ -34,6 +34,7 @@ import my.project.sakuraproject.R;
 import my.project.sakuraproject.adapter.DownloadListAdapter;
 import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.bean.DownloadBean;
+import my.project.sakuraproject.bean.DownloadEvent;
 import my.project.sakuraproject.bean.Refresh;
 import my.project.sakuraproject.bean.UpdateImgBean;
 import my.project.sakuraproject.custom.CustomLoadMoreView;
@@ -191,7 +192,7 @@ public class DownloadFragment extends MyLazyFragment<DownloadContract.View, Down
         }
     }
 
-    @Download.onTaskComplete
+    /*@Download.onTaskComplete
     public void onTaskComplete(DownloadTask downloadTask) {
 //        JSONObject obj = JSONObject.parseObject(Aria.download(this).load(downloadTask.getEntity().getId()).getExtendField());
         new Handler().postDelayed(() -> {
@@ -206,7 +207,7 @@ public class DownloadFragment extends MyLazyFragment<DownloadContract.View, Down
                 }
             }
         }, 1000);
-    }
+    }*/
 
     @Override
     public void onDestroy() {
@@ -331,5 +332,19 @@ public class DownloadFragment extends MyLazyFragment<DownloadContract.View, Down
         if (!isFragmentVisible) return;
         updateImgPresenter = new UpdateImgPresenter(updateImgBean.getOldImgUrl(), updateImgBean.getDescUrl(), this);
         updateImgPresenter.loadData();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onDownloadEvent(DownloadEvent downloadEvent) {
+        new Handler().postDelayed(() -> {
+            for (int i = 0, size = downloadList.size(); i < size; i++) {
+                if (downloadList.get(i).getAnimeTitle().equals(downloadEvent.getTitle())) {
+                    downloadList.get(i).setFilesSize(DatabaseUtil.queryDownloadFilesSize(downloadList.get(i).getDownloadId()));
+                    downloadList.get(i).setNoCompleteSize(DatabaseUtil.queryDownloadNotCompleteCount(downloadList.get(i).getDownloadId()));
+                    adapter.notifyItemChanged(i);
+                    break;
+                }
+            }
+        }, 1000);
     }
 }

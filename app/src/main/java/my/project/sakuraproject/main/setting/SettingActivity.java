@@ -31,6 +31,7 @@ import my.project.sakuraproject.api.Api;
 import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.bean.Refresh;
 import my.project.sakuraproject.custom.CustomToast;
+import my.project.sakuraproject.database.DatabaseUtil;
 import my.project.sakuraproject.main.about.AboutActivity;
 import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.base.Presenter;
@@ -149,7 +150,7 @@ public class SettingActivity extends BaseActivity {
         slidrConfig.setText((Boolean) SharedPreferencesUtils.getParam(this, "slidr_config", false) ? slidrConfigs[1] : slidrConfigs[0]);
     }
 
-    @OnClick({R.id.set_domain, R.id.set_player, R.id.set_favorite_update, R.id.set_download_number, R.id.set_sildr, R.id.check_update, R.id.about})
+    @OnClick({R.id.set_domain, R.id.set_player, R.id.set_favorite_update, R.id.set_download_number, R.id.set_sildr, R.id.check_update, R.id.about, R.id.remove_downloads})
     public void onClick(RelativeLayout layout) {
         switch (layout.getId()) {
             case R.id.set_domain:
@@ -178,6 +179,9 @@ public class SettingActivity extends BaseActivity {
                 break;
             case R.id.about:
                 startActivity(new Intent(this, AboutActivity.class));
+                break;
+            case R.id.remove_downloads:
+                removeDownloads();
                 break;
         }
     }
@@ -305,6 +309,23 @@ public class SettingActivity extends BaseActivity {
         });
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
+    }
+
+    private void removeDownloads() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.DialogStyle);
+        builder.setPositiveButton(Utils.getString(R.string.page_positive), null);
+        builder.setNegativeButton(Utils.getString(R.string.cancel), null);
+        builder.setTitle(Utils.getString(R.string.remove_downloads_title));
+        builder.setMessage(Utils.getString(R.string.remove_downloads_content));
+        builder.setCancelable(false);
+        alertDialog = builder.create();
+        alertDialog.show();
+        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+            DatabaseUtil.deleteAllDownloads();
+            CustomToast.showToast(this, "已删除所有下载记录", CustomToast.DEFAULT);
+            alertDialog.dismiss();
+        });
+        alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(v -> alertDialog.dismiss());
     }
 
     /*public void setX5State() {

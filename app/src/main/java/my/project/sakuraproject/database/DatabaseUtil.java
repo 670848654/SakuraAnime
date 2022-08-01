@@ -774,7 +774,7 @@ public class DatabaseUtil {
         if (path.contains(".m3u8")) {
             path = path.replaceAll("m3u8", "mp4");
             File file = new File(path);
-            db.execSQL("update T_DOWNLOAD_DATA set F_COMPLETE = 1, F_PATH=?, F_FILE_SIZE=? where F_LINK_ID=? AND F_TASK_ID=?",
+            db.execSQL("update T_DOWNLOAD_DATA set F_COMPLETE = 1, F_PATH=?, F_FILE_SIZE=?, F_TASK_ID = -99  where F_LINK_ID=? AND F_TASK_ID=?",
                     new Object[]{
                             path,
                             file.length(),
@@ -782,7 +782,7 @@ public class DatabaseUtil {
                             taskId
                     });
         } else
-            db.execSQL("update T_DOWNLOAD_DATA set F_COMPLETE = 1, F_PATH=?, F_FILE_SIZE=? where F_LINK_ID=? AND F_TASK_ID=?",
+            db.execSQL("update T_DOWNLOAD_DATA set F_COMPLETE = 1, F_PATH=?, F_FILE_SIZE=?, F_TASK_ID = -99 where F_LINK_ID=? AND F_TASK_ID=?",
                     new Object[]{
                             path,
                             fileSize,
@@ -958,9 +958,11 @@ public class DatabaseUtil {
                 new String[]{String.valueOf(taskId)});
         List<Object> objects = new ArrayList<>();
         cursor.moveToNext();
-        objects.add(cursor.getString(0));
-        objects.add(cursor.getInt(1));
-        Log.e("????" , cursor.getString(0) + cursor.getInt(1));
+        if (cursor.getCount() > 0) {
+            objects.add(cursor.getString(0));
+            objects.add(cursor.getInt(1));
+            Log.e("????" , cursor.getString(0) + cursor.getInt(1));
+        }
         cursor.close();
         return objects;
     }
@@ -1062,5 +1064,13 @@ public class DatabaseUtil {
         }
         db.execSQL("delete from T_DOWNLOAD_DATA where F_TASK_ID in (select F_TASK_ID from T_DOWNLOAD_DATA group by F_TASK_ID having count(*) > 1) and F_COMPLETE = 0", new String[]{});
         db.execSQL("delete from T_DOWNLOAD where F_ID not in (select F_LINK_ID from T_DOWNLOAD_DATA group by F_LINK_ID)", new String[]{});
+    }
+
+    /**
+     * 删除所有下载记录
+     */
+    public static void deleteAllDownloads() {
+        db.execSQL("delete from T_DOWNLOAD");
+        db.execSQL("delete from T_DOWNLOAD_DATA");
     }
 }

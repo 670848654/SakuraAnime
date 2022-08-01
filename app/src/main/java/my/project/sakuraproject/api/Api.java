@@ -1,7 +1,5 @@
 package my.project.sakuraproject.api;
 
-import com.arialyy.annotations.M3U8;
-
 public class Api {
     //检测更新
     public final static String CHECK_UPDATE = "https://api.github.com/repos/670848654/SakuraAnime/releases/latest";
@@ -14,8 +12,10 @@ public class Api {
     // malimali 搜索
     public final static String MALIMALI_SEARCH = "/vodsearch/%s----------%s---.html";
     // malimali 分类
-    public final static String MALIMALI_TAG = "/vodshow/%s-%s-%s-%s-%s-%s.html"; // 1, 排序, 分类, 字母, 分页, 年代
-    public final static String MALIMALI_TAG_DEFAULT = "1";
+//    https://www.malimali6.com/vodshow/10--hits-%E6%90%9E%E7%AC%91--B---1---2022.html
+    public final static String MALIMALI_TAG = "/vodshow/%s--%s-%s--%s---%s---%s.html"; // 1, 排序, 分类, 字母, 分页, 年代
+//    public final static String MALIMALI_TAG = "/vodshow/%s-%s-%s-%s-%s-%s.html"; // 1, 排序, 分类, 字母, 分页, 年代
+    public final static String MALIMALI_TAG_DEFAULT = "1"; // 默认分类【全部】
     public final static String MALIMALI_CHINA = "9";
     public final static String MALIMALI_JAPAN = "10";
     public final static String MALIMALI_EUROPE = "11";

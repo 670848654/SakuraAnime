@@ -163,7 +163,7 @@ public class ImomoeJsoupUtils {
             HomeBean.HomeItemBean homeItemBean = new HomeBean.HomeItemBean();
             String animeTitle = hot.select("figcaption.block-title > b").text();
             String url = hot.select("a").attr("href");
-            String img = hot.select("img").attr(isHot ? "src" : "data-echo");
+            String img = getNoHasHttpImg(hot.select("img").attr(isHot ? "src" : "data-echo"));
             String episodes = hot.select(isHot ? "p.otherinfo" : "p.block-clearfix").text();
             homeItemBean.setTitle(animeTitle);
             homeItemBean.setUrl(url);
@@ -279,6 +279,8 @@ public class ImomoeJsoupUtils {
         Document document = Jsoup.parse(source);
         Elements titles = document.getElementById("content").select("div.typebox.board").select("span");
         Elements items = document.getElementById("content").select("div.typebox.board").select("ul");
+        Log.e("titles", titles.html());
+        Log.e("items", items.html());
         if (titles.size() -1 == items.size()) {
             for (int i = 0, tagSize = titles.size(); i < tagSize; i++) {
                 if (i == tagSize - 1) {
@@ -348,7 +350,7 @@ public class ImomoeJsoupUtils {
                 AnimeListBean bean = new AnimeListBean();
                 bean.setTitle(elements.get(i).select("a").get(0).attr("title"));
                 bean.setUrl(elements.get(i).select("a").get(0).attr("href"));
-                bean.setImg(elements.get(i).select("img").attr("data-echo"));
+                bean.setImg(getNoHasHttpImg(elements.get(i).select("img").attr("data-echo")));
                 bean.setDesc(elements.get(i).select("span.listbox-mask").text());
                 animeListBeans.add(bean);
             }
@@ -382,7 +384,7 @@ public class ImomoeJsoupUtils {
                 AnimeListBean bean = new AnimeListBean();
                 bean.setTitle(elements.get(i).select("a").get(0).attr("title"));
                 bean.setUrl(elements.get(i).select("a").get(0).attr("href"));
-                bean.setImg(elements.get(i).select("img").attr("data-echo"));
+                bean.setImg(getNoHasHttpImg(elements.get(i).select("img").attr("data-echo")));
                 bean.setDesc(elements.get(i).select("span.listbox-mask").text());
                 animeListBeans.add(bean);
             }
@@ -416,7 +418,7 @@ public class ImomoeJsoupUtils {
         Document document = Jsoup.parse(source);
         animeListBean.setTitle(document.select("div.drama-box > div#thumb > img").attr("alt"));
         //番剧图片
-        animeListBean.setImg(document.select("div.drama-box > div#thumb > img").attr("src"));
+        animeListBean.setImg(getNoHasHttpImg(document.select("div.drama-box > div#thumb > img").attr("src")));
         Elements labels = document.select("div.drama-box").select("label");
         for (Element label : labels) {
             if (label.text().contains("动漫剧情"))
@@ -495,7 +497,7 @@ public class ImomoeJsoupUtils {
                 List<AnimeDescRecommendBean> animeDescRecommendBeans = new ArrayList<>();
                 for (int i = 0, size = recommendElements.size(); i < size; i++) {
                     String title = recommendElements.get(i).select("b").text();
-                    String img = recommendElements.get(i).select("img").attr("data-echo");
+                    String img = getNoHasHttpImg(recommendElements.get(i).select("img").attr("data-echo"));
                     String url = recommendElements.get(i).select("a").attr("href");
                     animeDescRecommendBeans.add(new AnimeDescRecommendBean(title, img, url));
                 }
@@ -596,8 +598,17 @@ public class ImomoeJsoupUtils {
      */
     public static String getAinmeImg(String source) {
         Document document = Jsoup.parse(source);
-        return document.select("div.drama-box > div#thumb > img").attr("src");
+        return getNoHasHttpImg(document.select("div.drama-box > div#thumb > img").attr("src"));
 //        return document.select("div.box > div.video-cover > div.module-item-cover > div.module-item-pic > img").attr("data-src");
     }
     /**************************************  更新图片方法结束  **************************************/
+
+    /**
+     * 处理某些图片
+     * @param img
+     * @return
+     */
+    private static String getNoHasHttpImg(String img) {
+        return img.startsWith("//") ? "https:" + img : img;
+    }
 }

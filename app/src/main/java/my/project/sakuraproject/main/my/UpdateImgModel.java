@@ -15,7 +15,7 @@ public class UpdateImgModel extends BaseModel implements UpdateImgContract.Model
 
     @Override
     public void getData(String oldImgUrl, String descUrl, UpdateImgContract.LoadDataCallback callback) {
-        if (descUrl.contains("/view/"))
+        if (descUrl.contains("/voddetail/"))
             parserImomoe(oldImgUrl, getDomain(true) + descUrl, callback);
         else
             parserYhdm(oldImgUrl, getDomain(false) + descUrl, callback);

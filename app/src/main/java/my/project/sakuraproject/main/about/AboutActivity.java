@@ -144,6 +144,7 @@ public class AboutActivity extends BaseActivity {
 
     public List createUpdateLogList() {
         List logsList = new ArrayList();
+        logsList.add(new LogBean("版本：2.3.5", "修复malimali源部分图片显示失败的问题\n修复malimali源分类解析方法\n修复删除下载的视频后下载其他视频时出现TaskId重复导致下载异常闪退的问题，如已出现需删除所有下载记录（设置->清除所有下载记录）\n**malimali源站点搜索功能异常，需等待站点修复"));
         logsList.add(new LogBean("版本：2.3.4", "修复malimali源站点UI改版（又变回原来的UI了。。。）导致所有相关解析出错的问题\n修复在下载列表界面中出现下载成功但显示下载失败的问题"));
         logsList.add(new LogBean("版本：2.3.3", "malimali域名变更为https://www.malimali6.com\n修复malimali源站点UI改版导致所有相关解析出错的问题\nmalimali源新增当视频地址是链接到腾讯视频等视频网站资源时，在播放失败时选择网页嗅探时加入了几个免费的VIP视频解析接口（不保证长期有效），下载该类型的视频时同理，但不保证一定能嗅探成功\n**由于malimali源站点改版导致部分番剧的地址发生变化可能导致在我的收藏、历史记录等界面操作时出现崩溃的情况，如出现请手动删除相关信息"));
         logsList.add(new LogBean("版本：2.3.2", "修复在下载过程中应用异常退出后再进行继续下载时TS转换器被回收导致下载完成后无法合并的问题\n修复Aria下载框架使用不当存在内存泄露的问题\n*本次更新后建议先手动删除所有下载失败的剧集，否则可能出现数据错乱...\n**选择多集批量下载时有时会出现未创建下载任务的情况，如出现该问题请删除未执行下载剧集后自行重新下载"));

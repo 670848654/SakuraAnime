@@ -226,6 +226,7 @@ public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatA
         if (getRunningActivityName().equals("StartActivity")) {
             DatabaseUtil.dataTransfer();
             DatabaseUtil.deleteImomoeData();
+            DatabaseUtil.updatePlayUrl();
         }
         setStatusBarColor();
         initCustomViews();

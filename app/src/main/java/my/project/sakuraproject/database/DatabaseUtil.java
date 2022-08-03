@@ -1073,4 +1073,23 @@ public class DatabaseUtil {
         db.execSQL("delete from T_DOWNLOAD");
         db.execSQL("delete from T_DOWNLOAD_DATA");
     }
+
+    /**
+     * 2022年8月3日09:28:04新增
+     * 由于MALIMALI源地址变更需更新错误的播放记录
+     */
+    public static void updatePlayUrl() {
+        Cursor cursor = db.rawQuery("select F_ID, F_PLAY_URL from T_HISTORY_DATA WHERE F_PLAY_URL like '%/play/%'", null);
+        if (cursor.getCount() > 0) {
+            while (cursor.moveToNext()) {
+                String id = cursor.getString(0);
+                String url = cursor.getString(1).replaceAll("/play/", "/vodplay/");
+                db.execSQL("UPDATE T_HISTORY_DATA SET F_PLAY_URL = ? WHERE F_ID = ?", new String[] {
+                        url,
+                        id
+                });
+            }
+            cursor.close();
+        }
+    }
 }

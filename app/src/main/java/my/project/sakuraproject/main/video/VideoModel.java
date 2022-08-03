@@ -22,7 +22,7 @@ public class VideoModel extends BaseModel implements VideoContract.Model {
     private boolean isImomoe;
     @Override
     public void getData(String title, String url, int source, String playNumber, VideoContract.LoadDataCallback callback) {
-        isImomoe = url.contains("/play/");
+        isImomoe = url.contains("/vodplay/");
         if (isImomoe)
             parserImomoe(title, BaseModel.getDomain(true) + url, source, playNumber, false, callback);
         else

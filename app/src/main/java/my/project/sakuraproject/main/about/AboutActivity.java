@@ -144,6 +144,7 @@ public class AboutActivity extends BaseActivity {
 
     public List createUpdateLogList() {
         List logsList = new ArrayList();
+        logsList.add(new LogBean("版本：2.3.6", "修复malimali源播放时闪退的问题\n**由于malimali源播放地址变更，从历史记录中进行播放出现闪退时需手动删除该历史记录"));
         logsList.add(new LogBean("版本：2.3.5", "修复malimali源部分图片显示失败的问题\n修复malimali源分类解析方法\n修复删除下载的视频后下载其他视频时出现TaskId重复导致下载异常闪退的问题，如已出现需删除所有下载记录（设置->清除所有下载记录）\n**malimali源站点搜索功能异常，需等待站点修复"));
         logsList.add(new LogBean("版本：2.3.4", "修复malimali源站点UI改版（又变回原来的UI了。。。）导致所有相关解析出错的问题\n修复在下载列表界面中出现下载成功但显示下载失败的问题"));
         logsList.add(new LogBean("版本：2.3.3", "malimali域名变更为https://www.malimali6.com\n修复malimali源站点UI改版导致所有相关解析出错的问题\nmalimali源新增当视频地址是链接到腾讯视频等视频网站资源时，在播放失败时选择网页嗅探时加入了几个免费的VIP视频解析接口（不保证长期有效），下载该类型的视频时同理，但不保证一定能嗅探成功\n**由于malimali源站点改版导致部分番剧的地址发生变化可能导致在我的收藏、历史记录等界面操作时出现崩溃的情况，如出现请手动删除相关信息"));

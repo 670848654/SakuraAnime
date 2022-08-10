@@ -30,6 +30,7 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.jzvd.JZUtils;
@@ -201,6 +202,8 @@ public abstract class BasePlayerActivity extends BaseActivity implements JZPlaye
             clickIndex++;
             changePlayUrl(clickIndex);
         });
+        if (isLocalVideo)
+            player.danmuView.setVisibility(View.GONE);
         // 加载视频失败，嗅探视频
         player.snifferBtn.setOnClickListener(v -> snifferVideo());
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) picConfig.setVisibility(View.GONE);
@@ -315,6 +318,7 @@ public abstract class BasePlayerActivity extends BaseActivity implements JZPlaye
     }
 
     protected void changePlayUrl(int position) {
+        player.releaseDanMu();
         if (isLocalVideo) {
             changeLocalPlayUrl(position);
             return;
@@ -395,7 +399,10 @@ public abstract class BasePlayerActivity extends BaseActivity implements JZPlaye
         player.seekToInAdvance = userSavePosition;//跳转到指定的播放进度
         player.startButton.performClick();//响应点击事件
         hasPosition = userSavePosition > 0;
+        getDanmu();
     }
+
+    protected abstract void getDanmu();
 
     protected void toPlay(String path, String dramaTitle) {
         player.playingShow();
@@ -442,7 +449,11 @@ public abstract class BasePlayerActivity extends BaseActivity implements JZPlaye
         if (isInPictureInPictureMode) {
             player.startPIP();
             isPip = true;
-        } else isPip = false;
+            player.hideDanmmu();
+        } else {
+            player.showDanmmu();
+            isPip = false;
+        }
     }
 
     @Override
@@ -519,6 +530,7 @@ public abstract class BasePlayerActivity extends BaseActivity implements JZPlaye
             clickIndex++;
             changePlayUrl(clickIndex);
         } else {
+            player.releaseDanMu();
 //            application.showSuccessToastMsg("全部播放完毕");
             CustomToast.showToast(this, "全部播放完毕", CustomToast.SUCCESS);
             if (!drawerLayout.isDrawerOpen(GravityCompat.END))
@@ -559,6 +571,8 @@ public abstract class BasePlayerActivity extends BaseActivity implements JZPlaye
             EventBus.getDefault().post(new Refresh(1));
             EventBus.getDefault().post(new Refresh(2));
         }
+//        handler.removeCallbacksAndMessages(null);
+        player.releaseDanMu();
         player.releaseAllVideos();
         super.onDestroy();
     }

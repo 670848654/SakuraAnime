@@ -89,4 +89,9 @@ public class LocalPlayerActivity extends BasePlayerActivity {
     protected void changeVideo(String title) {
 
     }
+
+    @Override
+    protected void getDanmu() {
+
+    }
 }

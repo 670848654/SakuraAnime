@@ -204,12 +204,14 @@ public class FavoriteFragment extends MyLazyFragment<FavoriteContract.View, Favo
 
     @Override
     public void showErrorUpdateInfo(int source) {
-        getActivity().runOnUiThread(() -> {
-            if (Utils.isTopActivity(getActivity()) && isFragmentVisible) {
-                CustomToast.showToast(getActivity(), source == 0 ? "Yhdm源获取更新失败！" : "Imomoe源获取更新失败！", CustomToast.ERROR);
+        if (getActivity() != null) {
+            getActivity().runOnUiThread(() -> {
+                if (Utils.isTopActivity(getActivity()) && isFragmentVisible) {
+                    CustomToast.showToast(getActivity(), source == 0 ? "Yhdm源获取更新失败！" : "Imomoe源获取更新失败！", CustomToast.ERROR);
 //                application.showSnackbarMsg(msg, source == 0 ? "Yhdm源获取更新失败！" : "Imomoe源获取更新失败！");
-            }
-        });
+                }
+            });
+        }
     }
 
     @Override

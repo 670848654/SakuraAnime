@@ -104,6 +104,14 @@
             android:textAlignment="center"
             android:textColor="#ffffff" />
 
+        <ImageView
+            android:id="@+id/danmu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/tanmu_open"
+            android:clickable="true"
+            android:paddingLeft="14dp" />
+
         <TextView
             android:id="@+id/tvSpeed"
             android:layout_width="wrap_content"
@@ -366,4 +374,10 @@
             android:textColor="@color/orange800"
             android:textSize="14sp" />
     </LinearLayout>
+
+    <master.flame.danmaku.ui.widget.DanmakuView
+        android:id="@+id/jz_danmu"
+        android:layout_marginTop="15dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 </RelativeLayout>

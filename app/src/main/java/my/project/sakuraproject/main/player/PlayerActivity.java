@@ -2,23 +2,42 @@ package my.project.sakuraproject.main.player;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import androidx.core.view.GravityCompat;
+
+
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+
+import cn.jzvd.JZUtils;
+import master.flame.danmaku.danmaku.loader.ILoader;
+import master.flame.danmaku.danmaku.loader.IllegalDataException;
+import master.flame.danmaku.danmaku.loader.android.DanmakuLoaderFactory;
+import master.flame.danmaku.danmaku.model.android.Danmakus;
+import master.flame.danmaku.danmaku.parser.BaseDanmakuParser;
+import master.flame.danmaku.danmaku.parser.IDataSource;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.adapter.DramaAdapter;
 import my.project.sakuraproject.api.Api;
 import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.bean.AnimeDescDetailsBean;
 import my.project.sakuraproject.bean.Event;
+import my.project.sakuraproject.custom.CustomDanmakuParser;
 import my.project.sakuraproject.custom.CustomToast;
 import my.project.sakuraproject.main.base.BaseModel;
+import my.project.sakuraproject.main.video.DanmuContract;
+import my.project.sakuraproject.main.video.DanmuPresenter;
 import my.project.sakuraproject.main.video.VideoContract;
 import my.project.sakuraproject.main.video.VideoPresenter;
 import my.project.sakuraproject.sniffing.SniffingUICallback;
@@ -27,8 +46,10 @@ import my.project.sakuraproject.sniffing.web.SniffingUtil;
 import my.project.sakuraproject.util.Utils;
 import my.project.sakuraproject.util.VideoUtils;
 
-public class PlayerActivity extends BasePlayerActivity implements VideoContract.View, SniffingUICallback {
+public class PlayerActivity extends BasePlayerActivity implements VideoContract.View, SniffingUICallback, DanmuContract.View {
     private boolean isMaliMali = false;
+    private DanmuPresenter danmuPresenter;
+
     @Override
     protected boolean isLocalVideo() {
         return false;
@@ -119,6 +140,36 @@ public class PlayerActivity extends BasePlayerActivity implements VideoContract.
     protected void changeVideo(String title) {
         videoPresenter = new VideoPresenter(animeTitle, dramaUrl, 0, title, this);
         videoPresenter.loadData(true);
+    }
+
+    @Override
+    protected void getDanmu() {
+        if (player.openDanmuConfig) {
+            danmuPresenter = new DanmuPresenter(animeTitle, witchTitle.split("-")[1].trim(), this);
+            danmuPresenter.loadDanmu();
+        }
+    }
+
+    private BaseDanmakuParser createParser(InputStream stream) {
+        if (stream == null) {
+            return new BaseDanmakuParser() {
+
+                @Override
+                protected Danmakus parse() {
+                    return new Danmakus();
+                }
+            };
+        }
+        ILoader loader = DanmakuLoaderFactory.create(DanmakuLoaderFactory.TAG_ACFUN);
+        try {
+            loader.load(stream);
+        } catch (IllegalDataException e) {
+            e.printStackTrace();
+        }
+        BaseDanmakuParser parser = new CustomDanmakuParser();
+        IDataSource<?> dataSource = loader.getDataSource();
+        parser.load(dataSource);
+        return parser;
     }
 
     @Override
@@ -283,5 +334,43 @@ public class PlayerActivity extends BasePlayerActivity implements VideoContract.
             url = String.format(Api.PARSE_API, url);
             SniffingUtil.get().activity(this).referer(url).callback(this).url(url).start();
         }
+    }
+
+    @Override
+    public void showSuccessDanmuView(JSONObject danmus) {
+        runOnUiThread(() -> {
+            if (!mActivityFinish) {
+                if (player.loadError) return;
+                JSONArray jsonArray = danmus.getJSONObject("data").getJSONArray("data");
+                Toast.makeText(this, "查询弹幕API成功，共"+danmus.getJSONObject("data").getInteger("total")+"条弹幕~", Toast.LENGTH_SHORT).show();
+                InputStream result = new ByteArrayInputStream(jsonArray.toString().getBytes(StandardCharsets.UTF_8));
+                player.danmakuParser = createParser(result);
+                player.createDanmu();
+                if (player.danmakuView.isPrepared()) {
+                    player.danmakuView.restart();
+                }
+                player.danmakuView.prepare(player.danmakuParser, player.danmakuContext);
+                if (userSavePosition > 0) {
+                    new Handler().postDelayed(() -> {
+                        // 一秒后定位弹幕时间为用户上次观看位置
+                        player.seekDanmu(userSavePosition);
+                    }, 1000);
+                }
+            }
+        });
+    }
+
+    @Override
+    public void showErrorDanmuView(String msg) {
+        runOnUiThread(() -> {
+            Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+        });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (danmuPresenter != null)
+            danmuPresenter.detachView();
     }
 }

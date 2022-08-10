@@ -72,7 +72,7 @@
     <string name="page_positive_edit">修改</string>
     <string name="page_negative">取消</string>
     <string name="page_def">恢复默认</string>
-    <string name="domain_title">输入樱花动漫域名（PC端）</string>
+    <string name="domain_title">输入相关站点域名（PC端）</string>
     <string name="set_domain_ok">域名更改成功</string>
     <string name="set_domain_error1">参数不能为空</string>
     <string name="set_domain_error2">参数格式错误</string>
@@ -95,6 +95,9 @@
     <string name="remove_downloads_title">清除所有下载记录</string>
     <string name="remove_downloads_msg">当使用下载功能出现异常时可进行该操作</string>
     <string name="remove_downloads_content">是否清空所有下载记录？\n执行后将清空所有下载记录，但不会删除文件。</string>
+    <string name="danmu_title">播放番剧时弹幕开关</string>
+    <string name="danmu_open">开</string>
+    <string name="danmu_close">关</string>
     <!-- webViewDialog 文本 -->
     <string name="other_operation">操作</string>
     <string name="anthology">选集</string>
@@ -128,7 +131,7 @@
     <string name="test_model_desc">OnePlus 8 Pro\nAndroid 12</string>
     <string name="now_version">当前版本</string>
     <string name="final_compile">最后编译日期</string>
-    <string name="final_compile_time">2022年8月3日</string>
+    <string name="final_compile_time">2022年8月10日</string>
     <string name="cache">缓存目录</string>
     <string name="cache_text">/SakuraAnime/\n卸载后自行删除此目录</string>
     <string name="github">Github仓库</string>

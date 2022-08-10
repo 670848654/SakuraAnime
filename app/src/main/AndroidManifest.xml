@@ -21,6 +21,7 @@
         android:supportsRtl="true"
         android:requestLegacyExternalStorage = "true"
         android:theme="@style/AppTheme"
+        android:allowNativeHeapPointerTagging="false"
         android:usesCleartextTraffic="true">
         <meta-data
             android:name="EasyGoClient"

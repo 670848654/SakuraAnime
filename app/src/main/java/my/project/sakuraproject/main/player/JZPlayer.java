@@ -11,12 +11,22 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 import androidx.appcompat.app.AlertDialog;
+
 import cn.jzvd.JZDataSource;
 import cn.jzvd.JZUtils;
 import cn.jzvd.Jzvd;
 import cn.jzvd.JzvdStd;
+import master.flame.danmaku.BuildConfig;
+import master.flame.danmaku.controller.DrawHandler;
+import master.flame.danmaku.danmaku.model.BaseDanmaku;
+import master.flame.danmaku.danmaku.model.DanmakuTimer;
+import master.flame.danmaku.danmaku.model.IDisplayer;
+import master.flame.danmaku.danmaku.model.android.DanmakuContext;
+import master.flame.danmaku.danmaku.parser.BaseDanmakuParser;
+import master.flame.danmaku.ui.widget.DanmakuView;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.cling.ui.DLNAActivity;
 import my.project.sakuraproject.custom.CustomToast;
@@ -40,6 +50,14 @@ public class JZPlayer extends JzvdStd {
     public String localVideoPath;
     private LocalVideoDLNAServer localVideoDLNAServer;
     public int displayIndex = 1;
+    // 弹幕
+    public boolean openDanmuConfig; // 是否启用弹幕功能
+    public DanmakuView danmakuView;
+    public DanmakuContext danmakuContext;
+    public BaseDanmakuParser danmakuParser;
+    public ImageView danmuView;
+    public boolean open_danmu = true;
+    public boolean loadError = false;
 
     public JZPlayer(Context context) { super(context); }
 
@@ -85,6 +103,11 @@ public class JZPlayer extends JzvdStd {
         nextVideo = findViewById(R.id.next_video);
         display = findViewById(R.id.display);
         display.setOnClickListener(this);
+        danmuView = findViewById(R.id.danmu);
+        danmuView.setOnClickListener(this);
+        openDanmuConfig = (Boolean) SharedPreferencesUtils.getParam(context, "open_danmu", true);
+        if (!openDanmuConfig)
+            danmuView.setVisibility(GONE);
     }
 
     @Override
@@ -118,6 +141,7 @@ public class JZPlayer extends JzvdStd {
                 long fastForwardProgress = currentPositionWhenPlaying + (Integer) SharedPreferencesUtils.getParam(context, "user_speed", 15) * 1000;
                 if (duration > fastForwardProgress) mediaInterface.seekTo(fastForwardProgress);
                 else mediaInterface.seekTo(duration);
+                seekDanmu(currentPositionWhenPlaying);
                 break;
             case R.id.quick_retreat:
                 //当前时间
@@ -126,6 +150,7 @@ public class JZPlayer extends JzvdStd {
                 long quickRetreatProgress = quickRetreatCurrentPositionWhenPlaying - (Integer) SharedPreferencesUtils.getParam(context, "user_speed", 15) * 1000;
                 if (quickRetreatProgress > 0) mediaInterface.seekTo(quickRetreatProgress);
                 else mediaInterface.seekTo(0);
+                seekDanmu(quickRetreatProgress);
                 break;
             case R.id.tvSpeed:
                 if (currentSpeedIndex == 7) currentSpeedIndex = 0;
@@ -159,6 +184,21 @@ public class JZPlayer extends JzvdStd {
                 if (displayIndex == 4) displayIndex = 1;
                 else displayIndex += 1;
                 display.setText(getDisplayIndex(displayIndex));
+                break;
+            case R.id.danmu:
+                if (danmakuView == null)
+                    return;
+                if (open_danmu) {
+                    open_danmu = false;
+                    // 关闭弹幕
+                    danmuView.setImageDrawable(context.getResources().getDrawable(R.drawable.tanmu_close));
+                    hideDanmmu();
+                } else {
+                    open_danmu = true;
+                    // 打开弹幕
+                    danmuView.setImageDrawable(context.getResources().getDrawable(R.drawable.tanmu_open));
+                    showDanmmu();
+                }
                 break;
         }
     }
@@ -286,8 +326,22 @@ public class JZPlayer extends JzvdStd {
         preVideo.setVisibility(INVISIBLE);
         nextVideo.setVisibility(INVISIBLE);
         pauseListener.pause();
+        if (danmakuView != null && danmakuView.isPrepared()) {
+            danmakuView.pause();
+        }
     }
 
+    public void releaseDanMu() {
+        if (danmakuView != null) danmakuView.release();
+        danmakuView = null;
+    }
+
+    @Override
+    public void onStateError() {
+        super.onStateError();
+        loadError = true;
+        if (danmakuView != null) danmakuView.release();
+    }
 
     //这里是暂停的时候点击屏幕消失的UI,只显示下面底部的进度条UI
     @Override
@@ -376,12 +430,18 @@ public class JZPlayer extends JzvdStd {
     public void onAutoCompletion() {
         super.onStateAutoComplete();
         listener.complete();
+        /*danmakuView.stop();
+        danmakuView.clear();
+        danmakuView.clearDanmakusOnScreen();*/
     }
 
     @Override
     public void onStatePlaying() {
         super.onStatePlaying();
         playingListener.playing();
+        if (danmakuView != null && danmakuView.isPrepared()) {
+            danmakuView.resume();
+        }
     }
 
     @Override
@@ -411,6 +471,20 @@ public class JZPlayer extends JzvdStd {
     }
 
     @Override
+    public void onSeekComplete() {
+        super.onSeekComplete();
+        seekDanmu(getCurrentPositionWhenPlaying());
+    }
+
+    public void seekDanmu(long time) {
+        if (danmakuView != null) {
+            danmakuView.clearDanmakusOnScreen();
+            danmakuView.seekTo(time);
+            showDanmmu();
+        }
+    }
+
+    @Override
     public void onProgress(int progress, long position, long duration) {
         super.onProgress(progress, position, duration);
         onProgressListener.getPosition(position, duration);
@@ -420,5 +494,63 @@ public class JZPlayer extends JzvdStd {
     public void reset() {
         super.reset();
         if (localVideoDLNAServer != null) localVideoDLNAServer.stop();
+    }
+
+    public void showDanmmu() {
+        if (danmuView != null)
+            danmakuView.show();
+    }
+
+    public void hideDanmmu() {
+        if (danmuView != null)
+            danmakuView.hide();
+    }
+
+    public void createDanmu() {
+        if (danmakuView == null) {
+            danmakuView = findViewById(R.id.jz_danmu);
+            HashMap<Integer, Boolean> overlappingEnablePair = new HashMap<Integer, Boolean>();
+            overlappingEnablePair.put(BaseDanmaku.TYPE_SCROLL_RL, true);
+            overlappingEnablePair.put(BaseDanmaku.TYPE_FIX_TOP, true);
+            HashMap<Integer, Integer> maxLinesPair = new HashMap<Integer, Integer>();
+            maxLinesPair.put(BaseDanmaku.TYPE_SCROLL_RL, 5); // 滚动弹幕最大显示5行,可设置多种类型限制行数
+            danmakuContext = DanmakuContext.create();
+            danmakuContext.setDanmakuStyle(IDisplayer.DANMAKU_STYLE_STROKEN, 3)
+                    .setDuplicateMergingEnabled(false)
+                    .setScrollSpeedFactor(1.2f)
+                    .setScaleTextSize(1.2f)
+                    .setMaximumLines(maxLinesPair)
+                    .preventOverlapping(overlappingEnablePair).setDanmakuMargin(40);
+//        danmakuParser = new BaseDanmakuParser() {
+//            @Override
+//            protected IDanmakus parse() {
+//                return new Danmakus();
+//            }
+//        };
+            danmakuView.setCallback(new DrawHandler.Callback() {
+                @Override
+                public void prepared() {
+                    danmakuView.start();
+                }
+
+                @Override
+                public void updateTimer(DanmakuTimer timer) {
+                    // 弹幕倍速设置
+                    timer.update(getCurrentPositionWhenPlaying());
+                }
+
+                @Override
+                public void danmakuShown(BaseDanmaku danmaku) {
+
+                }
+
+                @Override
+                public void drawingFinished() {
+
+                }
+            });
+            danmakuView.showFPS(BuildConfig.DEBUG);
+            danmakuView.enableDanmakuDrawingCache(true);
+        }
     }
 }

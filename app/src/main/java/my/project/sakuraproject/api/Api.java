@@ -29,4 +29,7 @@ public class Api {
             "https://jx.m3u8.tv/jiexi/?url=%s",
             "https://z1.m1907.cn/?jx=%s"
     };
+
+    // 弹幕接口
+    public final static String DANMU_API = "https://api.danmu.oyyds.top/api/message/getSome?name=%s&number=%s&type=1";
 }

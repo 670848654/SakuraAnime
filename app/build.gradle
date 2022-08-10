@@ -7,8 +7,8 @@ android {
         applicationId "my.project.sakuraproject"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 45
-        versionName "2.3.6"
+        versionCode 46
+        versionName "2.3.7"
         ndk{abiFilters "arm64-v8a", "x86_64"}
         resConfigs"zh"
     }
@@ -54,7 +54,7 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.1'
     implementation 'com.squareup.okhttp3:okhttp:3.12.0'
     implementation 'cn.jzvd:jiaozivideoplayer:7.2.0'
-    implementation 'com.google.android.exoplayer:exoplayer:2.11.1'
+    implementation 'com.google.android.exoplayer:exoplayer:2.12.1'
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
     implementation 'jp.wasabeef:glide-transformations:4.3.0'
@@ -77,6 +77,9 @@ dependencies {
     implementation 'me.laoyuyu.aria:core:3.8.16'
     annotationProcessor 'me.laoyuyu.aria:compiler:3.8.16'
     implementation 'me.laoyuyu.aria:m3u8:3.8.16'
+    // danmu
+    implementation 'com.github.ctiao:DanmakuFlameMaster:0.9.25'
+    implementation 'com.github.ctiao:ndkbitmap-armv7a:0.9.21'
     implementation 'org.jsoup:jsoup:1.14.1'
 }
 

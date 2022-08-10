@@ -12,6 +12,7 @@ import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlaybackException;
+import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
@@ -79,6 +80,11 @@ public class JZExoPlayer extends JZMediaInterface implements Player.EventListene
 
             // 2. Create the player
             RenderersFactory renderersFactory = new DefaultRenderersFactory(context);
+            /*simpleExoPlayer = new SimpleExoPlayer.Builder(context, renderersFactory)
+                    .setTrackSelector(trackSelector)
+                    .setLoadControl(loadControl)
+                    .setBandwidthMeter(bandwidthMeter)
+                    .build();*/
             simpleExoPlayer = new SimpleExoPlayer.Builder(context, renderersFactory)
                     .setTrackSelector(trackSelector)
                     .setLoadControl(loadControl)
@@ -92,14 +98,16 @@ public class JZExoPlayer extends JZMediaInterface implements Player.EventListene
             DefaultHttpDataSourceFactory httpDataSourceFactory = new DefaultHttpDataSourceFactory(
                     Util.getUserAgent(context, context.getResources().getString(R.string.app_name)),
                     null,
-                    1500,
-                    1500,
+                    15000,
+                    15000,
                     true /* allowCrossProtocolRedirects */
             );
 
             if (currUrl.contains(".m3u8")) {
+//                videoSource = new HlsMediaSource.Factory(httpDataSourceFactory)
+//                        .createMediaSource(Uri.parse(currUrl), handler, null);
                 videoSource = new HlsMediaSource.Factory(httpDataSourceFactory)
-                        .createMediaSource(Uri.parse(currUrl), handler, null);
+                        .createMediaSource(Uri.parse(currUrl));
             } else {
                 videoSource = new ProgressiveMediaSource.Factory(dataSourceFactory)
                         .createMediaSource(Uri.parse(currUrl));
@@ -119,7 +127,12 @@ public class JZExoPlayer extends JZMediaInterface implements Player.EventListene
             simpleExoPlayer.setPlayWhenReady(true);
             callback = new onBufferingUpdate();
 
-            simpleExoPlayer.setVideoSurface(new Surface(jzvd.textureView.getSurfaceTexture()));
+            if (jzvd.textureView != null) {
+                SurfaceTexture surfaceTexture = jzvd.textureView.getSurfaceTexture();
+                if (surfaceTexture != null) {
+                    simpleExoPlayer.setVideoSurface(new Surface(surfaceTexture));
+                }
+            }
         });
 
     }
@@ -157,7 +170,7 @@ public class JZExoPlayer extends JZMediaInterface implements Player.EventListene
     public void release() {
         if (mMediaHandler != null && mMediaHandlerThread != null && simpleExoPlayer != null) {//不知道有没有妖孽
             HandlerThread tmpHandlerThread = mMediaHandlerThread;
-            SimpleExoPlayer tmpMediaPlayer = simpleExoPlayer;
+            ExoPlayer tmpMediaPlayer = simpleExoPlayer;
             JZMediaInterface.SAVED_SURFACE = null;
 
             mMediaHandler.post(() -> {
@@ -194,7 +207,7 @@ public class JZExoPlayer extends JZMediaInterface implements Player.EventListene
         simpleExoPlayer.setPlaybackParameters(playbackParameters);
     }
 
-    @Override
+    /*@Override
     public void onTimelineChanged(final Timeline timeline, Object manifest, final int reason) {
         Log.e(TAG, "onTimelineChanged");
 //        JZMediaPlayer.instance().mainThreadHandler.post(() -> {
@@ -203,12 +216,12 @@ public class JZExoPlayer extends JZMediaInterface implements Player.EventListene
 //                    JzvdMgr.getCurrentJzvd().onInfo(reason, timeline.getPeriodCount());
 //                }
 //        });
-    }
+    }*/
 
-    @Override
+    /*@Override
     public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
 
-    }
+    }*/
 
     @Override
     public void onLoadingChanged(boolean isLoading) {

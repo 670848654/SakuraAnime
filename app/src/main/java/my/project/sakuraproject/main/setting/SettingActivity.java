@@ -76,6 +76,9 @@ public class SettingActivity extends BaseActivity {
     private Call downCall;
     @BindView(R.id.show)
     CoordinatorLayout show;
+    @BindView(R.id.danmu_select)
+    TextView danmuSelectView;
+    private String[] danmuItems = {"开", "关"};
 
     @Override
     protected Presenter createPresenter() {
@@ -148,9 +151,10 @@ public class SettingActivity extends BaseActivity {
         domain_default.setText(Sakura.DOMAIN);
         downloadNumber.setText(((Integer) SharedPreferencesUtils.getParam(this, "download_number", 0) + 1) + "");
         slidrConfig.setText((Boolean) SharedPreferencesUtils.getParam(this, "slidr_config", false) ? slidrConfigs[1] : slidrConfigs[0]);
+        danmuSelectView.setText((Boolean) SharedPreferencesUtils.getParam(this, "open_danmu", true) ? danmuItems[0] : danmuItems[1]);
     }
 
-    @OnClick({R.id.set_domain, R.id.set_player, R.id.set_favorite_update, R.id.set_download_number, R.id.set_sildr, R.id.check_update, R.id.about, R.id.remove_downloads})
+    @OnClick({R.id.set_domain, R.id.set_player, R.id.set_favorite_update, R.id.set_download_number, R.id.set_sildr, R.id.check_update, R.id.about, R.id.remove_downloads, R.id.set_danmu})
     public void onClick(RelativeLayout layout) {
         switch (layout.getId()) {
             case R.id.set_domain:
@@ -182,6 +186,9 @@ public class SettingActivity extends BaseActivity {
                 break;
             case R.id.remove_downloads:
                 removeDownloads();
+                break;
+            case R.id.set_danmu:
+                setDanmu();
                 break;
         }
     }
@@ -326,6 +333,26 @@ public class SettingActivity extends BaseActivity {
             alertDialog.dismiss();
         });
         alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(v -> alertDialog.dismiss());
+    }
+
+    public void setDanmu() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.DialogStyle);
+        builder.setTitle(Utils.getString(R.string.danmu_title));
+        builder.setSingleChoiceItems(danmuItems, (Boolean) SharedPreferencesUtils.getParam(this, "open_danmu", true) ? 0 : 1, (dialog, which) -> {
+            switch (which) {
+                case 0:
+                    SharedPreferencesUtils.setParam(getApplicationContext(), "open_danmu", true);
+                    danmuSelectView.setText(danmuItems[0]);
+                    break;
+                case 1:
+                    SharedPreferencesUtils.setParam(getApplicationContext(), "open_danmu", false);
+                    danmuSelectView.setText(danmuItems[1]);
+                    break;
+            }
+            dialog.dismiss();
+        });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
     }
 
     /*public void setX5State() {

@@ -102,7 +102,6 @@ public class DownloadFragment extends MyLazyFragment<DownloadContract.View, Down
 
     private void initAdapter() {
         adapter = new DownloadListAdapter(getActivity(), downloadList);
-        adapter.openLoadAnimation();
         adapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
         adapter.setOnItemClickListener((adapter, view, position) -> {
             if (!Utils.isFastClick()) return;
@@ -146,6 +145,7 @@ public class DownloadFragment extends MyLazyFragment<DownloadContract.View, Down
         }, 500), mRecyclerView);
         if (Utils.checkHasNavigationBar(getActivity())) mRecyclerView.setPadding(0,0,0, Utils.getNavigationBarHeight(getActivity()));
         mRecyclerView.setAdapter(adapter);
+        setRecyclerViewView();
     }
 
     public void setLoadState(boolean loadState) {
@@ -156,6 +156,7 @@ public class DownloadFragment extends MyLazyFragment<DownloadContract.View, Down
     private void loadDownloadData() {
         isMain = true;
         downloadList.clear();
+        setRecyclerViewView();
         mPresenter = createPresenter();
         loadData();
     }
@@ -222,7 +223,6 @@ public class DownloadFragment extends MyLazyFragment<DownloadContract.View, Down
             if (isMain) {
                 loading.setVisibility(View.GONE);
                 downloadList = list;
-                setRecyclerViewView();
                 adapter.setNewData(downloadList);
             } else
                 adapter.addData(list);
@@ -241,7 +241,7 @@ public class DownloadFragment extends MyLazyFragment<DownloadContract.View, Down
         setLoadState(false);
         getActivity().runOnUiThread(() -> {
             if (isMain) {
-                setRecyclerViewView();
+                setRecyclerViewEmpty();
                 loading.setVisibility(View.GONE);
                 errorTitle.setText(msg);
                 adapter.setEmptyView(errorView);
@@ -287,13 +287,13 @@ public class DownloadFragment extends MyLazyFragment<DownloadContract.View, Down
         setRecyclerViewView();
     }
 
+    private void setRecyclerViewEmpty() {
+        mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 1));
+    }
+
     private void setRecyclerViewView() {
         String config = getActivity().getResources().getConfiguration().toString();
         boolean isInMagicWindow = config.contains("miui-magic-windows");
-        if (downloadList.size() == 0) {
-            mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 1));
-            return;
-        }
         if (!Utils.isPad()) {
             mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 1));
         }

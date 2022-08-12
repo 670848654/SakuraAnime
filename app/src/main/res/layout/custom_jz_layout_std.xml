@@ -5,7 +5,7 @@
     android:background="@android:color/black"
     android:descendantFocusability="afterDescendants">
 
-    <FrameLayout
+    <my.project.sakuraproject.custom.LongPressEventView
         android:id="@+id/surface_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -17,7 +17,7 @@
             android:adjustViewBounds="true"
             android:background="#000000"
             android:scaleType="fitXY" />
-    </FrameLayout>
+    </my.project.sakuraproject.custom.LongPressEventView>
 
     <RelativeLayout
         android:layout_width="wrap_content"
@@ -52,92 +52,151 @@
 
     </RelativeLayout>
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/layout_bottom"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_alignParentBottom="true"
         android:background="@drawable/jz_bottom_bg"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:paddingBottom="10dp"
         android:visibility="invisible">
 
-        <TextView
-            android:id="@+id/current"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="14dp"
-            android:text="00:00"
-            android:textColor="#ffffff" />
+        <LinearLayout
+            android:id="@+id/layout_seek"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_above="@+id/custom_view"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
-        <SeekBar
-            android:id="@+id/bottom_seek_progress"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="1.0"
-            android:background="@null"
-            android:max="100"
-            android:maxHeight="1dp"
-            android:minHeight="1dp"
-            android:paddingLeft="12dp"
-            android:paddingTop="8dp"
-            android:paddingRight="12dp"
-            android:paddingBottom="8dp"
-            android:progressDrawable="@drawable/jz_bottom_seek_progress"
-            android:thumb="@drawable/jz_bottom_seek_thumb" />
+            <TextView
+                android:id="@+id/current"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="14dp"
+                android:text="00:00"
+                android:textColor="#ffffff" />
 
-        <TextView
-            android:id="@+id/total"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="00:00"
-            android:textColor="#ffffff" />
+            <SeekBar
+                android:id="@+id/bottom_seek_progress"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1.0"
+                android:background="@null"
+                android:max="100"
+                android:maxHeight="1dp"
+                android:minHeight="1dp"
+                android:paddingLeft="12dp"
+                android:paddingTop="8dp"
+                android:paddingRight="12dp"
+                android:paddingBottom="8dp"
+                android:progressDrawable="@drawable/jz_bottom_seek_progress"
+                android:thumb="@drawable/player_seek_img" />
 
-        <TextView
-            android:id="@+id/clarity"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:paddingLeft="20dp"
-            android:text="clarity"
-            android:textAlignment="center"
-            android:textColor="#ffffff" />
+            <TextView
+                android:id="@+id/total"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="14dp"
+                android:text="00:00"
+                android:textColor="#ffffff" />
 
-        <ImageView
-            android:id="@+id/danmu"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/tanmu_open"
-            android:clickable="true"
-            android:paddingLeft="14dp" />
+        </LinearLayout>
 
-        <TextView
-            android:id="@+id/tvSpeed"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:id="@+id/custom_view"
+            android:layout_alignParentBottom="true"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:clickable="true"
-            android:paddingLeft="14dp"
-            android:textColor="#ffffff" />
+            android:layout_alignParentRight="true">
 
-        <TextView
-            android:id="@+id/display"
-            android:text="自适应比例"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:paddingLeft="14dp"
-            android:paddingRight="20dp"
-            android:textColor="#ffffff" />
+            <TextView
+                android:text="asdasdsadsa"
+                android:id="@+id/danmu_info"
+                android:visibility="gone"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:textColor="#d1d1d1"
+                android:paddingLeft="14dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
 
-        <ImageView
-            android:id="@+id/fullscreen"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingRight="14dp"
-            android:scaleType="centerInside"
-            android:src="@drawable/baseline_view_selections_white_48dp" />
-    </LinearLayout>
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true">
+
+                <TextView
+                    android:id="@+id/clarity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:clickable="true"
+                    android:text="clarity"
+                    android:paddingRight="14dp"
+                    android:textAlignment="center"
+                    android:textColor="#ffffff" />
+
+                <ImageView
+                    android:id="@+id/danmu"
+                    android:layout_toRightOf="@+id/clarity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="20dp"
+                    android:src="@drawable/outline_subtitles_white_48dp"
+                    android:clickable="true" />
+
+                <TextView
+                    android:id="@+id/display"
+                    android:layout_toRightOf="@+id/danmu"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:text="自适应比例"
+                    android:clickable="true"
+                    android:paddingRight="20dp"
+                    android:textColor="#ffffff" />
+
+                <TextView
+                    android:id="@+id/tvSpeed"
+                    android:layout_toRightOf="@+id/display"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:text="倍速"
+                    android:clickable="true"
+                    android:paddingRight="20dp"
+                    android:textColor="#ffffff" />
+
+                <TextView
+                    android:id="@+id/select_drama"
+                    android:layout_toRightOf="@+id/tvSpeed"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:text="选集"
+                    android:clickable="true"
+                    android:paddingRight="20dp"
+                    android:textColor="#ffffff" />
+
+                <ImageView
+                    android:id="@+id/fullscreen"
+                    android:visibility="gone"
+                    android:layout_toRightOf="@+id/select_drama"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:paddingRight="14dp"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/baseline_view_selections_white_48dp" />
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+    </RelativeLayout>
 
     <ProgressBar
         android:id="@+id/bottom_progress"
@@ -197,11 +256,12 @@
             android:textColor="#ffffff"
             android:textSize="18sp" />
 
+
         <ImageView
             android:id="@+id/config"
             android:visibility="invisible"
-            android:layout_toLeftOf="@+id/airplay"
             android:layout_marginRight="14dp"
+            android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:src="@drawable/ic_settings_white_48dp"
             android:layout_width="wrap_content"
@@ -210,13 +270,23 @@
         <ImageView
             android:id="@+id/airplay"
             android:visibility="invisible"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
+            android:layout_toLeftOf="@+id/config"
             android:layout_centerVertical="true"
             android:layout_marginEnd="14dp"
             android:src="@drawable/baseline_airplay_white_48dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
+
+        <ImageView
+            android:id="@+id/pip"
+            android:visibility="invisible"
+            android:layout_toLeftOf="@+id/airplay"
+            android:layout_marginRight="14dp"
+            android:layout_centerVertical="true"
+            android:src="@drawable/baseline_picture_in_picture_alt_white_48dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
 
         <LinearLayout
             android:id="@+id/battery_time_layout"
@@ -248,6 +318,31 @@
                 android:textColor="#ffffffff"
                 android:textSize="12.0sp" />
         </LinearLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/long_press_bg"
+        android:visibility="gone"
+        android:layout_below="@+id/layout_top"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:drawableLeft="@drawable/baseline_fast_forward_white_48dp"
+            android:drawablePadding="5dp"
+            android:text="2倍速播放中"
+            android:gravity="center_vertical"
+            android:textColor="#FFF"
+            android:background="@drawable/long_press_bg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
     </RelativeLayout>
 
     <ProgressBar

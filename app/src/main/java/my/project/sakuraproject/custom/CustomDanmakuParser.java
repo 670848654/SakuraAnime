@@ -68,17 +68,17 @@ public class CustomDanmakuParser extends BaseDanmakuParser {
                 if (item != null) {
                     item.setTime(time + 1200);
                     item.textColor = color;
-//                    item.textShadowColor = color <= Color.BLACK ? Color.WHITE : Color.BLACK;
+                    item.textShadowColor = color <= Color.BLACK ? Color.WHITE : Color.BLACK;
                     item.index = i;
                     item.flags = mContext.mGlobalFlagValues;
                     item.setTimer(mTimer);
                     item.text = danmuObj.getString("content");
-                    item.textShadowColor = Color.GRAY;
-//                    item.textShadowColor = color;
+//                    item.textShadowColor = Color.GRAY;
                     item.underlineColor = Color.TRANSPARENT;
                     item.borderColor = Color.TRANSPARENT;
                     item.priority = 3;
-                    item.textSize = Utils.dpToPx(Utils.getContext(), 14);
+//                    item.textSize = Utils.dpToPx(Utils.getContext(), 14);
+                    item.textSize = 20 * (mDispDensity - 0.6f);
                     danmakus.addItem(item);
                 }
             }

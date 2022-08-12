@@ -102,7 +102,6 @@ public class HistoryFragment extends MyLazyFragment<HistoryContract.View, Histor
 
     private void initAdapter() {
         adapter = new HistoryListAdapter(getActivity(), historyBeans);
-        adapter.openLoadAnimation();
         adapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
         adapter.setOnItemClickListener((adapter, view, position) -> {
             if (!Utils.isFastClick()) return;
@@ -169,6 +168,7 @@ public class HistoryFragment extends MyLazyFragment<HistoryContract.View, Histor
         }, 500), mRecyclerView);
         if (Utils.checkHasNavigationBar(getActivity())) mRecyclerView.setPadding(0,0,0, Utils.getNavigationBarHeight(getActivity()));
         mRecyclerView.setAdapter(adapter);
+        setRecyclerViewView();
     }
 
     public void setLoadState(boolean loadState) {
@@ -184,6 +184,7 @@ public class HistoryFragment extends MyLazyFragment<HistoryContract.View, Histor
     private void loadHistoryData() {
         isMain = true;
         historyBeans.clear();
+        setRecyclerViewView();
         mPresenter = createPresenter();
         loadData();
     }
@@ -218,7 +219,7 @@ public class HistoryFragment extends MyLazyFragment<HistoryContract.View, Histor
         else
             historyBeans.clear();
         if (historyBeans.size() <= 0) {
-            setRecyclerViewView();
+            setRecyclerViewEmpty();
             adapter.setNewData(historyBeans);
             errorTitle.setText(Utils.getString(R.string.empty_history));
             adapter.setEmptyView(errorView);
@@ -263,7 +264,6 @@ public class HistoryFragment extends MyLazyFragment<HistoryContract.View, Histor
             if (isMain) {
                 loading.setVisibility(View.GONE);
                 historyBeans = list;
-                setRecyclerViewView();
                 setFabClick();
                 adapter.setNewData(historyBeans);
             } else
@@ -367,7 +367,7 @@ public class HistoryFragment extends MyLazyFragment<HistoryContract.View, Histor
         setLoadState(false);
         getActivity().runOnUiThread(() -> {
             if (isMain) {
-                setRecyclerViewView();
+                setRecyclerViewEmpty();
                 loading.setVisibility(View.GONE);
                 errorTitle.setText(msg);
                 adapter.setEmptyView(errorView);
@@ -414,13 +414,13 @@ public class HistoryFragment extends MyLazyFragment<HistoryContract.View, Histor
         setRecyclerViewView();
     }
 
+    private void setRecyclerViewEmpty() {
+        mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 1));
+    }
+
     private void setRecyclerViewView() {
         String config = getActivity().getResources().getConfiguration().toString();
         boolean isInMagicWindow = config.contains("miui-magic-windows");
-        if (historyBeans.size() == 0) {
-            mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 1));
-            return;
-        }
         if (!Utils.isPad()) {
             mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 1));
         }

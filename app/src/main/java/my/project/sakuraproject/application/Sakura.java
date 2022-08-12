@@ -18,8 +18,12 @@ import java.util.Map;
 import java.util.Set;
 
 import androidx.appcompat.app.AppCompatDelegate;
+
+import javax.net.ssl.HttpsURLConnection;
+
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.services.DownloadService;
+import my.project.sakuraproject.util.CropUtil;
 import my.project.sakuraproject.util.SharedPreferencesUtils;
 import my.project.sakuraproject.util.Utils;
 
@@ -43,6 +47,8 @@ public class Sakura extends Application {
     public void onCreate() {
         super.onCreate();
         Utils.init(this);
+        // 忽略Https验证
+        HttpsURLConnection.setDefaultSSLSocketFactory(CropUtil.getUnsafeSslSocketFactory());
 //        CrashHandler crashHandler = CrashHandler.getInstance();
 //        crashHandler.init(getApplicationContext());
         if (Utils.isServiceRunning(this, "my.project.sakuraproject.services.DownloadService")) {

@@ -211,6 +211,7 @@ public class SettingActivity extends BaseActivity {
         });
         EditText editText = view.findViewById(R.id.domain);
         String defaultUrl = isImomoe ? (String) SharedPreferencesUtils.getParam(this, "imomoe_domain", Utils.getString(R.string.imomoe_url)) : (String) SharedPreferencesUtils.getParam(this, "domain", Utils.getString(R.string.domain_url));
+        spinner.setSelection(defaultUrl.startsWith("https") ? 1 : 0, true);
         editText.setText(defaultUrl.replaceAll("http://", "").replaceAll("https://", ""));
         builder.setPositiveButton(Utils.getString(R.string.page_positive_edit), null);
         builder.setNegativeButton(Utils.getString(R.string.page_negative), null);

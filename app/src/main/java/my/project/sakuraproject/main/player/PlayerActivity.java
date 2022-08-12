@@ -343,6 +343,8 @@ public class PlayerActivity extends BasePlayerActivity implements VideoContract.
                 if (player.loadError) return;
                 JSONArray jsonArray = danmus.getJSONObject("data").getJSONArray("data");
                 Toast.makeText(this, "查询弹幕API成功，共"+danmus.getJSONObject("data").getInteger("total")+"条弹幕~", Toast.LENGTH_SHORT).show();
+                player.danmuInfoView.setText("已加载"+ danmus.getJSONObject("data").getInteger("total") + "条弹幕！");
+                player.danmuInfoView.setVisibility(View.VISIBLE);
                 InputStream result = new ByteArrayInputStream(jsonArray.toString().getBytes(StandardCharsets.UTF_8));
                 player.danmakuParser = createParser(result);
                 player.createDanmu();

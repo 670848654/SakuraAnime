@@ -122,7 +122,6 @@ public class AnimeListActivity extends BaseActivity<AnimeListContract.View, Anim
 
     public void initAdapter() {
         adapter = new AnimeListAdapter(this, list, false);
-        adapter.openLoadAnimation();
         adapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
         adapter.setOnItemClickListener((adapter, view, position) -> {
             if (!Utils.isFastClick()) return;
@@ -155,6 +154,7 @@ public class AnimeListActivity extends BaseActivity<AnimeListContract.View, Anim
             }
         }, 500), mRecyclerView);
         mRecyclerView.setAdapter(adapter);
+        setRecyclerViewView();
     }
 
     @OnClick(R.id.query)
@@ -177,9 +177,9 @@ public class AnimeListActivity extends BaseActivity<AnimeListContract.View, Anim
         runOnUiThread(() -> {
             if (!mActivityFinish) {
                 if (isMain) {
+                    setRecyclerViewView();
                     mSwipe.setRefreshing(false);
                     list = animeList;
-                    setRecyclerViewView();
                     adapter.setNewData(list);
                 } else {
                     adapter.addData(animeList);
@@ -194,7 +194,7 @@ public class AnimeListActivity extends BaseActivity<AnimeListContract.View, Anim
         runOnUiThread(() -> {
             if (!mActivityFinish) {
                 if (isMain) {
-                    setRecyclerViewView();
+                    setRecyclerViewEmpty();
                     mSwipe.setRefreshing(false);
                     errorTitle.setText(msg);
                     adapter.setEmptyView(errorView);
@@ -237,13 +237,13 @@ public class AnimeListActivity extends BaseActivity<AnimeListContract.View, Anim
         setRecyclerViewView();
     }
 
+    private void setRecyclerViewEmpty() {
+        mRecyclerView.setLayoutManager(new GridLayoutManager(this, 1));
+    }
+
     private void setRecyclerViewView() {
         String config = this.getResources().getConfiguration().toString();
         boolean isInMagicWindow = config.contains("miui-magic-windows");
-        if (list.size() == 0) {
-            mRecyclerView.setLayoutManager(new GridLayoutManager(this, 1));
-            return;
-        }
         if (!Utils.isPad()) {
             mRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
         }

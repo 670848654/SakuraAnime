@@ -217,6 +217,7 @@ public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> im
             animeListPresenter.loadData(true, false, Utils.isImomoe());
         });
         tagRecyclerView.setAdapter(tagAdapter);
+        setRecyclerViewView();
         mBottomSheetDialog = new BottomSheetDialog(this);
         mBottomSheetDialog.setContentView(tagView);
     }
@@ -229,7 +230,7 @@ public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> im
     @OnClick(R.id.tag_btn)
     public void tagBtnClick() {
         tagAdapter.setNewData(tagList);
-        mBottomSheetDialog.getBehavior().setState(BottomSheetBehavior.STATE_EXPANDED);
+//        mBottomSheetDialog.getBehavior().setState(BottomSheetBehavior.STATE_EXPANDED);
         mBottomSheetDialog.show();
     }
 
@@ -246,14 +247,13 @@ public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> im
                 ref.setVisibility(View.GONE);
                 mSwipe.setRefreshing(false);
                 tagList = list;
-                setRecyclerViewView();
                 tagAdapter.setNewData(tagList);
                 tagAdapter.expandAll();
                 if (!animeUrl.isEmpty()) {
                     animeListPresenter = new AnimeListPresenter(animeUrl, nowPage, this);
                     animeListPresenter.loadData(true, false, Utils.isImomoe());
                 } else {
-                    mBottomSheetDialog.getBehavior().setState(BottomSheetBehavior.STATE_EXPANDED);
+//                    mBottomSheetDialog.getBehavior().setState(BottomSheetBehavior.STATE_EXPANDED);
                     mBottomSheetDialog.show();
                 }
                 tag_btn.show();
@@ -271,7 +271,7 @@ public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> im
         runOnUiThread(() -> {
             if (!mActivityFinish) {
                 ref.setVisibility(View.VISIBLE);
-                setRecyclerViewView();
+                setRecyclerViewEmpty(true);
                 mSwipe.setRefreshing(false);
                 errorTitle.setText(msg);
                 tagAdapter.setEmptyView(errorView);
@@ -297,9 +297,9 @@ public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> im
         runOnUiThread(() -> {
             if (!mActivityFinish) {
                 if (isMain) {
+                    setRecyclerViewView();
                     mSwipe.setRefreshing(false);
                     animeLists = animeList;
-                    setRecyclerViewView();
                     animeListAdapter.setNewData(animeLists);
                 } else {
                     animeListAdapter.addData(animeList);
@@ -314,7 +314,7 @@ public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> im
         runOnUiThread(() -> {
             if (!mActivityFinish) {
                 if (isMain) {
-                    setRecyclerViewView();
+                    setRecyclerViewEmpty(false);
                     mSwipe.setRefreshing(false);
                     errorTitle.setText(msg);
                     animeListAdapter.setEmptyView(errorView);
@@ -343,13 +343,16 @@ public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> im
         setRecyclerViewView();
     }
 
+    private void setRecyclerViewEmpty(boolean isTag) {
+        if (isTag)
+            tagRecyclerView.setLayoutManager(new GridLayoutManager(this, 1));
+        else
+            animeListRecyclerView.setLayoutManager(new GridLayoutManager(this, 1));
+    }
+
     private void setRecyclerViewView() {
         String config = this.getResources().getConfiguration().toString();
         boolean isInMagicWindow = config.contains("miui-magic-windows");
-        if (tagList.size() == 0) {
-            tagRecyclerView.setLayoutManager(new GridLayoutManager(this, 1));
-            return;
-        }
         if (!Utils.isPad()) {
             final GridLayoutManager manager = new GridLayoutManager(this,6);
             manager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
@@ -360,13 +363,13 @@ public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> im
             });
             // important! setLayoutManager should be called after setAdapter
             tagRecyclerView.setLayoutManager(manager);
-            animeListRecyclerView.setLayoutManager(new GridLayoutManager(this, animeLists.size() == 0 ? 1 : 3));
+            animeListRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
         }
         else {
             if (isInMagicWindow) {
-                animeListRecyclerView.setLayoutManager(new GridLayoutManager(this, animeLists.size() == 0 ? 1 : 4));
+                animeListRecyclerView.setLayoutManager(new GridLayoutManager(this, 4));
             } else {
-                animeListRecyclerView.setLayoutManager(new GridLayoutManager(this, animeLists.size() == 0 ? 1 : 5));
+                animeListRecyclerView.setLayoutManager(new GridLayoutManager(this, 5));
             }
             final GridLayoutManager manager = new GridLayoutManager(this,12);
             manager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {

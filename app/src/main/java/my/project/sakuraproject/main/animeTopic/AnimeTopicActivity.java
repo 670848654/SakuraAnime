@@ -125,7 +125,6 @@ public class AnimeTopicActivity extends BaseActivity<AnimeTopicContract.View, An
     public void initAdapter() {
         mRecyclerView.setLayoutManager(new GridLayoutManager(this, Utils.isPad() ? 3 : 2));
         adapter = new AnimeListAdapter(this, list, true);
-        adapter.openLoadAnimation();
         adapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
         adapter.setOnItemClickListener((adapter, view, position) -> {
             if (!Utils.isFastClick()) return;
@@ -181,6 +180,7 @@ public class AnimeTopicActivity extends BaseActivity<AnimeTopicContract.View, An
         runOnUiThread(() -> {
             if (!mActivityFinish) {
                 if (isMain) {
+                    mRecyclerView.setLayoutManager(new GridLayoutManager(this, Utils.isPad() ? 3 : 2));
                     mSwipe.setRefreshing(false);
                     list = animeList;
                     adapter.setNewData(list);
@@ -198,6 +198,7 @@ public class AnimeTopicActivity extends BaseActivity<AnimeTopicContract.View, An
             if (!mActivityFinish) {
                 if (isMain) {
                     mSwipe.setRefreshing(false);
+                    mRecyclerView.setLayoutManager(new GridLayoutManager(this, 1));
                     errorTitle.setText(msg);
                     adapter.setEmptyView(errorView);
                 } else {

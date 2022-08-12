@@ -371,7 +371,7 @@ public class MaliTagActivity extends BaseActivity<TagContract.View, TagPresenter
             }
         }, 500), animeListRecyclerView);
         animeListRecyclerView.setAdapter(animeListAdapter);
-
+        setRecyclerViewView();
     }
 
     private void setLoadState(boolean loadState) {
@@ -403,7 +403,6 @@ public class MaliTagActivity extends BaseActivity<TagContract.View, TagPresenter
                 ref.setVisibility(View.GONE);
                 listView.setVisibility(View.VISIBLE);
                 mSwipe.setRefreshing(false);
-                setRecyclerViewView();
                 for (MaliTagBean beans : list) {
                     switch (beans.getTitle()) {
                         case FL:
@@ -446,7 +445,7 @@ public class MaliTagActivity extends BaseActivity<TagContract.View, TagPresenter
             if (!mActivityFinish) {
                 ref.setVisibility(View.VISIBLE);
                 listView.setVisibility(View.GONE);
-                setRecyclerViewView();
+                setRecyclerViewEmpty();
                 mSwipe.setRefreshing(false);
                 errorTitle.setText(msg);
                 mBottomSheetDialog.getBehavior().setState(BottomSheetBehavior.STATE_EXPANDED);
@@ -471,9 +470,9 @@ public class MaliTagActivity extends BaseActivity<TagContract.View, TagPresenter
         runOnUiThread(() -> {
             if (!mActivityFinish) {
                 if (isMain) {
+                    setRecyclerViewView();
                     mSwipe.setRefreshing(false);
                     animeLists = animeList;
-                    setRecyclerViewView();
                     animeListAdapter.setNewData(animeLists);
                 } else {
                     animeListAdapter.addData(animeList);
@@ -488,7 +487,7 @@ public class MaliTagActivity extends BaseActivity<TagContract.View, TagPresenter
         runOnUiThread(() -> {
             if (!mActivityFinish) {
                 if (isMain) {
-                    setRecyclerViewView();
+                    setRecyclerViewEmpty();
                     mSwipe.setRefreshing(false);
                     errorTitle.setText(msg);
                     animeListAdapter.setEmptyView(errorView);
@@ -517,36 +516,22 @@ public class MaliTagActivity extends BaseActivity<TagContract.View, TagPresenter
         setRecyclerViewView();
     }
 
+    private void setRecyclerViewEmpty() {
+        animeListRecyclerView.setLayoutManager(new GridLayoutManager(this, 1));
+    }
+
     private void setRecyclerViewView() {
         String config = this.getResources().getConfiguration().toString();
         boolean isInMagicWindow = config.contains("miui-magic-windows");
         if (!Utils.isPad()) {
-            /*final GridLayoutManager manager = new GridLayoutManager(this,6);
-            manager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-                @Override
-                public int getSpanSize(int position) {
-                    return tagAdapter.getItemViewType(position) == TagAdapter.TYPE_LEVEL_1 ? 1 : manager.getSpanCount();
-                }
-            });
-            // important! setLayoutManager should be called after setAdapter
-            tagRecyclerView.setLayoutManager(manager);*/
-            animeListRecyclerView.setLayoutManager(new GridLayoutManager(this, animeLists.size() == 0 ? 1 : 3));
+            animeListRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
         }
         else {
             if (isInMagicWindow) {
-                animeListRecyclerView.setLayoutManager(new GridLayoutManager(this, animeLists.size() == 0 ? 1 : 4));
+                animeListRecyclerView.setLayoutManager(new GridLayoutManager(this, 4));
             } else {
-                animeListRecyclerView.setLayoutManager(new GridLayoutManager(this, animeLists.size() == 0 ? 1 : 5));
+                animeListRecyclerView.setLayoutManager(new GridLayoutManager(this, 5));
             }
-           /* final GridLayoutManager manager = new GridLayoutManager(this,12);
-            manager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-                @Override
-                public int getSpanSize(int position) {
-                    return tagAdapter.getItemViewType(position) == TagAdapter.TYPE_LEVEL_1 ? 1 : manager.getSpanCount();
-                }
-            });
-            // important! setLayoutManager should be called after setAdapter
-            tagRecyclerView.setLayoutManager(manager);*/
         }
     }
 }

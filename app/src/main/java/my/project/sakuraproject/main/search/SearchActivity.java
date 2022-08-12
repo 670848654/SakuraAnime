@@ -99,7 +99,6 @@ public class SearchActivity extends BaseActivity<SearchContract.View, SearchPres
     public void initAdapter() {
 //        mRecyclerView.setLayoutManager(new GridLayoutManager(this, Utils.isPad() ? 5 : 3));
         adapter = new AnimeListAdapter(this, searchList, false);
-        adapter.openLoadAnimation();
         adapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
         adapter.setOnItemClickListener((adapter, view, position) -> {
             if (!Utils.isFastClick()) return;
@@ -132,6 +131,7 @@ public class SearchActivity extends BaseActivity<SearchContract.View, SearchPres
         }, 500), mRecyclerView);
         if (Utils.checkHasNavigationBar(this)) mRecyclerView.setPadding(0,0,0, Utils.getNavigationBarHeight(this));
         mRecyclerView.setAdapter(adapter);
+        setRecyclerViewView();
     }
 
     public void openAnimeDesc(String title, String url) {
@@ -232,9 +232,9 @@ public class SearchActivity extends BaseActivity<SearchContract.View, SearchPres
             isSearch = false;
             if (!mActivityFinish) {
                 if (isMain) {
+                    setRecyclerViewView();
                     mSwipe.setRefreshing(false);
                     searchList = list;
-                    setRecyclerViewView();
                     adapter.setNewData(searchList);
                 } else {
                     adapter.addData(list);
@@ -250,7 +250,7 @@ public class SearchActivity extends BaseActivity<SearchContract.View, SearchPres
             isSearch = false;
             if (!mActivityFinish) {
                 if (isMain) {
-                    setRecyclerViewView();
+                    setRecyclerViewEmpty();
                     mSwipe.setRefreshing(false);
                     errorTitle.setText(msg);
                     adapter.setEmptyView(errorView);
@@ -279,13 +279,13 @@ public class SearchActivity extends BaseActivity<SearchContract.View, SearchPres
         setRecyclerViewView();
     }
 
+    private void setRecyclerViewEmpty() {
+        mRecyclerView.setLayoutManager(new GridLayoutManager(this, 1));
+    }
+
     private void setRecyclerViewView() {
         String config = this.getResources().getConfiguration().toString();
         boolean isInMagicWindow = config.contains("miui-magic-windows");
-        if (searchList.size() == 0) {
-            mRecyclerView.setLayoutManager(new GridLayoutManager(this, 1));
-            return;
-        }
         if (!Utils.isPad()) {
             mRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
         }

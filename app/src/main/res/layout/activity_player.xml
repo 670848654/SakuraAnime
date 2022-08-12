@@ -205,7 +205,7 @@
 
                     </RelativeLayout>
 
-                    <RelativeLayout
+                    <!--<RelativeLayout
                         android:id="@+id/pic_config"
                         android:background="?android:attr/selectableItemBackground"
                         android:layout_width="match_parent"
@@ -229,7 +229,7 @@
                             android:layout_centerVertical="true"
                             android:textColor="@android:color/white" />
 
-                    </RelativeLayout>
+                    </RelativeLayout>-->
 
                     <LinearLayout
                         android:id="@+id/other_view"

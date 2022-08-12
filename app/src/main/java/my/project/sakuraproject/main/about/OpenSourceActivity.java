@@ -105,8 +105,7 @@ public class OpenSourceActivity extends BaseActivity {
     public void initAdapter() {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new SourceAdapter(list);
-        adapter.openLoadAnimation();
-        adapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
+        adapter.openLoadAnimation(BaseQuickAdapter.SLIDEIN_BOTTOM);
         adapter.setOnItemClickListener((adapter, view, position) -> {
             if (Utils.isFastClick()) Utils.viewInChrome(this, list.get(position).getUrl());
         });

@@ -112,7 +112,6 @@ public class DownloadDataActivity extends BaseActivity<DownloadDataContract.View
     private void initAdapter() {
 //        mRecyclerView.setLayoutManager(new GridLayoutManager(this, Utils.isPad() ? 2 : 1));
         adapter = new DownloadDataListAdapter(this, downloadDataBeans);
-        adapter.openLoadAnimation();
         adapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
         adapter.setOnItemClickListener((adapter, view, position) -> {
             if (!Utils.isFastClick()) return;
@@ -186,6 +185,7 @@ public class DownloadDataActivity extends BaseActivity<DownloadDataContract.View
             }
         }, 500), mRecyclerView);
         mRecyclerView.setAdapter(adapter);
+        setRecyclerViewView();
     }
 
     private void showDeleteDataDialog(DownloadDataBean bean, int position) {
@@ -342,7 +342,6 @@ public class DownloadDataActivity extends BaseActivity<DownloadDataContract.View
         runOnUiThread(() -> {
             if (isMain) {
                 downloadDataBeans = list;
-                setRecyclerViewView();
                 adapter.setNewData(downloadDataBeans);
             } else
                 adapter.addData(list);
@@ -359,7 +358,7 @@ public class DownloadDataActivity extends BaseActivity<DownloadDataContract.View
         setLoadState(false);
         runOnUiThread(() -> {
             if (isMain) {
-                setRecyclerViewView();
+                setRecyclerViewEmpty();
                 errorTitle.setText(msg);
                 adapter.setEmptyView(errorView);
             }
@@ -423,13 +422,13 @@ public class DownloadDataActivity extends BaseActivity<DownloadDataContract.View
         setRecyclerViewView();
     }
 
+    private void setRecyclerViewEmpty() {
+        mRecyclerView.setLayoutManager(new GridLayoutManager(this, 1));
+    }
+
     private void setRecyclerViewView() {
         String config = this.getResources().getConfiguration().toString();
         boolean isInMagicWindow = config.contains("miui-magic-windows");
-        if (downloadDataBeans.size() == 0) {
-            mRecyclerView.setLayoutManager(new GridLayoutManager(this, 1));
-            return;
-        }
         if (!Utils.isPad()) {
             mRecyclerView.setLayoutManager(new GridLayoutManager(this, 1));
         }

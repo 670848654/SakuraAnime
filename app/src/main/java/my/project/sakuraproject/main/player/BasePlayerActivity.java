@@ -66,8 +66,8 @@ public abstract class BasePlayerActivity extends BaseActivity implements JZPlaye
     LinearLayout navConfigView;
     @BindView(R.id.drawer_layout)
     DrawerLayout drawerLayout;
-    @BindView(R.id.pic_config)
-    RelativeLayout picConfig;
+    /*@BindView(R.id.pic_config)
+    RelativeLayout picConfig;*/
     @BindView(R.id.hide_progress)
     SwitchCompat hideProgressSc;
     @BindView(R.id.other_view)
@@ -206,15 +206,18 @@ public abstract class BasePlayerActivity extends BaseActivity implements JZPlaye
             player.danmuView.setVisibility(View.GONE);
         // 加载视频失败，嗅探视频
         player.snifferBtn.setOnClickListener(v -> snifferVideo());
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) picConfig.setVisibility(View.GONE);
-        else picConfig.setVisibility(View.VISIBLE);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) player.pipView.setVisibility(View.GONE);
+        else player.pipView.setVisibility(View.VISIBLE);
         if (gtSdk23()) player.tvSpeed.setVisibility(View.VISIBLE);
         else player.tvSpeed.setVisibility(View.GONE);
-        player.fullscreenButton.setOnClickListener(view -> {
+        player.selectDramaView.setOnClickListener(view -> {
             if (!Utils.isFastClick()) return;
             if (drawerLayout.isDrawerOpen(GravityCompat.END))
                 drawerLayout.closeDrawer(GravityCompat.END);
             else drawerLayout.openDrawer(GravityCompat.END);
+        });
+        player.pipView.setOnClickListener(view -> {
+            if (gtSdk26()) startPic();
         });
         Jzvd.FULLSCREEN_ORIENTATION = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE;
         Jzvd.NORMAL_ORIENTATION = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE;
@@ -271,15 +274,16 @@ public abstract class BasePlayerActivity extends BaseActivity implements JZPlaye
         userSpeed = speed;
     }
 
-    @OnClick({R.id.speed_config, R.id.pic_config, R.id.player_config, R.id.browser_config})
+//    @OnClick({R.id.speed_config, R.id.pic_config, R.id.player_config, R.id.browser_config})
+    @OnClick({R.id.speed_config, R.id.player_config, R.id.browser_config})
     public void configBtnClick(RelativeLayout relativeLayout) {
         switch (relativeLayout.getId()) {
             case R.id.speed_config:
                 setDefaultSpeed();
                 break;
-            case R.id.pic_config:
+            /*case R.id.pic_config:
                 if (gtSdk26()) startPic();
-                break;
+                break;*/
             case R.id.player_config:
                 Utils.selectVideoPlayer(this, url);
                 break;
@@ -319,6 +323,7 @@ public abstract class BasePlayerActivity extends BaseActivity implements JZPlaye
 
     protected void changePlayUrl(int position) {
         player.releaseDanMu();
+        player.danmuInfoView.setVisibility(View.GONE);
         if (isLocalVideo) {
             changeLocalPlayUrl(position);
             return;

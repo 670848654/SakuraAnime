@@ -4,10 +4,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.AttributeSet;
+import android.view.HapticFeedbackConstants;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.io.IOException;
@@ -30,10 +32,12 @@ import master.flame.danmaku.ui.widget.DanmakuView;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.cling.ui.DLNAActivity;
 import my.project.sakuraproject.custom.CustomToast;
+import my.project.sakuraproject.custom.LongPressEventView;
 import my.project.sakuraproject.util.SharedPreferencesUtils;
 import my.project.sakuraproject.util.Utils;
 
 public class JZPlayer extends JzvdStd {
+    float starX, startY;
     private Context context;
     private CompleteListener listener;
     private TouchListener touchListener;
@@ -46,16 +50,22 @@ public class JZPlayer extends JzvdStd {
     public ImageView fastForward, quickRetreat, config, airplay;
     public TextView tvSpeed, snifferBtn, openDrama, preVideo, nextVideo, display;
     public int currentSpeedIndex = 1;
+    public float speedRet = 1.0f;
     public boolean isLocalVideo;
     public String localVideoPath;
     private LocalVideoDLNAServer localVideoDLNAServer;
     public int displayIndex = 1;
+    public TextView selectDramaView;
+    private RelativeLayout longPressBgView;
+    private boolean isLongClick = false;
+    public ImageView pipView;
     // 弹幕
     public boolean openDanmuConfig; // 是否启用弹幕功能
     public DanmakuView danmakuView;
     public DanmakuContext danmakuContext;
     public BaseDanmakuParser danmakuParser;
     public ImageView danmuView;
+    public TextView danmuInfoView;
     public boolean open_danmu = true;
     public boolean loadError = false;
 
@@ -103,11 +113,51 @@ public class JZPlayer extends JzvdStd {
         nextVideo = findViewById(R.id.next_video);
         display = findViewById(R.id.display);
         display.setOnClickListener(this);
+        selectDramaView = findViewById(R.id.select_drama);
+        danmuInfoView = findViewById(R.id.danmu_info);
+        pipView = findViewById(R.id.pip);
         danmuView = findViewById(R.id.danmu);
         danmuView.setOnClickListener(this);
         openDanmuConfig = (Boolean) SharedPreferencesUtils.getParam(context, "open_danmu", true);
-        if (!openDanmuConfig)
+        if (!openDanmuConfig) {
             danmuView.setVisibility(GONE);
+            danmuInfoView.setVisibility(GONE);
+        }
+        danmakuView = findViewById(R.id.jz_danmu);
+        HashMap<Integer, Boolean> overlappingEnablePair = new HashMap<Integer, Boolean>();
+        overlappingEnablePair.put(BaseDanmaku.TYPE_SCROLL_RL, true);
+        overlappingEnablePair.put(BaseDanmaku.TYPE_FIX_TOP, true);
+        HashMap<Integer, Integer> maxLinesPair = new HashMap<Integer, Integer>();
+        maxLinesPair.put(BaseDanmaku.TYPE_SCROLL_RL, 5); // 滚动弹幕最大显示5行,可设置多种类型限制行数
+        danmakuContext = DanmakuContext.create();
+        danmakuContext.setDanmakuStyle(IDisplayer.DANMAKU_STYLE_STROKEN, 3)
+                .setDuplicateMergingEnabled(false)
+                .setScrollSpeedFactor(1.2f)
+                .setScaleTextSize(1.2f)
+                .setMaximumLines(maxLinesPair)
+                .preventOverlapping(overlappingEnablePair).setDanmakuMargin(40);
+        longPressBgView = findViewById(R.id.long_press_bg);
+        LongPressEventView viewLongPress = findViewById(R.id.surface_container);
+        viewLongPress.setLongPressEventListener(new LongPressEventView.LongPressEventListener() {
+            @Override
+            public void onLongClick(View v) {
+                isLongClick = true;
+                //震动反馈
+                v.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+                if (mediaInterface != null) {
+                    mediaInterface.setSpeed(2.0f);
+                    longPressBgView.setVisibility(VISIBLE);
+                }
+            }
+
+            @Override
+            public void onDisLongClick(View v) {
+                if (mediaInterface != null) {
+                    mediaInterface.setSpeed(speedRet);
+                    longPressBgView.setVisibility(GONE);
+                }
+            }
+        });
     }
 
     @Override
@@ -115,6 +165,7 @@ public class JZPlayer extends JzvdStd {
         super.onClick(v);
         switch (v.getId()) {
             case R.id.std_lock:
+                ibLock.setTag(1);
                 if (locked) {
                     // 已经上锁，再次点击解锁
                     changeUiToPlayingShow();
@@ -156,7 +207,7 @@ public class JZPlayer extends JzvdStd {
                 if (currentSpeedIndex == 7) currentSpeedIndex = 0;
                 else currentSpeedIndex += 1;
                 mediaInterface.setSpeed(getSpeedFromIndex(currentSpeedIndex));
-                tvSpeed.setText("倍数X" + getSpeedFromIndex(currentSpeedIndex));
+                tvSpeed.setText(currentSpeedIndex == 1 ? "倍速" : "倍速X" + getSpeedFromIndex(currentSpeedIndex));
                 break;
             case R.id.airplay:
                 if (!Utils.isWifi(context)) {
@@ -191,12 +242,12 @@ public class JZPlayer extends JzvdStd {
                 if (open_danmu) {
                     open_danmu = false;
                     // 关闭弹幕
-                    danmuView.setImageDrawable(context.getResources().getDrawable(R.drawable.tanmu_close));
+                    danmuView.setImageDrawable(context.getResources().getDrawable(R.drawable.outline_subtitles_off_white_48dp));
                     hideDanmmu();
                 } else {
                     open_danmu = true;
                     // 打开弹幕
-                    danmuView.setImageDrawable(context.getResources().getDrawable(R.drawable.tanmu_open));
+                    danmuView.setImageDrawable(context.getResources().getDrawable(R.drawable.outline_subtitles_white_48dp));
                     showDanmmu();
                 }
                 break;
@@ -204,34 +255,33 @@ public class JZPlayer extends JzvdStd {
     }
 
     private float getSpeedFromIndex(int index) {
-        float ret = 0f;
         switch (index) {
             case 0:
-                ret = 0.5f;
+                speedRet = 0.5f;
                 break;
             case 1:
-                ret = 1.0f;
+                speedRet = 1.0f;
                 break;
             case 2:
-                ret = 1.25f;
+                speedRet = 1.25f;
                 break;
             case 3:
-                ret = 1.5f;
+                speedRet = 1.5f;
                 break;
             case 4:
-                ret = 1.75f;
+                speedRet = 1.75f;
                 break;
             case 5:
-                ret = 2.0f;
+                speedRet = 2.0f;
                 break;
             case 6:
-                ret = 2.5f;
+                speedRet = 2.5f;
                 break;
             case 7:
-                ret = 3.0f;
+                speedRet = 3.0f;
                 break;
         }
-        return ret;
+        return speedRet;
     }
 
     private String getDisplayIndex(int index) {
@@ -267,6 +317,7 @@ public class JZPlayer extends JzvdStd {
             quickRetreat.setVisibility(VISIBLE);
             config.setVisibility(VISIBLE);
             airplay.setVisibility(VISIBLE);
+            fullscreenButton.setVisibility(GONE);
             showOrHideChangeViewListener.showOrHideChangeView();
         }
         if (screen == SCREEN_FULLSCREEN)
@@ -289,12 +340,60 @@ public class JZPlayer extends JzvdStd {
     public boolean onTouch(View v, MotionEvent event) {
         touchListener.touch();
         switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                starX = event.getX();
+                startY = event.getY();
+                if (locked) {
+                    return true;
+                }
+                break;
             // 用户滑动屏幕的操作，返回true来屏蔽音量、亮度、进度的滑动功能
             case MotionEvent.ACTION_MOVE:
                 if (locked)
                     return true;
+            case MotionEvent.ACTION_UP:
+                if (locked) {
+                    //&& Math.abs(Math.abs(event.getX() - starX)) > ViewConfiguration.get(getContext()).getScaledTouchSlop()  && Math.abs(Math.abs(event.getY() - startY)) > ViewConfiguration.get(getContext()).getScaledTouchSlop()
+                    if (event.getX() == starX || event.getY() == startY) {
+                        startDismissControlViewTimer();
+                        onClickUiToggle();
+                    }
+                    return true;
+                }
+                break;
         }
         return super.onTouch(v, event);
+    }
+
+    @Override
+    public void onClickUiToggle() {
+        super.onClickUiToggle();
+        if (isLongClick) {
+            changeUiToPlayingClear();
+            isLongClick = false;
+        }
+        if (!locked) {
+            if (bottomContainer.getVisibility() == View.VISIBLE) {
+                ibLock.setVisibility(View.VISIBLE);
+            } else {
+                ibLock.setVisibility(View.GONE);
+            }
+        } else {
+            if ((int) ibLock.getTag() == 1) {
+                bottomProgressBar.setVisibility(GONE);
+                ibLock.setVisibility(View.VISIBLE);
+            }
+        }
+    }
+
+    @Override
+    public void changeUiToPauseShow() {
+        super.changeUiToPauseShow();
+        if (locked) {
+            bottomContainer.setVisibility(GONE);
+            topContainer.setVisibility(GONE);
+            startButton.setVisibility(GONE);
+        }
     }
 
     //这里是播放的时候屏幕上面UI消失  只显示下面底部的进度条UI
@@ -390,8 +489,8 @@ public class JZPlayer extends JzvdStd {
     @Override
     public void setScreenFullscreen() {
         super.setScreenFullscreen();
-        fullscreenButton.setImageResource(R.drawable.baseline_view_selections_white_48dp);
-        tvSpeed.setText("倍数X" + getSpeedFromIndex(currentSpeedIndex));
+//        fullscreenButton.setImageResource(R.drawable.baseline_view_selections_white_48dp);
+//        tvSpeed.setText("倍数X" + getSpeedFromIndex(currentSpeedIndex));
     }
 
     public interface PlayingListener {
@@ -507,50 +606,29 @@ public class JZPlayer extends JzvdStd {
     }
 
     public void createDanmu() {
-        if (danmakuView == null) {
-            danmakuView = findViewById(R.id.jz_danmu);
-            HashMap<Integer, Boolean> overlappingEnablePair = new HashMap<Integer, Boolean>();
-            overlappingEnablePair.put(BaseDanmaku.TYPE_SCROLL_RL, true);
-            overlappingEnablePair.put(BaseDanmaku.TYPE_FIX_TOP, true);
-            HashMap<Integer, Integer> maxLinesPair = new HashMap<Integer, Integer>();
-            maxLinesPair.put(BaseDanmaku.TYPE_SCROLL_RL, 5); // 滚动弹幕最大显示5行,可设置多种类型限制行数
-            danmakuContext = DanmakuContext.create();
-            danmakuContext.setDanmakuStyle(IDisplayer.DANMAKU_STYLE_STROKEN, 3)
-                    .setDuplicateMergingEnabled(false)
-                    .setScrollSpeedFactor(1.2f)
-                    .setScaleTextSize(1.2f)
-                    .setMaximumLines(maxLinesPair)
-                    .preventOverlapping(overlappingEnablePair).setDanmakuMargin(40);
-//        danmakuParser = new BaseDanmakuParser() {
-//            @Override
-//            protected IDanmakus parse() {
-//                return new Danmakus();
-//            }
-//        };
-            danmakuView.setCallback(new DrawHandler.Callback() {
-                @Override
-                public void prepared() {
-                    danmakuView.start();
-                }
+        danmakuView.setCallback(new DrawHandler.Callback() {
+            @Override
+            public void prepared() {
+                danmakuView.start();
+            }
 
-                @Override
-                public void updateTimer(DanmakuTimer timer) {
-                    // 弹幕倍速设置
-                    timer.update(getCurrentPositionWhenPlaying());
-                }
+            @Override
+            public void updateTimer(DanmakuTimer timer) {
+                // 弹幕倍速设置
+                timer.update(getCurrentPositionWhenPlaying());
+            }
 
-                @Override
-                public void danmakuShown(BaseDanmaku danmaku) {
+            @Override
+            public void danmakuShown(BaseDanmaku danmaku) {
 
-                }
+            }
 
-                @Override
-                public void drawingFinished() {
+            @Override
+            public void drawingFinished() {
 
-                }
-            });
-            danmakuView.showFPS(BuildConfig.DEBUG);
-            danmakuView.enableDanmakuDrawingCache(true);
-        }
+            }
+        });
+        danmakuView.showFPS(BuildConfig.DEBUG);
+        danmakuView.enableDanmakuDrawingCache(true);
     }
 }

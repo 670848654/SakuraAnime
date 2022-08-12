@@ -29,6 +29,7 @@ import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.bean.LogBean;
 import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.base.Presenter;
+import my.project.sakuraproject.sniffing.Util;
 import my.project.sakuraproject.util.SwipeBackLayoutUtil;
 import my.project.sakuraproject.util.Utils;
 
@@ -39,6 +40,8 @@ public class AboutActivity extends BaseActivity {
     TextView cache;
     @BindView(R.id.footer)
     LinearLayout footer;
+    @BindView(R.id.source_title)
+    TextView sourceTitleView;
 
     @Override
     protected Presenter createPresenter() {
@@ -81,6 +84,7 @@ public class AboutActivity extends BaseActivity {
     private void initViews() {
         LinearLayout.LayoutParams Params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Utils.getNavigationBarHeight(this));
         footer.findViewById(R.id.footer).setLayoutParams(Params);
+        sourceTitleView.setText(Utils.isImomoe() ? Utils.getString(R.string.imomoe_url) : Utils.getString(R.string.domain_url));
         cache.setText(Environment.getExternalStorageDirectory() + Utils.getString(R.string.cache_text));
     }
 

@@ -174,8 +174,7 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
     private void initAdapter() {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new HomeAdapter(this, multiItemEntities, this);
-        adapter.openLoadAnimation();
-        adapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
+        adapter.openLoadAnimation(BaseQuickAdapter.SCALEIN);
         adapter.setOnItemChildClickListener((adapter, view, position) -> {
             switch (adapter.getItemViewType(position)) {
                 case HomeAdapter.TYPE_LEVEL_1:

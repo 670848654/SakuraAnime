@@ -91,7 +91,6 @@ public class UpdateListActivity extends BaseActivity<UpdateListContract.View, Up
 
     public void initAdapter() {
         adapter = new UpdateListAdapter(this, list);
-        adapter.openLoadAnimation();
         adapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
         adapter.setOnItemClickListener((adapter, view, position) -> {
             if (!Utils.isFastClick()) return;
@@ -104,6 +103,7 @@ public class UpdateListActivity extends BaseActivity<UpdateListContract.View, Up
         });
         if (Utils.checkHasNavigationBar(this)) mRecyclerView.setPadding(0,0,0, Utils.getNavigationBarHeight(this));
         mRecyclerView.setAdapter(adapter);
+        setRecyclerViewView();
     }
 
     @Override
@@ -117,7 +117,6 @@ public class UpdateListActivity extends BaseActivity<UpdateListContract.View, Up
             if (!mActivityFinish) {
                 mSwipe.setRefreshing(false);
                 list = animeList;
-                setRecyclerViewView();
                 adapter.setNewData(list);
             }
         });
@@ -127,7 +126,6 @@ public class UpdateListActivity extends BaseActivity<UpdateListContract.View, Up
     public void showErrorView(String msg) {
         runOnUiThread(() -> {
             if (!mActivityFinish) {
-                setRecyclerViewView();
                 mSwipe.setRefreshing(false);
                 errorTitle.setText(msg);
                 adapter.setEmptyView(errorView);

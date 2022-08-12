@@ -79,7 +79,6 @@ public class WeekFragment extends LazyFragment {
         if (adapter == null) {
 //            recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), Utils.isPad() ? 4 : 2));
             adapter = new FragmentAdapter(getActivity(), list);
-            adapter.openLoadAnimation();
             adapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
             adapter.setOnItemClickListener((adapter, view, position) -> {
                 if (!Utils.isFastClick()) return;
@@ -98,6 +97,7 @@ public class WeekFragment extends LazyFragment {
 //                }
 //            });
             recyclerView.setAdapter(adapter);
+            setRecyclerViewView();
         }
     }
 
@@ -105,9 +105,9 @@ public class WeekFragment extends LazyFragment {
         loading.setVisibility(View.GONE);
         if (adapter.getData().isEmpty()) {
             list = getList(week);
-            setRecyclerViewView();
             if (list.size() == 0) {
                 if (!application.error.isEmpty()) {
+                    setRecyclerViewEmpty();
                     errorTitle.setText(application.error);
                     adapter.setEmptyView(errorView);
                 }
@@ -155,13 +155,13 @@ public class WeekFragment extends LazyFragment {
         setRecyclerViewView();
     }
 
+    private void setRecyclerViewEmpty() {
+        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 1));
+    }
+
     private void setRecyclerViewView() {
         String config = getActivity().getResources().getConfiguration().toString();
         boolean isInMagicWindow = config.contains("miui-magic-windows");
-        if (list.size() == 0) {
-            recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 1));
-            return;
-        }
         if (!Utils.isPad())
             recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
         else {

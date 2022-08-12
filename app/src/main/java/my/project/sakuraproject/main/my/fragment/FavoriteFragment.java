@@ -88,7 +88,6 @@ public class FavoriteFragment extends MyLazyFragment<FavoriteContract.View, Favo
 
     private void initAdapter() {
         adapter = new FavoriteListAdapter(getActivity(), favoriteList);
-        adapter.openLoadAnimation();
         adapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
         adapter.setOnItemClickListener((adapter, view, position) -> {
             if (!Utils.isFastClick()) return;
@@ -130,6 +129,7 @@ public class FavoriteFragment extends MyLazyFragment<FavoriteContract.View, Favo
         }, 500), mRecyclerView);
         if (Utils.checkHasNavigationBar(getActivity())) mRecyclerView.setPadding(0,0,0, Utils.getNavigationBarHeight(getActivity()));
         mRecyclerView.setAdapter(adapter);
+        setRecyclerViewView();
     }
 
     public void setLoadState(boolean loadState) {
@@ -143,6 +143,7 @@ public class FavoriteFragment extends MyLazyFragment<FavoriteContract.View, Favo
         isMain = true;
         favoriteList.clear();
         adapter.setNewData(favoriteList);
+        setRecyclerViewView();
         loading.setVisibility(View.VISIBLE);
         if (favoriteCount > 0 && updateOrder) {
 //            application.showSnackbarMsg(msg, Utils.getString(R.string.check_favorite_update));
@@ -164,7 +165,7 @@ public class FavoriteFragment extends MyLazyFragment<FavoriteContract.View, Favo
 //        application.showSnackbarMsg(msg, Utils.getString(R.string.join_error));
         CustomToast.showToast(getActivity(), Utils.getString(R.string.join_error), CustomToast.SUCCESS);
         if (favoriteList.size() <= 0) {
-            setRecyclerViewView();
+            setRecyclerViewEmpty();
             errorTitle.setText(Utils.getString(R.string.empty_favorite));
             adapter.setEmptyView(errorView);
         }
@@ -177,7 +178,6 @@ public class FavoriteFragment extends MyLazyFragment<FavoriteContract.View, Favo
             if (isMain) {
                 loading.setVisibility(View.GONE);
                 favoriteList = list;
-                setRecyclerViewView();
                 adapter.setNewData(favoriteList);
             } else
                 adapter.addData(list);
@@ -226,7 +226,7 @@ public class FavoriteFragment extends MyLazyFragment<FavoriteContract.View, Favo
         setLoadState(false);
         getActivity().runOnUiThread(() -> {
             if (isMain) {
-                setRecyclerViewView();
+                setRecyclerViewEmpty();
                 loading.setVisibility(View.GONE);
                 errorTitle.setText(msg);
                 adapter.setEmptyView(errorView);
@@ -267,13 +267,13 @@ public class FavoriteFragment extends MyLazyFragment<FavoriteContract.View, Favo
         setRecyclerViewView();
     }
 
+    private void setRecyclerViewEmpty() {
+        mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 1));
+    }
+
     private void setRecyclerViewView() {
         String config = getActivity().getResources().getConfiguration().toString();
         boolean isInMagicWindow = config.contains("miui-magic-windows");
-        if (favoriteList.size() == 0) {
-            mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 1));
-            return;
-        }
         if (!Utils.isPad()) {
             mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
         }

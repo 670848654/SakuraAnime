@@ -432,7 +432,7 @@ public class JZPlayer extends JzvdStd {
 
     public void releaseDanMu() {
         if (danmakuView != null) danmakuView.release();
-        danmakuView = null;
+//        danmakuView = null;
     }
 
     @Override

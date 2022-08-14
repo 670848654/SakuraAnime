@@ -569,13 +569,15 @@ public class ImomoeJsoupUtils {
      */
     public static List<AnimeDescDetailsBean> getAllDrama(String source, String dramaStr) {
         Document document = Jsoup.parse(source);
-        Elements playElements = document.select("div#tabDatelist").select("ul").get(0).select("a"); //剧集列表
         List<AnimeDescDetailsBean> animeDescDramasBeans = new ArrayList<>();
-        for (Element dramaList : playElements) {
-            String name = dramaList.text();
-            String watchUrl = dramaList.attr("href");
-            animeDescDramasBeans.add(new AnimeDescDetailsBean(name, watchUrl, dramaStr.contains(watchUrl)));
-        }
+        Elements dataElement = document.select("div#tabDatelist");
+        if (dataElement.size() > 0) {
+            Elements playElements = dataElement.select("ul").get(0).select("a"); //剧集列表
+            for (Element dramaList : playElements) {
+                String name = dramaList.text();
+                String watchUrl = dramaList.attr("href");
+                animeDescDramasBeans.add(new AnimeDescDetailsBean(name, watchUrl, dramaStr.contains(watchUrl)));
+            }
         /*Elements playElements = document.select("div#sort-item-1 > a"); //剧集列表
         List<AnimeDescDetailsBean> animeDescDramasBeans = new ArrayList<>();
         for (Element dramaList : playElements) {
@@ -583,7 +585,8 @@ public class ImomoeJsoupUtils {
             String watchUrl = dramaList.attr("href");
             animeDescDramasBeans.add(new AnimeDescDetailsBean(name, watchUrl, dramaStr.contains(watchUrl)));
         }*/
-        Log.e("size", animeDescDramasBeans.size() + "");
+            Log.e("size", animeDescDramasBeans.size() + "");
+        }
         return animeDescDramasBeans;
     }
     /**************************************  选集解析方法结束  **************************************/

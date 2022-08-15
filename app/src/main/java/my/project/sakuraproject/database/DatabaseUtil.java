@@ -629,7 +629,19 @@ public class DatabaseUtil {
      */
     public static List<HistoryBean> queryAllHistory(int limit, int offset) {
         List<HistoryBean> historyBeans = new ArrayList<>();
-        Cursor historyCursor = db.rawQuery("select t2.F_ID F_ANIME_ID, t1.F_ID, t2.F_TITLE, t1.F_DESC_URL, t2.F_SOURCE, t1.F_IMG_URL, t1.F_UPDATE_TIME " +
+        // 隐藏错误的历史记录
+        Cursor historyCursor = db.rawQuery("select t1.F_ID, COUNT(t2.F_ID) from T_HISTORY t1 \n" +
+                "left join T_HISTORY_DATA t2 on t1.F_ID = t2.F_LINK_ID\n" +
+                "where t1.F_VISIBLE = 1 \n" +
+                "GROUP BY t1.F_ID", null);
+        while (historyCursor.moveToNext()) {
+            String historyId = historyCursor.getString(0);
+            int count = historyCursor.getInt(1);
+            if (count == 0) {
+                db.execSQL("update T_HISTORY set F_VISIBLE = 0 where F_ID = ? ", new String[]{historyId}); // 当字表数据不存在时隐藏该历史记录
+            }
+        }
+        historyCursor = db.rawQuery("select t2.F_ID F_ANIME_ID, t1.F_ID, t2.F_TITLE, t1.F_DESC_URL, t2.F_SOURCE, t1.F_IMG_URL, t1.F_UPDATE_TIME " +
                 "from T_HISTORY t1 " +
                 "left join T_ANIME t2 on t1.F_LINK_ID = t2.F_ID " +
                 "where t1.F_VISIBLE = 1 " +

@@ -9,6 +9,8 @@ import android.os.Looper;
 import android.os.PowerManager;
 import android.util.Log;
 
+import androidx.annotation.Nullable;
+
 import com.arialyy.annotations.Download;
 import com.arialyy.aria.core.Aria;
 import com.arialyy.aria.core.download.DownloadEntity;
@@ -18,8 +20,6 @@ import com.arialyy.aria.core.task.DownloadTask;
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
-
-import androidx.annotation.Nullable;
 
 import my.project.sakuraproject.bean.DownloadEvent;
 import my.project.sakuraproject.bean.Refresh;

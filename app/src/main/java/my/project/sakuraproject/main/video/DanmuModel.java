@@ -2,11 +2,7 @@ package my.project.sakuraproject.main.video;
 
 import com.alibaba.fastjson.JSONObject;
 
-import org.jsoup.Jsoup;
-
 import java.io.IOException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import my.project.sakuraproject.api.Api;
 import my.project.sakuraproject.main.base.BaseModel;
@@ -27,20 +23,17 @@ public class DanmuModel extends BaseModel implements DanmuContract.Model {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                String source = getHtmlBody(response, false);
-                String danmu = Jsoup.parse(source).html();
+                String danmu = response.body().string();
                 if (!danmu.isEmpty()) {
-                    Matcher matcher = Pattern.compile("\\{.*\\}").matcher(danmu);
-                    if (matcher.find()) {
-                        String obj = matcher.group();
-                        try {
-                            JSONObject jsonObject = JSONObject.parseObject(obj);
+                    try {
+                        JSONObject jsonObject = JSONObject.parseObject(danmu);
+                        if (jsonObject.getInteger("code") == 200)
                             callback.successDanmu(jsonObject);
-                        } catch (Exception e) {
-                            callback.errorDanmu("弹幕接口返回JSON格式异常，内容解析失败！");
-                        }
-                    } else
-                        callback.errorDanmu("获取弹幕信息失败！");
+                        else
+                            callback.errorDanmu("接口服务返回异常，请稍后再试！");
+                    } catch (Exception e) {
+                        callback.errorDanmu("弹幕接口返回JSON格式异常，内容解析失败！");
+                    }
                 }
                 else
                     callback.errorDanmu("获取弹幕信息失败！");

@@ -2,10 +2,11 @@ package my.project.sakuraproject.cling.control;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
+
 import org.fourthline.cling.controlpoint.ControlPoint;
 import org.fourthline.cling.model.meta.Device;
 
-import androidx.annotation.NonNull;
 import my.project.sakuraproject.cling.entity.IDevice;
 import my.project.sakuraproject.cling.service.callback.AVTransportSubscriptionCallback;
 import my.project.sakuraproject.cling.service.callback.RenderingControlSubscriptionCallback;

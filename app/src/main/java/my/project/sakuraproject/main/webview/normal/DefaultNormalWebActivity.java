@@ -14,15 +14,12 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
-import com.r0adkll.slidr.Slidr;
-
 import androidx.appcompat.widget.Toolbar;
+
 import butterknife.BindView;
-import butterknife.OnClick;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.base.Presenter;
-import my.project.sakuraproject.util.SwipeBackLayoutUtil;
 import my.project.sakuraproject.util.Utils;
 
 public class DefaultNormalWebActivity extends BaseActivity {

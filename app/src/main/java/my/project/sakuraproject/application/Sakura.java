@@ -5,6 +5,8 @@ import android.app.Application;
 import android.content.Intent;
 import android.view.View;
 
+import androidx.appcompat.app.AppCompatDelegate;
+
 import com.arialyy.aria.core.Aria;
 import com.bumptech.glide.Glide;
 import com.google.android.material.snackbar.Snackbar;
@@ -16,8 +18,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import androidx.appcompat.app.AppCompatDelegate;
 
 import javax.net.ssl.HttpsURLConnection;
 

@@ -7,6 +7,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
+import androidx.appcompat.app.AlertDialog;
+
+import com.arialyy.aria.core.task.DownloadTask;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -22,10 +26,6 @@ import java.util.regex.Pattern;
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-
-import androidx.appcompat.app.AlertDialog;
-
-import com.arialyy.aria.core.task.DownloadTask;
 
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.api.Api;

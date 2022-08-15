@@ -1,11 +1,15 @@
 package my.project.sakuraproject.main.player;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
+
+import androidx.core.view.GravityCompat;
+
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -14,13 +18,6 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import androidx.core.view.GravityCompat;
-
-
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-
-import cn.jzvd.JZUtils;
 import master.flame.danmaku.danmaku.loader.ILoader;
 import master.flame.danmaku.danmaku.loader.IllegalDataException;
 import master.flame.danmaku.danmaku.loader.android.DanmakuLoaderFactory;
@@ -341,22 +338,29 @@ public class PlayerActivity extends BasePlayerActivity implements VideoContract.
         runOnUiThread(() -> {
             if (!mActivityFinish) {
                 if (player.loadError) return;
-                JSONArray jsonArray = danmus.getJSONObject("data").getJSONArray("data");
-                Toast.makeText(this, "查询弹幕API成功，共"+danmus.getJSONObject("data").getInteger("total")+"条弹幕~", Toast.LENGTH_SHORT).show();
-                player.danmuInfoView.setText("已加载"+ danmus.getJSONObject("data").getInteger("total") + "条弹幕！");
-                player.danmuInfoView.setVisibility(View.VISIBLE);
-                InputStream result = new ByteArrayInputStream(jsonArray.toString().getBytes(StandardCharsets.UTF_8));
-                player.danmakuParser = createParser(result);
-                player.createDanmu();
-                if (player.danmakuView.isPrepared()) {
-                    player.danmakuView.restart();
-                }
-                player.danmakuView.prepare(player.danmakuParser, player.danmakuContext);
-                if (userSavePosition > 0) {
-                    new Handler().postDelayed(() -> {
-                        // 一秒后定位弹幕时间为用户上次观看位置
-                        player.seekDanmu(userSavePosition);
-                    }, 1000);
+                try {
+                    JSONArray jsonArray = danmus.getJSONObject("data").getJSONArray("data");
+                    Toast.makeText(this, "查询弹幕API成功，共"+danmus.getJSONObject("data").getInteger("total")+"条弹幕~", Toast.LENGTH_SHORT).show();
+                    player.danmuInfoView.setText("已加载"+ danmus.getJSONObject("data").getInteger("total") + "条弹幕！");
+                    player.danmuInfoView.setVisibility(View.VISIBLE);
+                    InputStream result = new ByteArrayInputStream(jsonArray.toString().getBytes(StandardCharsets.UTF_8));
+                    player.danmakuParser = createParser(result);
+                    player.createDanmu();
+                    if (player.danmakuView.isPrepared()) {
+                        player.danmakuView.restart();
+                    }
+                    player.danmakuView.prepare(player.danmakuParser, player.danmakuContext);
+                    if (!player.open_danmu) {
+                        player.hideDanmmu();
+                    }
+                    if (userSavePosition > 0) {
+                        new Handler().postDelayed(() -> {
+                            // 一秒后定位弹幕时间为用户上次观看位置
+                            player.seekDanmu(userSavePosition);
+                        }, 1000);
+                    }
+                } catch (Exception e) {
+                    Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -365,7 +369,8 @@ public class PlayerActivity extends BasePlayerActivity implements VideoContract.
     @Override
     public void showErrorDanmuView(String msg) {
         runOnUiThread(() -> {
-            Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+            if (!mActivityFinish)
+                Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
         });
     }
 

@@ -12,10 +12,10 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
+
 import java.io.IOException;
 import java.util.HashMap;
-
-import androidx.appcompat.app.AlertDialog;
 
 import cn.jzvd.JZDataSource;
 import cn.jzvd.JZUtils;
@@ -129,6 +129,7 @@ public class JZPlayer extends JzvdStd {
         overlappingEnablePair.put(BaseDanmaku.TYPE_FIX_TOP, true);
         HashMap<Integer, Integer> maxLinesPair = new HashMap<Integer, Integer>();
         maxLinesPair.put(BaseDanmaku.TYPE_SCROLL_RL, 5); // 滚动弹幕最大显示5行,可设置多种类型限制行数
+        maxLinesPair.put(BaseDanmaku.TYPE_FIX_TOP, 5);
         danmakuContext = DanmakuContext.create();
         danmakuContext.setDanmakuStyle(IDisplayer.DANMAKU_STYLE_STROKEN, 3)
                 .setDuplicateMergingEnabled(false)
@@ -579,7 +580,6 @@ public class JZPlayer extends JzvdStd {
         if (danmakuView != null) {
             danmakuView.clearDanmakusOnScreen();
             danmakuView.seekTo(time);
-            showDanmmu();
         }
     }
 

@@ -14,6 +14,16 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.AppCompatTextView;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.content.ContextCompat;
+import androidx.core.widget.NestedScrollView;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import com.alibaba.fastjson.JSONObject;
 import com.arialyy.aria.core.Aria;
 import com.arialyy.aria.core.download.m3u8.M3U8VodOption;
@@ -42,15 +52,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.AppCompatTextView;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.core.content.ContextCompat;
-import androidx.core.widget.NestedScrollView;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.lujun.androidtagview.TagContainerLayout;
@@ -539,7 +540,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
             showView(tagContainerLayout);
         }else
             hideView(tagContainerLayout);
-        if (animeListBean.getDesc().isEmpty())
+        if (animeListBean.getDesc() == null || animeListBean.getDesc().isEmpty())
             hideView(desc);
         else {
             desc.setContent(animeListBean.getDesc());

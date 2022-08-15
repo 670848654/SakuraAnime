@@ -11,6 +11,13 @@ import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.AppCompatCheckBox;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import com.alibaba.fastjson.JSONObject;
 import com.arialyy.annotations.Download;
 import com.arialyy.aria.core.Aria;
@@ -28,12 +35,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.AppCompatCheckBox;
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.adapter.DownloadDataListAdapter;
@@ -48,7 +49,6 @@ import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.player.LocalPlayerActivity;
 import my.project.sakuraproject.util.SwipeBackLayoutUtil;
 import my.project.sakuraproject.util.Utils;
-import my.project.sakuraproject.util.VideoUtils;
 
 public class DownloadDataActivity extends BaseActivity<DownloadDataContract.View, DownloadDataPresenter> implements DownloadDataContract.View {
     @BindView(R.id.rv_list)

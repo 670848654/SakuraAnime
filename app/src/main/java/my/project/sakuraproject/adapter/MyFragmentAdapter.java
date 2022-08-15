@@ -2,13 +2,14 @@ package my.project.sakuraproject.adapter;
 
 import android.view.ViewGroup;
 
-import java.util.HashMap;
-import java.util.List;
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
+
+import java.util.HashMap;
+import java.util.List;
+
 import my.project.sakuraproject.bean.AnimeUpdateInfoBean;
 import my.project.sakuraproject.main.my.fragment.DownloadFragment;
 import my.project.sakuraproject.main.my.fragment.FavoriteFragment;

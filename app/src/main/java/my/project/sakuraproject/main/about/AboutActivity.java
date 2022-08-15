@@ -12,15 +12,16 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.r0adkll.slidr.Slidr;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.OnClick;
 import my.project.sakuraproject.R;
@@ -29,7 +30,6 @@ import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.bean.LogBean;
 import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.base.Presenter;
-import my.project.sakuraproject.sniffing.Util;
 import my.project.sakuraproject.util.SwipeBackLayoutUtil;
 import my.project.sakuraproject.util.Utils;
 
@@ -148,6 +148,7 @@ public class AboutActivity extends BaseActivity {
 
     public List createUpdateLogList() {
         List logsList = new ArrayList();
+        logsList.add(new LogBean("版本：2.3.8", "添加播放界面长按2倍速功能\n添加对获取弹幕API异常时的处理\n修复在收藏、历史记录中由于番剧地址发生改变导致访问详情界面闪退的问题"));
         logsList.add(new LogBean("版本：2.3.7", "修复malimali源部分番剧无法播放的问题，如：咒术回战\n初步添加对弹幕支持，使用@MaybeQHL提供的弹幕API\n**可在设置中进行弹幕开关，可能会出现崩溃的情况"));
         logsList.add(new LogBean("版本：2.3.6", "修复malimali源播放时闪退的问题\n**由于malimali源播放地址变更，从历史记录中进行播放出现闪退时需手动删除该历史记录"));
         logsList.add(new LogBean("版本：2.3.5", "修复malimali源部分图片显示失败的问题\n修复malimali源分类解析方法\n修复删除下载的视频后下载其他视频时出现TaskId重复导致下载异常闪退的问题，如已出现需删除所有下载记录（设置->清除所有下载记录）\n**malimali源站点搜索功能异常，需等待站点修复"));

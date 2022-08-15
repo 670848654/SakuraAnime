@@ -11,7 +11,6 @@ import master.flame.danmaku.danmaku.model.IDanmakus;
 import master.flame.danmaku.danmaku.model.android.Danmakus;
 import master.flame.danmaku.danmaku.parser.BaseDanmakuParser;
 import master.flame.danmaku.danmaku.parser.android.JSONSource;
-import my.project.sakuraproject.util.Utils;
 
 public class CustomDanmakuParser extends BaseDanmakuParser {
     @Override
@@ -76,7 +75,7 @@ public class CustomDanmakuParser extends BaseDanmakuParser {
 //                    item.textShadowColor = Color.GRAY;
                     item.underlineColor = Color.TRANSPARENT;
                     item.borderColor = Color.TRANSPARENT;
-                    item.priority = 3;
+                    item.priority = 0;
 //                    item.textSize = Utils.dpToPx(Utils.getContext(), 14);
                     item.textSize = 20 * (mDispDensity - 0.6f);
                     danmakus.addItem(item);

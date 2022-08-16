@@ -20,6 +20,7 @@ import my.project.sakuraproject.R;
 import my.project.sakuraproject.bean.AnimeDescDetailsBean;
 import my.project.sakuraproject.bean.AnimeDescListBean;
 import my.project.sakuraproject.bean.AnimeDescRecommendBean;
+import my.project.sakuraproject.bean.AnimeDramasBean;
 import my.project.sakuraproject.bean.AnimeListBean;
 import my.project.sakuraproject.bean.AnimeUpdateBean;
 import my.project.sakuraproject.bean.AnimeUpdateInfoBean;
@@ -360,6 +361,9 @@ public class YhdmJsoupUtils {
     public static AnimeDescListBean getAnimeDescList(String source, String dramaStr) {
         AnimeDescListBean animeDescListBean = new AnimeDescListBean();
         Document document = Jsoup.parse(source);
+        List<AnimeDramasBean> animeDramasBeans = new ArrayList<>();
+        AnimeDramasBean animeDramasBean = new AnimeDramasBean();
+        animeDramasBean.setListTitle("播放列表");
         Elements dramaElements = document.select("div.movurl > ul > li"); //剧集列表
         if (dramaElements.size() > 0) {
             /** 封装剧集 **/
@@ -372,7 +376,9 @@ public class YhdmJsoupUtils {
                 else select = false;
                 animeDescDramasBeans.add(new AnimeDescDetailsBean(name, watchUrl, select));
             }
-            animeDescListBean.setAnimeDescDetailsBeans(animeDescDramasBeans);
+            animeDramasBean.setAnimeDescDetailsBeanList(animeDescDramasBeans);
+            animeDramasBeans.add(animeDramasBean);
+            animeDescListBean.setAnimeDramasBeans(animeDramasBeans);
             /** 封装多季 **/
             Elements multiElements = document.select("div.img > ul > li"); //多季
             if (multiElements.size() > 0) {

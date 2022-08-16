@@ -20,6 +20,7 @@ import my.project.sakuraproject.R;
 import my.project.sakuraproject.bean.AnimeDescDetailsBean;
 import my.project.sakuraproject.bean.AnimeDescListBean;
 import my.project.sakuraproject.bean.AnimeDescRecommendBean;
+import my.project.sakuraproject.bean.AnimeDramasBean;
 import my.project.sakuraproject.bean.AnimeListBean;
 import my.project.sakuraproject.bean.HomeBean;
 import my.project.sakuraproject.bean.MaliTagBean;
@@ -179,7 +180,7 @@ public class ImomoeJsoupUtils {
     /**
      * 新番时间表解析方法
      * 2022年6月29日19:16:20 修改
-     * @param source
+     * @param //source
      * @return
      * @throws JSONException
      */
@@ -474,23 +475,27 @@ public class ImomoeJsoupUtils {
     public static AnimeDescListBean getAnimeDescList(String source, String dramaStr) {
         AnimeDescListBean animeDescListBean = new AnimeDescListBean();
         Document document = Jsoup.parse(source);
-//        List<List<AnimeDescDetailsBean>> multipleAnimeDescDetailsBeans = new ArrayList<>();
-        // 该网站存在多各播放地址，推荐使用主路线，故只获取主线路剧集列表
-        Elements playElements = document.select("div#vlink_1 > ul > li"); //剧集列表
-        if (playElements.size() > 0) {
-            boolean select;
-            List<AnimeDescDetailsBean> animeDescDramasBeans = new ArrayList<>();
-            for (Element dramaList : playElements) {
-                String name = dramaList.select("a").text();
-                String watchUrl = dramaList.select("a").attr("href");
-                Log.e("dramaStr - > " , dramaStr + "- > " + watchUrl);
-                if (dramaStr.contains(watchUrl)) select = true;
-                else select = false;
-                animeDescDramasBeans.add(new AnimeDescDetailsBean(name, watchUrl, select));
+        // 2022年8月16日14:36:16 修改获取所有播放列表
+        Elements playBox = document.select("div.playbox");
+        if (playBox.size() > 0) {
+            List<AnimeDramasBean> animeDramasBeans = new ArrayList<>();
+            for (Element element : playBox) {
+                AnimeDramasBean animeDramasBean = new AnimeDramasBean();
+                animeDramasBean.setListTitle(element.getElementsByTag("b").text() + element.getElementsByTag("strong").text());
+                Elements liList = element.select("ul > li");
+                List<AnimeDescDetailsBean> animeDescDramasBeans = new ArrayList<>();
+                for (Element drama : liList) {
+                    String name = drama.select("a").text();
+                    String watchUrl = drama.select("a").attr("href");
+                    Log.e("dramaStr - > " , dramaStr + "- > " + watchUrl);
+                    animeDescDramasBeans.add(new AnimeDescDetailsBean(name, watchUrl, dramaStr.contains(watchUrl)));
+                }
+                animeDramasBean.setAnimeDescDetailsBeanList(animeDescDramasBeans);
+                animeDramasBeans.add(animeDramasBean);
             }
+            animeDescListBean.setAnimeDramasBeans(animeDramasBeans);
            /* multipleAnimeDescDetailsBeans.add(animeDescDramasBeans);
             animeDescListBean.setMultipleAnimeDescDetailsBeans(multipleAnimeDescDetailsBeans);*/
-            animeDescListBean.setAnimeDescDetailsBeans(animeDescDramasBeans);
             //** 封装推荐 **//
             Elements recommendElements = document.select("div#mytab8r").select("li"); //相关推荐
             if (recommendElements.size() > 0) {
@@ -570,14 +575,32 @@ public class ImomoeJsoupUtils {
     public static List<AnimeDescDetailsBean> getAllDrama(String source, String dramaStr) {
         Document document = Jsoup.parse(source);
         List<AnimeDescDetailsBean> animeDescDramasBeans = new ArrayList<>();
-        Elements dataElement = document.select("div#tabDatelist");
+        Elements dataElement = document.select("div#tabDatelist > ul");
         if (dataElement.size() > 0) {
-            Elements playElements = dataElement.select("ul").get(0).select("a"); //剧集列表
+            Elements playing = null;
+            for (int i=0, size=dataElement.size(); i<size; i++) {
+                Elements playElements = dataElement.get(i).select("a"); //剧集列表
+                for (Element dramaList : playElements) {
+                    String watchUrl = dramaList.attr("href");
+                    if (dramaStr.contains(watchUrl)) {
+                        playing = playElements;
+                        break;
+                    }
+                }
+            }
+            if (playing != null) {
+                for (Element element : playing) {
+                    String name = element.text();
+                    String watchUrl = element.attr("href");
+                    animeDescDramasBeans.add(new AnimeDescDetailsBean(name, watchUrl, dramaStr.contains(watchUrl)));
+                }
+            }
+            /*Elements playElements = dataElement.select("li").get(0).select("a"); //剧集列表
             for (Element dramaList : playElements) {
                 String name = dramaList.text();
                 String watchUrl = dramaList.attr("href");
                 animeDescDramasBeans.add(new AnimeDescDetailsBean(name, watchUrl, dramaStr.contains(watchUrl)));
-            }
+            }*/
         /*Elements playElements = document.select("div#sort-item-1 > a"); //剧集列表
         List<AnimeDescDetailsBean> animeDescDramasBeans = new ArrayList<>();
         for (Element dramaList : playElements) {

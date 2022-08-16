@@ -8,6 +8,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -41,6 +43,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.textfield.TextInputLayout;
 import com.r0adkll.slidr.Slidr;
 import com.r0adkll.slidr.model.SlidrInterface;
 
@@ -66,6 +69,7 @@ import my.project.sakuraproject.api.Api;
 import my.project.sakuraproject.bean.AnimeDescDetailsBean;
 import my.project.sakuraproject.bean.AnimeDescListBean;
 import my.project.sakuraproject.bean.AnimeDescRecommendBean;
+import my.project.sakuraproject.bean.AnimeDramasBean;
 import my.project.sakuraproject.bean.AnimeListBean;
 import my.project.sakuraproject.bean.DownloadDramaBean;
 import my.project.sakuraproject.bean.Event;
@@ -138,6 +142,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     private AnimeDescRecommendAdapter animeDescRecommendAdapter;
     private AnimeDescRecommendAdapter animeDescMultiAdapter;
     private AnimeDescListBean animeDescListBean = new AnimeDescListBean();
+    private List<AnimeDescDetailsBean> dramaList; // 剧集列表
     private ImageView closeDrama;
     private BottomSheetDialog mBottomSheetDialog;
     private AnimeDescDramaAdapter animeDescDramaAdapter;
@@ -175,6 +180,11 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     List<String> urls; // 保存
     List<String> dramaNames;
     private M3U8VodOption m3U8VodOption; // 下载m3u8配置
+
+    @BindView(R.id.selected_text)
+    AutoCompleteTextView selectedDrama;
+    private List<String> dramaTitles;
+    private ArrayAdapter dramaTitlesApter;
 
     @Override
     protected DescPresenter createPresenter() {
@@ -244,7 +254,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
 
     @SuppressLint("RestrictedApi")
     public void initAdapter() {
-        animeDescDetailsAdapter = new AnimeDescDetailsAdapter(this, animeDescListBean.getAnimeDescDetailsBeans());
+        animeDescDetailsAdapter = new AnimeDescDetailsAdapter(this, dramaList);
         animeDescDetailsAdapter.setOnItemClickListener((adapter, view, position) -> {
             if (!Utils.isFastClick()) return;
             playVideo(adapter, position, detailsRv);
@@ -464,9 +474,9 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         clickIndex = position;
         int playSource = 0;
         String playNumber;
-        animeDescListBean.getAnimeDescDetailsBeans().get(position).setSelected(true);
-        dramaUrl = animeDescListBean.getAnimeDescDetailsBeans().get(position).getUrl();
-        playNumber = animeDescListBean.getAnimeDescDetailsBeans().get(position).getTitle();
+        dramaList.get(position).setSelected(true);
+        dramaUrl = dramaList.get(position).getUrl();
+        playNumber = dramaList.get(position).getTitle();
         witchTitle = animeTitle + " - " + playNumber;
         animeDescDetailsAdapter.notifyDataSetChanged();
         animeDescDramaAdapter.notifyDataSetChanged();
@@ -484,7 +494,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         switch ((Integer) SharedPreferencesUtils.getParam(getApplicationContext(), "player", 0)) {
             case 0:
                 //调用播放器
-                VideoUtils.openPlayer(true, this, witchTitle, animeUrl, animeTitle, dramaUrl, animeDescListBean.getAnimeDescDetailsBeans(), clickIndex, animeId, isImomoe);
+                VideoUtils.openPlayer(true, this, witchTitle, animeUrl, animeTitle, dramaUrl, dramaList, clickIndex, animeId, isImomoe);
                 break;
             case 1:
                 Utils.selectVideoPlayer(this, animeUrl);
@@ -631,21 +641,20 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
                 if (isFavorite) DatabaseUtil.updateFavorite(animeListBean, animeId);
                 animeDescListBean = bean;
                 downloadBean = new ArrayList<>();
-                animeDescDetailsAdapter.setNewData(animeDescListBean.getAnimeDescDetailsBeans());
-                for (AnimeDescDetailsBean b : animeDescListBean.getAnimeDescDetailsBeans()) {
-                    DownloadDramaBean downloadDramaBean = new DownloadDramaBean();
-                    downloadDramaBean.setTitle(b.getTitle());
-                    downloadDramaBean.setSelected(false);
-                    downloadDramaBean.setUrl(b.getUrl());
-                    downloadBean.add(downloadDramaBean);
+                // 默认展示第一播放源
+                dramaList = animeDescListBean.getAnimeDramasBeans().get(0).getAnimeDescDetailsBeanList();
+                dramaTitles = new ArrayList<>();
+                for (AnimeDramasBean animeDramasBean : animeDescListBean.getAnimeDramasBeans()) {
+                    dramaTitles.add(animeDramasBean.getListTitle());
                 }
+                initTitleAdapter();
+                setAdapterData(0);
                 if (bean.getAnimeDescMultiBeans().size() > 0)
                     showView(multiLinearLayout);
                 else
                     hideView(multiLinearLayout);
                 animeDescMultiAdapter.setNewData(bean.getAnimeDescMultiBeans());
                 animeDescRecommendAdapter.setNewData(bean.getAnimeDescRecommendBeans());
-                setAnimeDescDramaAdapter(0);
                 showView(desc_view);
                 showView(playLinearLayout);
                 showView(recommendLinearLayout);
@@ -653,12 +662,36 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         });
     }
 
+    private void initTitleAdapter() {
+        selectedDrama.setText(dramaTitles.get(0));
+        dramaTitlesApter = new ArrayAdapter(this, R.layout.list_item, dramaTitles);
+        selectedDrama.setAdapter(dramaTitlesApter);
+        selectedDrama.setOnItemClickListener((parent, view, position, id) -> {
+            setAdapterData(position);
+        });
+    }
+
+    private void setAdapterData(int position) {
+        dramaList = animeDescListBean.getAnimeDramasBeans().get(position).getAnimeDescDetailsBeanList();
+        animeDescDetailsAdapter.setNewData(dramaList);
+        animeDescDetailsAdapter.setNewData(dramaList);
+        downloadBean = new ArrayList<>();
+        for (AnimeDescDetailsBean b : dramaList) {
+            DownloadDramaBean downloadDramaBean = new DownloadDramaBean();
+            downloadDramaBean.setTitle(b.getTitle());
+            downloadDramaBean.setSelected(false);
+            downloadDramaBean.setUrl(b.getUrl());
+            downloadBean.add(downloadDramaBean);
+        }
+        setAnimeDescDramaAdapter(0);
+    }
+
     private void setAnimeDescDramaAdapter(int sourceIndex) {
-        if (animeDescListBean.getAnimeDescDetailsBeans().size() > 4)
+        if (dramaList.size() > 4)
             showView(openDrama);
         else
             hideView(openDrama);
-        animeDescDramaAdapter.setNewData(animeDescListBean.getAnimeDescDetailsBeans());
+        animeDescDramaAdapter.setNewData(dramaList);
         downloadAdapter.setNewData(downloadBean);
     }
 
@@ -781,7 +814,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(Event event) {
         clickIndex = event.getClickIndex();
-        animeDescListBean.getAnimeDescDetailsBeans().get(clickIndex).setSelected(true);
+        dramaList.get(clickIndex).setSelected(true);
         animeDescDetailsAdapter.notifyDataSetChanged();
         animeDescDramaAdapter.notifyDataSetChanged();
     }

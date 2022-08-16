@@ -272,23 +272,28 @@
                     android:orientation="vertical"
                     android:layout_marginTop="10dp"
                     android:padding="5dp"
-                    android:visibility="gone">
+                    android:visibility="visible">
 
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="8dp">
 
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:layout_centerVertical="true"
-                            android:id="@+id/selected_text"
+                        <com.google.android.material.textfield.TextInputLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="8dp"
-                            android:text="选集"
-                            android:textSize="16sp"
-                            android:textColor="@color/white"
-                            android:textStyle="bold"/>
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+
+                            <AutoCompleteTextView
+                                android:id="@+id/selected_text"
+                                android:focusable="false"
+                                android:textColor="@color/white"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="16sp"
+                                android:textStyle="bold"/>
+                        </com.google.android.material.textfield.TextInputLayout>
+
 
                         <!--<TextView
                             android:visibility="gone"

@@ -7,7 +7,6 @@ import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
@@ -18,7 +17,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatTextView;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.content.ContextCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -38,12 +36,12 @@ import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.ctetin.expandabletextviewlibrary.ExpandableTextView;
+import com.google.android.material.bottomappbar.BottomAppBar;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.textfield.TextInputLayout;
 import com.r0adkll.slidr.Slidr;
 import com.r0adkll.slidr.model.SlidrInterface;
 
@@ -135,8 +133,6 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     LinearLayout recommendLinearLayout;
     @BindView(R.id.error_msg)
     TextView error_msg;
-    @BindView(R.id.msg)
-    CoordinatorLayout msg;
     private RecyclerView lineRecyclerView;
     private AnimeDescDetailsAdapter animeDescDetailsAdapter;
     private AnimeDescRecommendAdapter animeDescRecommendAdapter;
@@ -150,8 +146,6 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     LinearLayout desc_view;
     @BindView(R.id.bg)
     ImageView bg;
-    @BindView(R.id.favorite)
-    MaterialButton favorite;
     @BindView(R.id.tag_view)
     TagContainerLayout tagContainerLayout;
     @BindView(R.id.update_time)
@@ -164,8 +158,8 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     private int clickIndex; // 当前点击剧集
     // 番剧ID
     private String animeId;
-    @BindView(R.id.download)
-    FloatingActionButton downloadView;
+    @BindView(R.id.to_back)
+    FloatingActionButton toBackView;
     private SlidrInterface slidrInterface;
     // 下载
     private String savePath; // 下载保存路劲
@@ -185,6 +179,9 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     AutoCompleteTextView selectedDrama;
     private List<String> dramaTitles;
     private ArrayAdapter dramaTitlesApter;
+
+    @BindView(R.id.bottomAppBar)
+    BottomAppBar bottomAppBar;
 
     @Override
     protected DescPresenter createPresenter() {
@@ -207,12 +204,10 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         StatusBarUtil.setColorForSwipeBack(this, getResources().getColor(R.color.colorPrimaryDark), 0);
         if (isDarkTheme) bg.setVisibility(View.GONE);
         slidrInterface = Slidr.attach(this, Utils.defaultInit());
-        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) msg.getLayoutParams();
-        params.setMargins(10, 0, 10, 0);
         scrollView.getViewTreeObserver().addOnScrollChangedListener(() -> mSwipe.setEnabled(scrollView.getScrollY() == 0));
         desc.setNeedExpend(true);
         getBundle();
-        initFab();
+        initBottomAppBar();
         initSwipe();
         initAdapter();
         initTagClick();
@@ -232,15 +227,23 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         }
     }
 
-    public void initFab() {
-        if (Utils.checkHasNavigationBar(this)) {
-            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) downloadView.getLayoutParams();
-            params.setMargins(Utils.dpToPx(this, 16),
-                    Utils.dpToPx(this, 16),
-                    Utils.dpToPx(this, 16),
-                    Utils.getNavigationBarHeight(this) + 15);
-            downloadView.setLayoutParams(params);
-        }
+    public void initBottomAppBar() {
+        bottomAppBar.setOnMenuItemClickListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.favorite:
+                    favoriteAnime();
+                    break;
+                case R.id.download:
+                    checkHasDownload();
+                    downloadBottomSheetDialog.getBehavior().setState(BottomSheetBehavior.STATE_EXPANDED);
+                    downloadBottomSheetDialog.show();
+                    break;
+                case R.id.browser:
+                    Utils.viewInChrome(this, BaseModel.getDomain(isImomoe) + sakuraUrl);
+                    break;
+            }
+            return true;
+        });
     }
 
     public void initSwipe() {
@@ -443,21 +446,16 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         }
     }
 
-    @OnClick({R.id.browser})
-    public void openBrowser() {
-        Utils.viewInChrome(this, BaseModel.getDomain(isImomoe) + sakuraUrl);
-    }
-
     @SuppressLint("RestrictedApi")
     public void openAnimeDesc() {
-        downloadView.setVisibility(View.GONE);
+//        downloadView.setVisibility(View.GONE);
         animeImg.setImageDrawable(getDrawable(isDarkTheme ? R.drawable.loading_night : R.drawable.loading_light));
         hideView(tagContainerLayout);
         tagContainerLayout.setTags("");
         hideView(score_view);
         setTextviewEmpty(desc);
         animeDescListBean = new AnimeDescListBean();
-        hideView(favorite);
+        hideViewInvisible(bottomAppBar);
         bg.setImageDrawable(getResources().getDrawable(R.drawable.default_bg));
         mPresenter = new DescPresenter(sakuraUrl, this);
         mPresenter.loadData(true);
@@ -517,9 +515,9 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
 
     public void favoriteAnime() {
         isFavorite = DatabaseUtil.favorite(animeListBean, animeId);
-        favorite.setIcon(ContextCompat.getDrawable(this, isFavorite ? R.drawable.baseline_favorite_white_48dp : R.drawable.baseline_favorite_border_white_48dp));
-        favorite.setText(isFavorite ? Utils.getString(R.string.has_favorite) : Utils.getString(R.string.favorite));
-        application.showSnackbarMsg(msg, isFavorite ? Utils.getString(R.string.join_ok) : Utils.getString(R.string.join_error));
+        bottomAppBar.getMenu().getItem(0).setIcon(ContextCompat.getDrawable(this, isFavorite ? R.drawable.baseline_favorite_white_48dp : R.drawable.baseline_favorite_border_white_48dp));
+        bottomAppBar.getMenu().getItem(0).setTitle(isFavorite ? Utils.getString(R.string.has_favorite) : Utils.getString(R.string.favorite));
+        application.showSnackbarMsg(bottomAppBar, isFavorite ? Utils.getString(R.string.join_ok) : Utils.getString(R.string.join_error));
         EventBus.getDefault().post(new Refresh(1));
     }
 
@@ -563,18 +561,8 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         }
     }
 
-    /*@OnClick(R.id.spinner)
-    public void showMenu() {
-        showPopupMenu();
-    }*/
-
-    @OnClick(R.id.favorite)
-    public void setFavorite() {
-        favoriteAnime();
-    }
-
-    @OnClick(R.id.exit)
-    public void exit() {
+    @OnClick(R.id.to_back)
+    public void back() {
         finish();
     }
 
@@ -590,8 +578,8 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     public void showLoadErrorView(String msg) {
         runOnUiThread(() -> {
             if (!mActivityFinish) {
-                downloadView.setVisibility(View.GONE);
                 mSwipe.setRefreshing(false);
+                hideViewInvisible(bottomAppBar);
                 hideView(desc_view);
                 hideView(playLinearLayout);
                 hideView(multiLinearLayout);
@@ -600,6 +588,10 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
                 showView(errorBg);
             }
         });
+    }
+    private void hideViewInvisible(View view) {
+        Utils.fadeOut(view);
+        view.setVisibility(View.INVISIBLE);
     }
 
     private void hideView(View view) {
@@ -615,8 +607,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     @Override
     public void showEmptyVIew() {
         mSwipe.setRefreshing(true);
-        downloadView.setVisibility(View.GONE);
-        hideView(favorite);
+        hideViewInvisible(bottomAppBar);
         hideView(desc_view);
         hideView(playLinearLayout);
         hideView(multiLinearLayout);
@@ -635,7 +626,6 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
             if (!mActivityFinish) {
                 /*if (!isImomoe)
                     downloadView.setVisibility(View.VISIBLE);*/
-                downloadView.setVisibility(View.VISIBLE);
                 setCollapsingToolbar();
                 mSwipe.setRefreshing(false);
                 if (isFavorite) DatabaseUtil.updateFavorite(animeListBean, animeId);
@@ -655,6 +645,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
                     hideView(multiLinearLayout);
                 animeDescMultiAdapter.setNewData(bean.getAnimeDescMultiBeans());
                 animeDescRecommendAdapter.setNewData(bean.getAnimeDescRecommendBeans());
+                showView(bottomAppBar);
                 showView(desc_view);
                 showView(playLinearLayout);
                 showView(recommendLinearLayout);
@@ -707,11 +698,8 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         isFavorite = is;
         runOnUiThread(() -> {
             if (!mActivityFinish) {
-                if (!favorite.isShown()) {
-                    favorite.setIcon(ContextCompat.getDrawable(this, isFavorite ? R.drawable.baseline_favorite_white_48dp : R.drawable.baseline_favorite_border_white_48dp));
-                    favorite.setText(isFavorite ? Utils.getString(R.string.has_favorite) : Utils.getString(R.string.favorite));
-                    showView(favorite);
-                }
+                bottomAppBar.getMenu().getItem(0).setIcon(ContextCompat.getDrawable(this, isFavorite ? R.drawable.baseline_favorite_white_48dp : R.drawable.baseline_favorite_border_white_48dp));
+                bottomAppBar.getMenu().getItem(0).setTitle(isFavorite ? Utils.getString(R.string.has_favorite) : Utils.getString(R.string.favorite));
             }
         });
     }
@@ -723,6 +711,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
                 mSwipe.setRefreshing(false);
                 setCollapsingToolbar();
                 showView(desc_view);
+                showView(bottomAppBar);
                 hideView(playLinearLayout);
                 hideView(multiLinearLayout);
                 hideView(recommendLinearLayout);
@@ -820,16 +809,6 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     }
 
     /****************************************** 下载相关 ******************************************/
-    /**
-     * 显示downloadBottomSheetDialog
-     */
-    @OnClick(R.id.download)
-    public void download() {
-        checkHasDownload();
-        downloadBottomSheetDialog.getBehavior().setState(BottomSheetBehavior.STATE_EXPANDED);
-        downloadBottomSheetDialog.show();
-    }
-
     /**
      * 下载配置
      */

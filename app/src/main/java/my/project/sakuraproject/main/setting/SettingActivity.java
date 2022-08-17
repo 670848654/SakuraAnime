@@ -197,6 +197,7 @@ public class SettingActivity extends BaseActivity {
     public void setDomain() {
         AlertDialog alertDialog;
         AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.DialogStyle);
+        builder.setTitle(Utils.getString(R.string.domain_title));
         View view = LayoutInflater.from(this).inflate(R.layout.dialog_domain, null);
         Spinner spinner = view.findViewById(R.id.prefix);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -217,7 +218,6 @@ public class SettingActivity extends BaseActivity {
         builder.setPositiveButton(Utils.getString(R.string.page_positive_edit), null);
         builder.setNegativeButton(Utils.getString(R.string.page_negative), null);
         builder.setNeutralButton(Utils.getString(R.string.page_def), null);
-        builder.setTitle(Utils.getString(R.string.domain_title));
         builder.setCancelable(false);
         alertDialog = builder.setView(view).create();
         alertDialog.show();

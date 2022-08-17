@@ -17,13 +17,13 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -69,7 +69,7 @@ public abstract class BasePlayerActivity extends BaseActivity implements JZPlaye
     /*@BindView(R.id.pic_config)
     RelativeLayout picConfig;*/
     @BindView(R.id.hide_progress)
-    SwitchCompat hideProgressSc;
+    SwitchMaterial hideProgressSc;
     @BindView(R.id.other_view)
     LinearLayout otherView;
     protected String
@@ -95,7 +95,7 @@ public abstract class BasePlayerActivity extends BaseActivity implements JZPlaye
     protected boolean hasPosition = false;
     protected long userSavePosition = 0;
     @BindView(R.id.play_next_video)
-    SwitchCompat playNextVideoSc;
+    SwitchMaterial playNextVideoSc;
     protected boolean playNextVideo;
     @BindView(R.id.spinner)
     TextView spinner;
@@ -206,8 +206,6 @@ public abstract class BasePlayerActivity extends BaseActivity implements JZPlaye
             player.danmuView.setVisibility(View.GONE);
         // 加载视频失败，嗅探视频
         player.snifferBtn.setOnClickListener(v -> snifferVideo());
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) player.pipView.setVisibility(View.GONE);
-        else player.pipView.setVisibility(View.VISIBLE);
         if (gtSdk23()) player.tvSpeed.setVisibility(View.VISIBLE);
         else player.tvSpeed.setVisibility(View.GONE);
         player.selectDramaView.setOnClickListener(view -> {

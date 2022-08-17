@@ -2,6 +2,7 @@ package my.project.sakuraproject.main.player;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.AttributeSet;
 import android.view.HapticFeedbackConstants;
@@ -142,6 +143,7 @@ public class JZPlayer extends JzvdStd {
         viewLongPress.setLongPressEventListener(new LongPressEventView.LongPressEventListener() {
             @Override
             public void onLongClick(View v) {
+                if (loadError) return;
                 isLongClick = true;
                 //震动反馈
                 v.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
@@ -153,12 +155,20 @@ public class JZPlayer extends JzvdStd {
 
             @Override
             public void onDisLongClick(View v) {
+                if (loadError) return;
                 if (mediaInterface != null) {
                     mediaInterface.setSpeed(speedRet);
                     longPressBgView.setVisibility(GONE);
                 }
             }
         });
+    }
+
+    public void setPipView() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
+            pipView.setVisibility(View.GONE);
+        else
+            pipView.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -316,6 +326,7 @@ public class JZPlayer extends JzvdStd {
             super.changeUiToPlayingShow();
             fastForward.setVisibility(VISIBLE);
             quickRetreat.setVisibility(VISIBLE);
+            setPipView();
             config.setVisibility(VISIBLE);
             airplay.setVisibility(VISIBLE);
             fullscreenButton.setVisibility(GONE);
@@ -331,6 +342,7 @@ public class JZPlayer extends JzvdStd {
         ibLock.setVisibility(GONE);
         fastForward.setVisibility(GONE);
         quickRetreat.setVisibility(GONE);
+        pipView.setVisibility(GONE);
         config.setVisibility(GONE);
         airplay.setVisibility(GONE);
         preVideo.setVisibility(GONE);
@@ -408,6 +420,7 @@ public class JZPlayer extends JzvdStd {
         ibLock.setVisibility(View.INVISIBLE);
         fastForward.setVisibility(INVISIBLE);
         quickRetreat.setVisibility(INVISIBLE);
+        pipView.setVisibility(INVISIBLE);
         config.setVisibility(INVISIBLE);
         airplay.setVisibility(INVISIBLE);
         preVideo.setVisibility(INVISIBLE);
@@ -421,8 +434,9 @@ public class JZPlayer extends JzvdStd {
         ibLock.setVisibility(View.INVISIBLE);
         fastForward.setVisibility(INVISIBLE);
         quickRetreat.setVisibility(INVISIBLE);
+        pipView.setVisibility(INVISIBLE);
         config.setVisibility(INVISIBLE);
-        airplay.setVisibility(VISIBLE);
+        airplay.setVisibility(INVISIBLE);
         preVideo.setVisibility(INVISIBLE);
         nextVideo.setVisibility(INVISIBLE);
         pauseListener.pause();
@@ -450,8 +464,9 @@ public class JZPlayer extends JzvdStd {
         ibLock.setVisibility(View.INVISIBLE);
         fastForward.setVisibility(INVISIBLE);
         quickRetreat.setVisibility(INVISIBLE);
+        pipView.setVisibility(INVISIBLE);
         config.setVisibility(INVISIBLE);
-        airplay.setVisibility(VISIBLE);
+        airplay.setVisibility(INVISIBLE);
         preVideo.setVisibility(INVISIBLE);
         nextVideo.setVisibility(INVISIBLE);
     }
@@ -463,6 +478,7 @@ public class JZPlayer extends JzvdStd {
         ibLock.setVisibility(View.INVISIBLE);
         fastForward.setVisibility(INVISIBLE);
         quickRetreat.setVisibility(INVISIBLE);
+        pipView.setVisibility(INVISIBLE);
         config.setVisibility(INVISIBLE);
         airplay.setVisibility(INVISIBLE);
         preVideo.setVisibility(INVISIBLE);
@@ -478,6 +494,7 @@ public class JZPlayer extends JzvdStd {
             ibLock.setVisibility(View.INVISIBLE);
             fastForward.setVisibility(INVISIBLE);
             quickRetreat.setVisibility(INVISIBLE);
+            pipView.setVisibility(INVISIBLE);
             config.setVisibility(INVISIBLE);
             airplay.setVisibility(state == STATE_ERROR ? INVISIBLE : VISIBLE);
             if ((Boolean) SharedPreferencesUtils.getParam(context, "hide_progress", false))
@@ -539,6 +556,7 @@ public class JZPlayer extends JzvdStd {
     public void onStatePlaying() {
         super.onStatePlaying();
         playingListener.playing();
+        loadError = false;
         if (danmakuView != null && danmakuView.isPrepared()) {
             danmakuView.resume();
         }

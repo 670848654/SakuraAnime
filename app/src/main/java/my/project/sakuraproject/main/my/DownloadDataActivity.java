@@ -12,7 +12,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.AppCompatCheckBox;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,6 +23,7 @@ import com.arialyy.aria.core.Aria;
 import com.arialyy.aria.core.download.DownloadEntity;
 import com.arialyy.aria.core.task.DownloadTask;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.google.android.material.checkbox.MaterialCheckBox;
 import com.r0adkll.slidr.Slidr;
 
 import org.greenrobot.eventbus.EventBus;
@@ -192,7 +192,8 @@ public class DownloadDataActivity extends BaseActivity<DownloadDataContract.View
         AlertDialog alertDialog;
         AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.DialogStyle);
         View view = LayoutInflater.from(this).inflate(R.layout.dialog_remove_download, null);
-        AppCompatCheckBox checkBox = view.findViewById(R.id.remove_file_select);
+        MaterialCheckBox checkBox = view.findViewById(R.id.remove_file_select);
+        builder.setTitle(Utils.getString(R.string.other_operation));
         builder.setPositiveButton(Utils.getString(R.string.page_positive), (dialog, which) -> deleteData(checkBox.isChecked(), bean, position));
         builder.setNegativeButton(Utils.getString(R.string.page_negative), (dialog, which) -> dialog.dismiss());
         alertDialog = builder.setView(view).create();

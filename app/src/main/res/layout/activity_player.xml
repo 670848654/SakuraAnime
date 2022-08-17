@@ -159,15 +159,16 @@
                             android:layout_centerVertical="true"
                             android:textColor="@android:color/white" />
 
-                        <androidx.appcompat.widget.SwitchCompat
+                        <com.google.android.material.switchmaterial.SwitchMaterial
                             android:id="@+id/hide_progress"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
                             android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
                             android:layout_marginRight="8dp"
-                            android:thumbTint="@color/colorAccent"
-                            android:textColor="@android:color/white"/>
+                            style="Widget.Material3.CompoundButton.MaterialSwitch"
+                            android:textColor="@android:color/white"
+                            android:thumbTint="@color/colorAccent" />
 
                     </RelativeLayout>
 
@@ -193,7 +194,7 @@
                             android:layout_centerVertical="true"
                             android:textColor="@android:color/white" />
 
-                        <androidx.appcompat.widget.SwitchCompat
+                        <com.google.android.material.switchmaterial.SwitchMaterial
                             android:id="@+id/play_next_video"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"

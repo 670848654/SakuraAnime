@@ -19,24 +19,6 @@
         android:background="@drawable/desc_gradient"
         android:fitsSystemWindows="true" />
 
-    <!--<com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/translucent"
-        android:theme="@style/AppTheme.AppBarOverlay"
-        app:elevation="0dp">
-
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            style="@style/ToolbarStyle"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/translucent"
-            android:theme="@style/DescToolbarTheme"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
-
-    </com.google.android.material.appbar.AppBarLayout>-->
-
     <my.project.sakuraproject.custom.MySwipeRefreshLayout
         android:id="@+id/mSwipe"
         android:layout_width="match_parent"
@@ -45,7 +27,9 @@
         <androidx.core.widget.NestedScrollView
             android:id="@+id/scrollview"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:paddingBottom="100dp"
+            android:clipToPadding="false">
 
             <LinearLayout
                 android:clipChildren="true"
@@ -66,16 +50,6 @@
                         android:id="@+id/img_box"
                         android:layout_width="match_parent"
                         android:layout_height="203dp">
-
-                        <ImageView
-                            android:id="@+id/exit"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="20dp"
-                            android:clickable="true"
-                            android:src="@drawable/baseline_arrow_back_white_48dp"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
 
                         <androidx.cardview.widget.CardView
                             android:id="@+id/card_view"
@@ -147,21 +121,6 @@
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
-<!--                    <RelativeLayout-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:clipChildren="true"-->
-<!--                        android:layout_marginTop="10dp"-->
-<!--                        android:layout_marginRight="10dp"-->
-<!--                        android:layout_marginBottom="10dp"-->
-<!--                        android:layout_weight="6">-->
-
-<!--                        <my.project.sakuraproject.custom.InsideScrollView-->
-<!--                            android:id="@+id/inside_view"-->
-<!--                            android:scrollbars="none"-->
-<!--                            android:layout_width="match_parent"-->
-<!--                            android:layout_height="wrap_content">-->
-
                         <RelativeLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content">
@@ -171,8 +130,6 @@
                                 android:layout_height="wrap_content"
                                 android:id="@+id/title"
                                 android:layout_marginTop="10dp"
-                                android:layout_marginLeft="20dp"
-                                android:layout_marginRight="20dp"
                                 android:gravity="center_horizontal"
                                 android:focusable="true"
                                 android:focusableInTouchMode="true"
@@ -188,45 +145,12 @@
                                 android:textColor="@color/white"
                                 android:textSize="18sp" />
 
-                            <LinearLayout
-                                android:id="@+id/btn_view"
-                                android:layout_below="@id/title"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_centerHorizontal="true"
-                                android:orientation="horizontal">
-
-                                <com.google.android.material.button.MaterialButton
-                                    android:id="@+id/favorite"
-                                    style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:textSize="14sp"
-                                    app:strokeColor="@color/mtrl_btn_stroke_color_selector"
-                                    android:textColor="@color/white"
-                                    app:iconTint="@color/white"/>
-
-                                <com.google.android.material.button.MaterialButton
-                                    android:id="@+id/browser"
-                                    android:layout_marginLeft="5dp"
-                                    style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:textSize="14sp"
-                                    app:icon="@drawable/baseline_language_white_48dp"
-                                    android:text="@string/open_browser"
-                                    app:strokeColor="@color/mtrl_btn_stroke_color_selector"
-                                    android:textColor="@color/white"
-                                    app:iconTint="@color/white"/>
-
-                            </LinearLayout>
-
                             <co.lujun.androidtagview.TagContainerLayout
-                                android:layout_below="@+id/btn_view"
+                                android:layout_below="@+id/title"
                                 android:id="@+id/tag_view"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="5dp"
+                                android:layout_marginTop="10dp"
                                 app:container_border_color="@color/translucent"
                                 app:container_background_color="@color/translucent"
                                 app:tag_corner_radius="4dp"
@@ -258,10 +182,6 @@
 
                         </RelativeLayout>
 
-<!--                        </my.project.sakuraproject.custom.InsideScrollView>-->
-
-<!--                    </RelativeLayout>-->
-
                 </LinearLayout>
 
                 <!-- 剧集视图 -->
@@ -272,7 +192,7 @@
                     android:orientation="vertical"
                     android:layout_marginTop="10dp"
                     android:padding="5dp"
-                    android:visibility="visible">
+                    android:visibility="gone">
 
                     <RelativeLayout
                         android:layout_width="match_parent"
@@ -280,13 +200,16 @@
                         android:layout_marginBottom="8dp">
 
                         <com.google.android.material.textfield.TextInputLayout
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            app:endIconTint="@android:color/white"
+                            app:boxStrokeColor="@color/text_input_layout_stroke_color"
                             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
 
                             <AutoCompleteTextView
                                 android:id="@+id/selected_text"
                                 android:focusable="false"
+                                android:inputType="none"
                                 android:textColor="@color/white"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -294,19 +217,6 @@
                                 android:textStyle="bold"/>
                         </com.google.android.material.textfield.TextInputLayout>
 
-
-                        <!--<TextView
-                            android:visibility="gone"
-                            android:layout_toRightOf="@id/selected_text"
-                            android:id="@+id/spinner"
-                            android:textColor="@color/colorAccent"
-                            android:gravity="center_vertical"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:drawableRight="@drawable/baseline_arrow_drop_down_white_48dp"
-                            android:drawablePadding="5dp"
-                            android:layout_marginLeft="8dp"/>-->
                     </RelativeLayout>
 
                     <androidx.recyclerview.widget.RecyclerView
@@ -431,22 +341,28 @@
 
     </my.project.sakuraproject.custom.MySwipeRefreshLayout>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/download"
-        android:src="@drawable/baseline_download_white_48dp"
-        android:layout_width="wrap_content"
+    <com.google.android.material.bottomappbar.BottomAppBar
+        android:id="@+id/bottomAppBar"
+        android:visibility="invisible"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:visibility="gone"
-        app:layout_behavior="my.project.sakuraproject.custom.ScrollAwareBehavior"
-        android:layout_margin="@dimen/fab_margin" />
+        android:backgroundTint="@color/night"
+        android:layout_gravity="bottom"
+        app:fabAlignmentMode="end"
+        app:fabCradleMargin="4dp"
+        style="@style/Widget.Material3.BottomAppBar"
+        app:fabCradleVerticalOffset="8dp"
+        app:hideOnScroll="true"
+        app:menu="@menu/bottom_app_bar"/>
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
-        android:id="@+id/msg"
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/to_back"
+        app:backgroundTint="@color/colorAccent"
+        app:tint="@android:color/white"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_anchor="@id/tag_view"
-        app:layout_anchorGravity="center" />
+        app:srcCompat="@drawable/outline_reply_white_48dp"
+        app:layout_anchor="@id/bottomAppBar" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

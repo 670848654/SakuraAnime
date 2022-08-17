@@ -2,11 +2,11 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.jakewharton.butterknife'
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 32
     defaultConfig {
         applicationId "my.project.sakuraproject"
         minSdkVersion 21
-        targetSdkVersion 30
+        targetSdkVersion 32
         versionCode 48
         versionName "2.3.8_1"
         ndk{abiFilters "arm64-v8a", "x86_64"}
@@ -37,14 +37,15 @@ allprojects {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'androidx.compose.material3:material3:1.0.0-alpha15'
     implementation files('src/libs/nanohttpd-2.3.1.jar')
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.palette:palette:1.0.0'
-    implementation 'com.google.android.material:material:1.4.0-alpha01'
+    implementation 'com.google.android.material:material:1.5.0-beta01'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'androidx.navigation:navigation-fragment:2.3.0'
-    implementation 'androidx.navigation:navigation-ui:2.3.0'
+//    implementation 'androidx.navigation:navigation-fragment:2.3.0'
+//    implementation 'androidx.navigation:navigation-ui:2.3.0'
     implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.30'
     implementation 'pub.devrel:easypermissions:3.0.0'
     implementation 'com.rengwuxian.materialedittext:library:2.1.4'

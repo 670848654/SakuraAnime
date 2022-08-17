@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/favorite"
+        android:icon="@drawable/baseline_favorite_border_white_48dp"
+        android:title="@string/favorite"
+        android:contentDescription="@string/favorite"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/download"
+        android:icon="@drawable/baseline_download_white_48dp"
+        android:title="@string/down"
+        android:contentDescription="@string/down"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/browser"
+        android:icon="@drawable/baseline_language_white_48dp"
+        android:title="@string/open_browser"
+        android:contentDescription="@string/open_browser"
+        app:showAsAction="ifRoom" />
+
+</menu>

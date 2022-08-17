@@ -19,6 +19,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             android:layout_margin="@dimen/fab_margin"
+            app:backgroundTint="@color/colorAccent"
+            app:tint="@android:color/white"
             android:visibility="gone"
             app:layout_behavior="my.project.sakuraproject.custom.ScrollAwareBehavior"
             app:srcCompat="@drawable/baseline_search_white_48dp" />

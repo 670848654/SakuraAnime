@@ -72,7 +72,7 @@
     <string name="page_positive_edit">修改</string>
     <string name="page_negative">取消</string>
     <string name="page_def">恢复默认</string>
-    <string name="domain_title">输入相关站点域名（PC端）</string>
+    <string name="domain_title">输入站点域名（PC端）</string>
     <string name="set_domain_ok">域名更改成功</string>
     <string name="set_domain_error1">参数不能为空</string>
     <string name="set_domain_error2">参数格式错误</string>

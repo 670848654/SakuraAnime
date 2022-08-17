@@ -3,8 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:paddingTop="10dp"
     android:paddingLeft="25dp"
-    android:paddingTop="25dp"
     android:paddingRight="25dp">
     <TextView
         android:text="@string/delete_single_download"
@@ -12,11 +12,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <androidx.appcompat.widget.AppCompatCheckBox
+    <com.google.android.material.checkbox.MaterialCheckBox
         android:id="@+id/remove_file_select"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
+        app:buttonTint="@color/colorAccent"
         android:textColor="@color/text_color_primary"
         android:text="@string/remove_download_file"/>
 </LinearLayout>

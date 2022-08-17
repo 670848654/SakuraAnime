@@ -363,7 +363,7 @@ public class YhdmJsoupUtils {
         Document document = Jsoup.parse(source);
         List<AnimeDramasBean> animeDramasBeans = new ArrayList<>();
         AnimeDramasBean animeDramasBean = new AnimeDramasBean();
-        animeDramasBean.setListTitle("播放列表");
+        animeDramasBean.setListTitle("默认播放列表");
         Elements dramaElements = document.select("div.movurl > ul > li"); //剧集列表
         if (dramaElements.size() > 0) {
             /** 封装剧集 **/

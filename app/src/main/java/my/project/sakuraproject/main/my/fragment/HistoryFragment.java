@@ -199,6 +199,7 @@ public class HistoryFragment extends MyLazyFragment<HistoryContract.View, Histor
     private void showDeleteHistoryDialog(int position, String historyId, boolean isAll) {
         AlertDialog alertDialog;
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.DialogStyle);
+        builder.setTitle(Utils.getString(R.string.other_operation));
         builder.setMessage(isAll ? Utils.getString(R.string.delete_all_history) : Utils.getString(R.string.delete_single_history));
         builder.setPositiveButton(getString(R.string.page_positive), (dialog, which) -> deleteHistory(position, historyId, isAll));
         builder.setNegativeButton(getString(R.string.page_negative), (dialog, which) -> dialog.dismiss());

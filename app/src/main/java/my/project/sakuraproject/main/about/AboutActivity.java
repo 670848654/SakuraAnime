@@ -1,9 +1,7 @@
 package my.project.sakuraproject.main.about;
 
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.os.Environment;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -128,20 +126,13 @@ public class AboutActivity extends BaseActivity {
     public void showUpdateLogs() {
         AlertDialog alertDialog;
         AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.DialogStyle);
+        builder.setTitle(Utils.getString(R.string.update_log));
         View view = LayoutInflater.from(this).inflate(R.layout.dialog_update_log, null);
         RecyclerView logs = view.findViewById(R.id.rv_list);
         logs.setLayoutManager(new LinearLayoutManager(this));
         LogAdapter logAdapter = new LogAdapter(createUpdateLogList());
         logs.setAdapter(logAdapter);
         builder.setPositiveButton(Utils.getString(R.string.page_positive), null);
-        TextView title = new TextView(this);
-        title.setText(Utils.getString(R.string.update_log));
-        title.setPadding(30,30,30,30);
-        title.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
-        title.setGravity(Gravity.LEFT);
-        title.setTextSize(18);
-        title.setTextColor(getResources().getColor(R.color.text_color_primary));
-        builder.setCustomTitle(title);
         alertDialog = builder.setView(view).create();
         alertDialog.show();
     }

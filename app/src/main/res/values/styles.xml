@@ -1,6 +1,6 @@
 <resources>
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="AppTheme" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
@@ -22,27 +22,35 @@
         <item name="scrimBackground">@color/mtrl_scrim_color</item>
         <item name="colorSecondary">@color/colorAccent</item>
         <item name="colorOnSecondary">@color/white</item>
-<!--        <item name="itemShapeFillColor">@color/colorAccent</item>-->
-<!--        <item name="android:colorControlHighlight">@color/colorAccent</item>-->
-<!--        <item name="textAppearanceHeadline1">@style/TextAppearance.MaterialComponents.Headline1</item>-->
-<!--        <item name="textAppearanceHeadline2">@style/TextAppearance.MaterialComponents.Headline2</item>-->
-<!--        <item name="textAppearanceHeadline3">@style/TextAppearance.MaterialComponents.Headline3</item>-->
-<!--        <item name="textAppearanceHeadline4">@style/TextAppearance.MaterialComponents.Headline4</item>-->
-<!--        <item name="textAppearanceHeadline5">@style/TextAppearance.MaterialComponents.Headline5</item>-->
-<!--        <item name="textAppearanceHeadline6">@style/TextAppearance.MaterialComponents.Headline6</item>-->
-<!--        <item name="textAppearanceSubtitle1">@style/TextAppearance.MaterialComponents.Subtitle1</item>-->
-<!--        <item name="textAppearanceSubtitle2">@style/TextAppearance.MaterialComponents.Subtitle2</item>-->
-<!--        <item name="textAppearanceBody1">@style/TextAppearance.MaterialComponents.Body1</item>-->
-<!--        <item name="textAppearanceBody2">@style/TextAppearance.MaterialComponents.Body2</item>-->
-<!--        <item name="textAppearanceCaption">@style/TextAppearance.MaterialComponents.Caption</item>-->
-<!--        <item name="textAppearanceButton">@style/TextAppearance.MaterialComponents.Button</item>-->
-<!--        <item name="textAppearanceOverline">@style/TextAppearance.MaterialComponents.Overline</item>-->
 
-        <item name="snackbarTextViewStyle">@style/Widget.App.SnackbarText</item>
+        <item name="snackbarStyle">@style/Widget.App.Snackbar</item>
+        <item name="snackbarButtonStyle">@style/Widget.App.SnackbarButton</item>
+        <item name="materialAlertDialogTheme">@style/DialogStyle</item>
+        <item name="switchStyle">@style/Widget.App.Switch</item>
     </style>
 
-    <style name="Widget.App.SnackbarText" parent="Widget.MaterialComponents.Snackbar.TextView">
-        <item name="android:textColor">@color/white</item>
+    <!-- Snackbar Style -->
+    <style name="Widget.App.Snackbar" parent="Widget.Material3.Snackbar">
+        <item name="materialThemeOverlay">@style/ThemeOverlay.App.Snackbar</item>
+    </style>
+
+    <style name="Widget.App.SnackbarButton" parent="Widget.Material3.Button.TextButton.Snackbar">
+        <item name="android:textColor">@color/colorAccent</item>
+    </style>
+
+    <style name="ThemeOverlay.App.Snackbar" parent="">
+        <item name="colorPrimaryInverse">@color/colorAccent</item>
+        <item name="colorOnSurfaceInverse">@color/colorAccent</item>
+    </style>
+
+    <!-- Switch Style -->
+    <style name="Widget.App.Switch" parent="Widget.Material3.CompoundButton.Switch">
+        <item name="materialThemeOverlay">@style/ThemeOverlay.App.Switch</item>
+    </style>
+
+    <style name="ThemeOverlay.App.Switch" parent="">
+        <item name="colorPrimaryContainer">@color/pink100</item>
+        <item name="colorPrimary">@color/colorAccent</item>
     </style>
 
     <style name="ThemeToolbar.NavigationView" parent="AppTheme">
@@ -139,26 +147,37 @@
         <item name="android:windowExitAnimation">@anim/fade_out</item>
     </style>
 
-    <style name="DialogStyle" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+    <style name="DialogStyle" parent="ThemeOverlay.Material3.MaterialAlertDialog">
         <item name="colorPrimary">@color/text_color_primary</item>
         <item name="colorSecondary">@color/text_color_primary</item>
         <item name="colorSurface">@color/text_color_primary</item>
         <item name="colorOnSurface">@color/text_color_primary</item>
+        <item name="alertDialogStyle">@style/MaterialAlertDialog.App</item>
         <item name="materialAlertDialogTitleTextStyle">@style/MaterialAlertDialog.App.Title.Text</item>
         <item name="buttonBarPositiveButtonStyle">@style/ThemeOverlay.App.Button</item>
         <item name="buttonBarNeutralButtonStyle">@style/ThemeOverlay.App.Button</item>
         <item name="buttonBarNegativeButtonStyle">@style/ThemeOverlay.App.Button</item>
     </style>
 
-    <style name="MaterialAlertDialog.App.Title.Text" parent="MaterialAlertDialog.MaterialComponents.Title.Text">
+    <style name="MaterialAlertDialog.App" parent="MaterialAlertDialog.Material3">
+        <item name="shapeAppearance">@style/ShapeAppearance.App.MediumComponent</item>
+        <item name="shapeAppearanceOverlay">@null</item>
+    </style>
+
+    <style name="ShapeAppearance.App.MediumComponent" parent="ShapeAppearance.Material3.MediumComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">28dp</item>
+    </style>
+
+    <style name="MaterialAlertDialog.App.Title.Text" parent="MaterialAlertDialog.Material3.Title.Text">
         <item name="android:textColor">@color/text_color_primary</item>
     </style>
 
-    <style name="ThemeOverlay.App.Button" parent="Widget.MaterialComponents.Button.TextButton">
+    <style name="ThemeOverlay.App.Button" parent="Widget.Material3.Button.TextButton">
         <item name="android:textColor">@color/colorAccent</item>
     </style>
 
-    <style name="Theme.NotFullActivity" parent="Theme.AppCompat.DayNight.Dialog.Alert">
+    <style name="Theme.NotFullActivity" parent="Theme.Material3.DayNight.Dialog.Alert">
         <item name="android:windowCloseOnTouchOutside">false</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>

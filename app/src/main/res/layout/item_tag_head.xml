@@ -9,7 +9,6 @@
 
     <TextView
         android:id="@+id/header"
-        android:text="哈哈"
         android:paddingLeft="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -17,9 +16,8 @@
         android:textStyle="bold"
         android:textSize="18sp" />
 
-    <View
+    <com.google.android.material.divider.MaterialDivider
         android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        android:layout_margin="10dp"
-        android:background="@color/head"/>
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"/>
 </LinearLayout>

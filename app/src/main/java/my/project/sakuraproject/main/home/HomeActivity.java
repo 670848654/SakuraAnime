@@ -17,6 +17,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.wuyr.rippleanimation.RippleAnimation;
 
 import org.greenrobot.eventbus.EventBus;
@@ -130,7 +131,7 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
     }
 
     private void setDefaultSource() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.DialogStyle);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this, R.style.DialogStyle);
         builder.setTitle(Utils.getString(R.string.select_source));
         int selected = Utils.isImomoe() ? 1 : 0;
         builder.setSingleChoiceItems(sourceItems, selected, (dialog, index) -> {

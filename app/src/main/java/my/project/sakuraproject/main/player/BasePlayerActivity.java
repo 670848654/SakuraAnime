@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import org.greenrobot.eventbus.EventBus;
@@ -292,7 +293,7 @@ public abstract class BasePlayerActivity extends BaseActivity implements JZPlaye
     }
 
     private void setDefaultSpeed() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
         builder.setTitle(Utils.getString(R.string.set_user_speed));
         builder.setSingleChoiceItems(speeds, userSpeed, (dialog, which) -> {
             switch (which) {

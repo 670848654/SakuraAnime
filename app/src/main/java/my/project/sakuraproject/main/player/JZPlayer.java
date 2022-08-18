@@ -143,7 +143,7 @@ public class JZPlayer extends JzvdStd {
         viewLongPress.setLongPressEventListener(new LongPressEventView.LongPressEventListener() {
             @Override
             public void onLongClick(View v) {
-                if (loadError) return;
+                if (loadError || state != STATE_PLAYING) return;
                 isLongClick = true;
                 //震动反馈
                 v.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
@@ -155,7 +155,7 @@ public class JZPlayer extends JzvdStd {
 
             @Override
             public void onDisLongClick(View v) {
-                if (loadError) return;
+                if (loadError || state != STATE_PLAYING) return;
                 if (mediaInterface != null) {
                     mediaInterface.setSpeed(speedRet);
                     longPressBgView.setVisibility(GONE);

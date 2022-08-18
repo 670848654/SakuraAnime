@@ -2,6 +2,6 @@
     android:id="@+id/rv_list"
     android:paddingLeft="10dp"
     android:paddingRight="10dp"
-    android:paddingTop="25dp"
+    android:paddingTop="20dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content" />

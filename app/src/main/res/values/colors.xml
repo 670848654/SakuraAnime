@@ -279,27 +279,27 @@
     <color name="night">#303030</color>
     <color name="bold">#424242</color>
 
-    <color name="colorPrimary">#FFF</color>
+    <color name="colorPrimary">#f3eaeb</color>
     <color name="colorPrimaryDark">#bdbdbd</color>
     <color name="colorAccent">#ff4081</color>
     <color name="toolbar_color">#000000</color>
     <color name="tabTextColor">#000000</color>
     <color name="tabSelectedTextColor">#ff4081</color>
-    <color name="navigationview_bg_color">#FFF</color>
-    <color name="window_bg">#FFF</color>
+    <color name="navigationview_bg_color">#f3eaeb</color>
+    <color name="window_bg">#f3eaeb</color>
     <color name="toolbar_layout_bg">#bdbdbd</color>
     <color name="item_stroke">#F2F2F2</color>
     <color name="text_color_primary">#000</color>
-    <color name="item_selected_color">#FFF</color>
+    <color name="item_selected_color">#f3eaeb</color>
     <color name="jd_bg">#000</color>
     <color name="white">#FFF</color>
     <color name="logo_bg">#e55578</color>
-    <color name="drama">#fdfdfd</color>
+    <color name="drama">#f3eaeb</color>
 
-    <color name="light_toolbar_color">#FFF</color>
+    <color name="light_toolbar_color">#f3eaeb</color>
     <color name="light_toolbar_color_lt23">#bdbdbd</color>
-    <color name="light_window_color">#FFFFFF</color>
-    <color name="light_navigation_color">#FFFFFF</color>
+    <color name="light_window_color">#f3eaeb</color>
+    <color name="light_navigation_color">#f3eaeb</color>
     <color name="light_navigation_text_color">#000000</color>
     <color name="light_navigation_tini_color">#ff4081</color>
 

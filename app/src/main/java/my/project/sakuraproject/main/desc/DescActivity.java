@@ -517,7 +517,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         isFavorite = DatabaseUtil.favorite(animeListBean, animeId);
         bottomAppBar.getMenu().getItem(0).setIcon(ContextCompat.getDrawable(this, isFavorite ? R.drawable.baseline_favorite_white_48dp : R.drawable.baseline_favorite_border_white_48dp));
         bottomAppBar.getMenu().getItem(0).setTitle(isFavorite ? Utils.getString(R.string.has_favorite) : Utils.getString(R.string.favorite));
-        application.showSnackbarMsg(bottomAppBar, isFavorite ? Utils.getString(R.string.join_ok) : Utils.getString(R.string.join_error));
+        application.showSnackbarMsg(bottomAppBar, isFavorite ? Utils.getString(R.string.join_ok) : Utils.getString(R.string.join_error), toBackView);
         EventBus.getDefault().post(new Refresh(1));
     }
 

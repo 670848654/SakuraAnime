@@ -58,6 +58,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
 import com.bumptech.glide.request.transition.Transition;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.r0adkll.slidr.model.SlidrConfig;
 import com.r0adkll.slidr.model.SlidrPosition;
 
@@ -139,7 +140,7 @@ public class Utils {
      */
     public static AlertDialog getProDialog(Activity activity, @StringRes int id) {
         AlertDialog alertDialog;
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity, R.style.DialogStyle);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(activity, R.style.DialogStyle);
         View view = LayoutInflater.from(activity).inflate(R.layout.dialog_proress, null);
         RelativeLayout root = view.findViewById(R.id.root);
         TextView msg = view.findViewById(R.id.msg);
@@ -247,7 +248,7 @@ public class Utils {
      */
     public static void showX5Info(Context context) {
         AlertDialog alertDialog;
-        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context, R.style.DialogStyle);
         builder.setPositiveButton(getString(R.string.x5_info_positive), null);
         builder.setMessage(getString(R.string.x5_info));
         builder.setTitle(getString(R.string.x5_info_title));
@@ -620,7 +621,7 @@ public class Utils {
                                       DialogInterface.OnClickListener posListener,
                                       DialogInterface.OnClickListener negListener) {
         AlertDialog alertDialog;
-        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context, R.style.DialogStyle);
         builder.setMessage(body);
         builder.setTitle(getString(R.string.find_new_version) + version);
         builder.setPositiveButton(getString(R.string.update_now), posListener);

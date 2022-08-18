@@ -10,6 +10,7 @@ import android.util.Log;
 import androidx.appcompat.app.AlertDialog;
 
 import com.arialyy.aria.core.task.DownloadTask;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -44,7 +45,7 @@ public class VideoUtils {
      * @param HTML_url
      */
     public static void showErrorInfo(Context context, String HTML_url) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context, R.style.DialogStyle);
         builder.setPositiveButton(Utils.getString(R.string.play_not_found_positive), null);
         builder.setNegativeButton(Utils.getString(R.string.play_not_found_negative), null);
         builder.setTitle(Utils.getString(R.string.play_not_found_title));
@@ -77,7 +78,7 @@ public class VideoUtils {
             if (type == 0) items[i] = getVideoUrl(list.get(i));
             else items[i] = list.get(i);
         }
-        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(context, R.style.DialogStyle);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context, R.style.DialogStyle);
         builder.setTitle(Utils.getString(R.string.select_video_source));
         builder.setCancelable(false);
         builder.setItems(items, listener);
@@ -94,7 +95,7 @@ public class VideoUtils {
      * @param listener
      */
     public static void showPlayerNetworkErrorDialog(Context context, DialogInterface.OnClickListener listener) {
-        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(context, R.style.DialogStyle);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context, R.style.DialogStyle);
         builder.setCancelable(false);
         builder.setMessage(Utils.getString(R.string.error_700));
         builder.setNegativeButton(Utils.getString(R.string.try_again), listener);
@@ -327,7 +328,7 @@ public class VideoUtils {
     }
 
     public static void showParseAlert(Context context, DialogInterface.OnClickListener listener) {
-        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(context, R.style.DialogStyle);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context, R.style.DialogStyle);
         builder.setTitle(Utils.getString(R.string.select_parse_interface));
         builder.setCancelable(false);
         builder.setItems(Api.PARSE_TITLES, listener);

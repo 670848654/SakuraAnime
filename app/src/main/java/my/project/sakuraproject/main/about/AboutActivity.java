@@ -15,6 +15,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.r0adkll.slidr.Slidr;
 
 import java.util.ArrayList;
@@ -125,7 +126,7 @@ public class AboutActivity extends BaseActivity {
 
     public void showUpdateLogs() {
         AlertDialog alertDialog;
-        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.DialogStyle);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this, R.style.DialogStyle);
         builder.setTitle(Utils.getString(R.string.update_log));
         View view = LayoutInflater.from(this).inflate(R.layout.dialog_update_log, null);
         RecyclerView logs = view.findViewById(R.id.rv_list);
@@ -139,6 +140,7 @@ public class AboutActivity extends BaseActivity {
 
     public List createUpdateLogList() {
         List logsList = new ArrayList();
+        logsList.add(new LogBean("版本：2.3.9", "修复目前已知问题\nmalimali源中部分番剧存在多个播放列表，原先只获取了默认线路，发现某些番主路线并不能正常播放，现提供所有播放线路"));
         logsList.add(new LogBean("版本：2.3.8_1", "添加播放界面长按2倍速功能\n添加对获取弹幕API异常时的处理\n修复在收藏、历史记录中由于番剧地址发生改变导致访问详情界面闪退的问题\n修复番剧地址改变导致历史记录出现闪退的问题"));
         logsList.add(new LogBean("版本：2.3.8", "添加播放界面长按2倍速功能\n添加对获取弹幕API异常时的处理\n修复在收藏、历史记录中由于番剧地址发生改变导致访问详情界面闪退的问题"));
         logsList.add(new LogBean("版本：2.3.7", "修复malimali源部分番剧无法播放的问题，如：咒术回战\n初步添加对弹幕支持，使用@MaybeQHL提供的弹幕API\n**可在设置中进行弹幕开关，可能会出现崩溃的情况"));

@@ -17,6 +17,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import com.arialyy.aria.core.Aria;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.r0adkll.slidr.Slidr;
 
 import org.greenrobot.eventbus.EventBus;
@@ -196,7 +197,7 @@ public class SettingActivity extends BaseActivity {
 
     public void setDomain() {
         AlertDialog alertDialog;
-        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.DialogStyle);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this, R.style.DialogStyle);
         builder.setTitle(Utils.getString(R.string.domain_title));
         View view = LayoutInflater.from(this).inflate(R.layout.dialog_domain, null);
         Spinner spinner = view.findViewById(R.id.prefix);
@@ -255,7 +256,7 @@ public class SettingActivity extends BaseActivity {
     }
 
     public void setDefaultPlayer() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.DialogStyle);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this, R.style.DialogStyle);
         builder.setTitle(Utils.getString(R.string.select_player));
         builder.setSingleChoiceItems(playerItems, (Integer) SharedPreferencesUtils.getParam(getApplicationContext(), "player", 0), (dialog, which) -> {
             switch (which) {
@@ -275,7 +276,7 @@ public class SettingActivity extends BaseActivity {
     }
 
     public void setCheckFavoriteUpdateState() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.DialogStyle);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this, R.style.DialogStyle);
         builder.setTitle(Utils.getString(R.string.page_title));
         builder.setSingleChoiceItems(checkFavoriteUpdateItems, (Boolean) SharedPreferencesUtils.getParam(this, "check_favorite_update", true) ? 0 : 1, (dialog, which) -> {
             switch (which) {
@@ -295,7 +296,7 @@ public class SettingActivity extends BaseActivity {
     }
 
     public void setDownloadNumber() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.DialogStyle);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this, R.style.DialogStyle);
         builder.setTitle("设置同时下载任务数量");
         builder.setSingleChoiceItems(downloadNumbers, (Integer) SharedPreferencesUtils.getParam(this, "download_number", 0), (dialog, which) -> {
             SharedPreferencesUtils.setParam(this, "download_number", which);
@@ -308,7 +309,7 @@ public class SettingActivity extends BaseActivity {
     }
 
     private void setSildr() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.DialogStyle);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this, R.style.DialogStyle);
         builder.setTitle("设置滑动返回方式");
         builder.setSingleChoiceItems(slidrConfigs, (Boolean) SharedPreferencesUtils.getParam(this, "slidr_config", false) ? 1 : 0, (dialog, which) -> {
             SharedPreferencesUtils.setParam(this, "slidr_config", which == 0 ? false : true);
@@ -321,12 +322,11 @@ public class SettingActivity extends BaseActivity {
     }
 
     private void removeDownloads() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.DialogStyle);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this, R.style.DialogStyle);
         builder.setPositiveButton(Utils.getString(R.string.page_positive), null);
         builder.setNegativeButton(Utils.getString(R.string.cancel), null);
         builder.setTitle(Utils.getString(R.string.remove_downloads_title));
         builder.setMessage(Utils.getString(R.string.remove_downloads_content));
-        builder.setCancelable(false);
         alertDialog = builder.create();
         alertDialog.show();
         alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
@@ -338,7 +338,7 @@ public class SettingActivity extends BaseActivity {
     }
 
     public void setDanmu() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.DialogStyle);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this, R.style.DialogStyle);
         builder.setTitle(Utils.getString(R.string.danmu_title));
         builder.setSingleChoiceItems(danmuItems, (Boolean) SharedPreferencesUtils.getParam(this, "open_danmu", true) ? 0 : 1, (dialog, which) -> {
             switch (which) {
@@ -356,26 +356,6 @@ public class SettingActivity extends BaseActivity {
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }
-
-    /*public void setX5State() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.DialogStyle);
-        builder.setTitle("请选择内核状态");
-        builder.setSingleChoiceItems(x5Items, Utils.loadX5() ? 0 : 1, (dialog, which) -> {
-            switch (which){
-                case 0:
-                    SharedPreferencesUtils.setParam(getApplicationContext(),"loadX5",true);
-                    x5_state.setText(x5Items[0]);
-                    break;
-                case 1:
-                    SharedPreferencesUtils.setParam(getApplicationContext(),"loadX5",false);
-                    x5_state.setText(x5Items[1]);
-                    break;
-            }
-            dialog.dismiss();
-        });
-        AlertDialog alertDialog = builder.create();
-        alertDialog.show();
-    }*/
 
     public void checkUpdate() {
         alertDialog = Utils.getProDialog(this, R.string.check_update_text);

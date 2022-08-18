@@ -19,6 +19,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
 import java.util.List;
 
 import butterknife.ButterKnife;
@@ -238,7 +240,7 @@ public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatA
 
     private void getManager() {
         AlertDialog alertDialog;
-        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.DialogStyle);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this, R.style.DialogStyle);
         builder.setPositiveButton(Utils.getString(R.string.authorize_msg), null);
         builder.setTitle(Utils.getString(R.string.authorize_title_msg));
         builder.setMessage(Utils.getString(R.string.file_manger_msg));

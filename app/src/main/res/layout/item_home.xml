@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/baseline_arrow_forward_white_48dp"
+            android:src="@drawable/baseline_keyboard_arrow_right_white_48dp"
             app:tint="@color/text_color_primary" />
 
     </RelativeLayout>

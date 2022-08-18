@@ -349,11 +349,9 @@
         android:backgroundTint="@color/night"
         android:layout_gravity="bottom"
         app:fabAlignmentMode="end"
-        app:fabCradleMargin="4dp"
-        style="@style/Widget.Material3.BottomAppBar"
-        app:fabCradleVerticalOffset="8dp"
         app:hideOnScroll="true"
-        app:menu="@menu/bottom_app_bar"/>
+        app:menu="@menu/bottom_app_bar"
+        style="@style/Widget.Material3.BottomAppBar"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/to_back"

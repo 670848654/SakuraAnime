@@ -24,6 +24,7 @@ import com.arialyy.aria.core.download.DownloadEntity;
 import com.arialyy.aria.core.task.DownloadTask;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.android.material.checkbox.MaterialCheckBox;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.r0adkll.slidr.Slidr;
 
 import org.greenrobot.eventbus.EventBus;
@@ -185,12 +186,11 @@ public class DownloadDataActivity extends BaseActivity<DownloadDataContract.View
             }
         }, 500), mRecyclerView);
         mRecyclerView.setAdapter(adapter);
-        setRecyclerViewView();
     }
 
     private void showDeleteDataDialog(DownloadDataBean bean, int position) {
         AlertDialog alertDialog;
-        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.DialogStyle);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this, R.style.DialogStyle);
         View view = LayoutInflater.from(this).inflate(R.layout.dialog_remove_download, null);
         MaterialCheckBox checkBox = view.findViewById(R.id.remove_file_select);
         builder.setTitle(Utils.getString(R.string.other_operation));
@@ -343,6 +343,10 @@ public class DownloadDataActivity extends BaseActivity<DownloadDataContract.View
         runOnUiThread(() -> {
             if (isMain) {
                 downloadDataBeans = list;
+                if (downloadDataBeans.size() >0)
+                    setRecyclerViewView();
+                else
+                    setRecyclerViewEmpty();
                 adapter.setNewData(downloadDataBeans);
             } else
                 adapter.addData(list);
@@ -409,12 +413,6 @@ public class DownloadDataActivity extends BaseActivity<DownloadDataContract.View
                 }
             }
         }, 1000);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (Utils.isPad()) setRecyclerViewView();
     }
 
     @Override

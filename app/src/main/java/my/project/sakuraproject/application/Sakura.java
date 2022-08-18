@@ -99,8 +99,9 @@ public class Sakura extends Application {
         Snackbar.make(view, msg, Snackbar.LENGTH_LONG).setAction(actionMsg, listener).show();
     }
 
-    public void showSnackbarMsg(View view, String msg) {
+    public void showSnackbarMsg(View view, String msg, View anchorView) {
         Snackbar snackbar = Snackbar.make(view, msg, Snackbar.LENGTH_LONG);
+        snackbar.setAnchorView(anchorView);
         snackbar.getView().setBackgroundColor(getResources().getColor(R.color.colorAccent));
         snackbar.show();
     }

@@ -144,7 +144,6 @@ public class FavoriteFragment extends MyLazyFragment<FavoriteContract.View, Favo
         isMain = true;
         favoriteList.clear();
         adapter.setNewData(favoriteList);
-        setRecyclerViewView();
         loading.setVisibility(View.VISIBLE);
         if (favoriteCount > 0 && updateOrder) {
 //            application.showSnackbarMsg(msg, Utils.getString(R.string.check_favorite_update));
@@ -179,6 +178,10 @@ public class FavoriteFragment extends MyLazyFragment<FavoriteContract.View, Favo
             if (isMain) {
                 loading.setVisibility(View.GONE);
                 favoriteList = list;
+                if (favoriteList.size() > 0)
+                    setRecyclerViewView();
+                else
+                    setRecyclerViewEmpty();
                 adapter.setNewData(favoriteList);
             } else
                 adapter.addData(list);
@@ -253,13 +256,6 @@ public class FavoriteFragment extends MyLazyFragment<FavoriteContract.View, Favo
         if (refresh.getIndex() == 1) {
             loadFavoriteData();
         }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (isFragmentVisible && Utils.isPad())
-            setRecyclerViewView();
     }
 
     @Override

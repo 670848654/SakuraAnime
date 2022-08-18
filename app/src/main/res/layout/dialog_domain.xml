@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:paddingLeft="25dp"
-    android:paddingTop="25dp"
+    android:paddingTop="20dp"
     android:paddingRight="25dp">
     <TextView
         android:text="@string/domain_msg"

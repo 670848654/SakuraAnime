@@ -137,6 +137,7 @@ public class AboutActivity extends BaseActivity {
 
     public List createUpdateLogList() {
         List logsList = new ArrayList();
+        logsList.add(new LogBean("版本：2.4.0", "移除滑动返回修复Android 8.0闪退问题\n支持屏幕旋转"));
         logsList.add(new LogBean("版本：2.3.9_1", "修复使用虚拟导航栏时详情页底部菜单被遮挡的问题"));
         logsList.add(new LogBean("版本：2.3.9", "修复目前已知问题\nmalimali源中部分番剧存在多个播放列表，原先只获取了默认线路，发现某些番主路线并不能正常播放，现提供所有播放线路"));
         logsList.add(new LogBean("版本：2.3.8_1", "添加播放界面长按2倍速功能\n添加对获取弹幕API异常时的处理\n修复在收藏、历史记录中由于番剧地址发生改变导致访问详情界面闪退的问题\n修复番剧地址改变导致历史记录出现闪退的问题"));

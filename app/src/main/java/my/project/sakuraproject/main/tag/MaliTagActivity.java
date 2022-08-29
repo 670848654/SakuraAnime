@@ -8,23 +8,21 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.r0adkll.slidr.Slidr;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 import butterknife.OnClick;
 import my.project.sakuraproject.R;
@@ -39,7 +37,6 @@ import my.project.sakuraproject.main.animeList.AnimeListContract;
 import my.project.sakuraproject.main.animeList.AnimeListPresenter;
 import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.desc.DescActivity;
-import my.project.sakuraproject.util.SwipeBackLayoutUtil;
 import my.project.sakuraproject.util.Utils;
 
 /**
@@ -112,7 +109,7 @@ public class MaliTagActivity extends BaseActivity<TagContract.View, TagPresenter
 
     @Override
     protected void init() {
-        Slidr.attach(this, Utils.defaultInit());
+//        Slidr.attach(this, Utils.defaultInit());
         getBundle();
         initToolbar();
         initFab();
@@ -123,7 +120,7 @@ public class MaliTagActivity extends BaseActivity<TagContract.View, TagPresenter
 
     @Override
     protected void initBeforeView() {
-        SwipeBackLayoutUtil.convertActivityToTranslucent(this);
+//        SwipeBackLayoutUtil.convertActivityToTranslucent(this);
     }
 
     private void getBundle() {
@@ -372,7 +369,6 @@ public class MaliTagActivity extends BaseActivity<TagContract.View, TagPresenter
             }
         }, 500), animeListRecyclerView);
         animeListRecyclerView.setAdapter(animeListAdapter);
-        setRecyclerViewView();
     }
 
     private void setLoadState(boolean loadState) {
@@ -509,7 +505,7 @@ public class MaliTagActivity extends BaseActivity<TagContract.View, TagPresenter
     @Override
     public void onResume() {
         super.onResume();
-        if (Utils.isPad()) setRecyclerViewView();
+        setRecyclerViewView();
     }
 
     @Override
@@ -522,17 +518,17 @@ public class MaliTagActivity extends BaseActivity<TagContract.View, TagPresenter
     }
 
     private void setRecyclerViewView() {
+        position = animeListRecyclerView.getLayoutManager() == null ? 0 : ((GridLayoutManager) animeListRecyclerView.getLayoutManager()).findFirstVisibleItemPosition();
         String config = this.getResources().getConfiguration().toString();
         boolean isInMagicWindow = config.contains("miui-magic-windows");
-        if (!Utils.isPad()) {
-            animeListRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
-        }
+        if (!Utils.isPad())
+            animeListRecyclerView.setLayoutManager(new GridLayoutManager(this, isPortrait ? 3 : 5));
         else {
-            if (isInMagicWindow) {
+            if (isInMagicWindow)
                 animeListRecyclerView.setLayoutManager(new GridLayoutManager(this, 4));
-            } else {
-                animeListRecyclerView.setLayoutManager(new GridLayoutManager(this, 5));
-            }
+            else
+                animeListRecyclerView.setLayoutManager(new GridLayoutManager(this, isPortrait ? 5 : 8));
         }
+        animeListRecyclerView.getLayoutManager().scrollToPosition(position);
     }
 }

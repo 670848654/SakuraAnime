@@ -5,19 +5,17 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.chad.library.adapter.base.BaseQuickAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.MenuItemCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
-import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.r0adkll.slidr.Slidr;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import butterknife.BindView;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.adapter.AnimeListAdapter;
@@ -27,7 +25,6 @@ import my.project.sakuraproject.custom.CustomLoadMoreView;
 import my.project.sakuraproject.custom.CustomToast;
 import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.desc.DescActivity;
-import my.project.sakuraproject.util.SwipeBackLayoutUtil;
 import my.project.sakuraproject.util.Utils;
 
 public class SearchActivity extends BaseActivity<SearchContract.View, SearchPresenter> implements SearchContract.View {
@@ -67,7 +64,7 @@ public class SearchActivity extends BaseActivity<SearchContract.View, SearchPres
 
     @Override
     protected void init() {
-        Slidr.attach(this, Utils.defaultInit());
+//        Slidr.attach(this, Utils.defaultInit());
         getBundle();
         initToolbar();
         initSwipe();
@@ -76,7 +73,7 @@ public class SearchActivity extends BaseActivity<SearchContract.View, SearchPres
 
     @Override
     protected void initBeforeView() {
-        SwipeBackLayoutUtil.convertActivityToTranslucent(this);
+//        SwipeBackLayoutUtil.convertActivityToTranslucent(this);
     }
 
     public void getBundle() {
@@ -132,7 +129,6 @@ public class SearchActivity extends BaseActivity<SearchContract.View, SearchPres
         }, 500), mRecyclerView);
         if (Utils.checkHasNavigationBar(this)) mRecyclerView.setPadding(0,0,0, Utils.getNavigationBarHeight(this));
         mRecyclerView.setAdapter(adapter);
-        setRecyclerViewView();
     }
 
     public void openAnimeDesc(String title, String url) {
@@ -159,7 +155,7 @@ public class SearchActivity extends BaseActivity<SearchContract.View, SearchPres
         mSearchView.onActionViewExpanded();
         mSearchView.setSubmitButtonEnabled(true);
         mSearchView.setQueryHint(Utils.getString(R.string.search_hint));
-        mSearchView.setMaxWidth(2000);
+        mSearchView.setMaxWidth(4000);
         if (!title.isEmpty()) {
             mSearchView.setQuery(title, false);
             mSearchView.clearFocus();
@@ -272,7 +268,7 @@ public class SearchActivity extends BaseActivity<SearchContract.View, SearchPres
     @Override
     public void onResume() {
         super.onResume();
-        if (Utils.isPad()) setRecyclerViewView();
+        setRecyclerViewView();
     }
 
     @Override
@@ -285,17 +281,17 @@ public class SearchActivity extends BaseActivity<SearchContract.View, SearchPres
     }
 
     private void setRecyclerViewView() {
+        position = mRecyclerView.getLayoutManager() == null ? 0 : ((GridLayoutManager) mRecyclerView.getLayoutManager()).findFirstVisibleItemPosition();
         String config = this.getResources().getConfiguration().toString();
         boolean isInMagicWindow = config.contains("miui-magic-windows");
-        if (!Utils.isPad()) {
-            mRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
-        }
+        if (!Utils.isPad())
+            mRecyclerView.setLayoutManager(new GridLayoutManager(this, isPortrait ? 3 : 5));
         else {
-            if (isInMagicWindow) {
+            if (isInMagicWindow)
                 mRecyclerView.setLayoutManager(new GridLayoutManager(this, 4));
-            } else {
-                mRecyclerView.setLayoutManager(new GridLayoutManager(this, 5));
-            }
+            else
+                mRecyclerView.setLayoutManager(new GridLayoutManager(this, isPortrait ? 5 : 8));
         }
+        mRecyclerView.getLayoutManager().scrollToPosition(position);
     }
 }

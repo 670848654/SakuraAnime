@@ -1,7 +1,6 @@
 package my.project.sakuraproject.cling.control;
 
 import androidx.annotation.Nullable;
-
 import my.project.sakuraproject.cling.control.callback.ControlCallback;
 import my.project.sakuraproject.cling.control.callback.ControlReceiveCallback;
 

@@ -192,6 +192,7 @@ android:orientation="vertical">
                 android:id="@+id/set_sildr"
                 android:layout_marginTop="8dp"
                 android:background="?android:attr/selectableItemBackground"
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="65dp">
 

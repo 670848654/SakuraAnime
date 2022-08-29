@@ -7,22 +7,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.r0adkll.slidr.Slidr;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 import butterknife.OnClick;
 import my.project.sakuraproject.R;
@@ -37,7 +35,6 @@ import my.project.sakuraproject.main.animeList.AnimeListContract;
 import my.project.sakuraproject.main.animeList.AnimeListPresenter;
 import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.desc.DescActivity;
-import my.project.sakuraproject.util.SwipeBackLayoutUtil;
 import my.project.sakuraproject.util.Utils;
 
 public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> implements TagContract.View, AnimeListContract.View {
@@ -80,7 +77,7 @@ public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> im
 
     @Override
     protected void init() {
-        Slidr.attach(this, Utils.defaultInit());
+//        Slidr.attach(this, Utils.defaultInit());
         getBundle();
         initToolbar();
         initFab();
@@ -90,7 +87,7 @@ public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> im
 
     @Override
     protected void initBeforeView() {
-        SwipeBackLayoutUtil.convertActivityToTranslucent(this);
+//        SwipeBackLayoutUtil.convertActivityToTranslucent(this);
     }
 
     public void getBundle() {
@@ -218,7 +215,6 @@ public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> im
             animeListPresenter.loadData(true, false, Utils.isImomoe());
         });
         tagRecyclerView.setAdapter(tagAdapter);
-        setRecyclerViewView();
         mBottomSheetDialog = new BottomSheetDialog(this);
         mBottomSheetDialog.setContentView(tagView);
     }
@@ -336,7 +332,7 @@ public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> im
     @Override
     public void onResume() {
         super.onResume();
-        if (Utils.isPad()) setRecyclerViewView();
+        setRecyclerViewView();
     }
 
     @Override
@@ -352,10 +348,11 @@ public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> im
     }
 
     private void setRecyclerViewView() {
+        position = animeListRecyclerView.getLayoutManager() == null ? 0 : ((GridLayoutManager) animeListRecyclerView.getLayoutManager()).findFirstVisibleItemPosition();
         String config = this.getResources().getConfiguration().toString();
         boolean isInMagicWindow = config.contains("miui-magic-windows");
         if (!Utils.isPad()) {
-            final GridLayoutManager manager = new GridLayoutManager(this,6);
+            GridLayoutManager manager = new GridLayoutManager(this, 6);
             manager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
                 @Override
                 public int getSpanSize(int position) {
@@ -364,23 +361,25 @@ public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> im
             });
             // important! setLayoutManager should be called after setAdapter
             tagRecyclerView.setLayoutManager(manager);
-            animeListRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
+            animeListRecyclerView.setLayoutManager(new GridLayoutManager(this, isPortrait ? 3 : 5));
         }
         else {
+            GridLayoutManager manager = new GridLayoutManager(this, 12);
+            manager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+                @Override
+                public int getSpanSize(int position) {
+                    return tagAdapter.getItemViewType(position) == TagAdapter.TYPE_LEVEL_1 ? 1 : manager.getSpanCount();
+                }
+            });
+            // important! setLayoutManager should be called after setAdapter
+            tagRecyclerView.setLayoutManager(manager);
+
             if (isInMagicWindow) {
                 animeListRecyclerView.setLayoutManager(new GridLayoutManager(this, 4));
             } else {
-                animeListRecyclerView.setLayoutManager(new GridLayoutManager(this, 5));
+                animeListRecyclerView.setLayoutManager(new GridLayoutManager(this, isPortrait ? 5 : 8));
             }
-            final GridLayoutManager manager = new GridLayoutManager(this,12);
-            manager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-                @Override
-                public int getSpanSize(int position) {
-                    return tagAdapter.getItemViewType(position) == TagAdapter.TYPE_LEVEL_1 ? 1 : manager.getSpanCount();
-                }
-            });
-            // important! setLayoutManager should be called after setAdapter
-            tagRecyclerView.setLayoutManager(manager);
         }
+        animeListRecyclerView.getLayoutManager().scrollToPosition(position);
     }
 }

@@ -1,12 +1,6 @@
 package my.project.sakuraproject.main.week;
 
-import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.viewpager.widget.ViewPager;
-
 import com.google.android.material.tabs.TabLayout;
-import com.r0adkll.slidr.Slidr;
-import com.r0adkll.slidr.model.SlidrInterface;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -17,6 +11,9 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.adapter.WeekAdapter;
@@ -30,7 +27,6 @@ import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.home.HomeContract;
 import my.project.sakuraproject.main.home.HomePresenter;
 import my.project.sakuraproject.util.SharedPreferencesUtils;
-import my.project.sakuraproject.util.SwipeBackLayoutUtil;
 import my.project.sakuraproject.util.Utils;
 
 public class WeekActivity extends BaseActivity<HomeContract.View, HomePresenter> implements HomeContract.View {
@@ -49,7 +45,7 @@ public class WeekActivity extends BaseActivity<HomeContract.View, HomePresenter>
             new int[]{-android.R.attr.state_checked},
             new int[]{android.R.attr.state_checked}
     };
-    private SlidrInterface slidrInterface;
+//    private SlidrInterface slidrInterface;
 
     @Override
     protected HomePresenter createPresenter() {
@@ -69,7 +65,7 @@ public class WeekActivity extends BaseActivity<HomeContract.View, HomePresenter>
 
     @Override
     protected void init() {
-        slidrInterface = Slidr.attach(this, Utils.defaultInit());
+//        slidrInterface = Slidr.attach(this, Utils.defaultInit());
         initToolbar();
         initSwipe();
         initFragment();
@@ -77,7 +73,7 @@ public class WeekActivity extends BaseActivity<HomeContract.View, HomePresenter>
 
     @Override
     protected void initBeforeView() {
-        SwipeBackLayoutUtil.convertActivityToTranslucent(this);
+//        SwipeBackLayoutUtil.convertActivityToTranslucent(this);
     }
 
     public void initToolbar() {
@@ -184,7 +180,7 @@ public class WeekActivity extends BaseActivity<HomeContract.View, HomePresenter>
         viewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                enableSliding(position == 0);
+//                enableSliding(position == 0);
             }
 
             @Override
@@ -199,13 +195,13 @@ public class WeekActivity extends BaseActivity<HomeContract.View, HomePresenter>
         });
     }
 
-    private void enableSliding(boolean enable){
+    /*private void enableSliding(boolean enable){
         if (Utils.getSlidrConfig()) return;
         if (enable)
             slidrInterface.unlock();
         else
             slidrInterface.lock();
-    }
+    }*/
 
     public void removeFragmentTransaction() {
         try {//避免重启太快恢复

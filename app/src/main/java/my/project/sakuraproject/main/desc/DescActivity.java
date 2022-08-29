@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -34,8 +35,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.r0adkll.slidr.Slidr;
-import com.r0adkll.slidr.model.SlidrInterface;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -45,6 +44,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.content.ContextCompat;
@@ -90,11 +90,10 @@ import my.project.sakuraproject.sniffing.SniffingVideo;
 import my.project.sakuraproject.sniffing.web.SniffingUtil;
 import my.project.sakuraproject.util.SharedPreferencesUtils;
 import my.project.sakuraproject.util.StatusBarUtil;
-import my.project.sakuraproject.util.SwipeBackLayoutUtil;
 import my.project.sakuraproject.util.Utils;
 import my.project.sakuraproject.util.VideoUtils;
 
-public class DescActivity extends BaseActivity<DescContract.View, DescPresenter> implements DescContract.View, VideoContract.View,
+public class DescActivity extends BaseActivity<DescContract.View, DescPresenter> implements View.OnSystemUiVisibilityChangeListener, DescContract.View, VideoContract.View,
         DownloadVideoContract.View, SniffingUICallback {
     @BindView(R.id.anime_img)
     ImageView animeImg;
@@ -160,7 +159,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     private String animeId;
     @BindView(R.id.to_back)
     FloatingActionButton toBackView;
-    private SlidrInterface slidrInterface;
+//    private SlidrInterface slidrInterface;
     // 下载
     private String savePath; // 下载保存路劲
     private int source; // 番剧源 0 yhdm 1 imomoe
@@ -203,7 +202,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         EventBus.getDefault().register(this);
         StatusBarUtil.setColorForSwipeBack(this, getResources().getColor(R.color.colorPrimaryDark), 0);
         if (isDarkTheme) bg.setVisibility(View.GONE);
-        slidrInterface = Slidr.attach(this, Utils.defaultInit());
+//        slidrInterface = Slidr.attach(this, Utils.defaultInit());
         scrollView.getViewTreeObserver().addOnScrollChangedListener(() -> mSwipe.setEnabled(scrollView.getScrollY() == 0));
         desc.setNeedExpend(true);
         getBundle();
@@ -215,7 +214,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
 
     @Override
     protected void initBeforeView() {
-        SwipeBackLayoutUtil.convertActivityToTranslucent(this);
+//        SwipeBackLayoutUtil.convertActivityToTranslucent(this);
     }
 
     public void getBundle() {
@@ -234,6 +233,8 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
                     favoriteAnime();
                     break;
                 case R.id.download:
+                    if (downloadAdapter.getData().size() == 0)
+                        return false;
                     checkHasDownload();
                     downloadBottomSheetDialog.getBehavior().setState(BottomSheetBehavior.STATE_EXPANDED);
                     downloadBottomSheetDialog.show();
@@ -266,7 +267,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         detailsRv.setLayoutManager(detailsRvLinearLayoutManager);
         detailsRv.setAdapter(animeDescDetailsAdapter);
         detailsRv.setNestedScrollingEnabled(false);
-        setEnableSliding(detailsRv, detailsRvLinearLayoutManager);
+//        setEnableSliding(detailsRv, detailsRvLinearLayoutManager);
 
         animeDescMultiAdapter = new AnimeDescRecommendAdapter(this, animeDescListBean.getAnimeDescMultiBeans());
         animeDescMultiAdapter.setOnItemClickListener((adapter, view, position) -> {
@@ -280,7 +281,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         multiRv.setLayoutManager(multiRvLinearLayoutManager);
         multiRv.setAdapter(animeDescMultiAdapter);
         multiRv.setNestedScrollingEnabled(false);
-        setEnableSliding(multiRv, multiRvLinearLayoutManager);
+//        setEnableSliding(multiRv, multiRvLinearLayoutManager);
 
         animeDescRecommendAdapter = new AnimeDescRecommendAdapter(this, animeDescListBean.getAnimeDescRecommendBeans());
         animeDescRecommendAdapter.setOnItemClickListener((adapter, view, position) -> {
@@ -295,7 +296,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         if (Utils.checkHasNavigationBar(this)) recommendRv.setPadding(0,0,0, Utils.getNavigationBarHeight(this));
         recommendRv.setAdapter(animeDescRecommendAdapter);
         recommendRv.setNestedScrollingEnabled(false);
-        setEnableSliding(recommendRv, recommendRvLinearLayoutManager);
+//        setEnableSliding(recommendRv, recommendRvLinearLayoutManager);
 
         View dramaView = LayoutInflater.from(this).inflate(R.layout.dialog_drama, null);
         lineRecyclerView = dramaView.findViewById(R.id.drama_list);
@@ -373,7 +374,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         return linearLayoutManager;
     }
 
-    private void setEnableSliding(RecyclerView recommendRv, LinearLayoutManager linearLayoutManager) {
+    /*private void setEnableSliding(RecyclerView recommendRv, LinearLayoutManager linearLayoutManager) {
         if (Utils.getSlidrConfig()) return;
         recommendRv.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -384,7 +385,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
                     slidrInterface.unlock();
             }
         });
-    }
+    }*/
 
     private void initTagClick() {
         tagContainerLayout.setOnTagClickListener(new TagView.OnTagClickListener() {
@@ -1044,13 +1045,20 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     public void onResume() {
         super.onResume();
         setRecyclerViewView();
-        ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) bottomAppBar.getLayoutParams();
-        int height = Utils.getNavigationBarHeight(this) + 80;
-        params.height = height;
-        bottomAppBar.setLayoutParams(params);
+        /*if (Utils.checkHasNavigationBar(this)) {
+            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) bottomAppBar.getLayoutParams();
+                int navSize = Utils.getNavigationBarHeight(this) - 15;
+            int height = navSize > 100 ? navSize + navSize : 132;
+            params.height = height;
+            Log.e("height", height + "");
+            bottomAppBar.setLayoutParams(params);
+        }*/
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_IMMERSIVE
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+        getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(this);
     }
 
-    @Override
     protected void setConfigurationChanged() {
         setRecyclerViewView();
     }
@@ -1071,5 +1079,12 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
                 downloadRecyclerView.setLayoutManager(new GridLayoutManager(this, 8));
             }
         }
+    }
+
+    @Override
+    public void onSystemUiVisibilityChange(int i) {
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_IMMERSIVE
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
     }
 }

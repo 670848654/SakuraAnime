@@ -1,8 +1,13 @@
 package my.project.sakuraproject.main.start;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
 import android.content.Intent;
+import android.graphics.Path;
 import android.os.Handler;
 import android.view.View;
+import android.view.animation.AnticipateInterpolator;
 import android.widget.LinearLayout;
 
 import org.json.JSONException;
@@ -10,6 +15,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
+import androidx.core.splashscreen.SplashScreen;
 import butterknife.BindView;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.api.Api;
@@ -29,6 +35,9 @@ public class StartActivity extends BaseActivity {
     @BindView(R.id.check_update)
     LinearLayout linearLayout;
     private String downUrl;
+    private SplashScreen splashScreen;
+    private boolean keep = true;
+    private final int DELAY = 1000;
 
     @Override
     protected Presenter createPresenter() {
@@ -46,17 +55,49 @@ public class StartActivity extends BaseActivity {
 
     @Override
     protected void init() {
-        hideGap();
-        SharedPreferencesUtils.setParam(this, "initX5", "init");
+        //Keep returning false to Should Keep On Screen until ready to begin.
+        splashScreen.setKeepVisibleCondition((SplashScreen.KeepOnScreenCondition) () -> keep);
         Handler handler = new Handler();
-        handler.postDelayed(() -> {
+        handler.postDelayed(runner, DELAY);
+        splashScreen.setOnExitAnimationListener(splashScreenView -> {
+            Path path = new Path();
+            path.moveTo(1.0f, 1.0f);
+            path.lineTo(0f, 0f);
+            final ObjectAnimator scaleOut = ObjectAnimator.ofFloat(
+                    splashScreenView.getIconView(),
+                    View.SCALE_X,
+                    View.SCALE_Y,
+                    path
+            );
+            scaleOut.setInterpolator(new AnticipateInterpolator());
+            scaleOut.setDuration(200L);
+
+            // Call SplashScreenView.remove at the end of your custom animation.
+            scaleOut.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    splashScreenView.remove();
+                }
+            });
+
+            // Run your animation.
+            scaleOut.start();
+        });
+    }
+
+    /**Will cause a second process to run on the main thread**/
+    private final Runnable runner = () -> {
+        keep = false;
+        SharedPreferencesUtils.setParam(this, "initX5", "init");
+        new Handler().postDelayed(() -> {
             linearLayout.setVisibility(View.VISIBLE);
             checkUpdate();
         }, 1000);
-    }
+    };
 
     @Override
     protected void initBeforeView() {
+        splashScreen = SplashScreen.installSplashScreen(this);
         StatusBarUtil.setColorNoTranslucent(this, getResources().getColor(R.color.logo_bg));
     }
 

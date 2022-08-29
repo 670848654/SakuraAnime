@@ -13,16 +13,15 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
+import java.util.List;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
-
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-
-import java.util.List;
-
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import my.project.sakuraproject.R;
@@ -44,18 +43,23 @@ public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatA
     protected boolean isDarkTheme;
     protected static String PREVIDEOSTR = "上一集：%s";
     protected static String NEXTVIDEOSTR = "下一集：%s";
-    // 黑暗模式问题
-    private boolean isChanged = false;
+    protected boolean isPortrait;
+    protected int position = 0;
+    protected int change;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Configuration mConfiguration = getResources().getConfiguration();
+        change = mConfiguration.orientation;
+        if (change == mConfiguration.ORIENTATION_LANDSCAPE) isPortrait = false;
+        else if (change == mConfiguration.ORIENTATION_PORTRAIT) isPortrait = true;
         isDarkTheme = Utils.getTheme();
         if (isDarkTheme)
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         else
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-        if (!getRunningActivityName().equals("StartActivity")) overridePendingTransition(R.anim.activity_in, R.anim.activity_out);
+//        if (!getRunningActivityName().equals("StartActivity")) overridePendingTransition(R.anim.activity_in, R.anim.activity_out);
         initBeforeView();
         setContentView(setLayoutRes());
         if (Utils.checkHasNavigationBar(this)) {
@@ -231,6 +235,7 @@ public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatA
             DatabaseUtil.deleteImomoeData();
             DatabaseUtil.updatePlayUrl();
         }
+        hideGap();
         setStatusBarColor();
         initCustomViews();
         init();
@@ -264,23 +269,17 @@ public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatA
     @Override
     public void finish() {
         super.finish();
-        if (!getRunningActivityName().equals("StartActivity")) overridePendingTransition(R.anim.activity_in, R.anim.activity_out);
+//        if (!getRunningActivityName().equals("StartActivity")) overridePendingTransition(R.anim.activity_in, R.anim.activity_out);
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        if (Utils.isPad()) {
-            if (!isDarkTheme) isChanged = false; // 如果不是黑暗模式则跳过
-            if (isChanged) {
-                // 阻止黑暗模式调用两次
-                isChanged = false;
-                return;
-            } else {
-                isChanged = true;
-                setConfigurationChanged();
-            }
-        }
+        // 防止两次调用
+        if (newConfig.orientation == change) return;
+        change = newConfig.orientation;
+        isPortrait = newConfig.orientation == Configuration.ORIENTATION_PORTRAIT;
+        setConfigurationChanged();
     }
 
     protected abstract void setConfigurationChanged();

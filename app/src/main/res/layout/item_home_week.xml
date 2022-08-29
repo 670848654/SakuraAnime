@@ -11,7 +11,7 @@
     card_view:cardBackgroundColor="@color/window_bg"
     android:foreground="?android:attr/selectableItemBackground"
     card_view:cardCornerRadius="4dp"
-    card_view:cardElevation="4dp"
+    card_view:cardElevation="2dp"
     card_view:cardUseCompatPadding="false">
 
     <RelativeLayout

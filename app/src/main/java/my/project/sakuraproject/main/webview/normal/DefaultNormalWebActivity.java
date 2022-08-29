@@ -15,7 +15,6 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import androidx.appcompat.widget.Toolbar;
-
 import butterknife.BindView;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.main.base.BaseActivity;
@@ -57,7 +56,6 @@ public class DefaultNormalWebActivity extends BaseActivity {
     @Override
     protected void init() {
         initToolbar();
-        hideGap();
         getBundle();
         initWebView();
     }

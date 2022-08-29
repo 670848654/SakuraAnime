@@ -1,9 +1,9 @@
 package my.project.sakuraproject.cling.entity;
 
-import androidx.annotation.IntDef;
-
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+
+import androidx.annotation.IntDef;
 
 /**
  * 说明：连接设备状态

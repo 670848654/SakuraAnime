@@ -1,17 +1,11 @@
 package my.project.sakuraproject.main.my.fragment;
 
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
-
-import androidx.appcompat.widget.PopupMenu;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 
@@ -21,6 +15,10 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.appcompat.widget.PopupMenu;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import my.project.sakuraproject.R;
@@ -130,7 +128,6 @@ public class FavoriteFragment extends MyLazyFragment<FavoriteContract.View, Favo
         }, 500), mRecyclerView);
         if (Utils.checkHasNavigationBar(getActivity())) mRecyclerView.setPadding(0,0,0, Utils.getNavigationBarHeight(getActivity()));
         mRecyclerView.setAdapter(adapter);
-        setRecyclerViewView();
     }
 
     public void setLoadState(boolean loadState) {
@@ -173,19 +170,21 @@ public class FavoriteFragment extends MyLazyFragment<FavoriteContract.View, Favo
 
     @Override
     public void showSuccessView(List<AnimeListBean> list) {
-        setLoadState(true);
-        getActivity().runOnUiThread(() -> {
-            if (isMain) {
-                loading.setVisibility(View.GONE);
-                favoriteList = list;
-                if (favoriteList.size() > 0)
-                    setRecyclerViewView();
-                else
-                    setRecyclerViewEmpty();
-                adapter.setNewData(favoriteList);
-            } else
-                adapter.addData(list);
-        });
+        if (getActivity() != null) {
+            setLoadState(true);
+            getActivity().runOnUiThread(() -> {
+                if (isMain) {
+                    loading.setVisibility(View.GONE);
+                    favoriteList = list;
+                    if (favoriteList.size() > 0)
+                        setRecyclerViewView();
+                    else
+                        setRecyclerViewEmpty();
+                    adapter.setNewData(favoriteList);
+                } else
+                    adapter.addData(list);
+            });
+        }
     }
 
     @Override
@@ -259,8 +258,7 @@ public class FavoriteFragment extends MyLazyFragment<FavoriteContract.View, Favo
     }
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
+    protected void setConfigurationChanged() {
         setRecyclerViewView();
     }
 
@@ -269,18 +267,18 @@ public class FavoriteFragment extends MyLazyFragment<FavoriteContract.View, Favo
     }
 
     private void setRecyclerViewView() {
+        position = mRecyclerView.getLayoutManager() == null ? 0 : ((GridLayoutManager) mRecyclerView.getLayoutManager()).findFirstVisibleItemPosition();
         String config = getActivity().getResources().getConfiguration().toString();
         boolean isInMagicWindow = config.contains("miui-magic-windows");
-        if (!Utils.isPad()) {
-            mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
-        }
+        if (!Utils.isPad())
+            mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), isPortrait ? 3 : 5));
         else {
-            if (isInMagicWindow) {
+            if (isInMagicWindow)
                 mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 4));
-            } else {
-                mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 5));
-            }
+            else
+                mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), isPortrait ? 5 : 8));
         }
+        mRecyclerView.getLayoutManager().scrollToPosition(position);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

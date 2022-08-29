@@ -37,7 +37,9 @@ allprojects {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "androidx.core:core-splashscreen:1.0.0-alpha02"
     implementation 'androidx.compose.material3:material3:1.0.0-alpha15'
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     implementation files('src/libs/nanohttpd-2.3.1.jar')
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.palette:palette:1.0.0'
@@ -49,7 +51,7 @@ dependencies {
     implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.30'
     implementation 'pub.devrel:easypermissions:3.0.0'
     implementation 'com.rengwuxian.materialedittext:library:2.1.4'
-    implementation 'com.r0adkll:slidableactivity:2.0.5'
+//    implementation 'com.r0adkll:slidableactivity:2.0.5'
     implementation 'com.jakewharton:butterknife:10.2.1'
     implementation 'org.jetbrains:annotations:15.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.1'

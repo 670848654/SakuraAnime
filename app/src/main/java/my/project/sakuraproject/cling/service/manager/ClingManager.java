@@ -2,8 +2,6 @@ package my.project.sakuraproject.cling.service.manager;
 
 import android.content.Context;
 
-import androidx.annotation.Nullable;
-
 import org.fourthline.cling.model.meta.Device;
 import org.fourthline.cling.model.types.DeviceType;
 import org.fourthline.cling.model.types.ServiceType;
@@ -14,6 +12,7 @@ import org.fourthline.cling.registry.Registry;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import androidx.annotation.Nullable;
 import my.project.sakuraproject.cling.entity.ClingControlPoint;
 import my.project.sakuraproject.cling.entity.ClingDevice;
 import my.project.sakuraproject.cling.entity.IControlPoint;

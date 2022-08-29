@@ -11,15 +11,14 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+
 import androidx.annotation.ColorInt;
 import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.drawerlayout.widget.DrawerLayout;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-
 import my.project.sakuraproject.R;
 
 /**

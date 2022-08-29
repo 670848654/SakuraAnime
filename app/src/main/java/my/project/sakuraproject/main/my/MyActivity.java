@@ -4,14 +4,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 
-import androidx.appcompat.widget.Toolbar;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.viewpager.widget.ViewPager;
-
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
-import com.r0adkll.slidr.Slidr;
-import com.r0adkll.slidr.model.SlidrInterface;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -19,13 +13,15 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
 
+import androidx.appcompat.widget.Toolbar;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.adapter.MyFragmentAdapter;
 import my.project.sakuraproject.bean.AnimeUpdateInfoBean;
 import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.base.Presenter;
-import my.project.sakuraproject.util.SwipeBackLayoutUtil;
 import my.project.sakuraproject.util.Utils;
 
 public class MyActivity extends BaseActivity implements ViewPager.OnPageChangeListener {
@@ -41,7 +37,9 @@ public class MyActivity extends BaseActivity implements ViewPager.OnPageChangeLi
     private String[] tabTitleArr = Utils.getArray(R.array.my_titles);
     @BindView(R.id.msg)
     CoordinatorLayout msg;
-    private SlidrInterface slidrInterface;
+//    private SlidrInterface slidrInterface;
+
+    public static int index = 0;
 
     @Override
     protected Presenter createPresenter() {
@@ -58,7 +56,7 @@ public class MyActivity extends BaseActivity implements ViewPager.OnPageChangeLi
 
     @Override
     protected void init() {
-        slidrInterface = Slidr.attach(this, Utils.defaultInit());
+//        slidrInterface = Slidr.attach(this, Utils.defaultInit());
         CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) msg.getLayoutParams();
         params.setMargins(10, 0, 10, Utils.getNavigationBarHeight(this) - 5);
         initToolbar();
@@ -101,19 +99,19 @@ public class MyActivity extends BaseActivity implements ViewPager.OnPageChangeLi
 
     @Override
     protected void initBeforeView() {
-        SwipeBackLayoutUtil.convertActivityToTranslucent(this);
+//        SwipeBackLayoutUtil.convertActivityToTranslucent(this);
     }
 
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-        enableSliding(position == 0);
+//        enableSliding(position == 0);
         if (position == 2) // 解决Viewpager嵌套Fragment中的recyclerView notifyDataSetChanged无效问题
             myFragmentAdapter.getItem(position).getView().requestLayout();
     }
 
     @Override
     public void onPageSelected(int position) {
-        enableSliding(position == 0);
+//        enableSliding(position == 0);
         switch (position) {
             case 1:
                 if (!fab.isShown()) {
@@ -128,13 +126,13 @@ public class MyActivity extends BaseActivity implements ViewPager.OnPageChangeLi
         }
     }
 
-    private void enableSliding(boolean enable){
+    /*private void enableSliding(boolean enable){
         if (Utils.getSlidrConfig()) return;
         if (enable)
             slidrInterface.unlock();
         else
             slidrInterface.lock();
-    }
+    }*/
 
     @Override
     public void onPageScrollStateChanged(int state) {}

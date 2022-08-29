@@ -40,16 +40,6 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import androidx.annotation.ArrayRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
-import androidx.appcompat.app.AlertDialog;
-import androidx.browser.customtabs.CustomTabsIntent;
-import androidx.cardview.widget.CardView;
-import androidx.core.content.FileProvider;
-import androidx.palette.graphics.Palette;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.model.LazyHeaders;
@@ -59,8 +49,6 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
 import com.bumptech.glide.request.transition.Transition;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.r0adkll.slidr.model.SlidrConfig;
-import com.r0adkll.slidr.model.SlidrPosition;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -75,6 +63,15 @@ import java.util.Formatter;
 import java.util.List;
 import java.util.Locale;
 
+import androidx.annotation.ArrayRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.appcompat.app.AlertDialog;
+import androidx.browser.customtabs.CustomTabsIntent;
+import androidx.cardview.widget.CardView;
+import androidx.core.content.FileProvider;
+import androidx.palette.graphics.Palette;
 import jp.wasabeef.glide.transformations.BlurTransformation;
 import my.project.sakuraproject.BuildConfig;
 import my.project.sakuraproject.R;
@@ -374,7 +371,7 @@ public class Utils {
      *
      * @return
      */
-    public static SlidrConfig defaultInit() {
+    /*public static SlidrConfig defaultInit() {
         SlidrConfig.Builder mBuilder;
         mBuilder = new SlidrConfig.Builder()
                 .position(SlidrPosition.LEFT)
@@ -385,7 +382,7 @@ public class Utils {
                 .edge((Boolean) SharedPreferencesUtils.getParam(getContext(), "slidr_config", false))
                 .edgeSize(0.18f);// The % of the screen that counts as the edge, default 18%;
         return mBuilder.build();
-    }
+    }*/
 
     public static boolean getSlidrConfig() {
         return (Boolean) SharedPreferencesUtils.getParam(getContext(), "slidr_config", false);
@@ -631,6 +628,8 @@ public class Utils {
         alertDialog.show();
     }
 
+    private static final String NAVIGATION= "navigationBarBackground";
+
     /**
      * 判断是否有NavigationBar
      *
@@ -666,6 +665,7 @@ public class Utils {
         if (resourceId > 0 && checkHasNavigationBar(activity)) {
             result = resources.getDimensionPixelSize(resourceId);
         }
+        Log.e("getNavigationBarHeight", result + "");
         return result + 15;
     }
 

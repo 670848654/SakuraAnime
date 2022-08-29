@@ -2,16 +2,12 @@ package my.project.sakuraproject.main.week;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 
@@ -22,6 +18,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -147,12 +145,11 @@ public class WeekFragment extends LazyFragment {
     @Override
     public void onResume() {
         super.onResume();
-//        setRecyclerViewView();
+        setRecyclerViewView();
     }
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
+    protected void setConfigurationChanged() {
         setRecyclerViewView();
     }
 
@@ -161,15 +158,17 @@ public class WeekFragment extends LazyFragment {
     }
 
     private void setRecyclerViewView() {
+        position = recyclerView.getLayoutManager() == null ? 0 : ((GridLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
         String config = getActivity().getResources().getConfiguration().toString();
         boolean isInMagicWindow = config.contains("miui-magic-windows");
         if (!Utils.isPad())
-            recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+            recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), isPortrait ? 2 : 3));
         else {
-            if (isInMagicWindow) {
+            if (isInMagicWindow)
                 recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
-            } else
-                recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 4));
+            else
+                recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), isPortrait ? 4 : 6));
         }
+        recyclerView.getLayoutManager().scrollToPosition(position);
     }
 }

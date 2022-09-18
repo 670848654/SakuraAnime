@@ -137,6 +137,7 @@ public class AboutActivity extends BaseActivity {
 
     public List createUpdateLogList() {
         List logsList = new ArrayList();
+        logsList.add(new LogBean("版本：2.4.1", "修复下载记录无法删除的问题"));
         logsList.add(new LogBean("版本：2.4.0", "移除滑动返回修复Android 8.0闪退问题\n支持屏幕旋转"));
         logsList.add(new LogBean("版本：2.3.9_1", "修复使用虚拟导航栏时详情页底部菜单被遮挡的问题"));
         logsList.add(new LogBean("版本：2.3.9", "修复目前已知问题\nmalimali源中部分番剧存在多个播放列表，原先只获取了默认线路，发现某些番主路线并不能正常播放，现提供所有播放线路"));

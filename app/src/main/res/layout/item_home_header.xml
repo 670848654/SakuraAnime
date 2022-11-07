@@ -1,14 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<HorizontalScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:layout_margin="5dp"
+    android:scrollbars="none"
+    android:foreground="?android:attr/selectableItemBackground"
+    app:cardBackgroundColor="@color/window_bg">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/header_list"
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/chip_group"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        app:singleLine="true">
 
-</LinearLayout>
+    </com.google.android.material.chip.ChipGroup>
+
+</HorizontalScrollView>

@@ -5,6 +5,7 @@ import com.chad.library.adapter.base.entity.MultiItemEntity;
 import java.util.List;
 
 import my.project.sakuraproject.bean.MaliTagBean;
+import my.project.sakuraproject.bean.TagBean;
 import my.project.sakuraproject.main.base.BasePresenter;
 import my.project.sakuraproject.main.base.Presenter;
 
@@ -28,7 +29,7 @@ public class TagPresenter extends Presenter<TagContract.View> implements BasePre
     }
 
     @Override
-    public void success(List<MultiItemEntity> list) {
+    public void success(List<TagBean> list) {
         view.showSuccessView(list);
     }
 

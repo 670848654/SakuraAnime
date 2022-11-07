@@ -26,16 +26,54 @@ public class DownloadNotification {
     private CharSequence NAME = "下载通知";
     private String Description = "下载通知";
 
+    public static final String CHANNEL_INFO_ID = "downloadInfo";
+    public static final CharSequence INFO_NAME = "下载状态";
+    public static final String INFO_Description = "下载状态";
+
+    private RemoteViews remoteViews;
+
     public DownloadNotification(Context context) {
         this.context = context;
         notifications = new HashMap<>();
         mManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
     }
 
+    public void showDefaultNotification(int notificationId, String title, String videoNumber, boolean success) {
+        if (!notifications.containsKey(notificationId)) {
+            Notification notification = null;
+            remoteViews = new RemoteViews(context.getPackageName(), R.layout.custom_download_notification);
+            setTextColor(remoteViews);
+            remoteViews.setTextViewText(R.id.title, title);
+            remoteViews.setTextViewText(R.id.video_number, videoNumber);
+            remoteViews.setTextViewText(R.id.state, success ? "下载完成" : "下载失败");
+            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.O) {
+                oldBuilder = new Notification.Builder(context);
+                oldBuilder.setAutoCancel(true).setSmallIcon(R.drawable.baseline_download_white_48dp);
+                notification = oldBuilder.setContent(remoteViews).build();
+                mManager.notify(notificationId, notification);
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                NotificationChannel mChannel = new NotificationChannel(CHANNEL_INFO_ID, INFO_NAME, NotificationManager.IMPORTANCE_LOW);
+                mChannel.setDescription(INFO_Description);
+                mChannel.enableLights(true);
+                mChannel.setLightColor(Color.RED);
+                mChannel.enableVibration(true);
+                mChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+                mChannel.setShowBadge(false);
+                mManager.createNotificationChannel(mChannel);
+
+                newBuilder = new NotificationCompat.Builder(context, CHANNEL_INFO_ID);
+                newBuilder.setAutoCancel(true).setSmallIcon(R.drawable.baseline_download_white_48dp);
+                notification = newBuilder.setContent(remoteViews).build();
+                mManager.notify(notificationId, notification);
+            }
+            notifications.put(notificationId, notification);
+        }
+    }
+
     public void showNotification(int notificationId, String title, String videoNumber) {
         if (!notifications.containsKey(notificationId)) {
             Notification notification = null;
-            RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.custom_notification);
+            remoteViews = new RemoteViews(context.getPackageName(), R.layout.custom_notification);
             setTextColor(remoteViews);
             remoteViews.setTextViewText(R.id.title, title);
             remoteViews.setTextViewText(R.id.video_number, videoNumber);
@@ -80,13 +118,15 @@ public class DownloadNotification {
         }
     }
 
-    public void uploadInfo(int notificationId, boolean success) {
+    public void uploadInfo(int notificationId, String title, String videoNumber, boolean success) {
         Notification notification = notifications.get(notificationId);
         if (notification != null) {
-            setTextColor(notification.contentView);
+            /*setTextColor(notification.contentView);
             notification.contentView.setTextViewText(R.id.state, success ? "下载完成" : "下载失败");
             notification.contentView.setProgressBar(R.id.progress, 100, success ? 100 : 0, false);
-            mManager.notify(notificationId, notification);
+            mManager.notify(notificationId, notification);*/
+            cancelNotification(notificationId);
+            showDefaultNotification(notificationId, title, videoNumber, success);
         }
     }
 

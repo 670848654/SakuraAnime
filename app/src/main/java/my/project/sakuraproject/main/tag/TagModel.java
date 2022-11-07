@@ -11,6 +11,7 @@ import my.project.sakuraproject.R;
 import my.project.sakuraproject.api.Api;
 import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.bean.MaliTagBean;
+import my.project.sakuraproject.bean.TagBean;
 import my.project.sakuraproject.main.base.BaseModel;
 import my.project.sakuraproject.net.HttpGet;
 import my.project.sakuraproject.util.ImomoeJsoupUtils;
@@ -47,7 +48,7 @@ public class TagModel extends BaseModel implements TagContract.Model {
                     else if (YhdmJsoupUtils.hasRefresh(source))
                         parserYhdm(callback, "");
                     else {
-                        List<MultiItemEntity> tagList = YhdmJsoupUtils.getTagList(source);
+                        List<TagBean> tagList = YhdmJsoupUtils.getTagList(source);
                         if (tagList.size() > 0)
                             callback.success(tagList);
                         else

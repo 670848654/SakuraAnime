@@ -145,7 +145,23 @@
                                 android:textColor="@color/white"
                                 android:textSize="18sp" />
 
-                            <co.lujun.androidtagview.TagContainerLayout
+                            <HorizontalScrollView
+                                android:layout_below="@+id/title"
+                                android:id="@+id/scroll_view"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:scrollbars="none">
+
+                                <com.google.android.material.chip.ChipGroup
+                                    android:id="@+id/chip_group"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    app:singleLine="true">
+                                </com.google.android.material.chip.ChipGroup>
+
+                            </HorizontalScrollView>
+
+                            <!--<co.lujun.androidtagview.TagContainerLayout
                                 android:layout_below="@+id/title"
                                 android:id="@+id/tag_view"
                                 android:layout_width="match_parent"
@@ -160,11 +176,11 @@
                                 app:tag_background_color="#73e55578"
                                 app:tag_clickable="true"
                                 app:tag_horizontal_padding="10dp"
-                                app:tag_theme="none"/>
+                                app:tag_theme="none"/>-->
 
                             <com.ctetin.expandabletextviewlibrary.ExpandableTextView
                                 android:id="@+id/desc"
-                                android:layout_below="@id/tag_view"
+                                android:layout_below="@id/scroll_view"
                                 android:layout_marginTop="10dp"
                                 android:layout_marginLeft="10dp"
                                 android:layout_marginRight="10dp"

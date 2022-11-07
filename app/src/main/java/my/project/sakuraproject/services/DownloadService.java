@@ -133,16 +133,17 @@ public class DownloadService extends Service {
     @Download.onTaskFail
     public void onTaskFail(DownloadTask downloadTask) {
         Log.e("Service onTaskFail", downloadTask.getTaskName() + "，下载失败");
+        String animeTitle = (String) VideoUtils.getAnimeInfo(downloadTask, 0);
+        mNotify.uploadInfo(new Long(downloadTask.getEntity().getId()).intValue(), animeTitle, downloadTask.getTaskName(), false);
         DatabaseUtil.updateDownloadError((String) VideoUtils.getAnimeInfo(downloadTask, 0), (Integer) VideoUtils.getAnimeInfo(downloadTask, 1), downloadTask.getFilePath(), downloadTask.getEntity().getId(), downloadTask.getFileSize());
-        mNotify.uploadInfo(new Long(downloadTask.getEntity().getId()).intValue(), false);
         shouldUnRegister();
     }
 
     @Download.onTaskComplete
     public void onTaskComplete(DownloadTask downloadTask) {
         Log.e("Service onTaskComplete", downloadTask.getTaskName() + "，下载完成");
-        mNotify.uploadInfo(new Long(downloadTask.getEntity().getId()).intValue(), true);
         String animeTitle = (String) VideoUtils.getAnimeInfo(downloadTask, 0);
+        mNotify.uploadInfo(new Long(downloadTask.getEntity().getId()).intValue(), animeTitle, downloadTask.getTaskName(), true);
         DatabaseUtil.updateDownloadSuccess(animeTitle, (Integer) VideoUtils.getAnimeInfo(downloadTask, 1), downloadTask.getFilePath(), downloadTask.getEntity().getId(), downloadTask.getFileSize());
         EventBus.getDefault().post(new DownloadEvent(animeTitle, downloadTask.getTaskName(), downloadTask.getFilePath(), downloadTask.getFileSize()));
         shouldUnRegister();
@@ -156,8 +157,9 @@ public class DownloadService extends Service {
     private void shouldUnRegister() {
         List<DownloadEntity> list = Aria.download(this).getDRunningTask();
         if (list == null || list.size() == 0) {
-            Aria.download(this).unRegister();
-            Log.e("Aria Deregister", "Aria取消注册");
+            /*Aria.download(this).unRegister();
+            Log.e("Aria Deregister", "Aria取消注册");*/
+            onDestroy();
         }
     }
 }

@@ -64,7 +64,7 @@ dependencies {
     implementation "androidx.browser:browser:1.3.0"
 //    implementation 'com.github.fanchen001:Sniffing:1.0.1'
 //    implementation 'com.github.GrenderG:Toasty:1.4.2'
-    implementation 'co.lujun:androidtagview:1.1.7'
+//    implementation 'co.lujun:androidtagview:1.1.7'
     // Cling library
     implementation 'org.fourthline.cling:cling-core:2.1.1'
     implementation 'org.fourthline.cling:cling-support:2.1.1'

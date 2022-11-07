@@ -2,8 +2,6 @@ package my.project.sakuraproject.util;
 
 import android.util.Log;
 
-import com.chad.library.adapter.base.entity.MultiItemEntity;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,7 +24,6 @@ import my.project.sakuraproject.bean.AnimeUpdateBean;
 import my.project.sakuraproject.bean.AnimeUpdateInfoBean;
 import my.project.sakuraproject.bean.HomeBean;
 import my.project.sakuraproject.bean.TagBean;
-import my.project.sakuraproject.bean.TagHeaderBean;
 
 /**
  * http://www.yhdm.io/ 站点解析类
@@ -289,29 +286,29 @@ public class YhdmJsoupUtils {
      * @param source
      * @return
      */
-    public static List<MultiItemEntity> getTagList(String source) {
-        List<MultiItemEntity> tagList = new ArrayList<>();
+    public static List<TagBean> getTagList(String source) {
         Document document = Jsoup.parse(source);
         Elements titles = document.select("div.dtit");
         Elements items = document.select("div.link");
+        List<TagBean> tagBeans = new ArrayList<>();
         if (titles.size() == items.size()) {
             for (int i=1,tagSize=titles.size(); i<tagSize; i++) {
-                TagHeaderBean tagHeaderBean = new TagHeaderBean(titles.get(i).text());
+                TagBean tagBean = new TagBean();
+                tagBean.setTitle(titles.get(i).text());
                 Elements itemElements = items.get(i).select("a");
+                List<TagBean.TagSelectBean> tagSelectBeans = new ArrayList<>();
                 for (int j = 0, itemSize = itemElements.size(); j < itemSize; j++) {
-                    tagHeaderBean.addSubItem(
-                            new TagBean(
-                                    tagHeaderBean.getTitle() + " - " + itemElements.get(j).text(),
-                                    itemElements.get(j).text(),
-                                    itemElements.get(j).attr("href")
-                            )
-                    );
+                    TagBean.TagSelectBean tagSelectBean = new TagBean.TagSelectBean();
+                    tagSelectBean.setTagTitle(tagBean.getTitle() + " - " + itemElements.get(j).text());
+                    tagSelectBean.setTitle(itemElements.get(j).text());
+                    tagSelectBean.setUrl(itemElements.get(j).attr("href"));
+                    tagSelectBeans.add(tagSelectBean);
                 }
-                tagList.add(tagHeaderBean);
+                tagBean.setTagSelectBeans(tagSelectBeans);
+                tagBeans.add(tagBean);
             }
-            return tagList;
-        } else
-            return tagList;
+        }
+        return tagBeans;
     }
     /**************************************  动漫分类解析方法结束  **************************************/
 

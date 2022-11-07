@@ -12,19 +12,63 @@
 
         <include layout="@layout/toolbar" />
 
-        <include layout="@layout/content_home" />
+        <RelativeLayout
+            android:layout_below="@+id/app_bar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/tag_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="@dimen/fab_margin"
-            app:backgroundTint="@color/colorAccent"
-            app:tint="@android:color/white"
-            android:visibility="gone"
-            app:layout_behavior="my.project.sakuraproject.custom.ScrollAwareBehavior"
-            app:srcCompat="@drawable/baseline_dashboard_white_48dp" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/ref_btn"
+                android:visibility="gone"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:text="加载失败，点击重试"
+                app:backgroundTint="@color/colorAccent"
+                android:textColor="@color/white"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <!--<ProgressBar
+                android:id="@+id/load_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"/>-->
+
+            <HorizontalScrollView
+                android:id="@+id/scrollview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:scrollbars="none">
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chip_group"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:singleLine="true">
+                </com.google.android.material.chip.ChipGroup>
+
+            </HorizontalScrollView>
+
+            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                android:id="@+id/mSwipe"
+                android:layout_below="@+id/scrollview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clipToPadding="false"
+                    android:fadingEdge="none" />
+            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+        </RelativeLayout>
 
         <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:id="@+id/msg"

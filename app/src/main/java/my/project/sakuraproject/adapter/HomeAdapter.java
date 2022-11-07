@@ -1,12 +1,15 @@
 package my.project.sakuraproject.adapter;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.view.View;
 import android.widget.ImageView;
 
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 
 import java.util.List;
 
@@ -39,14 +42,30 @@ public class HomeAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity, Base
         switch (helper.getItemViewType()) {
             case TYPE_LEVEL_0:
                 HomeHeaderBean homeHeaderBean = (HomeHeaderBean) item;
-                recyclerView = helper.getView(R.id.header_list);
+                ChipGroup chipGroup = helper.getView(R.id.chip_group);
+                chipGroup.removeAllViews();
+                /*recyclerView = helper.getView(R.id.header_list);
                 List<HomeHeaderBean.HeaderDataBean> headerDataBeans = homeHeaderBean.getData();
                 recyclerView.setLayoutManager(new GridLayoutManager(context, headerDataBeans.size()));
                 homeHeaderAdapter = new HomeHeaderAdapter(context, headerDataBeans);
                 homeHeaderAdapter.setOnItemClickListener((adapter, view, position) -> {
                     onItemClick.onHeaderClick(headerDataBeans.get(position));
                 });
-                recyclerView.setAdapter(homeHeaderAdapter);
+                recyclerView.setAdapter(homeHeaderAdapter);*/
+                List<HomeHeaderBean.HeaderDataBean> headerDataBeans = homeHeaderBean.getData();
+                for (HomeHeaderBean.HeaderDataBean headerDataBean : headerDataBeans) {
+                    Chip chip = new Chip(context);
+                    chip.setText(headerDataBean.getTitle());
+                    chip.setBackgroundColor(context.getResources().getColor(R.color.window_bg));
+                    chip.setChipIconResource(headerDataBean.getImg());
+                    chip.setChipIconTint(ColorStateList.valueOf(context.getResources().getColor(R.color.text_color_primary)));
+                    chip.setTextColor(context.getResources().getColor(R.color.text_color_primary));
+                    chip.setChipStrokeColorResource(R.color.head);
+                    chip.setOnClickListener(view -> {
+                        onItemClick.onHeaderClick(headerDataBean);
+                    });
+                    chipGroup.addView(chip);
+                }
                 break;
             case TYPE_LEVEL_1:
                 HomeBean homeBean = (HomeBean) item;

@@ -4,33 +4,31 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 import butterknife.OnClick;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.adapter.AnimeListAdapter;
-import my.project.sakuraproject.adapter.MaliTagAdapter;
 import my.project.sakuraproject.api.Api;
 import my.project.sakuraproject.bean.AnimeListBean;
 import my.project.sakuraproject.bean.MaliTagBean;
+import my.project.sakuraproject.bean.TagBean;
 import my.project.sakuraproject.custom.CustomLoadMoreView;
 import my.project.sakuraproject.custom.CustomToast;
 import my.project.sakuraproject.main.animeList.AnimeListContract;
@@ -51,10 +49,6 @@ public class MaliTagActivity extends BaseActivity<TagContract.View, TagPresenter
     private List<AnimeListBean> animeLists = new ArrayList<>();
     @BindView(R.id.mSwipe)
     SwipeRefreshLayout mSwipe;
-    private BottomSheetDialog mBottomSheetDialog;
-    private MaterialButton ref;
-    @BindView(R.id.tag_btn)
-    FloatingActionButton tag_btn;
     private AnimeListPresenter animeListPresenter;
     private int nowPage = 1;
     private int pageCount = 1;
@@ -62,7 +56,7 @@ public class MaliTagActivity extends BaseActivity<TagContract.View, TagPresenter
     // ===========================================
     private String[] params = new String[] {"1", "", "", "", "", ""}; // 默认为全部
     private String subTitles = "%s%s%s%s";
-    private String[] subTitlesArray = new String[] {"{全部}", "", "", ""};
+    private String[] subTitlesArray = new String[] {"全部", "全部", "全部", "全部"};
     private final static String FL_ALL = "全部";
     public final static String FL_CHINA = "国产动漫";
     public final static String FL_JAPAN = "日韩动漫";
@@ -77,20 +71,14 @@ public class MaliTagActivity extends BaseActivity<TagContract.View, TagPresenter
     private final static String ZM = "字母";
     private String homeParam = "";
     private String title = "";
-    private LinearLayout listView;
-    // 分类
-    private RecyclerView flRecyclerView;
-    private MaliTagAdapter flAdapter;
-    // 类型
-    private RecyclerView lxRecyclerView;
-    private MaliTagAdapter lxAdapter;
-    // 年份
-    private RecyclerView nfRecyclerView;
-    private MaliTagAdapter nfAdapter;
-    // 字母
-    private RecyclerView zmRecyclerView;
-    private MaliTagAdapter zmAdapter;
-
+    // TAG
+    private List<MaliTagBean> maliTagBeans = new ArrayList<>();
+    @BindView(R.id.chip_group)
+    ChipGroup tagGroup;
+    private BottomSheetDialog tagDialog;
+    private ChipGroup itemChipsView;
+    @BindView(R.id.ref_btn)
+    MaterialButton refBtn;
 
     @Override
     protected TagPresenter createPresenter() {
@@ -112,9 +100,7 @@ public class MaliTagActivity extends BaseActivity<TagContract.View, TagPresenter
 //        Slidr.attach(this, Utils.defaultInit());
         getBundle();
         initToolbar();
-        initFab();
         initSwipe();
-        initTagAdapter();
         initAnimeAdapter();
     }
 
@@ -129,32 +115,15 @@ public class MaliTagActivity extends BaseActivity<TagContract.View, TagPresenter
             homeParam = bundle.getString("homeParam");
             params[0] = homeParam;
             title = bundle.getString("title");
-            subTitlesArray[0] = "{" + title + "}";
+            subTitlesArray[0] = title;
         }
     }
 
     private void initToolbar() {
-//        toolbar.setTitle(title.isEmpty() ? Utils.getString(R.string.tag_title) : title);
         toolbar.setTitle( Utils.getString(R.string.tag_title));
-        setToolbarSubTitle();
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbar.setNavigationOnClickListener(view -> finish());
-    }
-
-    private void setToolbarSubTitle() {
-        toolbar.setSubtitle(String.format(subTitles, subTitlesArray[0], subTitlesArray[1], subTitlesArray[2], subTitlesArray[3]));
-    }
-
-    private void initFab() {
-        if (Utils.checkHasNavigationBar(this)) {
-            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) tag_btn.getLayoutParams();
-            params.setMargins(Utils.dpToPx(this, 16),
-                    Utils.dpToPx(this, 16),
-                    Utils.dpToPx(this, 16),
-                    Utils.getNavigationBarHeight(this) + 15);
-            tag_btn.setLayoutParams(params);
-        }
     }
 
     private void initSwipe() {
@@ -173,7 +142,6 @@ public class MaliTagActivity extends BaseActivity<TagContract.View, TagPresenter
     private boolean checkState() {
         if (!Utils.isFastClick()) return false;
         if (mSwipe.isRefreshing()) {
-//                Sakura.getInstance().showToastMsg(Utils.getString(R.string.loading_info));
             CustomToast.showToast(this, Utils.getString(R.string.loading_info), CustomToast.WARNING);
             return false;
         }
@@ -200,137 +168,6 @@ public class MaliTagActivity extends BaseActivity<TagContract.View, TagPresenter
         animeListAdapter.setEmptyView(getLayoutInflater().inflate(R.layout.base_emnty_view, null));
         animeListPresenter = new AnimeListPresenter(params, this);
         animeListPresenter.loadMaliData(true);
-    }
-
-    private void initTagAdapter() {
-        View tagView = LayoutInflater.from(this).inflate(R.layout.dialog_mali_tag, null);
-        listView = tagView.findViewById(R.id.list_view);
-        // 分类数据
-        flAdapter = new MaliTagAdapter(this, new ArrayList<>());
-        flRecyclerView = tagView.findViewById(R.id.fl_list);
-        setRecyclerViewHorizontal(flRecyclerView);
-        flRecyclerView.setAdapter(flAdapter);
-        flAdapter.setOnItemClickListener((adapter, view, position) -> {
-            if (checkState()) {
-                // 设置选中颜色
-                TextView textView = (TextView) adapter.getViewByPosition(flRecyclerView, position, R.id.tag_group);
-                textView.setTextColor(getResources().getColor(R.color.colorAccent));
-                MaliTagBean.MaliTagList bean = (MaliTagBean.MaliTagList) adapter.getItem(position);
-                List<MaliTagBean.MaliTagList> maliTagLists = adapter.getData();
-                for (MaliTagBean.MaliTagList tagBean : maliTagLists) {
-                    tagBean.setSelected(false);
-                }
-                bean.setSelected(true);
-                subTitlesArray[0] = "{" + bean.getItemTitle() + "}";
-                setToolbarSubTitle();
-                adapter.setNewData(maliTagLists);
-                mSwipe.setEnabled(true);
-                // 刷新动漫列表
-                params[0] = getFlParam(bean.getItemTitle());
-                nowPage = 1;
-                params[4] = nowPage + "";
-                getTagData();
-            }
-        });
-        // 类型数据
-        lxAdapter = new MaliTagAdapter(this, new ArrayList<>());
-        lxRecyclerView = tagView.findViewById(R.id.lx_list);
-        setRecyclerViewHorizontal(lxRecyclerView);
-        lxRecyclerView.setAdapter(lxAdapter);
-        lxAdapter.setOnItemClickListener((adapter, view, position) -> {
-            if (checkState()) {
-                // 设置选中颜色
-                TextView textView = (TextView) adapter.getViewByPosition(lxRecyclerView, position, R.id.tag_group);
-                textView.setTextColor(getResources().getColor(R.color.colorAccent));
-                MaliTagBean.MaliTagList bean = (MaliTagBean.MaliTagList) adapter.getItem(position);
-                List<MaliTagBean.MaliTagList> maliTagLists = adapter.getData();
-                for (MaliTagBean.MaliTagList tagBean : maliTagLists) {
-                    tagBean.setSelected(false);
-                }
-                bean.setSelected(true);
-                subTitlesArray[1] = "{" + bean.getItemTitle() + "}";
-                setToolbarSubTitle();
-                adapter.setNewData(maliTagLists);
-                mSwipe.setEnabled(true);
-                // 刷新动漫列表
-                params[2] = bean.getItemTitle().equals("全部") ? "" :  bean.getItemTitle();
-//                params[2] = bean.getItemTitle().contains("全部") ? "" :  bean.getItemTitle();
-                nowPage = 1;
-                params[4] = nowPage + "";
-                getTagData();
-            }
-        });
-        // 年份数据
-        nfAdapter = new MaliTagAdapter(this, new ArrayList<>());
-        nfRecyclerView = tagView.findViewById(R.id.nf_list);
-        setRecyclerViewHorizontal(nfRecyclerView);
-        nfRecyclerView.setAdapter(nfAdapter);
-        nfAdapter.setOnItemClickListener((adapter, view, position) -> {
-            if (checkState()) {
-                // 设置选中颜色
-                TextView textView = (TextView) adapter.getViewByPosition(nfRecyclerView, position, R.id.tag_group);
-                textView.setTextColor(getResources().getColor(R.color.colorAccent));
-                MaliTagBean.MaliTagList bean = (MaliTagBean.MaliTagList) adapter.getItem(position);
-                List<MaliTagBean.MaliTagList> maliTagLists = adapter.getData();
-                for (MaliTagBean.MaliTagList tagBean : maliTagLists) {
-                    tagBean.setSelected(false);
-                }
-                bean.setSelected(true);
-                subTitlesArray[2] = "{" + bean.getItemTitle() + "}";
-                setToolbarSubTitle();
-                adapter.setNewData(maliTagLists);
-                mSwipe.setEnabled(true);
-                // 刷新动漫列表
-                params[5] = bean.getItemTitle().equals("全部") ? "" :  bean.getItemTitle();
-//                params[5] = bean.getItemTitle().contains("全部") ? "" :  bean.getItemTitle();
-                nowPage = 1;
-                params[4] = nowPage + "";
-                getTagData();
-            }
-        });
-        // 字母数据
-        zmAdapter = new MaliTagAdapter(this, new ArrayList<>());
-        zmRecyclerView = tagView.findViewById(R.id.zm_list);
-        setRecyclerViewHorizontal(zmRecyclerView);
-        zmRecyclerView.setAdapter(zmAdapter);
-        zmAdapter.setOnItemClickListener((adapter, view, position) -> {
-            if (checkState()) {
-                // 设置选中颜色
-                TextView textView = (TextView) adapter.getViewByPosition(zmRecyclerView, position, R.id.tag_group);
-                textView.setTextColor(getResources().getColor(R.color.colorAccent));
-                MaliTagBean.MaliTagList bean = (MaliTagBean.MaliTagList) adapter.getItem(position);
-                List<MaliTagBean.MaliTagList> maliTagLists = adapter.getData();
-                for (MaliTagBean.MaliTagList tagBean : maliTagLists) {
-                    tagBean.setSelected(false);
-                }
-                bean.setSelected(true);
-                subTitlesArray[3] = "{" + bean.getItemTitle() + "}";
-                setToolbarSubTitle();
-                adapter.setNewData(maliTagLists);
-                mSwipe.setEnabled(true);
-                // 刷新动漫列表
-                params[3] = bean.getItemTitle().equals("全部") ? "" :  bean.getItemTitle();
-//                params[3] = bean.getItemTitle().contains("全部") ? "" :  bean.getItemTitle();
-                nowPage = 1;
-                params[4] = nowPage + "";
-                getTagData();
-            }
-        });
-
-        ref = tagView.findViewById(R.id.ref);
-        ref.setOnClickListener((view)-> {
-            mBottomSheetDialog.dismiss();
-            mPresenter = createPresenter();
-            mPresenter.loadData(true);
-        });
-        mBottomSheetDialog = new BottomSheetDialog(this);
-        mBottomSheetDialog.setContentView(tagView);
-    }
-
-    private void setRecyclerViewHorizontal(RecyclerView recyclerView) {
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
-        recyclerView.setLayoutManager(linearLayoutManager);
     }
 
     private void initAnimeAdapter() {
@@ -376,10 +213,11 @@ public class MaliTagActivity extends BaseActivity<TagContract.View, TagPresenter
         animeListAdapter.loadMoreComplete();
     }
 
-    @OnClick(R.id.tag_btn)
-    public void tagBtnClick() {
-        mBottomSheetDialog.getBehavior().setState(BottomSheetBehavior.STATE_EXPANDED);
-        mBottomSheetDialog.show();
+    @OnClick(R.id.ref_btn)
+    public void refBtnClick() {
+        refBtn.setVisibility(View.GONE);
+        mPresenter = createPresenter();
+        mPresenter.loadData(true);
     }
 
 
@@ -389,7 +227,7 @@ public class MaliTagActivity extends BaseActivity<TagContract.View, TagPresenter
     }
 
     @Override
-    public void showSuccessView(List<MultiItemEntity> list) {
+    public void showSuccessView(List<TagBean> list) {
 
     }
 
@@ -397,57 +235,162 @@ public class MaliTagActivity extends BaseActivity<TagContract.View, TagPresenter
     public void showMaliSuccessView(List<MaliTagBean> list) {
         runOnUiThread(() -> {
             if (!mActivityFinish) {
-                ref.setVisibility(View.GONE);
-                listView.setVisibility(View.VISIBLE);
                 mSwipe.setRefreshing(false);
-                for (MaliTagBean beans : list) {
-                    switch (beans.getTitle()) {
+                maliTagBeans = list;
+                for (int i=0,size=maliTagBeans.size(); i<size; i++) {
+                    Chip chip = new Chip(this);
+                    switch (maliTagBeans.get(i).getTitle()) {
                         case FL:
-                            for (MaliTagBean.MaliTagList bean : beans.getMaliTagLists()) {
-                                if (subTitlesArray[0].contains(bean.getItemTitle())) {
-                                    bean.setSelected(true);
-                                }
-                            }
-                            flAdapter.setNewData(beans.getMaliTagLists());
+                            chip.setText(FL + "：" + subTitlesArray[0]);
                             break;
                         case LX:
-                            beans.getMaliTagLists().get(0).setSelected(true);
-                            lxAdapter.setNewData(beans.getMaliTagLists());
+                            chip.setText(LX + "：" + subTitlesArray[1]);
                             break;
                         case NF:
-                            beans.getMaliTagLists().get(0).setSelected(true);
-                            nfAdapter.setNewData(beans.getMaliTagLists());
+                            chip.setText(NF + "：" + subTitlesArray[2]);
                             break;
                         case ZM:
-                            beans.getMaliTagLists().get(0).setSelected(true);
-                            zmAdapter.setNewData(beans.getMaliTagLists());
+                            chip.setText(ZM + "：" + subTitlesArray[3]);
                             break;
                     }
+                    chip.setBackgroundColor(getResources().getColor(R.color.window_bg));
+                    chip.setTextColor(getResources().getColor(R.color.text_color_primary));
+                    chip.setChipStrokeColorResource(R.color.head);
+                    int index = i;
+                    chip.setOnClickListener(view -> {
+                        openSelectDialog(maliTagBeans.get(index).getTitle(), index);
+                    });
+                    tagGroup.addView(chip);
                 }
                 if (!homeParam.isEmpty()) {
                     animeListPresenter = new AnimeListPresenter(params, this);
                     animeListPresenter.loadMaliData(true);
-                } else {
-                    mBottomSheetDialog.getBehavior().setState(BottomSheetBehavior.STATE_EXPANDED);
-                    mBottomSheetDialog.show();
                 }
-                tag_btn.show();
             }
         });
+    }
+
+    private void openSelectDialog(String type, int position) {
+        View view = LayoutInflater.from(this).inflate(R.layout.dialog_tag, null);
+        TextView textView = view.findViewById(R.id.title);
+        textView.setText(maliTagBeans.get(position).getTitle());
+        ExtendedFloatingActionButton button = view.findViewById(R.id.confirm);
+        itemChipsView = view.findViewById(R.id.chip_group);
+        for (MaliTagBean.MaliTagList maliTagList : maliTagBeans.get(position).getMaliTagLists()) {
+            Chip singleChip = (Chip) LayoutInflater.from(this).inflate(R.layout.dialog_chip, null);
+            singleChip.setText(maliTagList.getItemTitle());
+            switch (type) {
+                case FL:
+                    singleChip.setChecked(maliTagList.getItemTitle().equals(subTitlesArray[0]));
+                    break;
+                case LX:
+                    singleChip.setChecked(maliTagList.getItemTitle().equals(subTitlesArray[1]));
+                    break;
+                case NF:
+                    singleChip.setChecked(maliTagList.getItemTitle().equals(subTitlesArray[2]));
+                    break;
+                case ZM:
+                    singleChip.setChecked(maliTagList.getItemTitle().equals(subTitlesArray[3]));
+                    break;
+            }
+            singleChip.setBackgroundColor(getResources().getColor(R.color.window_bg));
+            singleChip.setTextColor(getResources().getColor(R.color.text_color_primary));
+            singleChip.setChipStrokeColorResource(R.color.head);
+            singleChip.setOnCheckedChangeListener((compoundButton, b) -> {
+                String title = compoundButton.getText().toString();
+                if (b) {
+                    for (int i = 0; i < itemChipsView.getChildCount(); i++) {
+                        Chip chip1 = (Chip) itemChipsView.getChildAt(i);
+                        chip1.setChecked(chip1.getText().toString().equals(title));
+                    }
+                    for (MaliTagBean maliTagBean : maliTagBeans) {
+                        for (MaliTagBean.MaliTagList tagList : maliTagBean.getMaliTagLists()) {
+                            if (tagList.getItemTitle().equals(title)) {
+                                tagList.setSelected(true);
+                                switch (type) {
+                                    case FL:
+                                        params[0] = getFlParam(tagList.getItemTitle());
+                                        subTitlesArray[0] = tagList.getItemTitle();
+                                        break;
+                                    case LX:
+                                        params[2] = tagList.getItemTitle().equals("全部") ? "" :  tagList.getItemTitle();
+                                        subTitlesArray[1] = tagList.getItemTitle();
+                                        break;
+                                    case NF:
+                                        params[5] = tagList.getItemTitle().equals("全部") ? "" :  tagList.getItemTitle();
+                                        subTitlesArray[2] = tagList.getItemTitle();
+                                        break;
+                                    case ZM:
+                                        params[3] = tagList.getItemTitle().equals("全部") ? "" :  tagList.getItemTitle();
+                                        subTitlesArray[3] = tagList.getItemTitle();
+                                        break;
+                                }
+                            } else
+                                tagList.setSelected(false);
+                        }
+                    }
+                } else {
+                    switch (type) {
+                        case FL:
+                            params[0] = "1";
+                            subTitlesArray[0] = "全部";
+                            break;
+                        case LX:
+                            params[2] = "";
+                            subTitlesArray[1] = "全部";
+                            break;
+                        case NF:
+                            params[5] = "";
+                            subTitlesArray[2] = "全部";
+                            break;
+                        case ZM:
+                            params[3] = "";
+                            subTitlesArray[3] = "全部";
+                            break;
+                    }
+                }
+            });
+            itemChipsView.addView(singleChip);
+        }
+        tagDialog = new BottomSheetDialog(this);
+        tagDialog.setContentView(view);
+        button.setOnClickListener(view1 -> {
+            if (!checkState()) return;
+            tagDialog.dismiss();
+            Chip tag;
+            switch (type) {
+                case FL:
+                    tag = (Chip) tagGroup.getChildAt(0);
+                    tag.setText(FL + "：" + subTitlesArray[0]);
+                    break;
+                case LX:
+                    tag = (Chip) tagGroup.getChildAt(1);
+                    tag.setText(LX + "：" + subTitlesArray[1]);
+                    break;
+                case NF:
+                    tag = (Chip) tagGroup.getChildAt(2);
+                    tag.setText(NF + "：" + subTitlesArray[2]);
+                    break;
+                case ZM:
+                    tag = (Chip) tagGroup.getChildAt(3);
+                    tag.setText(ZM + "：" + subTitlesArray[3]);
+                    break;
+            }
+            nowPage = 1;
+            params[4] = nowPage + "";
+            getTagData();
+        });
+        tagDialog.getBehavior().setState(BottomSheetBehavior.STATE_EXPANDED);
+        tagDialog.show();
     }
 
     @Override
     public void showLoadErrorView(String msg) {
         runOnUiThread(() -> {
             if (!mActivityFinish) {
-                ref.setVisibility(View.VISIBLE);
-                listView.setVisibility(View.GONE);
+                refBtn.setVisibility(View.VISIBLE);
                 setRecyclerViewEmpty();
                 mSwipe.setRefreshing(false);
-                errorTitle.setText(msg);
-                mBottomSheetDialog.getBehavior().setState(BottomSheetBehavior.STATE_EXPANDED);
-                mBottomSheetDialog.show();
-                tag_btn.show();
             }
         });
     }

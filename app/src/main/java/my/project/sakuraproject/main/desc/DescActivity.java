@@ -34,6 +34,8 @@ import com.google.android.material.bottomappbar.BottomAppBar;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -56,8 +58,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 import butterknife.OnClick;
-import co.lujun.androidtagview.TagContainerLayout;
-import co.lujun.androidtagview.TagView;
 import jp.wasabeef.glide.transformations.BlurTransformation;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.adapter.AnimeDescDetailsAdapter;
@@ -146,8 +146,10 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     LinearLayout desc_view;
     @BindView(R.id.bg)
     ImageView bg;
-    @BindView(R.id.tag_view)
-    TagContainerLayout tagContainerLayout;
+    /*@BindView(R.id.tag_view)
+    TagContainerLayout tagContainerLayout;*/
+    @BindView(R.id.chip_group)
+    ChipGroup chipGroup;
     @BindView(R.id.update_time)
     MyTextView update_time;
     @BindView(R.id.score_view)
@@ -210,7 +212,6 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         initBottomAppBar();
         initSwipe();
         initAdapter();
-        initTagClick();
     }
 
     @Override
@@ -388,56 +389,17 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         });
     }*/
 
-    private void initTagClick() {
-        tagContainerLayout.setOnTagClickListener(new TagView.OnTagClickListener() {
-            @Override
-            public void onTagClick(int position, String text) {
-                Bundle bundle = new Bundle();
-                bundle.putString("title", animeListBean.getTagTitles().get(position));
-                bundle.putString("url", animeListBean.getTagUrls().get(position));
-                bundle.putBoolean("isMovie", animeListBean.getTagUrls().get(position).contains("movie") ? true : false);
-                isImomoe = sakuraUrl.contains("/voddetail/");
-                bundle.putBoolean("isImomoe", isImomoe);
-                if (!isImomoe)
-                    startActivity(new Intent(DescActivity.this, AnimeListActivity.class).putExtras(bundle));
-                else {
-                    /*if (sakuraUrl.contains("/voddetail/") && animeListBean.getTagUrls().get(position).contains("-") || animeListBean.getTagTitles().equals("动漫"))
-                        startActivity(new Intent(DescActivity.this, SearchActivity.class).putExtras(bundle));
-                    else {
-                        Bundle tagBundle = new Bundle();
-                        tagBundle.putString("title", animeListBean.getTagTitles().get(position));
-                        switch (animeListBean.getTagTitles().get(position)) {
-                            case MaliTagActivity.FL_JAPAN:
-                                tagBundle.putString("homeParam", Api.MALIMALI_JAPAN);
-                                break;
-                            case MaliTagActivity.FL_CHINA:
-                                tagBundle.putString("homeParam", Api.MALIMALI_CHINA);
-                                break;
-                            case MaliTagActivity.FL_EUROPE:
-                                tagBundle.putString("homeParam", Api.MALIMALI_EUROPE);
-                                break;
-                        }
-                        startActivity(new Intent(DescActivity.this, MaliTagActivity.class).putExtras(tagBundle));
-                    }*/
-                    CustomToast.showToast(DescActivity.this, "暂不支持", CustomToast.WARNING);
-                }
-            }
-
-            @Override
-            public void onTagLongClick(int position, String text) {
-
-            }
-
-            @Override
-            public void onSelectedTagDrag(int position, String text) {
-
-            }
-
-            @Override
-            public void onTagCrossClick(int position) {
-
-            }
-        });
+    private void chipClick(int position) {
+        Bundle bundle = new Bundle();
+        bundle.putString("title", animeListBean.getTagTitles().get(position));
+        bundle.putString("url", animeListBean.getTagUrls().get(position));
+        bundle.putBoolean("isMovie", animeListBean.getTagUrls().get(position).contains("movie") ? true : false);
+        isImomoe = sakuraUrl.contains("/voddetail/");
+        bundle.putBoolean("isImomoe", isImomoe);
+        if (!isImomoe)
+            startActivity(new Intent(DescActivity.this, AnimeListActivity.class).putExtras(bundle));
+        else
+            CustomToast.showToast(DescActivity.this, "当前源不支持", CustomToast.WARNING);
     }
 
     @OnClick(R.id.open_drama)
@@ -452,8 +414,8 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     public void openAnimeDesc() {
 //        downloadView.setVisibility(View.GONE);
         animeImg.setImageDrawable(getDrawable(isDarkTheme ? R.drawable.loading_night : R.drawable.loading_light));
-        hideView(tagContainerLayout);
-        tagContainerLayout.setTags("");
+        hideView(chipGroup);
+        chipGroup.removeAllViews();
         hideView(score_view);
         setTextviewEmpty(desc);
         animeDescListBean = new AnimeDescListBean();
@@ -546,10 +508,21 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         Utils.setDefaultImage(this, animeListBean.getImg(), animeListBean.getUrl(), animeImg, false, null, null);
         title.setText(animeListBean.getTitle());
         if (animeListBean.getTagTitles() != null) {
-            tagContainerLayout.setTags(animeListBean.getTagTitles());
-            showView(tagContainerLayout);
+            for (int i=0,size=animeListBean.getTagTitles().size(); i<size; i++) {
+                Chip chip = new Chip(this);
+                chip.setText(animeListBean.getTagTitles().get(i));
+                chip.setBackgroundColor(getResources().getColor(R.color.window_bg));
+                chip.setTextColor(getResources().getColor(R.color.text_color_primary));
+                chip.setChipStrokeColorResource(R.color.head);
+                int position = i;
+                chip.setOnClickListener(view -> {
+                    chipClick(position);
+                });
+                chipGroup.addView(chip);
+            }
+            showView(chipGroup);
         }else
-            hideView(tagContainerLayout);
+            hideView(chipGroup);
         if (animeListBean.getDesc() == null || animeListBean.getDesc().isEmpty())
             hideView(desc);
         else {

@@ -1,25 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/window_bg"
-    android:orientation="vertical">
+    android:layout_height="wrap_content">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/tag_list"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:clipToPadding="false"
-        android:fadingEdge="none" />
+        android:background="@color/window_bg">
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/ref"
-        android:visibility="gone"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:backgroundTint="@color/drama"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="点击重新加载数据"
-        android:textColor="@color/text_color_primary" />
-</LinearLayout>
+        <TextView
+            android:id="@+id/title"
+            android:layout_margin="16dp"
+            android:drawableRight="@drawable/ic_keyboard_arrow_down_white_48dp"
+            android:drawableTint="@color/text_color_primary"
+            android:gravity="center_vertical"
+            android:layout_centerHorizontal="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@color/text_color_primary" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chip_group"
+            android:layout_below="@+id/title"
+            app:chipSpacingVertical ="2dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        </com.google.android.material.chip.ChipGroup>
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/confirm"
+            android:text="确定"
+            android:layout_below="@+id/chip_group"
+            android:layout_margin="16dp"
+            android:layout_alignParentEnd="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="?attr/colorSecondaryContainer"
+            android:textColor="@color/text_color_primary"
+            app:icon="@drawable/outline_done_white_48dp"
+            app:iconTint="@color/text_color_primary" />
+
+    </RelativeLayout>
+
+</androidx.core.widget.NestedScrollView>

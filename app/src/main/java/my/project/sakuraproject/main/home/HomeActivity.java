@@ -295,17 +295,17 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
             mSwipe.setRefreshing(false);
             multiItemEntities = new ArrayList<>();
             headerDataBeans = new ArrayList<>();
-            headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("时间表", R.drawable.ic_xfsjb, HomeHeaderBean.TYPE_XFSJB));
+            headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("新番时间表", R.drawable.baseline_calendar_month_white_48dp, HomeHeaderBean.TYPE_XFSJB));
             if (!Utils.isImomoe()) {
-                headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("动漫分类", R.drawable.ic_dmfl, HomeHeaderBean.TYPE_DMFL));
-                headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("动漫电影", R.drawable.ic_dmdy, HomeHeaderBean.TYPE_DMDY));
-                headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("动漫专题", R.drawable.ic_dmzt, HomeHeaderBean.TYPE_DMZT));
-                headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("剧场版", R.drawable.ic_jcb, HomeHeaderBean.TYPE_JCB));
+                headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("动漫分类", R.drawable.baseline_filter_white_48dp, HomeHeaderBean.TYPE_DMFL));
+                headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("动漫电影", R.drawable.baseline_movie_white_48dp, HomeHeaderBean.TYPE_DMDY));
+                headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("动漫专题", R.drawable.outline_video_library_white_48dp, HomeHeaderBean.TYPE_DMZT));
+                headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("剧场版", R.drawable.ic_ondemand_video_white_48dp, HomeHeaderBean.TYPE_JCB));
             } else {
-                headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("动漫分类", R.drawable.ic_dmfl, HomeHeaderBean.TYPE_DMFL_MALIMALI_TAG));
-                headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("日韩动漫", R.drawable.ic_dmdy, HomeHeaderBean.TYPE_DMFL_MALIMALI_JAPAN));
-                headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("国产动漫", R.drawable.ic_dmzt, HomeHeaderBean.TYPE_DMFL_MALIMALI_CHINA));
-                headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("欧美动漫", R.drawable.ic_jcb, HomeHeaderBean.TYPE_DMFL_MALIMALI_EUROPE));
+                headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("动漫分类", R.drawable.baseline_filter_white_48dp, HomeHeaderBean.TYPE_DMFL_MALIMALI_TAG));
+                headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("日韩动漫", R.drawable.baseline_movie_white_48dp, HomeHeaderBean.TYPE_DMFL_MALIMALI_JAPAN));
+                headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("国产动漫", R.drawable.outline_video_library_white_48dp, HomeHeaderBean.TYPE_DMFL_MALIMALI_CHINA));
+                headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("欧美动漫", R.drawable.ic_ondemand_video_white_48dp, HomeHeaderBean.TYPE_DMFL_MALIMALI_EUROPE));
             }
             multiItemEntities.add(new HomeHeaderBean(headerDataBeans));
             for (HomeBean homeBean : beans) {

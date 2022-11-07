@@ -1,15 +1,10 @@
 package my.project.sakuraproject.bean;
 
-import com.chad.library.adapter.base.entity.MultiItemEntity;
+import java.util.List;
 
-import my.project.sakuraproject.adapter.TagAdapter;
-
-public class TagBean implements MultiItemEntity {
+public class TagBean {
     private String title;
-    private String itemTitle;
-    private String itemUrl;
-    private boolean selected;
-
+    private List<TagSelectBean> tagSelectBeans;
 
     public String getTitle() {
         return title;
@@ -19,38 +14,50 @@ public class TagBean implements MultiItemEntity {
         this.title = title;
     }
 
-    public String getItemTitle() {
-        return itemTitle;
+    public List<TagSelectBean> getTagSelectBeans() {
+        return tagSelectBeans;
     }
 
-    public void setItemTitle(String itemTitle) {
-        this.itemTitle = itemTitle;
+    public void setTagSelectBeans(List<TagSelectBean> tagSelectBeans) {
+        this.tagSelectBeans = tagSelectBeans;
     }
 
-    public String getItemUrl() {
-        return itemUrl;
-    }
+    public static class TagSelectBean {
+        private String tagTitle;
+        private String title;
+        private String url;
+        private boolean selected;
 
-    public void setItemUrl(String itemUrl) {
-        this.itemUrl = itemUrl;
-    }
+        public String getTagTitle() {
+            return tagTitle;
+        }
 
-    public boolean isSelected() {
-        return selected;
-    }
+        public void setTagTitle(String tagTitle) {
+            this.tagTitle = tagTitle;
+        }
 
-    public void setSelected(boolean selected) {
-        this.selected = selected;
-    }
+        public String getTitle() {
+            return title;
+        }
 
-    public TagBean(String title, String itemTitle, String itemUrl) {
-        this.title = title;
-        this.itemTitle = itemTitle;
-        this.itemUrl = itemUrl;
-    }
+        public void setTitle(String title) {
+            this.title = title;
+        }
 
-    @Override
-    public int getItemType() {
-        return TagAdapter.TYPE_LEVEL_1;
+        public String getUrl() {
+            return url;
+        }
+
+        public void setUrl(String url) {
+            this.url = url;
+        }
+
+        public boolean isSelected() {
+            return selected;
+        }
+
+        public void setSelected(boolean selected) {
+            this.selected = selected;
+        }
     }
 }

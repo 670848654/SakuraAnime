@@ -214,7 +214,16 @@ public class DownloadDataActivity extends BaseActivity<DownloadDataContract.View
             // 获取所有下载任务
             List<DownloadEntity> list = Aria.download(this).getTaskList();
             for (DownloadEntity entity : list) {
-                if (bean.getPath().equals(entity.getFilePath().replaceAll(".m3u8", ".mp4"))) {
+                if (bean.getTaskId() != -99) {
+                    // 未下载完成
+                    if (bean.getTaskId() == entity.getId()) {
+                        Aria.download(this).load(entity.getId()).cancel(removeFile);
+                        CustomToast.showToast(this, "已删除该剧集任务", CustomToast.SUCCESS);
+                        adapter.remove(position);
+                        break;
+                    }
+                }
+                else if (bean.getPath().equals(entity.getFilePath().replaceAll(".m3u8", ".mp4"))) {
                     // 如果是m3u8且已完成的任务
                     if (bean.getComplete() == 1 && removeFile) {
                         File f = new File(bean.getPath());

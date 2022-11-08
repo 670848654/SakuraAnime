@@ -17,6 +17,9 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import androidx.appcompat.app.AlertDialog;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
 import cn.jzvd.JZDataSource;
 import cn.jzvd.JZUtils;
 import cn.jzvd.Jzvd;
@@ -68,6 +71,7 @@ public class JZPlayer extends JzvdStd {
     public TextView danmuInfoView;
     public boolean open_danmu = true;
     public boolean loadError = false;
+    private String[] speeds = {"0.5x","1.0x", "1.25x", "1.5x", "1.75x", "2.0x", "2.5x", "3.0x"};
 
     public JZPlayer(Context context) { super(context); }
 
@@ -214,10 +218,11 @@ public class JZPlayer extends JzvdStd {
                 seekDanmu(quickRetreatProgress);
                 break;
             case R.id.tvSpeed:
-                if (currentSpeedIndex == 7) currentSpeedIndex = 0;
+                /*if (currentSpeedIndex == 7) currentSpeedIndex = 0;
                 else currentSpeedIndex += 1;
                 mediaInterface.setSpeed(getSpeedFromIndex(currentSpeedIndex));
-                tvSpeed.setText(currentSpeedIndex == 1 ? "倍速" : "倍速X" + getSpeedFromIndex(currentSpeedIndex));
+                tvSpeed.setText(currentSpeedIndex == 1 ? "倍速" : "倍速X" + getSpeedFromIndex(currentSpeedIndex));*/
+                showSpeedDialog();
                 break;
             case R.id.airplay:
                 if (!Utils.isWifi(context)) {
@@ -262,6 +267,19 @@ public class JZPlayer extends JzvdStd {
                 }
                 break;
         }
+    }
+
+    public void showSpeedDialog() {
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context, R.style.DialogStyle);
+        builder.setTitle("倍速设置");
+        builder.setSingleChoiceItems(speeds, currentSpeedIndex, (dialog, which) -> {
+            currentSpeedIndex = which;
+            mediaInterface.setSpeed(getSpeedFromIndex(currentSpeedIndex));
+            tvSpeed.setText(currentSpeedIndex == 1 ? "倍速" : "倍速X" + getSpeedFromIndex(currentSpeedIndex));
+            dialog.dismiss();
+        });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
     }
 
     private float getSpeedFromIndex(int index) {

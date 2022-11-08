@@ -48,6 +48,7 @@ public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> im
     SwipeRefreshLayout mSwipe;
     private AnimeListPresenter animeListPresenter;
     private String animeUrl = "";
+    private String toolbarSubTitle;
     private int nowPage = 1;
     private int pageCount = 1;
     private boolean isErr = true;
@@ -226,6 +227,7 @@ public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> im
                             if (selectBean.getTitle().equals(title)) {
                                 selectBean.setSelected(true);
                                 animeUrl = selectBean.getUrl();
+                                toolbarSubTitle = selectBean.getTitle();
                             } else
                                 selectBean.setSelected(false);
                         }
@@ -245,6 +247,7 @@ public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> im
             tagDialog.dismiss();
             if (animeUrl.isEmpty())
                 return;
+            toolbar.setSubtitle(toolbarSubTitle);
             animeLists.clear();
             animeListAdapter.setNewData(null);
             animeListAdapter.setEmptyView(getLayoutInflater().inflate(R.layout.base_emnty_view, null));

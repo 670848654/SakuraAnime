@@ -22,6 +22,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -393,8 +394,8 @@ public abstract class BasePlayerActivity extends BaseActivity implements JZPlaye
      */
     protected void play(String playUrl) {
         Jzvd.releaseAllVideos();
-        player.currentSpeedIndex = 1;
-        player.displayIndex = 1;
+        /*player.currentSpeedIndex = 1;
+        player.displayIndex = 1;*/
         player.setUp(playUrl, witchTitle, Jzvd.SCREEN_FULLSCREEN, JZExoPlayer.class);
         player.startVideo();
         userSavePosition = DatabaseUtil.getPlayPosition(animeId, dramaUrl);
@@ -408,8 +409,8 @@ public abstract class BasePlayerActivity extends BaseActivity implements JZPlaye
 
     protected void toPlay(String path, String dramaTitle) {
         player.playingShow();
-        player.currentSpeedIndex = 1;
-        player.displayIndex = 1;
+        /*player.currentSpeedIndex = 1;
+        player.displayIndex = 1;*/
         player.localVideoPath = path;
         player.setUp(Uri.fromFile(new File(path)).toString(), animeTitle + " - " + dramaTitle, Jzvd.SCREEN_FULLSCREEN, JZExoPlayer.class);
         player.startVideo();
@@ -579,4 +580,31 @@ public abstract class BasePlayerActivity extends BaseActivity implements JZPlaye
         player.danmakuView = null;
         super.onDestroy();
     }
+
+    /*@OnClick(R.id.order)
+    public void setOrder() {
+        String nowClickUrl = "";
+        if (isLocalVideo) {
+            nowClickUrl = dramaList.get(clickIndex).getUrl();
+            Collections.reverse(dramaList);
+            for (int i=0,size=dramaList.size(); i<size; i++) {
+                if (dramaList.get(i).getUrl().equals(nowClickUrl)) {
+                    clickIndex = i;
+                    break;
+                }
+            }
+            dramaAdapter.setNewData(dramaList);
+        } else {
+            nowClickUrl = yhdmDescList.get(clickIndex).getUrl();
+            Collections.reverse(yhdmDescList);
+            for (int i=0,size=yhdmDescList.size(); i<size; i++) {
+                if (yhdmDescList.get(i).getUrl().equals(nowClickUrl)) {
+                    clickIndex = i;
+                    break;
+                }
+            }
+            dramaAdapter.setNewData(yhdmDescList);
+        }
+        setPreNextData();
+    }*/
 }

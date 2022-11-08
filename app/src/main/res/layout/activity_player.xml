@@ -59,6 +59,18 @@
                         android:layout_marginTop="5dp"
                         android:layout_marginLeft="5dp"/>
 
+                    <!--<TextView
+                        android:id="@+id/order"
+                        android:text="播放列表倒序"
+                        android:textColor="@color/white"
+                        android:gravity="center_vertical"
+                        android:drawableLeft="@drawable/outline_sort_by_alpha_white_48dp"
+                        android:drawableTint="@color/white"
+                        android:drawablePadding="5dp"
+                        android:layout_margin="5dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>-->
+
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rv_list"
                         android:layout_width="match_parent"

@@ -126,8 +126,8 @@ public class DownloadNotification {
             notification.contentView.setProgressBar(R.id.progress, 100, success ? 100 : 0, false);
             mManager.notify(notificationId, notification);*/
             cancelNotification(notificationId);
-            showDefaultNotification(notificationId, title, videoNumber, success);
         }
+        showDefaultNotification(notificationId, title, videoNumber, success);
     }
 
     public void cancelNotification(int notificationId) {

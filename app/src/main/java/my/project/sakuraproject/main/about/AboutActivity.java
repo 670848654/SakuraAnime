@@ -137,6 +137,7 @@ public class AboutActivity extends BaseActivity {
 
     public List createUpdateLogList() {
         List logsList = new ArrayList();
+        logsList.add(new LogBean("版本：2.4.2", "修复已知问题"));
         logsList.add(new LogBean("版本：2.4.1", "修复下载记录无法删除的问题"));
         logsList.add(new LogBean("版本：2.4.0", "移除滑动返回修复Android 8.0闪退问题\n支持屏幕旋转"));
         logsList.add(new LogBean("版本：2.3.9_1", "修复使用虚拟导航栏时详情页底部菜单被遮挡的问题"));

@@ -14,6 +14,7 @@ import com.arialyy.aria.core.Aria;
 import com.arialyy.aria.core.download.DownloadEntity;
 import com.arialyy.aria.core.download.m3u8.M3U8VodOption;
 import com.arialyy.aria.core.task.DownloadTask;
+import com.arialyy.aria.util.ALog;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -126,16 +127,18 @@ public class DownloadService extends Service {
     @Download.onTaskCancel
     public void onTaskCancel(DownloadTask downloadTask) {
         Log.e("Service onTaskCancel", downloadTask.getTaskName() + "，取消下载");
+        mNotify.cancelNotification(new Long(downloadTask.getEntity().getId()).intValue());
 //        showInfo(downloadTask, "取消下载");
         shouldUnRegister();
     }
 
     @Download.onTaskFail
-    public void onTaskFail(DownloadTask downloadTask) {
+    public void onTaskFail(DownloadTask downloadTask, Exception e) {
         Log.e("Service onTaskFail", downloadTask.getTaskName() + "，下载失败");
         String animeTitle = (String) VideoUtils.getAnimeInfo(downloadTask, 0);
         mNotify.uploadInfo(new Long(downloadTask.getEntity().getId()).intValue(), animeTitle, downloadTask.getTaskName(), false);
         DatabaseUtil.updateDownloadError((String) VideoUtils.getAnimeInfo(downloadTask, 0), (Integer) VideoUtils.getAnimeInfo(downloadTask, 1), downloadTask.getFilePath(), downloadTask.getEntity().getId(), downloadTask.getFileSize());
+        handler.post(() -> CustomToast.showToast(getApplicationContext(), VideoUtils.getAnimeInfo(downloadTask, 0) + " " + downloadTask.getTaskName() + "下载失败\n" +  ALog.getExceptionString(e), CustomToast.ERROR));
         shouldUnRegister();
     }
 

@@ -321,9 +321,9 @@ public class DownloadDataActivity extends BaseActivity<DownloadDataContract.View
     @Download.onTaskFail
     public void onTaskFail(DownloadTask downloadTask) {
         Log.e("Service onTaskCancel", downloadTask.getTaskName() + "，下载失败");
-        JSONObject obj = JSONObject.parseObject(Aria.download(this).load(downloadTask.getEntity().getId()).getExtendField());
+        List<Object> objects = DatabaseUtil.queryDownloadAnimeInfo(downloadTask.getEntity().getId());
         for (int i = 0, size = downloadDataBeans.size(); i < size; i++) {
-            if (downloadDataBeans.get(i).getAnimeTitle().equals(obj.getString("title")) && downloadTask.getTaskName().contains(downloadDataBeans.get(i).getPlayNumber())) {
+            if (downloadDataBeans.get(i).getAnimeTitle().equals(objects.get(0)) && downloadTask.getTaskName().contains(downloadDataBeans.get(i).getPlayNumber())) {
                 downloadDataBeans.get(i).setComplete(2);
                 adapter.notifyItemChanged(i);
                 break;

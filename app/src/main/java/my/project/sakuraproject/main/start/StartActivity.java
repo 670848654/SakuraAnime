@@ -23,6 +23,7 @@ import my.project.sakuraproject.custom.CustomToast;
 import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.base.Presenter;
 import my.project.sakuraproject.main.home.HomeActivity;
+import my.project.sakuraproject.main.home.MainActivity;
 import my.project.sakuraproject.net.HttpGet;
 import my.project.sakuraproject.util.SharedPreferencesUtils;
 import my.project.sakuraproject.util.StatusBarUtil;
@@ -155,7 +156,7 @@ public class StartActivity extends BaseActivity {
     }
 
     private void openMain() {
-        startActivity(new Intent(StartActivity.this, HomeActivity.class));
+        startActivity(new Intent(StartActivity.this, MainActivity.class));
         StartActivity.this.finish();
     }
 }

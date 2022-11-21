@@ -21,6 +21,7 @@ import javax.net.ssl.HttpsURLConnection;
 
 import androidx.appcompat.app.AppCompatDelegate;
 import my.project.sakuraproject.R;
+import my.project.sakuraproject.bean.AnimeUpdateInfoBean;
 import my.project.sakuraproject.services.DownloadService;
 import my.project.sakuraproject.util.CropUtil;
 import my.project.sakuraproject.util.SharedPreferencesUtils;
@@ -36,6 +37,7 @@ public class Sakura extends Application {
     public String error;
     public JSONObject week = new JSONObject();
     public static boolean isImomoe = false;
+    public List<AnimeUpdateInfoBean> animeUpdateInfoBeans;
     public static Sakura getInstance() {
         return appContext;
     }
@@ -50,11 +52,11 @@ public class Sakura extends Application {
         HttpsURLConnection.setDefaultSSLSocketFactory(CropUtil.getUnsafeSslSocketFactory());
 //        CrashHandler crashHandler = CrashHandler.getInstance();
 //        crashHandler.init(getApplicationContext());
-        if (Utils.isServiceRunning(this, "my.project.sakuraproject.services.DownloadService")) {
+        /*if (Utils.isServiceRunning(this, "my.project.sakuraproject.services.DownloadService")) {
             // 应用异常重启时，停止服务，关闭下载
             stopService(new Intent(this, DownloadService.class));
             Aria.download(this).stopAllTask();
-        }
+        }*/
         if (Utils.getTheme())
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         else

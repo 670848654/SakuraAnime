@@ -952,8 +952,9 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
      * 开启下载服务
      */
     private void startDownloadService() {
-        if (!Utils.isServiceRunning(this, "my.project.sakuraproject.services.DownloadService"))
-            startService(new Intent(this, DownloadService.class));
+//        if (!Utils.isServiceRunning(this, "my.project.sakuraproject.services.DownloadService"))
+        startService(new Intent(this, DownloadService.class));
+        EventBus.getDefault().post(new Refresh(3));
     }
 
     /**

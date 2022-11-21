@@ -2,15 +2,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/function"
+        android:id="@+id/home"
         android:iconTint="@color/text_color_primary"
         android:icon="@drawable/baseline_home_white_48dp"
         android:title="首页" />
 
     <item
-        android:id="@+id/user"
+        android:id="@+id/my"
         android:iconTint="@color/text_color_primary"
-        android:icon="@drawable/baseline_person_white_48dp"
+        android:icon="@drawable/outline_account_circle_white_48dp"
         android:title="我的" />
 
 </menu>

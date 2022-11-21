@@ -31,9 +31,8 @@ import my.project.sakuraproject.util.VideoUtils;
 
 public class DownloadService extends Service {
     private DownloadNotification mNotify;
-    private Handler handler;
+//    private Handler handler;
     PowerManager.WakeLock wakeLock = null;
-    private M3U8VodOption m3U8VodOption; // 下载m3u8配置
 
     @Nullable
     @Override
@@ -54,15 +53,16 @@ public class DownloadService extends Service {
         if (null != wakeLock)  {
             wakeLock.acquire();
         }
-        handler = new Handler(Looper.getMainLooper());
-        handler.post(() -> CustomToast.showToast(getApplicationContext(), "下载服务已开启", CustomToast.SUCCESS));
+        /*handler = new Handler(Looper.getMainLooper());
+        handler.post(() -> CustomToast.showToast(getApplicationContext(), "下载服务已开启", CustomToast.SUCCESS));*/
         mNotify = new DownloadNotification(this);
         Log.e("Service onCreate", "DownloadService开始运行");
-        EventBus.getDefault().post(new Refresh(3));
+        Aria.download(this).register();
+        /*EventBus.getDefault().post(new Refresh(3));
         List<DownloadEntity> list = Aria.download(this).getAllNotCompleteTask();
+        Aria.download(this).register();
         if (list != null && list.size() > 0) {
             setM3U8VodOption();
-            Aria.download(this).register();
             for (DownloadEntity entity : list) {
                 if (entity.getUrl().contains("m3u8")) {
                     Log.e("恢复下载M3U8", "....");
@@ -72,17 +72,7 @@ public class DownloadService extends Service {
                     Log.e("恢复下载MP4", "....");
                 }
             }
-        }
-    }
-
-    private void setM3U8VodOption() {
-        // m3u8下载配置
-        m3U8VodOption = new M3U8VodOption();
-        m3U8VodOption.ignoreFailureTs();
-        m3U8VodOption.setUseDefConvert(false);
-        m3U8VodOption.setBandWidthUrlConverter(new M3U8DownloadConfig.BandWidthUrlConverter());
-        m3U8VodOption.setVodTsUrlConvert(new M3U8DownloadConfig.VodTsUrlConverter());
-        m3U8VodOption.setMergeHandler(new M3U8DownloadConfig.TsMergeHandler());
+        }*/
     }
 
     @Override
@@ -91,9 +81,12 @@ public class DownloadService extends Service {
             wakeLock.release();
             wakeLock = null;
         }
-        // Aria.download(this).unRegister();
         Log.e("Service onDestroy", "DownloadService销毁了");
-        handler.post(() -> CustomToast.showToast(getApplicationContext(), "下载服务已关闭", CustomToast.SUCCESS));
+        Aria.download(this).unRegister();
+        /*handler.post(() -> {
+            Aria.download(this).unRegister();
+            CustomToast.showToast(getApplicationContext(), "下载服务已关闭", CustomToast.SUCCESS);
+        });*/
         super.onDestroy();
     }
 
@@ -115,12 +108,12 @@ public class DownloadService extends Service {
     public void onTaskStart(DownloadTask downloadTask) {
         Log.e("Service onTaskStart", downloadTask.getTaskName() + "，开始下载");
         mNotify.showNotification(new Long(downloadTask.getEntity().getId()).intValue(), (String) VideoUtils.getAnimeInfo(downloadTask, 0), downloadTask.getTaskName());
-//        EventBus.getDefault().post(new Refresh(3));
     }
 
     @Download.onTaskStop
     public void onTaskStop(DownloadTask downloadTask) {
         Log.e("Service onTaskStop", downloadTask.getTaskName() + "，停止下载");
+        EventBus.getDefault().post(new Refresh(3));
         shouldUnRegister();
     }
 
@@ -138,7 +131,7 @@ public class DownloadService extends Service {
         String animeTitle = (String) VideoUtils.getAnimeInfo(downloadTask, 0);
         mNotify.uploadInfo(new Long(downloadTask.getEntity().getId()).intValue(), animeTitle, downloadTask.getTaskName(), false);
         DatabaseUtil.updateDownloadError((String) VideoUtils.getAnimeInfo(downloadTask, 0), (Integer) VideoUtils.getAnimeInfo(downloadTask, 1), downloadTask.getFilePath(), downloadTask.getEntity().getId(), downloadTask.getFileSize());
-        handler.post(() -> CustomToast.showToast(getApplicationContext(), VideoUtils.getAnimeInfo(downloadTask, 0) + " " + downloadTask.getTaskName() + "下载失败\n" +  ALog.getExceptionString(e), CustomToast.ERROR));
+//        handler.post(() -> CustomToast.showToast(getApplicationContext(), VideoUtils.getAnimeInfo(downloadTask, 0) + " " + downloadTask.getTaskName() + "下载失败\n" +  ALog.getExceptionString(e), CustomToast.ERROR));
         shouldUnRegister();
     }
 
@@ -160,9 +153,8 @@ public class DownloadService extends Service {
     private void shouldUnRegister() {
         List<DownloadEntity> list = Aria.download(this).getDRunningTask();
         if (list == null || list.size() == 0) {
-            /*Aria.download(this).unRegister();
-            Log.e("Aria Deregister", "Aria取消注册");*/
-            onDestroy();
+            // 没有正在执行的任务
+            EventBus.getDefault().post(new Refresh(100));
         }
     }
 }

@@ -211,7 +211,6 @@ public class ImomoeJsoupUtils {
         Document japanDocument = Jsoup.parse(japanHtml);
         Document chinaDocument = Jsoup.parse(chinaHtml);
         Elements japanWeekItem = japanDocument.getElementById("mytabweek").select("ul.tab-content");
-        Log.e("japanWeekItem", japanWeekItem.html());
         Elements chinaWeekItem = chinaDocument.getElementById("mytabweek1").select("ul.tab-content");
         if (japanWeekItem.size() > 0 && chinaWeekItem.size() > 0) {
             for (int i=0,size=TABS.length; i<size; i++) {

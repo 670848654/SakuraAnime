@@ -90,7 +90,7 @@ public class OpenSourceActivity extends BaseActivity {
 //        list.add(new SourceBean("AndroidTagView","whilu","A TagView library for Android. Customize your own & Drag effect.","https://github.com/whilu/AndroidTagView"));
         list.add(new SourceBean("AndroidUPnPDemo","zaneCC","android 投屏","https://github.com/zaneCC/AndroidUPnPDemo"));
         list.add(new SourceBean("cling","4thline","UPnP/DLNA library for Java and Android","https://github.com/4thline/cling"));
-        list.add(new SourceBean("RippleAnimation", "wuyr", "仿酷安客户端的主题切换动画效果", "https://github.com/wuyr/RippleAnimation"));
+//        list.add(new SourceBean("RippleAnimation", "wuyr", "仿酷安客户端的主题切换动画效果", "https://github.com/wuyr/RippleAnimation"));
         list.add(new SourceBean("ExpandableTextView", "MZCretin", "实现类似微博内容，@用户，链接高亮，@用户和链接可点击跳转，可展开和收回的TextView", "https://github.com/MZCretin/ExpandableTextView"));
         list.add(new SourceBean("fastjson", "alibaba", "A fast JSON parser/generator for Java.", "https://github.com/alibaba/fastjson"));
         list.add(new SourceBean("EventBus", "greenrobot", "Event bus for Android and Java that simplifies communication between Activities, Fragments, Threads, Services, etc. Less code, better quality.", "https://github.com/greenrobot/EventBus"));

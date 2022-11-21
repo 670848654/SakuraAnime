@@ -1,5 +1,7 @@
 package my.project.sakuraproject.main.home;
 
+import android.util.Log;
+
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;

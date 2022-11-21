@@ -327,6 +327,7 @@ public class SettingActivity extends BaseActivity {
         alertDialog = builder.create();
         alertDialog.show();
         alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+            EventBus.getDefault().post(new Refresh(99));
             DatabaseUtil.deleteAllDownloads();
             CustomToast.showToast(this, "已删除所有下载记录", CustomToast.DEFAULT);
             alertDialog.dismiss();

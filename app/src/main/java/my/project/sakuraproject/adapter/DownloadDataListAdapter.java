@@ -28,7 +28,6 @@ public class DownloadDataListAdapter extends BaseQuickAdapter<DownloadDataBean, 
 
     @Override
     protected void convert(BaseViewHolder helper, DownloadDataBean item) {
-        helper.addOnClickListener(R.id.delete_view);
         helper.setText(R.id.title, item.getPlayNumber());
         helper.setText(R.id.file_size, item.getFileSize() != 0 ? Utils.getNetFileSizeDescription(item.getFileSize()) : "0B");
         helper.setVisible(R.id.bottom_progress, false);

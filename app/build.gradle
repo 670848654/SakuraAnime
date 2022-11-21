@@ -40,6 +40,8 @@ dependencies {
     implementation "androidx.core:core-splashscreen:1.0.0-alpha02"
     implementation 'androidx.compose.material3:material3:1.0.0-alpha15'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+    implementation 'androidx.navigation:navigation-fragment:2.3.0'
+    implementation 'androidx.navigation:navigation-ui:2.3.0'
     implementation files('src/libs/nanohttpd-2.3.1.jar')
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.palette:palette:1.0.0'
@@ -72,7 +74,7 @@ dependencies {
     implementation 'org.eclipse.jetty:jetty-server:8.1.22.v20160922'
     implementation 'org.eclipse.jetty:jetty-servlet:8.1.22.v20160922'
     implementation 'org.eclipse.jetty:jetty-client:8.1.22.v20160922'
-    implementation 'com.wuyr:rippleanimation:1.0.0'
+//    implementation 'com.wuyr:rippleanimation:1.0.0'
     implementation 'com.github.MZCretin:ExpandableTextView:v1.6.1-x'
     implementation 'com.alibaba:fastjson:1.1.72.android'
     implementation 'org.greenrobot:eventbus:3.2.0'

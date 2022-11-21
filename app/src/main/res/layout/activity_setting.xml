@@ -313,6 +313,7 @@ android:orientation="vertical">
 
             <RelativeLayout
                 android:id="@+id/check_update"
+                android:visibility="gone"
                 android:background="?android:attr/selectableItemBackground"
                 android:clickable="true"
                 android:layout_width="match_parent"
@@ -353,6 +354,7 @@ android:orientation="vertical">
 
             <RelativeLayout
                 android:id="@+id/about"
+                android:visibility="gone"
                 android:layout_marginTop="8dp"
                 android:background="?android:attr/selectableItemBackground"
                 android:layout_width="match_parent"

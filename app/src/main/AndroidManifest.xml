@@ -46,6 +46,31 @@
             android:configChanges="screenLayout|orientation|screenSize|smallestScreenSize|keyboardHidden|uiMode"
             
             android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity
+            android:name=".main.home.MainActivity"
+            android:configChanges="screenLayout|orientation|screenSize|smallestScreenSize|keyboardHidden|uiMode"
+
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity
+            android:name=".main.my.FavoriteActivity"
+            android:configChanges="screenLayout|orientation|screenSize|smallestScreenSize|keyboardHidden|uiMode"
+
+            android:theme="@style/TranslucentTheme" />
+
+        <activity
+            android:name=".main.my.HistoryActivity"
+            android:configChanges="screenLayout|orientation|screenSize|smallestScreenSize|keyboardHidden|uiMode"
+
+            android:theme="@style/TranslucentTheme" />
+
+        <activity
+            android:name=".main.my.DownloadActivity"
+            android:configChanges="screenLayout|orientation|screenSize|smallestScreenSize|keyboardHidden|uiMode"
+
+            android:theme="@style/TranslucentTheme" />
+
         <activity
             android:name=".main.week.WeekActivity"
             android:configChanges="screenLayout|orientation|screenSize|smallestScreenSize|keyboardHidden|uiMode"

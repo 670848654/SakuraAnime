@@ -9,6 +9,7 @@
     app:cardBackgroundColor="@color/window_bg">
 
     <LinearLayout
+        android:id="@+id/desc_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
@@ -20,7 +21,7 @@
 
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 app:cardCornerRadius="8dp"
                 android:layout_marginRight="5dp"
                 app:cardElevation="0dp"
@@ -86,7 +87,7 @@
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="5"
+            android:layout_weight="6"
             android:layout_marginTop="2dp"
             android:layout_marginBottom="2dp"
             android:layout_marginLeft="5dp"
@@ -137,32 +138,16 @@
                 <ProgressBar
                     android:id="@+id/bottom_progress"
                     style="?android:attr/progressBarStyleHorizontal"
-                    android:layout_alignParentBottom="true"
                     android:layout_width="match_parent"
                     android:layout_height="3dp"
+                    android:layout_alignParentBottom="true"
                     android:max="100"
-                    android:visibility="visible"
-                    android:progressDrawable="@drawable/progress_bg" />
+                    android:progressDrawable="@drawable/progress_bg"
+                    android:visibility="visible" />
 
             </RelativeLayout>
 
         </LinearLayout>
-
-        <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
-
-            <ImageView
-                android:id="@+id/delete_view"
-                android:layout_centerVertical="true"
-                android:layout_centerHorizontal="true"
-                android:src="@drawable/baseline_delete_white_48dp"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:tint="@color/colorAccent"/>
-
-        </RelativeLayout>
 
     </LinearLayout>
 

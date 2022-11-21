@@ -716,6 +716,17 @@ public class DatabaseUtil {
     }
 
     /**
+     * 查询下载列表总数
+     * @return
+     */
+    public static int queryAllDownloadCount() {
+        Cursor cursor = db.rawQuery("SELECT t2.* FROM T_DOWNLOAD t1 LEFT JOIN T_DOWNLOAD_DATA t2 ON t1.F_ID = t2.F_LINK_ID" , null);
+        int count = cursor.getCount();
+        cursor.close();
+        return count;
+    }
+
+    /**
      * 删除下载数据
      * @param id
      */
@@ -835,6 +846,17 @@ public class DatabaseUtil {
                         taskId
                 });
         cursor.close();
+    }
+
+
+    /**
+     * 更新下载信息
+     */
+    public static void updateDownloadState(long taskId) {
+        db.execSQL("update T_DOWNLOAD_DATA set F_COMPLETE = 0 WHERE F_TASK_ID=?",
+                new Object[]{
+                        taskId
+                });
     }
 
     /**
@@ -977,14 +999,16 @@ public class DatabaseUtil {
      * @return
      */
     public static List<Object> queryDownloadAnimeInfo(long taskId) {
-        Cursor cursor = db.rawQuery("select t3.F_TITLE, t3.F_SOURCE from T_DOWNLOAD_DATA t1 LEFT JOIN T_DOWNLOAD t2 ON t1.F_LINK_ID = t2.F_ID LEFT JOIN T_ANIME t3 ON t2.F_LINK_ID = t3.F_ID where t1.F_TASK_ID=?",
+        Cursor cursor = db.rawQuery("select t3.F_TITLE, t3.F_SOURCE from T_DOWNLOAD_DATA t1 " +
+                        "LEFT JOIN T_DOWNLOAD t2 ON t1.F_LINK_ID = t2.F_ID " +
+                        "LEFT JOIN T_ANIME t3 ON t2.F_LINK_ID = t3.F_ID where t1.F_TASK_ID=?",
                 new String[]{String.valueOf(taskId)});
         List<Object> objects = new ArrayList<>();
         cursor.moveToNext();
         if (cursor.getCount() > 0) {
             objects.add(cursor.getString(0));
             objects.add(cursor.getInt(1));
-            Log.e("????" , cursor.getString(0) + cursor.getInt(1));
+            Log.e("????" , "taskId：" +taskId + ",番剧名称：" +cursor.getString(0) + cursor.getInt(1));
         }
         cursor.close();
         return objects;

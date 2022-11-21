@@ -159,6 +159,7 @@
 
     <style name="DialogStyle" parent="ThemeOverlay.Material3.MaterialAlertDialog">
         <item name="colorPrimary">@color/text_color_primary</item>
+        <item name="android:background">@color/window_bg</item>
         <item name="colorSecondary">@color/window_bg</item>
         <item name="colorSurface">@color/window_bg</item>
         <item name="colorOnSurface">@color/window_bg</item>

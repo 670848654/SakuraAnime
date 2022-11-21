@@ -17,6 +17,7 @@ import com.arialyy.aria.core.Aria;
 import com.arialyy.aria.core.download.DownloadEntity;
 import com.arialyy.aria.core.task.DownloadTask;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
@@ -46,7 +47,9 @@ import my.project.sakuraproject.custom.CustomToast;
 import my.project.sakuraproject.database.DatabaseUtil;
 import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.player.LocalPlayerActivity;
+import my.project.sakuraproject.services.DownloadService;
 import my.project.sakuraproject.util.Utils;
+import my.project.sakuraproject.util.VideoUtils;
 
 public class DownloadDataActivity extends BaseActivity<DownloadDataContract.View, DownloadDataPresenter> implements DownloadDataContract.View {
     @BindView(R.id.rv_list)
@@ -63,8 +66,10 @@ public class DownloadDataActivity extends BaseActivity<DownloadDataContract.View
     private int downloadDataCount = 0;
     private boolean isMain = true;
     protected boolean isErr = true;
-    private String downloadDataId;
-    private PopupMenu popupMenu;
+    private AlertDialog.Builder builder;
+    private static final String[] DOWNLOAD_STR = new String[]{"继续任务", "暂停任务", "删除任务"};
+    private static final String[] COMPLETE_STR = new String[]{"使用内置播放器播放", "使用外部播放器播放", "删除任务"};
+    private static final String[] DOWNLOAD_ERROR_STR = new String[]{"尝试重新下载", "删除任务"};
 
     @Override
     protected DownloadDataPresenter createPresenter() {
@@ -113,41 +118,70 @@ public class DownloadDataActivity extends BaseActivity<DownloadDataContract.View
         adapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
         adapter.setOnItemClickListener((adapter, view, position) -> {
             if (!Utils.isFastClick()) return;
-            if (downloadDataBeans.get(position).getComplete() != 1) {
-                CustomToast.showToast(this, "视频下载完成后才可播放！", CustomToast.WARNING);
-                return;
-            }
-            String path = downloadDataBeans.get(position).getPath();
-            popupMenu = new PopupMenu(this, adapter.getViewByPosition(position, R.id.title));
-            popupMenu.getMenu().add(android.view.Menu.NONE, 0, 0, "使用内置播放器播放");
-            popupMenu.getMenu().add(android.view.Menu.NONE, 1, 1, "使用外置播放器播放");
-            popupMenu.setOnMenuItemClickListener(item -> {
-                switch (item.getItemId()) {
-                    case 0:
-                        Bundle bundle = new Bundle();
-                        bundle.putString("playPath", path);
-                        bundle.putString("animeTitle", animeTitle);
-                        bundle.putString("dramaTitle", downloadDataBeans.get(position).getPlayNumber());
-                        bundle.putSerializable("downloadDataBeans", (Serializable) downloadDataBeans);
-                        startActivity(new Intent(this, LocalPlayerActivity.class).putExtras(bundle));
-                        break;
-                    case 1:
-                        Utils.selectVideoPlayer(this, path);
-                        break;
-                }
-                return true;
-            });
-            popupMenu.show();
-        });
-        adapter.setOnItemChildClickListener((adapter, view, position) -> {
-            if (!Utils.isFastClick()) return;
-            switch (view.getId()) {
-                case R.id.delete_view:
-                    showDeleteDataDialog(downloadDataBeans.get(position), position);
+            long taskId = downloadDataBeans.get(position).getTaskId();
+            switch (downloadDataBeans.get(position).getComplete()) {
+                case 0:
+                    // 等待下载状态
+                    builder = new AlertDialog.Builder(this, R.style.DialogStyle)
+                            .setItems(DOWNLOAD_STR, (dialogInterface, i) -> {
+                                dialogInterface.dismiss();
+                                switch (i) {
+                                    case 0:
+                                        // 继续下载
+                                        Aria.download(this).load(taskId).resume();
+                                        break;
+                                    case 1:
+                                        Aria.download(this).load(taskId).stop();
+                                        adapter.notifyItemChanged(position);
+                                        break;
+                                    case 2:
+                                        showDeleteDataDialog(downloadDataBeans.get(position), position);
+                                        break;
+                                }
+                            });
+                    break;
+                case 1:
+                    builder = new AlertDialog.Builder(this, R.style.DialogStyle)
+                            .setItems(COMPLETE_STR, (dialogInterface, i) -> {
+                                dialogInterface.dismiss();
+                                switch (i) {
+                                    case 0:
+                                        Bundle bundle = new Bundle();
+                                        bundle.putString("playPath",  downloadDataBeans.get(position).getPath());
+                                        bundle.putString("animeTitle", animeTitle);
+                                        bundle.putString("dramaTitle", downloadDataBeans.get(position).getPlayNumber());
+                                        bundle.putSerializable("downloadDataBeans", (Serializable) downloadDataBeans);
+                                        startActivity(new Intent(this, LocalPlayerActivity.class).putExtras(bundle));
+                                        break;
+                                    case 1:
+                                        Utils.selectVideoPlayer(this, downloadDataBeans.get(position).getPath());
+                                        break;
+                                    case 2:
+                                        showDeleteDataDialog(downloadDataBeans.get(position), position);
+                                        break;
+                                }
+                            });
+                    break;
+                case 2:
+                    builder = new AlertDialog.Builder(this, R.style.DialogStyle)
+                            .setItems(DOWNLOAD_ERROR_STR, (dialogInterface, i) -> {
+                                dialogInterface.dismiss();
+                                switch (i) {
+                                    case 0:
+                                        Aria.download(this).load(taskId).resume();
+                                        downloadDataBeans.get(position).setComplete(0);
+                                        DatabaseUtil.updateDownloadState(taskId);
+                                        break;
+                                    case 1:
+                                        showDeleteDataDialog(downloadDataBeans.get(position), position);
+                                        break;
+                                }
+                            });
                     break;
             }
+            builder.create().show();
         });
-        adapter.setOnItemLongClickListener((adapter, view, position) -> {
+        /*adapter.setOnItemLongClickListener((adapter, view, position) -> {
             if (!Utils.isFastClick()) return false;
             View v = adapter.getViewByPosition(mRecyclerView, position, R.id.title);
             final androidx.appcompat.widget.PopupMenu popupMenu = new androidx.appcompat.widget.PopupMenu(this, v);
@@ -162,7 +196,7 @@ public class DownloadDataActivity extends BaseActivity<DownloadDataContract.View
             });
             popupMenu.show();
             return true;
-        });
+        });*/
         if (Utils.checkHasNavigationBar(this)) mRecyclerView.setPadding(0,0,0, Utils.getNavigationBarHeight(this));
         adapter.setLoadMoreView(new CustomLoadMoreView());
         adapter.setOnLoadMoreListener(() -> mRecyclerView.postDelayed(() -> {
@@ -198,11 +232,10 @@ public class DownloadDataActivity extends BaseActivity<DownloadDataContract.View
     }
 
     private void deleteData(boolean removeFile, DownloadDataBean bean, int position) {
-        downloadDataId = bean.getId();
+        DatabaseUtil.deleteDownloadData(bean.getId());
         if (bean.getTaskId() == -1) {
             // -1直接删除
             adapter.remove(position);
-            DatabaseUtil.deleteDownloadData(bean.getId());
             CustomToast.showToast(this, "已删除该剧集任务", CustomToast.SUCCESS);
         } else {
             String path = bean.getPath();
@@ -269,8 +302,9 @@ public class DownloadDataActivity extends BaseActivity<DownloadDataContract.View
                 if (number != null)
                     number.setText(downloadTask.getConvertSpeed() == null ? "0kb/s" : downloadTask.getConvertSpeed());
                 TextView state = (TextView) adapter.getViewByPosition(i, R.id.state);
-                if (state != null)
+                if (state != null) {
                     state.setText(Html.fromHtml("<font color='#ff4081'>下载中</font>"));
+                }
                 TextView fileSize = (TextView) adapter.getViewByPosition(i, R.id.file_size);
                 if (fileSize != null) {
                     if (fileSize.getVisibility() != View.VISIBLE)
@@ -313,8 +347,7 @@ public class DownloadDataActivity extends BaseActivity<DownloadDataContract.View
     @Download.onTaskCancel
     public void onTaskCancel(DownloadTask downloadTask) {
         Log.e("Service onTaskCancel", downloadTask.getTaskName() + "，取消下载");
-        List<Object> objects = DatabaseUtil.queryDownloadAnimeInfo(downloadTask.getEntity().getId());
-        DatabaseUtil.deleteDownloadData(downloadDataId);
+//        List<Object> objects = DatabaseUtil.queryDownloadAnimeInfo(downloadTask.getEntity().getId());
         EventBus.getDefault().post(new Refresh(3));
     }
 
@@ -397,6 +430,15 @@ public class DownloadDataActivity extends BaseActivity<DownloadDataContract.View
             }
         }
     }
+
+    /*@Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(Refresh refresh) {
+        if (refresh.getIndex() == 3) {
+            mPresenter = new DownloadDataPresenter(downloadId, 0,limit, this);
+            loadData();
+        }
+    }
+*/
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onDownloadEvent(DownloadEvent downloadEvent) {

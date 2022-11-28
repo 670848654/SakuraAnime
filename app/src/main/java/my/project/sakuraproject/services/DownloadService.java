@@ -66,7 +66,8 @@ public class DownloadService extends Service {
             wakeLock = null;
         }
         // 服务关闭时存在未下载完成的任务，停止下载
-        if (Aria.download(this).getAllNotCompleteTask().size() > 0) {
+        List<DownloadEntity> downloadEntities = Aria.download(this).getAllNotCompleteTask();
+        if (downloadEntities != null && downloadEntities.size() > 0) {
             mNotify.showServiceNotification(-2, "由于下载服务被关闭，任务已暂停...");
             Aria.download(this).stopAllTask();
         }

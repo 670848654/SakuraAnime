@@ -47,7 +47,7 @@ public class DownloadNotification {
             Notification notification = null;
             if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.O) {
                 oldBuilder = new Notification.Builder(context);
-                oldBuilder.setAutoCancel(false).setPriority(Notification.PRIORITY_HIGH).setSmallIcon(R.drawable.baseline_download_white_48dp);
+                oldBuilder.setAutoCancel(false).setPriority(Notification.PRIORITY_HIGH).setSmallIcon(R.drawable.player_seek_img);
                 notification = oldBuilder.setContentTitle(SERVICE_INFO_NAME).setContentTitle(content).build();
                 mManager.notify(id, notification);
             } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -61,7 +61,7 @@ public class DownloadNotification {
                 mManager.createNotificationChannel(mChannel);
 
                 newBuilder = new NotificationCompat.Builder(context, CHANNEL_SERVICE_INFO_ID);
-                newBuilder.setAutoCancel(false).setSmallIcon(R.drawable.baseline_download_white_48dp);
+                newBuilder.setAutoCancel(false).setSmallIcon(R.drawable.player_seek_img);
                 notification = newBuilder.setContentTitle(SERVICE_INFO_NAME).setContentTitle(content).build();
                 mManager.notify(id, notification);
             }

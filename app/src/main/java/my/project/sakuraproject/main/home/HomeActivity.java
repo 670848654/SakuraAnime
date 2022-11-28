@@ -11,7 +11,6 @@ import android.widget.RelativeLayout;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.wuyr.rippleanimation.RippleAnimation;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -356,7 +355,7 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
                 getResources().getColor(R.color.dark_navigation_tini_color)
         };*/
         if (isChangingTheme) {
-            RippleAnimation.create(toolbar).setDuration(1000).start();
+//            RippleAnimation.create(toolbar).setDuration(1000).start();
             if (gtSdk23()) {
                 if (isDarkTheme) getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN & ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
                 else getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);

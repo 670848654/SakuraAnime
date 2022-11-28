@@ -167,7 +167,7 @@
     <string name="create_parse_download_task">解析视频真实地址中，请稍后&#8230;</string>
     <string name="download_m3u8_error">该</string>
     <string name="select_download_number">选择需要下载的剧集</string>
-    <string name="download_info">下载须知&#187; \n下载标识：\n\u3000红色→ 表示该剧集需要解析后才能下载（点击剧集即可开始解析下载，只支持单任务操作）。\n\u3000绿色→ 表示该剧集已存在下载任务。\n\u3000【不建议一次性下载太多剧集】\nm3u8格式：\n\u3000虽然支持m3u8格式的下载，由于m3u8存在各种加密、二级域名等情况，鉴于大部分资源都是使用AES-128加密，默认使用AES-128解密并合并文件为mp4格式，所以不一定能执行成功，如果下载失败自行删除下载任务~\n\u3000下载的视频仅在 我的→ 下载列表中进行播放，其他界面播放还是使用网络解析播放！</string>
+    <string name="download_info">下载须知&#187; \n下载标识：\n\u3000红色→ 表示该剧集需要解析后才能下载（点击剧集即可开始解析下载，只支持单任务操作）。\n\u3000绿色→ 表示该剧集已存在下载任务。\n\u3000【不建议一次性下载太多剧集】\n后台下载：\n\u3000请注意如果你需要在后台进行下载时，由于数据操作是在服务中进行，不同手机可能存在后台、锁屏后下载服务被杀死的情况，请根据自己的手机设置手动将该APP设置电池优化白名单或允许后台运行，否则后台下载时会出现下载失败的情况！\nm3u8格式：\n\u3000虽然支持m3u8格式的下载，由于m3u8存在各种加密、二级域名等情况，鉴于大部分资源都是使用AES-128加密，默认使用AES-128解密并合并文件为mp4格式，所以不一定能执行成功，如果下载失败自行删除下载任务~\n\u3000下载的视频仅在 我的→ 下载列表中进行播放，其他界面播放还是使用网络解析播放！</string>
     <string name="delete_single_download">是否删除该剧集任务？</string>
     <string name="remove_download_file">同时删除文件</string>
     <string name="download_positive">继续下载</string>
@@ -176,12 +176,14 @@
     <string name="os_title">开源相关</string>
     <!-- 快捷方式文本 -->
     <string name="disableMsg">不可用</string>
-    <string name="searchShortName">搜索动漫</string>
-    <string name="searchLongName">搜索动漫</string>
-    <string name="tagShortName">动漫分类</string>
-    <string name="tagLongName">动漫分类</string>
     <string name="favoriteShortName">我的追番</string>
     <string name="favoriteLongName">我的追番</string>
+    <string name="historyShortName">历史记录</string>
+    <string name="historyLongName">历史记录</string>
+    <string name="downloadShortName">下载列表</string>
+    <string name="downloadLongName">下载列表</string>
+    <string name="searchShortName">搜索动漫</string>
+    <string name="searchLongName">搜索动漫</string>
     <!-- 播放器文本 -->
     <string name="set_user_speed">设置快进/快退时长</string>
     <string name="player_setting_title">播放器设置</string>

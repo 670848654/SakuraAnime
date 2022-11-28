@@ -30,12 +30,43 @@ public class DownloadNotification {
     public static final CharSequence INFO_NAME = "下载状态";
     public static final String INFO_Description = "下载状态";
 
+    public static final String CHANNEL_SERVICE_INFO_ID = "downloadService";
+    public static final CharSequence SERVICE_INFO_NAME = "下载服务";
+    public static final String SERVICE_INFO_Description = "下载服务";
+
     private RemoteViews remoteViews;
 
     public DownloadNotification(Context context) {
         this.context = context;
         notifications = new HashMap<>();
         mManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+    }
+
+    public void showServiceNotification(int id, String content) {
+        if (!notifications.containsKey(id)) {
+            Notification notification = null;
+            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.O) {
+                oldBuilder = new Notification.Builder(context);
+                oldBuilder.setAutoCancel(false).setPriority(Notification.PRIORITY_HIGH).setSmallIcon(R.drawable.baseline_download_white_48dp);
+                notification = oldBuilder.setContentTitle(SERVICE_INFO_NAME).setContentTitle(content).build();
+                mManager.notify(id, notification);
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                NotificationChannel mChannel = new NotificationChannel(CHANNEL_SERVICE_INFO_ID, SERVICE_INFO_NAME, NotificationManager.IMPORTANCE_HIGH);
+                mChannel.setDescription(SERVICE_INFO_Description);
+                mChannel.enableLights(true);
+                mChannel.setLightColor(Color.RED);
+                mChannel.enableVibration(true);
+                mChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+                mChannel.setShowBadge(false);
+                mManager.createNotificationChannel(mChannel);
+
+                newBuilder = new NotificationCompat.Builder(context, CHANNEL_SERVICE_INFO_ID);
+                newBuilder.setAutoCancel(false).setSmallIcon(R.drawable.baseline_download_white_48dp);
+                notification = newBuilder.setContentTitle(SERVICE_INFO_NAME).setContentTitle(content).build();
+                mManager.notify(id, notification);
+            }
+            notifications.put(id, notification);
+        }
     }
 
     public void showDefaultNotification(int notificationId, String title, String videoNumber, boolean success) {
@@ -48,11 +79,11 @@ public class DownloadNotification {
             remoteViews.setTextViewText(R.id.state, success ? "下载完成" : "下载失败");
             if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.O) {
                 oldBuilder = new Notification.Builder(context);
-                oldBuilder.setAutoCancel(true).setSmallIcon(R.drawable.baseline_download_white_48dp);
+                oldBuilder.setAutoCancel(true).setPriority(Notification.PRIORITY_DEFAULT).setSmallIcon(R.drawable.baseline_download_white_48dp);
                 notification = oldBuilder.setContent(remoteViews).build();
                 mManager.notify(notificationId, notification);
             } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                NotificationChannel mChannel = new NotificationChannel(CHANNEL_INFO_ID, INFO_NAME, NotificationManager.IMPORTANCE_LOW);
+                NotificationChannel mChannel = new NotificationChannel(CHANNEL_INFO_ID, INFO_NAME, NotificationManager.IMPORTANCE_DEFAULT);
                 mChannel.setDescription(INFO_Description);
                 mChannel.enableLights(true);
                 mChannel.setLightColor(Color.RED);
@@ -80,7 +111,7 @@ public class DownloadNotification {
             remoteViews.setTextViewText(R.id.state, "下载中...");
             if (Build.VERSION.SDK_INT <= android.os.Build.VERSION_CODES.O) {
                 oldBuilder = new Notification.Builder(context);
-                oldBuilder.setAutoCancel(true).setSmallIcon(R.drawable.baseline_download_white_48dp);
+                oldBuilder.setAutoCancel(true).setPriority(Notification.PRIORITY_LOW).setSmallIcon(R.drawable.baseline_download_white_48dp);
                 notification = oldBuilder.setContent(remoteViews).build();
                 mManager.notify(notificationId, notification);
             } else if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {

@@ -482,7 +482,7 @@ public abstract class BasePlayerActivity extends BaseActivity implements JZPlaye
     @Override
     protected void onStop() {
         super.onStop();
-        if (isPip) finish();
+        if (isPip) onDestroy();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)

@@ -53,26 +53,10 @@ public class DownloadService extends Service {
         if (null != wakeLock)  {
             wakeLock.acquire();
         }
-        /*handler = new Handler(Looper.getMainLooper());
-        handler.post(() -> CustomToast.showToast(getApplicationContext(), "下载服务已开启", CustomToast.SUCCESS));*/
         mNotify = new DownloadNotification(this);
+        mNotify.showServiceNotification(-1, "下载服务运行中");
         Log.e("Service onCreate", "DownloadService开始运行");
         Aria.download(this).register();
-        /*EventBus.getDefault().post(new Refresh(3));
-        List<DownloadEntity> list = Aria.download(this).getAllNotCompleteTask();
-        Aria.download(this).register();
-        if (list != null && list.size() > 0) {
-            setM3U8VodOption();
-            for (DownloadEntity entity : list) {
-                if (entity.getUrl().contains("m3u8")) {
-                    Log.e("恢复下载M3U8", "....");
-                    Aria.download(this).load(entity.getId()).m3u8VodOption(m3U8VodOption).resume();
-                } else {
-                    Aria.download(this).load(entity.getId()).resume();
-                    Log.e("恢复下载MP4", "....");
-                }
-            }
-        }*/
     }
 
     @Override
@@ -81,24 +65,24 @@ public class DownloadService extends Service {
             wakeLock.release();
             wakeLock = null;
         }
-        Log.e("Service onDestroy", "DownloadService销毁了");
+        // 服务关闭时存在未下载完成的任务，停止下载
+        if (Aria.download(this).getAllNotCompleteTask().size() > 0) {
+            mNotify.showServiceNotification(-2, "由于下载服务被关闭，任务已暂停...");
+            Aria.download(this).stopAllTask();
+        }
+        mNotify.cancelNotification(-1);
         Aria.download(this).unRegister();
-        /*handler.post(() -> {
-            Aria.download(this).unRegister();
-            CustomToast.showToast(getApplicationContext(), "下载服务已关闭", CustomToast.SUCCESS);
-        });*/
+        Log.e("Service onDestroy", "DownloadService销毁了");
         super.onDestroy();
     }
 
     @Download.onWait
     public void onTaskWait(DownloadTask downloadTask) {
-        Log.e("Service onTaskWait", downloadTask.getTaskName() + "，等待处理");
         EventBus.getDefault().post(new Refresh(3));
     }
 
     @Download.onTaskResume
     public void onTaskResume(DownloadTask downloadTask) {
-        Log.e("Service onTaskStart", downloadTask.getTaskName() + "，恢复下载");
         mNotify.showNotification(new Long(downloadTask.getEntity().getId()).intValue(), (String) VideoUtils.getAnimeInfo(downloadTask, 0), downloadTask.getTaskName());
 //        EventBus.getDefault().post(new Refresh(3));
     }
@@ -106,20 +90,17 @@ public class DownloadService extends Service {
 
     @Download.onTaskStart
     public void onTaskStart(DownloadTask downloadTask) {
-        Log.e("Service onTaskStart", downloadTask.getTaskName() + "，开始下载");
         mNotify.showNotification(new Long(downloadTask.getEntity().getId()).intValue(), (String) VideoUtils.getAnimeInfo(downloadTask, 0), downloadTask.getTaskName());
     }
 
     @Download.onTaskStop
     public void onTaskStop(DownloadTask downloadTask) {
-        Log.e("Service onTaskStop", downloadTask.getTaskName() + "，停止下载");
         EventBus.getDefault().post(new Refresh(3));
         shouldUnRegister();
     }
 
     @Download.onTaskCancel
     public void onTaskCancel(DownloadTask downloadTask) {
-        Log.e("Service onTaskCancel", downloadTask.getTaskName() + "，取消下载");
         mNotify.cancelNotification(new Long(downloadTask.getEntity().getId()).intValue());
 //        showInfo(downloadTask, "取消下载");
         shouldUnRegister();
@@ -127,7 +108,6 @@ public class DownloadService extends Service {
 
     @Download.onTaskFail
     public void onTaskFail(DownloadTask downloadTask, Exception e) {
-        Log.e("Service onTaskFail", downloadTask.getTaskName() + "，下载失败");
         String animeTitle = (String) VideoUtils.getAnimeInfo(downloadTask, 0);
         mNotify.uploadInfo(new Long(downloadTask.getEntity().getId()).intValue(), animeTitle, downloadTask.getTaskName(), false);
         DatabaseUtil.updateDownloadError((String) VideoUtils.getAnimeInfo(downloadTask, 0), (Integer) VideoUtils.getAnimeInfo(downloadTask, 1), downloadTask.getFilePath(), downloadTask.getEntity().getId(), downloadTask.getFileSize());
@@ -137,7 +117,6 @@ public class DownloadService extends Service {
 
     @Download.onTaskComplete
     public void onTaskComplete(DownloadTask downloadTask) {
-        Log.e("Service onTaskComplete", downloadTask.getTaskName() + "，下载完成");
         String animeTitle = (String) VideoUtils.getAnimeInfo(downloadTask, 0);
         mNotify.uploadInfo(new Long(downloadTask.getEntity().getId()).intValue(), animeTitle, downloadTask.getTaskName(), true);
         DatabaseUtil.updateDownloadSuccess(animeTitle, (Integer) VideoUtils.getAnimeInfo(downloadTask, 1), downloadTask.getFilePath(), downloadTask.getEntity().getId(), downloadTask.getFileSize());
@@ -154,6 +133,7 @@ public class DownloadService extends Service {
         List<DownloadEntity> list = Aria.download(this).getDRunningTask();
         if (list == null || list.size() == 0) {
             // 没有正在执行的任务
+            mNotify.cancelNotification(-1);
             EventBus.getDefault().post(new Refresh(100));
         }
     }

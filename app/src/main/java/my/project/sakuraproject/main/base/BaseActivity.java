@@ -63,11 +63,11 @@ public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatA
         initBeforeView();
         setContentView(setLayoutRes());
         if (Utils.checkHasNavigationBar(this)) {
-            if (!getRunningActivityName().equals("PlayerActivity"))
+            /*if (!getRunningActivityName().equals("PlayerActivity"))
                 getWindow().setFlags(
                         WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
                         WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
-                );
+                );*/
             getWindow().setNavigationBarColor(Color.TRANSPARENT);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                 getWindow().setNavigationBarDividerColor(Color.TRANSPARENT);

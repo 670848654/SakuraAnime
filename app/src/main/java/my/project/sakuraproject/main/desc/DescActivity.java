@@ -94,7 +94,7 @@ import my.project.sakuraproject.util.StatusBarUtil;
 import my.project.sakuraproject.util.Utils;
 import my.project.sakuraproject.util.VideoUtils;
 
-public class DescActivity extends BaseActivity<DescContract.View, DescPresenter> implements View.OnSystemUiVisibilityChangeListener, DescContract.View, VideoContract.View,
+public class DescActivity extends BaseActivity<DescContract.View, DescPresenter> implements DescContract.View, VideoContract.View,
         DownloadVideoContract.View, SniffingUICallback {
     @BindView(R.id.anime_img)
     ImageView animeImg;
@@ -1028,10 +1028,10 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
             Log.e("height", height + "");
             bottomAppBar.setLayoutParams(params);
         }*/
-        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_IMMERSIVE
+        /*getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_IMMERSIVE
                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-        getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(this);
+        getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(this);*/
     }
 
     protected void setConfigurationChanged() {
@@ -1056,12 +1056,12 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         }
     }
 
-    @Override
+    /*@Override
     public void onSystemUiVisibilityChange(int i) {
         new Handler().postDelayed(() ->
                 getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_IMMERSIVE
                         | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION), 500);
 
-    }
+    }*/
 }

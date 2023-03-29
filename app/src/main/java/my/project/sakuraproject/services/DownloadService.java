@@ -91,6 +91,7 @@ public class DownloadService extends Service {
 
     @Download.onTaskStart
     public void onTaskStart(DownloadTask downloadTask) {
+        EventBus.getDefault().post(new Refresh(3));
         mNotify.showNotification(new Long(downloadTask.getEntity().getId()).intValue(), (String) VideoUtils.getAnimeInfo(downloadTask, 0), downloadTask.getTaskName());
     }
 

@@ -137,6 +137,7 @@ public class AboutActivity extends BaseActivity {
 
     public List createUpdateLogList() {
         List logsList = new ArrayList();
+        logsList.add(new LogBean("版本：2.4.3", "修复Yhdm源一些番剧解析出错的问题\n由于malimali源站点关闭，后续可能会再添加其他源"));
         logsList.add(new LogBean("版本：2.4.2", "修复已知问题"));
         logsList.add(new LogBean("版本：2.4.1", "修复下载记录无法删除的问题"));
         logsList.add(new LogBean("版本：2.4.0", "移除滑动返回修复Android 8.0闪退问题\n支持屏幕旋转"));

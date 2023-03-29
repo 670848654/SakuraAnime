@@ -71,7 +71,7 @@ public class MyFragment extends MyLazyFragment {
 
     @Override
     protected void setConfigurationChanged() {
-        setRecyclerViewView();
+        setRecyclerViewView(false);
     }
 
     @Override
@@ -93,9 +93,6 @@ public class MyFragment extends MyLazyFragment {
         videoList.add(new MainBean("追番列表", 1, R.drawable.outline_movie_filter_white_48dp, DatabaseUtil.queryFavoriteCount()));
         videoList.add(new MainBean("历史播放记录", 2, R.drawable.baseline_history_white_48dp, DatabaseUtil.queryHistoryCount()));
         videoList.add(new MainBean("视频下载列表", 3, R.drawable.baseline_download_white_48dp, DatabaseUtil.queryAllDownloadCount()));
-        videoRvList.setLayoutManager(new GridLayoutManager(getActivity(), 4));
-        gridSpaceItemDecoration = new GridSpaceItemDecoration(4, Utils.dpToPx(getActivity(), 8), true);
-        videoRvList.addItemDecoration(gridSpaceItemDecoration);
         videoAdapter = new MainAdapter(getActivity(), videoList);
         videoAdapter.setOnItemClickListener((adapter, view, position) -> {
             switch (videoList.get(position).getType()) {
@@ -117,9 +114,6 @@ public class MyFragment extends MyLazyFragment {
         otherList.add(new MainBean("版本 "+Utils.getASVersionName(), 2, R.drawable.outline_cloud_sync_white_48dp, 0));
         otherList.add(new MainBean("设置", 3, R.drawable.ic_settings_white_48dp, 0));
         otherList.add(new MainBean("关于", 4, R.drawable.baseline_android_white_48dp, 0));
-        otherRvList.setLayoutManager(new GridLayoutManager(getActivity(), 4));
-        gridSpaceItemDecoration = new GridSpaceItemDecoration(4, Utils.dpToPx(getActivity(), 8), true);
-        otherRvList.addItemDecoration(gridSpaceItemDecoration);
         otherAdapter = new MainAdapter(getActivity(), otherList);
         otherAdapter.setOnItemClickListener((adapter, view, position) -> {
             switch (otherList.get(position).getType()) {
@@ -144,6 +138,7 @@ public class MyFragment extends MyLazyFragment {
             }
         });
         otherRvList.setAdapter(otherAdapter);
+        setRecyclerViewView(true);
     }
 
     private void setDefaultSource() {
@@ -154,12 +149,14 @@ public class MyFragment extends MyLazyFragment {
             switch (index) {
                 case 0:
                     SharedPreferencesUtils.setParam(getActivity(), "isImomoe", false);
+                    setDomain();
                     break;
                 case 1:
-                    SharedPreferencesUtils.setParam(getActivity(), "isImomoe", true);
+                    CustomToast.showToast(getActivity(), "该站点已关闭，后续将引入新站点...", CustomToast.WARNING);
+//                    SharedPreferencesUtils.setParam(getActivity(), "isImomoe", true);
                     break;
             }
-            setDomain();
+//            setDomain();
             dialog.dismiss();
         });
         AlertDialog alertDialog = builder.create();
@@ -225,6 +222,25 @@ public class MyFragment extends MyLazyFragment {
         Utils.viewInBrowser(getActivity(), downloadUrl);
     }
 
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        videoList.get(0).setNumber(DatabaseUtil.queryFavoriteCount());
+        videoList.get(1).setNumber(DatabaseUtil.queryHistoryCount());
+        videoList.get(2).setNumber(DatabaseUtil.queryAllDownloadCount());
+        videoAdapter.setNewData(videoList);
+    }
+
+    @Override
+    protected void onVisible() {
+        super.onVisible();
+        videoList.get(0).setNumber(DatabaseUtil.queryFavoriteCount());
+        videoList.get(1).setNumber(DatabaseUtil.queryHistoryCount());
+        videoList.get(2).setNumber(DatabaseUtil.queryAllDownloadCount());
+        videoAdapter.setNewData(videoList);
+    }
+
     @Override
     protected Presenter createPresenter() {
         return null;
@@ -238,30 +254,43 @@ public class MyFragment extends MyLazyFragment {
     @Override
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(Refresh refresh) {
-        Log.e("ref", "刷新列表");
-        videoList.get(0).setNumber(DatabaseUtil.queryFavoriteCount());
+       /* videoList.get(0).setNumber(DatabaseUtil.queryFavoriteCount());
         videoList.get(1).setNumber(DatabaseUtil.queryHistoryCount());
         videoList.get(2).setNumber(DatabaseUtil.queryAllDownloadCount());
-        videoAdapter.setNewData(videoList);
+        videoAdapter.setNewData(videoList);*/
     }
 
-    private void setRecyclerViewView() {
+    private void setRecyclerViewView(boolean isMain) {
         String config = this.getResources().getConfiguration().toString();
-        boolean isInMagicWindow = config.contains("miui-magic-windows");
+//        boolean isInMagicWindow = config.contains("miui-magic-windows");
         if (!Utils.isPad()) {
             videoRvList.setLayoutManager(new GridLayoutManager(getActivity(), isPortrait ? 4 : 6));
-
             otherRvList.setLayoutManager(new GridLayoutManager(getActivity(), isPortrait ? 4 : 6));
+            if (isMain)
+                setSpaceItemDecoration(isPortrait ? 4 : 6);
         } else {
-            if (isInMagicWindow) {
+            /*if (isInMagicWindow) {
                 videoRvList.setLayoutManager(new GridLayoutManager(getActivity(), 6));
-
                 otherRvList.setLayoutManager(new GridLayoutManager(getActivity(), 6));
+                if (isMain)
+                    setSpaceItemDecoration(6);
             } else {
-                videoRvList.setLayoutManager(new GridLayoutManager(getActivity(), isPortrait ? 8 : 16));
-
-                otherRvList.setLayoutManager(new GridLayoutManager(getActivity(), isPortrait ? 8 : 16));
-            }
+                videoRvList.setLayoutManager(new GridLayoutManager(getActivity(), isPortrait ? 8 : 12));
+                otherRvList.setLayoutManager(new GridLayoutManager(getActivity(), isPortrait ? 8 : 12));
+                if (isMain)
+                    setSpaceItemDecoration(isPortrait ? 8 : 12);
+            }*/
+            videoRvList.setLayoutManager(new GridLayoutManager(getActivity(), isPortrait ? 8 : 12));
+            otherRvList.setLayoutManager(new GridLayoutManager(getActivity(), isPortrait ? 8 : 12));
+            if (isMain)
+                setSpaceItemDecoration(isPortrait ? 8 : 12);
         }
+    }
+
+    private void setSpaceItemDecoration(int spanCount) {
+        gridSpaceItemDecoration = new GridSpaceItemDecoration(spanCount, Utils.dpToPx(getActivity(), 8), true);
+        videoRvList.addItemDecoration(gridSpaceItemDecoration);
+        gridSpaceItemDecoration = new GridSpaceItemDecoration(spanCount, Utils.dpToPx(getActivity(), 8), true);
+        otherRvList.addItemDecoration(gridSpaceItemDecoration);
     }
 }

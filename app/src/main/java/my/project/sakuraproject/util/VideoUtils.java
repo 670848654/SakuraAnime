@@ -105,7 +105,7 @@ public class VideoUtils {
     public static String getVideoUrl(String url) {
         // String playStr = "";
         if (!url.contains("$mp4"))
-            return url.replaceAll("changeplay\\('", "").replaceAll("'\\);", "");
+            return url.replaceAll("changeplay\\('", "").replaceAll("'\\);", "").replaceAll("\\$(.*)", "");
         else
             return url.replaceAll("\\$(.*)", "").replaceAll("changeplay\\('", "").replaceAll("'\\);", "");
         /*

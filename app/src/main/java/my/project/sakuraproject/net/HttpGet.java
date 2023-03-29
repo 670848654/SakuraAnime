@@ -17,6 +17,8 @@ public class HttpGet {
         OkHttpClient client = new OkHttpClient.Builder()
                 .connectTimeout(connectTimeout, TimeUnit.SECONDS)
                 .readTimeout(readTimeout, TimeUnit.SECONDS)
+                .sslSocketFactory(SSLSocketClient.getSSLSocketFactory(), SSLSocketClient.getX509TrustManager())
+                .hostnameVerifier(SSLSocketClient.getHostnameVerifier())
                 .build();
         Request request = new Request.Builder()
                 .url(url)

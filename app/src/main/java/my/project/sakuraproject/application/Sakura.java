@@ -2,8 +2,10 @@ package my.project.sakuraproject.application;
 
 import android.app.Activity;
 import android.app.Application;
-import android.content.Intent;
+import android.os.Handler;
 import android.view.View;
+
+import androidx.appcompat.app.AppCompatDelegate;
 
 import com.arialyy.aria.core.Aria;
 import com.bumptech.glide.Glide;
@@ -19,10 +21,8 @@ import java.util.Set;
 
 import javax.net.ssl.HttpsURLConnection;
 
-import androidx.appcompat.app.AppCompatDelegate;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.bean.AnimeUpdateInfoBean;
-import my.project.sakuraproject.services.DownloadService;
 import my.project.sakuraproject.util.CropUtil;
 import my.project.sakuraproject.util.SharedPreferencesUtils;
 import my.project.sakuraproject.util.Utils;
@@ -44,9 +44,12 @@ public class Sakura extends Application {
     // yhdm最近更新动漫
     public static String YHDM_UPDATE;
 
+    public static Handler mainHandler;
+
     @Override
     public void onCreate() {
         super.onCreate();
+        mainHandler = new Handler(this.getMainLooper());
         Utils.init(this);
         // 忽略Https验证
         HttpsURLConnection.setDefaultSSLSocketFactory(CropUtil.getUnsafeSslSocketFactory());

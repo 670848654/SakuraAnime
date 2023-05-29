@@ -7,11 +7,12 @@ buildscript {
         jcenter()
         mavenCentral()
         maven {
+            allowInsecureProtocol = true
             url 'http://4thline.org/m2'
         }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.1.0'
+        classpath 'com.android.tools.build:gradle:7.2.0'
         classpath 'com.jakewharton:butterknife-gradle-plugin:10.2.1'
 
         // NOTE: Do not place your application dependencies here; they belong
@@ -25,6 +26,7 @@ allprojects {
         jcenter()
         mavenCentral()
         maven {
+            allowInsecureProtocol = true
             url 'http://4thline.org/m2'
         }
     }

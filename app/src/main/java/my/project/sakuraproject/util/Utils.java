@@ -945,4 +945,13 @@ public class Utils {
         });
         view.startAnimation(animation);
     }
+
+    public static int getNavigationBarHeight() {
+        float result = 0;
+        int resourceId = context.getResources().getIdentifier("navigation_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            result = context.getResources().getDimension(resourceId);
+        }
+        return (int) result;
+    }
 }

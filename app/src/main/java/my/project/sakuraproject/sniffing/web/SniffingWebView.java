@@ -49,8 +49,8 @@ public class SniffingWebView extends WebView {
         }
         mWebSettings.setJavaScriptCanOpenWindowsAutomatically(true);
         mWebSettings.setLoadsImagesAutomatically(true);
-        mWebSettings.setAppCacheEnabled(true);
-        mWebSettings.setAppCachePath(context.getCacheDir().getAbsolutePath());
+//        mWebSettings.setAppCacheEnabled(true);
+//        mWebSettings.setAppCachePath(context.getCacheDir().getAbsolutePath());
         mWebSettings.setDatabaseEnabled(true);
         mWebSettings.setGeolocationDatabasePath(context.getDir("database", 0).getPath());
         mWebSettings.setGeolocationEnabled(true);

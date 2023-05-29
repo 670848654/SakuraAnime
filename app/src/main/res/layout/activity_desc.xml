@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout
+    android:id="@+id/root"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/window_bg"
@@ -19,6 +20,7 @@
         android:background="@drawable/desc_gradient"
         android:fitsSystemWindows="true" />
 
+
     <my.project.sakuraproject.custom.MySwipeRefreshLayout
         android:id="@+id/mSwipe"
         android:layout_width="match_parent"
@@ -32,24 +34,41 @@
             android:clipToPadding="false">
 
             <LinearLayout
+                android:id="@+id/app_bar_margin"
                 android:clipChildren="true"
-                android:layout_marginTop="?attr/actionBarSize"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <LinearLayout
+                <com.google.android.material.appbar.AppBarLayout
+                    android:id="@+id/app_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:theme="@style/AppTheme.AppBarOverlay">
+
+                    <androidx.appcompat.widget.Toolbar
+                        android:id="@+id/toolbar"
+                        style="@style/ToolbarStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="?attr/actionBarSize"
+                        app:titleTextColor="@color/white"
+                        app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+                </com.google.android.material.appbar.AppBarLayout>
+
+                <RelativeLayout
                     android:id="@+id/desc_view"
                     android:visibility="visible"
                     android:layout_width="match_parent"
                     android:clipChildren="false"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:layout_marginLeft="16dp">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/img_box"
-                        android:layout_width="match_parent"
-                        android:layout_height="203dp">
+                        android:layout_width="wrap_content"
+                        android:layout_height="150dp">
 
                         <androidx.cardview.widget.CardView
                             android:id="@+id/card_view"
@@ -75,7 +94,7 @@
                                     android:layout_height="match_parent"
                                     android:scaleType="centerCrop" />
 
-                                <androidx.appcompat.widget.AppCompatTextView
+                                <!--<androidx.appcompat.widget.AppCompatTextView
                                     android:id="@+id/score_view"
                                     android:visibility="gone"
                                     android:layout_width="wrap_content"
@@ -114,91 +133,83 @@
                                         android:textSize="12sp"
                                         android:textColor="#f3f3f3" />
 
-                                </LinearLayout>
+                                </LinearLayout>-->
 
                             </RelativeLayout>
                         </androidx.cardview.widget.CardView>
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
-                        <RelativeLayout
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="5dp"
+                        android:layout_toRightOf="@+id/img_box"
+                        android:orientation="vertical">
+
+                        <!--<my.project.sakuraproject.custom.MyTextView
+                            android:id="@+id/title"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
+                            android:layout_height="wrap_content"
+                            android:ellipsize="marquee"
+                            android:focusable="true"
+                            android:focusableInTouchMode="true"
+                            android:marqueeRepeatLimit="marquee_forever"
+                            android:scrollHorizontally="true"
+                            android:shadowColor="@color/light_toolbar_color_lt23"
+                            android:shadowDx="1.0"
+                            android:shadowDy="1.0"
+                            android:shadowRadius="2.0"
+                            android:singleLine="true"
+                            android:textColor="@color/white"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />-->
 
-                            <my.project.sakuraproject.custom.MyTextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:id="@+id/title"
-                                android:layout_marginTop="10dp"
-                                android:gravity="center_horizontal"
-                                android:focusable="true"
-                                android:focusableInTouchMode="true"
-                                android:marqueeRepeatLimit="marquee_forever"
-                                android:ellipsize="marquee"
-                                android:scrollHorizontally="true"
-                                android:singleLine="true"
-                                android:textStyle="bold"
-                                android:shadowColor="@color/light_toolbar_color_lt23"
-                                android:shadowDx="1.0"
-                                android:shadowDy="1.0"
-                                android:shadowRadius="2.0"
-                                android:textColor="@color/white"
-                                android:textSize="18sp" />
+                        <TextView
+                            android:id="@+id/title"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:maxLines="3"
+                            android:padding="5dp"
+                            android:shadowColor="@color/light_toolbar_color_lt23"
+                            android:shadowDx="1.0"
+                            android:shadowDy="1.0"
+                            android:shadowRadius="2.0"
+                            android:textColor="@color/white"
+                            android:textSize="20sp"
+                            android:textStyle="bold" />
 
-                            <HorizontalScrollView
-                                android:layout_below="@+id/title"
-                                android:id="@+id/scroll_view"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:scrollbars="none">
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/score_view"
+                            android:layout_width="wrap_content"
+                            android:layout_height="20dp"
+                            android:paddingLeft="5dp"
+                            android:paddingBottom="5dp"
+                            android:drawableStart="@drawable/ic_baseline_star_rate_24"
+                            android:drawablePadding="5dp"
+                            android:includeFontPadding="false"
+                            android:gravity="start|center_vertical"
+                            android:textColor="@color/white"
+                            android:textSize="14sp"
+                            android:visibility="gone" />
 
-                                <com.google.android.material.chip.ChipGroup
-                                    android:id="@+id/chip_group"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    app:singleLine="true">
-                                </com.google.android.material.chip.ChipGroup>
+                        <TextView
+                            android:id="@+id/update_time"
+                            android:layout_width="wrap_content"
+                            android:layout_height="20dp"
+                            android:paddingLeft="5dp"
+                            android:drawableStart="@drawable/baseline_history_white_48dp"
+                            android:drawablePadding="5dp"
+                            android:includeFontPadding="false"
+                            android:gravity="start|center_vertical"
+                            android:textColor="@color/white"
+                            android:textSize="14sp" />
 
-                            </HorizontalScrollView>
+                    </LinearLayout>
 
-                            <!--<co.lujun.androidtagview.TagContainerLayout
-                                android:layout_below="@+id/title"
-                                android:id="@+id/tag_view"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="10dp"
-                                app:container_border_color="@color/translucent"
-                                app:container_background_color="@color/translucent"
-                                app:tag_corner_radius="4dp"
-                                app:container_gravity="center"
-                                app:tag_text_color="@color/white"
-                                app:tag_border_color="#73e55578"
-                                app:tag_background_color="#73e55578"
-                                app:tag_clickable="true"
-                                app:tag_horizontal_padding="10dp"
-                                app:tag_theme="none"/>-->
-
-                            <com.ctetin.expandabletextviewlibrary.ExpandableTextView
-                                android:id="@+id/desc"
-                                android:layout_below="@id/scroll_view"
-                                android:layout_marginTop="10dp"
-                                android:layout_marginLeft="10dp"
-                                android:layout_marginRight="10dp"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                app:ep_need_link="false"
-                                app:ep_need_mention="true"
-                                app:ep_max_line="4"
-                                android:lineSpacingExtra="4dp"
-                                app:ep_need_contract="true"
-                                app:ep_need_animation="true"
-                                app:ep_expand_color="@color/colorAccent"
-                                android:textColor="@color/white"
-                                android:textSize="14sp" />
-
-                        </RelativeLayout>
-
-                </LinearLayout>
+                </RelativeLayout>
 
                 <!-- 剧集视图 -->
                 <LinearLayout
@@ -206,9 +217,109 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="5dp"
                     android:padding="5dp"
                     android:visibility="gone">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/favorite"
+                            style="@style/Widget.Material3.Button.Icon"
+                            android:textColor="@color/text_color_primary"
+                            android:backgroundTint="@color/drama"
+                            app:iconTint="@color/text_color_primary"
+                            app:elevation="5dp"
+                            android:layout_marginLeft="2dp"
+                            android:layout_marginRight="2dp"
+                            android:text="追番"
+                            app:icon="@drawable/baseline_favorite_border_white_48dp"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.9"/>
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/download"
+                            style="@style/Widget.Material3.Button.Icon"
+                            android:textColor="@color/text_color_primary"
+                            android:backgroundTint="@color/drama"
+                            app:iconTint="@color/text_color_primary"
+                            app:elevation="5dp"
+                            android:layout_marginLeft="2dp"
+                            android:layout_marginRight="2dp"
+                            android:text="下载"
+                            app:icon="@drawable/baseline_download_white_48dp"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.9"/>
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/browser"
+                            style="@style/Widget.Material3.Button.Icon"
+                            android:textColor="@color/text_color_primary"
+                            android:backgroundTint="@color/drama"
+                            app:iconTint="@color/text_color_primary"
+                            app:elevation="5dp"
+                            android:layout_marginLeft="2dp"
+                            android:layout_marginRight="2dp"
+                            android:text="源网页"
+                            app:icon="@drawable/baseline_language_white_48dp"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.9"/>
+
+                    </LinearLayout>
+
+                    <!--<co.lujun.androidtagview.TagContainerLayout
+                        android:layout_below="@+id/title"
+                        android:id="@+id/tag_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        app:container_border_color="@color/translucent"
+                        app:container_background_color="@color/translucent"
+                        app:tag_corner_radius="4dp"
+                        app:container_gravity="center"
+                        app:tag_text_color="@color/white"
+                        app:tag_border_color="#73e55578"
+                        app:tag_background_color="#73e55578"
+                        app:tag_clickable="true"
+                        app:tag_horizontal_padding="10dp"
+                        app:tag_theme="none"/>-->
+
+                    <com.ctetin.expandabletextviewlibrary.ExpandableTextView
+                        android:id="@+id/desc"
+                        android:layout_margin="10dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:ep_need_link="false"
+                        app:ep_need_mention="true"
+                        app:ep_max_line="4"
+                        android:lineSpacingExtra="4dp"
+                        app:ep_need_contract="true"
+                        app:ep_need_animation="true"
+                        app:ep_expand_color="@color/colorAccent"
+                        android:textColor="@color/white"
+                        android:textSize="14sp" />
+
+                    <HorizontalScrollView
+                        android:layout_below="@+id/title"
+                        android:id="@+id/scroll_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:scrollbars="none">
+
+                        <com.google.android.material.chip.ChipGroup
+                            android:id="@+id/chip_group"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:singleLine="true">
+                        </com.google.android.material.chip.ChipGroup>
+
+                    </HorizontalScrollView>
 
                     <RelativeLayout
                         android:layout_width="match_parent"
@@ -357,7 +468,7 @@
 
     </my.project.sakuraproject.custom.MySwipeRefreshLayout>
 
-    <com.google.android.material.bottomappbar.BottomAppBar
+    <!--<com.google.android.material.bottomappbar.BottomAppBar
         android:id="@+id/bottomAppBar"
         android:visibility="invisible"
         android:layout_width="match_parent"
@@ -376,7 +487,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:srcCompat="@drawable/outline_reply_white_48dp"
-        app:layout_anchor="@id/bottomAppBar" />
+        app:layout_anchor="@id/bottomAppBar" />-->
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

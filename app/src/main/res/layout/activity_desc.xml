@@ -184,7 +184,7 @@
                         <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/score_view"
                             android:layout_width="wrap_content"
-                            android:layout_height="20dp"
+                            android:layout_height="24dp"
                             android:paddingLeft="5dp"
                             android:paddingBottom="5dp"
                             android:drawableStart="@drawable/ic_baseline_star_rate_24"
@@ -198,7 +198,7 @@
                         <TextView
                             android:id="@+id/update_time"
                             android:layout_width="wrap_content"
-                            android:layout_height="20dp"
+                            android:layout_height="24dp"
                             android:paddingLeft="5dp"
                             android:drawableStart="@drawable/baseline_history_white_48dp"
                             android:drawablePadding="5dp"

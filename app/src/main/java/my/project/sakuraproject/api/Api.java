@@ -31,5 +31,5 @@ public class Api {
     };
 
     // 弹幕接口
-    public final static String DANMU_API = "https://api.danmu.oyyds.top/api/message/getSome?name=%s&number=%s&type=1";
+    public final static String DANMU_API = "https://api.danmu.oyyds.top/api/message/getSomeV3?keyword=%s&number=%s&type=1&platforms=base,dandan&dandanRelated=true";
 }

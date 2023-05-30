@@ -571,9 +571,9 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
             desc.setContent(animeListBean.getDesc());
             showView(desc);
         }
-        update_time.setText(animeListBean.getUpdateTime());
+        update_time.setText("·"+animeListBean.getUpdateTime());
         if (!isImomoe) {
-            score_view.setText(animeListBean.getScore()+"分");
+            score_view.setText("·"+animeListBean.getScore()+"分");
             showView(score_view);
         }
     }

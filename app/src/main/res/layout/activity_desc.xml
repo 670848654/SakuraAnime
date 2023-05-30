@@ -172,24 +172,33 @@
                             android:layout_height="wrap_content"
                             android:ellipsize="end"
                             android:maxLines="3"
-                            android:padding="5dp"
                             android:shadowColor="@color/light_toolbar_color_lt23"
                             android:shadowDx="1.0"
                             android:shadowDy="1.0"
                             android:shadowRadius="2.0"
                             android:textColor="@color/white"
-                            android:textSize="20sp"
-                            android:textStyle="bold" />
+                            android:textSize="18sp" />
 
-                        <androidx.appcompat.widget.AppCompatTextView
+                        <HorizontalScrollView
+                            android:id="@+id/scroll_view"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:scrollbars="none">
+
+                            <com.google.android.material.chip.ChipGroup
+                                android:id="@+id/chip_group"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                app:singleLine="true">
+                            </com.google.android.material.chip.ChipGroup>
+
+                        </HorizontalScrollView>
+
+                        <TextView
                             android:id="@+id/score_view"
                             android:layout_width="wrap_content"
-                            android:layout_height="24dp"
-                            android:paddingLeft="5dp"
-                            android:paddingBottom="5dp"
-                            android:drawableStart="@drawable/ic_baseline_star_rate_24"
-                            android:drawablePadding="5dp"
-                            android:includeFontPadding="false"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="5dp"
                             android:gravity="start|center_vertical"
                             android:textColor="@color/white"
                             android:textSize="14sp"
@@ -198,11 +207,7 @@
                         <TextView
                             android:id="@+id/update_time"
                             android:layout_width="wrap_content"
-                            android:layout_height="24dp"
-                            android:paddingLeft="5dp"
-                            android:drawableStart="@drawable/baseline_history_white_48dp"
-                            android:drawablePadding="5dp"
-                            android:includeFontPadding="false"
+                            android:layout_height="wrap_content"
                             android:gravity="start|center_vertical"
                             android:textColor="@color/white"
                             android:textSize="14sp" />
@@ -228,48 +233,48 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/favorite"
-                            style="@style/Widget.Material3.Button.Icon"
-                            android:textColor="@color/text_color_primary"
-                            android:backgroundTint="@color/drama"
-                            app:iconTint="@color/text_color_primary"
+                            style="@style/Widget.Material3.Button.TextButton.Icon"
+                            android:textColor="@color/white"
+                            app:iconTint="@color/white"
                             app:elevation="5dp"
                             android:layout_marginLeft="2dp"
                             android:layout_marginRight="2dp"
                             android:text="追番"
+                            app:iconGravity="top"
                             app:icon="@drawable/baseline_favorite_border_white_48dp"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="0.9"/>
+                            android:layout_weight="1"/>
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/download"
-                            style="@style/Widget.Material3.Button.Icon"
-                            android:textColor="@color/text_color_primary"
-                            android:backgroundTint="@color/drama"
-                            app:iconTint="@color/text_color_primary"
+                            style="@style/Widget.Material3.Button.TextButton.Icon"
+                            android:textColor="@color/white"
+                            app:iconTint="@color/white"
                             app:elevation="5dp"
                             android:layout_marginLeft="2dp"
                             android:layout_marginRight="2dp"
                             android:text="下载"
+                            app:iconGravity="top"
                             app:icon="@drawable/baseline_download_white_48dp"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="0.9"/>
+                            android:layout_weight="1"/>
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/browser"
-                            style="@style/Widget.Material3.Button.Icon"
-                            android:textColor="@color/text_color_primary"
-                            android:backgroundTint="@color/drama"
-                            app:iconTint="@color/text_color_primary"
+                            style="@style/Widget.Material3.Button.TextButton.Icon"
+                            android:textColor="@color/white"
+                            app:iconTint="@color/white"
                             app:elevation="5dp"
                             android:layout_marginLeft="2dp"
                             android:layout_marginRight="2dp"
                             android:text="源网页"
+                            app:iconGravity="top"
                             app:icon="@drawable/baseline_language_white_48dp"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="0.9"/>
+                            android:layout_weight="1"/>
 
                     </LinearLayout>
 
@@ -304,22 +309,6 @@
                         app:ep_expand_color="@color/colorAccent"
                         android:textColor="@color/white"
                         android:textSize="14sp" />
-
-                    <HorizontalScrollView
-                        android:layout_below="@+id/title"
-                        android:id="@+id/scroll_view"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:scrollbars="none">
-
-                        <com.google.android.material.chip.ChipGroup
-                            android:id="@+id/chip_group"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            app:singleLine="true">
-                        </com.google.android.material.chip.ChipGroup>
-
-                    </HorizontalScrollView>
 
                     <RelativeLayout
                         android:layout_width="match_parent"
@@ -490,4 +479,3 @@
         app:layout_anchor="@id/bottomAppBar" />-->
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
-

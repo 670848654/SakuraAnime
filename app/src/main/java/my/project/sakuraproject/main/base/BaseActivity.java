@@ -1,7 +1,9 @@
 package my.project.sakuraproject.main.base;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.net.Uri;
@@ -22,12 +24,17 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
+
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.custom.CustomToast;
 import my.project.sakuraproject.database.DatabaseUtil;
+import my.project.sakuraproject.main.home.MainActivity;
 import my.project.sakuraproject.util.StatusBarUtil;
 import my.project.sakuraproject.util.Utils;
 import pub.devrel.easypermissions.EasyPermissions;
@@ -95,7 +102,7 @@ public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatA
             application = (Sakura) getApplication();
         }
         application.addActivity(this);
-        if (EasyPermissions.hasPermissions(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+        if (EasyPermissions.hasPermissions(this, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.POST_NOTIFICATIONS)) {
             isManager();
         } else {
 /*            EasyPermissions.requestPermissions(this, Utils.getString(R.string.permissions),
@@ -197,6 +204,10 @@ public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatA
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.R;
     }
 
+    public boolean gtSdk33() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU;
+    }
+
     private String getRunningActivityName() {
         String contextString = this.toString();
         return contextString.substring(contextString.lastIndexOf(".") + 1,
@@ -221,7 +232,19 @@ public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatA
 
     private void isManager() {
         if (gtSdk30()) {
-            if (Environment.isExternalStorageManager()) build();
+            if (Environment.isExternalStorageManager()) {
+                if (gtSdk33()) {
+                    int checkPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS);
+                    if (checkPermission != PackageManager.PERMISSION_GRANTED) {
+                        //动态申请
+                        ActivityCompat.requestPermissions(this, new String[]{
+                                Manifest.permission.POST_NOTIFICATIONS}, 0x99);
+                    } else {
+                        build();
+                    }
+                } else
+                    build();
+            }
             else getManager();
         } else build();
     }

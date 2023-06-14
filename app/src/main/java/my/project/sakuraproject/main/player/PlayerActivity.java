@@ -212,8 +212,8 @@ public class PlayerActivity extends BasePlayerActivity implements VideoContract.
 
     @Override
     public void showSuccessYhdmDramasView(List<AnimeDescDetailsBean> dramaList) {
-        yhdmDescList = dramaList;
-        runOnUiThread(() -> dramaAdapter.setNewData(yhdmDescList));
+        /*yhdmDescList = dramaList;
+        runOnUiThread(() -> dramaAdapter.setNewData(yhdmDescList));*/
     }
 
     @Override

@@ -198,7 +198,8 @@ public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatA
                 ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.POST_NOTIFICATIONS}, 0x100);
             } else
                 build();
-        }
+        } else
+            build();
     }
 
     public boolean gtSdk23() {

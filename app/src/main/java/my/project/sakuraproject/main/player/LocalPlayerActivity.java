@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
+import com.alibaba.fastjson.JSONObject;
+
 import androidx.core.view.GravityCompat;
 
 import java.util.List;
@@ -12,10 +14,12 @@ import my.project.sakuraproject.adapter.DramaAdapter;
 import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.bean.AnimeDescDetailsBean;
 import my.project.sakuraproject.bean.DownloadDataBean;
+import my.project.sakuraproject.main.video.DanmuContract;
+import my.project.sakuraproject.main.video.DanmuPresenter;
 import my.project.sakuraproject.services.DLNAService;
 import my.project.sakuraproject.util.Utils;
 
-public class LocalPlayerActivity extends BasePlayerActivity {
+public class LocalPlayerActivity extends BasePlayerActivity implements DanmuContract.View {
 
     @Override
     protected boolean isLocalVideo() {
@@ -86,6 +90,7 @@ public class LocalPlayerActivity extends BasePlayerActivity {
         return dramaAdapter.getItem(position);
     }
 
+
     @Override
     protected void changeVideo(String title) {
 
@@ -93,6 +98,39 @@ public class LocalPlayerActivity extends BasePlayerActivity {
 
     @Override
     protected void getDanmu() {
+        if (player.openDanmuConfig) {
+            danmuPresenter = new DanmuPresenter(animeTitle, witchTitle.split("-")[1].trim(), this);
+            danmuPresenter.loadDanmu();
+        }
+    }
+
+    @Override
+    public void showLoadingView() {
+
+    }
+
+    @Override
+    public void showLoadErrorView(String msg) {
+
+    }
+
+    @Override
+    public void showEmptyVIew() {
+
+    }
+
+    @Override
+    public void showLog(String url) {
+
+    }
+
+    @Override
+    public void showSuccessDanmuView(JSONObject danmus) {
+
+    }
+
+    @Override
+    public void showErrorDanmuView(String msg) {
 
     }
 }

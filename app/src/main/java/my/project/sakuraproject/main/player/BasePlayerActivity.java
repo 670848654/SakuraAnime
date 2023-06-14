@@ -48,6 +48,7 @@ import my.project.sakuraproject.database.DatabaseUtil;
 import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.base.BaseModel;
 import my.project.sakuraproject.main.base.Presenter;
+import my.project.sakuraproject.main.video.DanmuPresenter;
 import my.project.sakuraproject.main.video.VideoPresenter;
 import my.project.sakuraproject.services.DLNAService;
 import my.project.sakuraproject.util.SharedPreferencesUtils;
@@ -113,6 +114,8 @@ public abstract class BasePlayerActivity extends BaseActivity implements JZPlaye
     protected List<DownloadDataBean> downloadDataBeans = new ArrayList<>();
     protected String playPath,  dramaTitle;
     protected String downloadDataId;
+
+    protected DanmuPresenter danmuPresenter;
 
     @Override
     protected Presenter createPresenter() {
@@ -578,6 +581,8 @@ public abstract class BasePlayerActivity extends BaseActivity implements JZPlaye
         player.releaseDanMu();
         player.releaseAllVideos();
         player.danmakuView = null;
+        if (danmuPresenter != null)
+            danmuPresenter.detachView();
         super.onDestroy();
     }
 

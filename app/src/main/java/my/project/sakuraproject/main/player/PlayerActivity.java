@@ -45,7 +45,6 @@ import my.project.sakuraproject.util.VideoUtils;
 
 public class PlayerActivity extends BasePlayerActivity implements VideoContract.View, SniffingUICallback, DanmuContract.View {
     private boolean isMaliMali = false;
-    private DanmuPresenter danmuPresenter;
 
     @Override
     protected boolean isLocalVideo() {
@@ -372,12 +371,5 @@ public class PlayerActivity extends BasePlayerActivity implements VideoContract.
             if (!mActivityFinish)
                 Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
         });
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (danmuPresenter != null)
-            danmuPresenter.detachView();
     }
 }

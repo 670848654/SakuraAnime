@@ -126,10 +126,12 @@ public class DownloadDataActivity extends BaseActivity<DownloadDataContract.View
                                     case 0:
                                         // 继续下载
                                         Aria.download(this).load(taskId).resume();
+                                        downloadDataBeans.get(position).setComplete(0);
                                         startService(new Intent(this, DownloadService.class));
                                         break;
                                     case 1:
                                         Aria.download(this).load(taskId).stop();
+                                        downloadDataBeans.get(position).setComplete(0);
                                         adapter.notifyItemChanged(position);
                                         break;
                                     case 2:

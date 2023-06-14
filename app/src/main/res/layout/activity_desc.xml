@@ -346,14 +346,13 @@
 
                     <RelativeLayout
                         android:id="@+id/open_drama"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
-                        android:layout_gravity="right"
                         android:layout_marginTop="4dp"
                         android:layout_marginRight="4dp">
 
-                        <ImageView
+                        <!--<ImageView
                             android:id="@+id/down_img"
                             android:layout_width="20dp"
                             android:layout_height="20dp"
@@ -361,12 +360,31 @@
                             android:layout_toRightOf="@id/drama"
                             android:scaleType="centerInside"
                             android:src="@drawable/ic_keyboard_arrow_down_white_48dp"
-                            android:tint="@color/white" />
+                            android:tint="@color/white" />-->
 
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/drama"
+                        <TextView
+                            android:id="@+id/order"
+                            android:layout_toLeftOf="@+id/drama"
+                            android:layout_marginRight="15dp"
+                            android:drawableEnd="@drawable/ic_baseline_swap_vert_24"
+                            android:drawableTint="@color/white"
+                            android:drawablePadding="2dp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="列表反序"
+                            android:textStyle="bold"
+                            android:textColor="@color/colorAccent" />
+
+                        <TextView
+                            android:id="@+id/drama"
+                            android:layout_alignParentEnd="true"
+                            android:drawableEnd="@drawable/ic_keyboard_arrow_down_white_48dp"
+                            android:drawableTint="@color/white"
+                            android:drawablePadding="2dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
                             android:text="展开全部"
                             android:textStyle="bold"
                             android:textColor="@color/colorAccent" />

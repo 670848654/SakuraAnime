@@ -85,7 +85,7 @@ public class DownloadService extends Service {
 
     @Download.onTaskResume
     public void onTaskResume(DownloadTask downloadTask) {
-        mNotify.showNotification(new Long(downloadTask.getEntity().getId()).intValue(), (String) VideoUtils.getAnimeInfo(downloadTask, 0), downloadTask.getTaskName());
+        mNotify.showDefaultNotification(new Long(downloadTask.getEntity().getId()).intValue(), (String) VideoUtils.getAnimeInfo(downloadTask, 0), downloadTask.getTaskName());
 //        EventBus.getDefault().post(new Refresh(3));
     }
 
@@ -94,7 +94,7 @@ public class DownloadService extends Service {
     public void onTaskStart(DownloadTask downloadTask) {
         EventBus.getDefault().post(new Refresh(3));
         taskIds.add(new Long(downloadTask.getEntity().getId()));
-        mNotify.showNotification(new Long(downloadTask.getEntity().getId()).intValue(), (String) VideoUtils.getAnimeInfo(downloadTask, 0), downloadTask.getTaskName());
+        mNotify.showDefaultNotification(new Long(downloadTask.getEntity().getId()).intValue(), (String) VideoUtils.getAnimeInfo(downloadTask, 0), downloadTask.getTaskName());
     }
 
     @Download.onTaskStop
@@ -114,7 +114,7 @@ public class DownloadService extends Service {
     @Download.onTaskFail
     public void onTaskFail(DownloadTask downloadTask, Exception e) {
         String animeTitle = (String) VideoUtils.getAnimeInfo(downloadTask, 0);
-        mNotify.uploadInfo(new Long(downloadTask.getEntity().getId()).intValue(), animeTitle, downloadTask.getTaskName(), false);
+        mNotify.uploadInfo(new Long(downloadTask.getEntity().getId()).intValue(), animeTitle, downloadTask.getTaskName(), "下载失败 → " + (e == null ? "未知错误，或许是下载的资源不存在！" : e.getMessage()));
         DatabaseUtil.updateDownloadError((String) VideoUtils.getAnimeInfo(downloadTask, 0), (Integer) VideoUtils.getAnimeInfo(downloadTask, 1), downloadTask.getFilePath(), downloadTask.getEntity().getId(), downloadTask.getFileSize());
 //        handler.post(() -> CustomToast.showToast(getApplicationContext(), VideoUtils.getAnimeInfo(downloadTask, 0) + " " + downloadTask.getTaskName() + "下载失败\n" +  ALog.getExceptionString(e), CustomToast.ERROR));
         shouldUnRegister();
@@ -123,7 +123,7 @@ public class DownloadService extends Service {
     @Download.onTaskComplete
     public void onTaskComplete(DownloadTask downloadTask) {
         String animeTitle = (String) VideoUtils.getAnimeInfo(downloadTask, 0);
-        mNotify.uploadInfo(new Long(downloadTask.getEntity().getId()).intValue(), animeTitle, downloadTask.getTaskName(), true);
+        mNotify.uploadInfo(new Long(downloadTask.getEntity().getId()).intValue(), animeTitle, downloadTask.getTaskName(), "下载成功");
         DatabaseUtil.updateDownloadSuccess(animeTitle, (Integer) VideoUtils.getAnimeInfo(downloadTask, 1), downloadTask.getFilePath(), downloadTask.getEntity().getId(), downloadTask.getFileSize());
         EventBus.getDefault().post(new DownloadEvent(animeTitle, downloadTask.getTaskName(), downloadTask.getFilePath(), downloadTask.getFileSize()));
         shouldUnRegister();

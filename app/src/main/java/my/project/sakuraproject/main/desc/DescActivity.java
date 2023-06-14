@@ -51,6 +51,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
@@ -245,9 +246,14 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         toolbar.setNavigationOnClickListener(view -> finish());
     }
 
-    @OnClick({R.id.favorite, R.id.download, R.id.browser})
-    public void onClick(MaterialButton view) {
+    @OnClick({R.id.order, R.id.favorite, R.id.download, R.id.browser})
+    public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.order:
+                Collections.reverse(dramaList);
+                animeDescDetailsAdapter.notifyDataSetChanged();
+                animeDescDramaAdapter.notifyDataSetChanged();
+                break;
             case R.id.favorite:
                 favoriteAnime();
                 break;
@@ -691,10 +697,11 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     }
 
     private void setAnimeDescDramaAdapter(int sourceIndex) {
-        if (dramaList.size() > 4)
+        /*if (dramaList.size() > 4)
             showView(openDrama);
         else
-            hideView(openDrama);
+            hideView(openDrama);*/
+        showView(openDrama);
         animeDescDramaAdapter.setNewData(dramaList);
         downloadAdapter.setNewData(downloadBean);
     }

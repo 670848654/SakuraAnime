@@ -19,6 +19,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import my.project.sakuraproject.util.VideoUtils;
 
@@ -26,33 +28,49 @@ import my.project.sakuraproject.util.VideoUtils;
  * M3U8下载配置类
  */
 public class M3U8DownloadConfig {
-
+    private static final Pattern REG = Pattern.compile("http(.*)/");
     /************************************************************ m3u8下载配置 START ************************************************************/
     public static class BandWidthUrlConverter implements IBandWidthUrlConverter {
         @Override
         public String convert(String m3u8Url, String bandWidthUrl) {
             try {
+                Matcher m = REG.matcher(m3u8Url);
                 URL url = new URL(m3u8Url);
-                m3u8Url = m3u8Url.replace(url.getPath(), "");
+                if (m.find()) {
+                    m3u8Url = m.group();
+                }
+                else
+                    m3u8Url = m3u8Url.replace(url.getPath(), "");
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }
+            Log.e("bandWidthUrl", m3u8Url + bandWidthUrl);
             return m3u8Url + bandWidthUrl;
         }
     }
 
     public static class VodTsUrlConverter implements IVodTsUrlConverter {
-        @Override public List<String> convert(String m3u8Url, List<String> tsUrls) {
+        @Override
+        public List<String> convert(String m3u8Url, List<String> tsUrls) {
             // 转换ts文件的url地址
             try {
+                /*URL url = new URL(m3u8Url);
+                m3u8Url = m3u8Url.replace(url.getPath(), "").replaceAll("\\?.*", "");;*/
+                Matcher m = REG.matcher(m3u8Url);
                 URL url = new URL(m3u8Url);
-                m3u8Url = m3u8Url.replace(url.getPath(), "").replaceAll("\\?.*", "");;
+                if (m.find()) {
+                    m3u8Url = m.group();
+                }
+                else
+                    m3u8Url = m3u8Url.replace(url.getPath(), "");
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }
             List<String> newUrls = new ArrayList<>();
             for (String url : tsUrls) {
-                newUrls.add(url.contains("http") ? url : m3u8Url + url);
+                String tsUrl = url.contains("http") ? url : m3u8Url + url;
+                Log.e("tsUrl", tsUrl);
+                newUrls.add(tsUrl);
             }
             return newUrls; // 返回有效的ts文件url集合
         }

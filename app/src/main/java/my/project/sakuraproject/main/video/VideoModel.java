@@ -58,11 +58,11 @@ public class VideoModel extends BaseModel implements VideoContract.Model {
                     DatabaseUtil.addIndex(fid, url, playSource, playNumber);
                     String dataBaseDrama = DatabaseUtil.queryAllIndex(fid);
                     callback.successYhdmDramas(YhdmJsoupUtils.getAllDrama(source, dataBaseDrama));
-                    List<String> urls = YhdmJsoupUtils.getVideoUrlList(source);
+                    /*List<String> urls = YhdmJsoupUtils.getVideoUrlList(source);
                     if (urls.size() > 0)
                         callback.successYhdmVideoUrls(urls);
                     else
-                        callback.empty();
+                        callback.empty();*/
                 }
             }
         });

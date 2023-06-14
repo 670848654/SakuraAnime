@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
+import androidx.appcompat.app.AlertDialog;
+
 import com.arialyy.aria.core.task.DownloadTask;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
@@ -26,7 +28,6 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-import androidx.appcompat.app.AlertDialog;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.api.Api;
 import my.project.sakuraproject.application.Sakura;

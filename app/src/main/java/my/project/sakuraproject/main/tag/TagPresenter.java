@@ -1,7 +1,5 @@
 package my.project.sakuraproject.main.tag;
 
-import com.chad.library.adapter.base.entity.MultiItemEntity;
-
 import java.util.List;
 
 import my.project.sakuraproject.bean.MaliTagBean;

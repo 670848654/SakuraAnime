@@ -3,28 +3,24 @@ package my.project.sakuraproject.services;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Looper;
 import android.os.PowerManager;
 import android.util.Log;
+
+import androidx.annotation.Nullable;
 
 import com.arialyy.annotations.Download;
 import com.arialyy.aria.core.Aria;
 import com.arialyy.aria.core.download.DownloadEntity;
-import com.arialyy.aria.core.download.m3u8.M3U8VodOption;
 import com.arialyy.aria.core.task.DownloadTask;
-import com.arialyy.aria.util.ALog;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import androidx.annotation.Nullable;
 import my.project.sakuraproject.bean.DownloadEvent;
 import my.project.sakuraproject.bean.Refresh;
-import my.project.sakuraproject.config.M3U8DownloadConfig;
-import my.project.sakuraproject.custom.CustomToast;
 import my.project.sakuraproject.database.DatabaseUtil;
 import my.project.sakuraproject.util.DownloadNotification;
 import my.project.sakuraproject.util.VideoUtils;
@@ -33,6 +29,7 @@ public class DownloadService extends Service {
     private DownloadNotification mNotify;
 //    private Handler handler;
     PowerManager.WakeLock wakeLock = null;
+    private List<Long> taskIds = new ArrayList<>();
 
     @Nullable
     @Override
@@ -54,6 +51,7 @@ public class DownloadService extends Service {
             wakeLock.acquire();
         }
         mNotify = new DownloadNotification(this);
+        mNotify.cancelNotification(-2);
         mNotify.showServiceNotification(-1, "下载服务运行中");
         Log.e("Service onCreate", "DownloadService开始运行");
         Aria.download(this).register();
@@ -68,10 +66,13 @@ public class DownloadService extends Service {
         // 服务关闭时存在未下载完成的任务，停止下载
         List<DownloadEntity> downloadEntities = Aria.download(this).getAllNotCompleteTask();
         if (downloadEntities != null && downloadEntities.size() > 0) {
-            mNotify.showServiceNotification(-2, "由于下载服务被关闭，任务已暂停...");
+            mNotify.showServiceNotification(-2, "由于下载服务被系统杀死，任务已暂停，后台下载请根据各自系统设置应用白名单...");
             Aria.download(this).stopAllTask();
         }
         mNotify.cancelNotification(-1);
+        for (Long id : taskIds) {
+            mNotify.cancelNotification(id.intValue());
+        }
         Aria.download(this).unRegister();
         Log.e("Service onDestroy", "DownloadService销毁了");
         super.onDestroy();
@@ -92,6 +93,7 @@ public class DownloadService extends Service {
     @Download.onTaskStart
     public void onTaskStart(DownloadTask downloadTask) {
         EventBus.getDefault().post(new Refresh(3));
+        taskIds.add(new Long(downloadTask.getEntity().getId()));
         mNotify.showNotification(new Long(downloadTask.getEntity().getId()).intValue(), (String) VideoUtils.getAnimeInfo(downloadTask, 0), downloadTask.getTaskName());
     }
 
@@ -103,6 +105,7 @@ public class DownloadService extends Service {
 
     @Download.onTaskCancel
     public void onTaskCancel(DownloadTask downloadTask) {
+        taskIds.add(new Long(downloadTask.getEntity().getId()));
         mNotify.cancelNotification(new Long(downloadTask.getEntity().getId()).intValue());
 //        showInfo(downloadTask, "取消下载");
         shouldUnRegister();

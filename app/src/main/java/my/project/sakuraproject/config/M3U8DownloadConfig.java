@@ -2,6 +2,8 @@ package my.project.sakuraproject.config;
 
 import android.util.Log;
 
+import androidx.annotation.Nullable;
+
 import com.arialyy.aria.core.download.M3U8Entity;
 import com.arialyy.aria.core.processor.IBandWidthUrlConverter;
 import com.arialyy.aria.core.processor.ITsMergeHandler;
@@ -18,7 +20,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.annotation.Nullable;
 import my.project.sakuraproject.util.VideoUtils;
 
 /**

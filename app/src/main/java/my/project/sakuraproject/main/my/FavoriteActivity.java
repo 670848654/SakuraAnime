@@ -11,8 +11,6 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.chad.library.adapter.base.BaseQuickAdapter;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -24,7 +22,6 @@ import butterknife.BindView;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.adapter.FavoriteListAdapter;
 import my.project.sakuraproject.bean.AnimeListBean;
-import my.project.sakuraproject.bean.AnimeUpdateInfoBean;
 import my.project.sakuraproject.bean.Refresh;
 import my.project.sakuraproject.bean.UpdateImgBean;
 import my.project.sakuraproject.custom.CustomLoadMoreView;

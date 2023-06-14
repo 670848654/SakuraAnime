@@ -8,6 +8,8 @@ import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
 import com.arialyy.aria.core.Aria;
 
 import java.io.File;
@@ -18,7 +20,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import androidx.annotation.NonNull;
 import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.bean.AnimeListBean;
 import my.project.sakuraproject.bean.AnimeUpdateInfoBean;

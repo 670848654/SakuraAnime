@@ -1,10 +1,11 @@
 package my.project.sakuraproject.bean;
 
+import androidx.annotation.DrawableRes;
+
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 
 import java.util.List;
 
-import androidx.annotation.DrawableRes;
 import my.project.sakuraproject.adapter.HomeAdapter;
 
 public class HomeHeaderBean implements MultiItemEntity {

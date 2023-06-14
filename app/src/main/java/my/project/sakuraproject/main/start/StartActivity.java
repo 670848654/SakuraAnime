@@ -10,19 +10,19 @@ import android.view.View;
 import android.view.animation.AnticipateInterpolator;
 import android.widget.LinearLayout;
 
+import androidx.core.splashscreen.SplashScreen;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 
-import androidx.core.splashscreen.SplashScreen;
 import butterknife.BindView;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.api.Api;
 import my.project.sakuraproject.custom.CustomToast;
 import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.base.Presenter;
-import my.project.sakuraproject.main.home.HomeActivity;
 import my.project.sakuraproject.main.home.MainActivity;
 import my.project.sakuraproject.net.HttpGet;
 import my.project.sakuraproject.util.SharedPreferencesUtils;

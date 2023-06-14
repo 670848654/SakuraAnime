@@ -1,5 +1,9 @@
 package my.project.sakuraproject.main.week;
 
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.viewpager.widget.ViewPager;
+
 import com.google.android.material.tabs.TabLayout;
 
 import org.greenrobot.eventbus.Subscribe;
@@ -11,9 +15,6 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.adapter.WeekAdapter;

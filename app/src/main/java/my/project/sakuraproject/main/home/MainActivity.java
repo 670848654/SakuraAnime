@@ -2,14 +2,9 @@ package my.project.sakuraproject.main.home;
 
 import android.content.Intent;
 import android.content.res.ColorStateList;
-import android.os.Bundle;
-import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.LinearLayout;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
@@ -21,16 +16,12 @@ import androidx.navigation.fragment.FragmentNavigator;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
-import java.io.Serializable;
 
 import butterknife.BindView;
 import my.project.sakuraproject.R;
@@ -43,9 +34,7 @@ import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.base.Presenter;
 import my.project.sakuraproject.main.home.fragment.HomeFragment;
 import my.project.sakuraproject.main.home.fragment.MyFragment;
-import my.project.sakuraproject.main.my.MyActivity;
 import my.project.sakuraproject.main.search.SearchActivity;
-import my.project.sakuraproject.main.setting.SettingActivity;
 import my.project.sakuraproject.services.DownloadService;
 import my.project.sakuraproject.util.SharedPreferencesUtils;
 import my.project.sakuraproject.util.Utils;

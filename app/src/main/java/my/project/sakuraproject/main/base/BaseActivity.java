@@ -1,7 +1,6 @@
 package my.project.sakuraproject.main.base;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -15,18 +14,16 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-
-import java.util.List;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationManagerCompat;
-import androidx.core.content.ContextCompat;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
+import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -34,7 +31,6 @@ import my.project.sakuraproject.R;
 import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.custom.CustomToast;
 import my.project.sakuraproject.database.DatabaseUtil;
-import my.project.sakuraproject.main.home.MainActivity;
 import my.project.sakuraproject.util.StatusBarUtil;
 import my.project.sakuraproject.util.Utils;
 import pub.devrel.easypermissions.EasyPermissions;
@@ -182,6 +178,7 @@ public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatA
     @Override
     public void onPermissionsDenied(int requestCode, List<String> perms) {
 //        application.showErrorToastMsg(Utils.getString(R.string.permissions_error));
+        if (perms.size() == 1 && perms.contains("POST_NOTIFICATIONS")) return;
         CustomToast.showToast(this, Utils.getString(R.string.permissions_error), CustomToast.ERROR);
         application.removeALLActivity();
     }
@@ -189,7 +186,19 @@ public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatA
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 0x100 && grantResults.length > 0) {
+            build();
+        } else
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+    }
+
+    private void request_notification_api13_permission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (this.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.POST_NOTIFICATIONS}, 0x100);
+            } else
+                build();
+        }
     }
 
     public boolean gtSdk23() {
@@ -232,21 +241,12 @@ public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatA
 
     private void isManager() {
         if (gtSdk30()) {
-            if (Environment.isExternalStorageManager()) {
-                if (gtSdk33()) {
-                    int checkPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS);
-                    if (checkPermission != PackageManager.PERMISSION_GRANTED) {
-                        //动态申请
-                        ActivityCompat.requestPermissions(this, new String[]{
-                                Manifest.permission.POST_NOTIFICATIONS}, 0x99);
-                    } else {
-                        build();
-                    }
-                } else
-                    build();
-            }
-            else getManager();
-        } else build();
+            if (Environment.isExternalStorageManager())
+                request_notification_api13_permission();
+            else
+                getManager();
+        } else
+            request_notification_api13_permission();
     }
 
     private void build() {

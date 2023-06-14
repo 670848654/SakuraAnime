@@ -2,8 +2,6 @@ package my.project.sakuraproject.main.tag;
 
 import android.util.Log;
 
-import com.chad.library.adapter.base.entity.MultiItemEntity;
-
 import java.io.IOException;
 import java.util.List;
 

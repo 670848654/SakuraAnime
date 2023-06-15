@@ -33,6 +33,8 @@ public class M3U8DownloadConfig {
     public static class BandWidthUrlConverter implements IBandWidthUrlConverter {
         @Override
         public String convert(String m3u8Url, String bandWidthUrl) {
+            if (bandWidthUrl.startsWith("http"))
+                return bandWidthUrl;
             try {
                 Matcher m = REG.matcher(m3u8Url);
                 URL url = new URL(m3u8Url);
@@ -54,8 +56,6 @@ public class M3U8DownloadConfig {
         public List<String> convert(String m3u8Url, List<String> tsUrls) {
             // 转换ts文件的url地址
             try {
-                /*URL url = new URL(m3u8Url);
-                m3u8Url = m3u8Url.replace(url.getPath(), "").replaceAll("\\?.*", "");;*/
                 Matcher m = REG.matcher(m3u8Url);
                 URL url = new URL(m3u8Url);
                 if (m.find()) {

@@ -46,6 +46,7 @@ import my.project.sakuraproject.util.SharedPreferencesUtils;
 import my.project.sakuraproject.util.Utils;
 import my.project.sakuraproject.util.VideoUtils;
 
+@Deprecated
 public class HistoryFragment extends MyLazyFragment<HistoryContract.View, HistoryPresenter> implements HistoryContract.View,
         UpdateImgContract.View, VideoContract.View {
     @BindView(R.id.rv_list)

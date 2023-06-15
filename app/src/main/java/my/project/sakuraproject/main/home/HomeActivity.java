@@ -54,6 +54,11 @@ import my.project.sakuraproject.main.week.WeekActivity;
 import my.project.sakuraproject.util.SharedPreferencesUtils;
 import my.project.sakuraproject.util.Utils;
 
+/**
+ * （旧）应用首页
+ * @deprecated 现使用 {@link MainActivity}
+ */
+@Deprecated
 public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter> implements HomeContract.View, HomeAdapter.OnItemClick {
     @BindView(R.id.root)
     RelativeLayout root;

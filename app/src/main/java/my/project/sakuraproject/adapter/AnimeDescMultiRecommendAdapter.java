@@ -14,12 +14,12 @@ import my.project.sakuraproject.bean.AnimeDescRecommendBean;
 import my.project.sakuraproject.util.Utils;
 
 /**
- * 相关推荐适配器
+ * 多季、相关推荐适配器
  */
-public class AnimeDescRecommendAdapter extends BaseQuickAdapter<AnimeDescRecommendBean, BaseViewHolder> {
+public class AnimeDescMultiRecommendAdapter extends BaseQuickAdapter<AnimeDescRecommendBean, BaseViewHolder> {
     private Context context;
 
-    public AnimeDescRecommendAdapter(Context context, @Nullable List<AnimeDescRecommendBean> data) {
+    public AnimeDescMultiRecommendAdapter(Context context, @Nullable List<AnimeDescRecommendBean> data) {
         super(R.layout.item_desc_recommend, data);
         this.context = context;
     }

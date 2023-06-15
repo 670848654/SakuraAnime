@@ -49,6 +49,7 @@ import my.project.sakuraproject.main.my.UpdateImgPresenter;
 import my.project.sakuraproject.services.DownloadService;
 import my.project.sakuraproject.util.Utils;
 
+@Deprecated
 public class DownloadFragment extends MyLazyFragment<DownloadContract.View, DownloadPresenter> implements DownloadContract.View, UpdateImgContract.View {
     @BindView(R.id.rv_list)
     RecyclerView mRecyclerView;

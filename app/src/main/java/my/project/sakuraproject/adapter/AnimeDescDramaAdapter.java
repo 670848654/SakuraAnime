@@ -15,7 +15,9 @@ import my.project.sakuraproject.bean.AnimeDescDetailsBean;
 
 /**
  * 展开播放列表适配器
+ * @deprecated 播放列表相同布局统一使用 {@link DramaAdapter}
  */
+@Deprecated
 public class AnimeDescDramaAdapter extends BaseQuickAdapter<AnimeDescDetailsBean, BaseViewHolder> {
     private Context context;
 

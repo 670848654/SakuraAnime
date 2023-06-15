@@ -1,13 +1,10 @@
 package my.project.sakuraproject.main.video;
 
-import android.util.Log;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.regex.Pattern;
 
 import my.project.sakuraproject.application.Sakura;
-import my.project.sakuraproject.bean.YhdmVideoUrlBean;
 import my.project.sakuraproject.main.base.BaseModel;
 import my.project.sakuraproject.net.HttpGet;
 import my.project.sakuraproject.util.ImomoeJsoupUtils;
@@ -43,7 +40,7 @@ public class DownloadVideoModel extends BaseModel implements DownloadVideoContra
                     parserYhdmVideoUrls(url, playNumber, callback);
                 else {
                     List<String> urls = YhdmJsoupUtils.getVideoUrlList(source);
-                    if (urls.size() > 0) {
+                    /*if (urls.size() > 0) {
                         YhdmVideoUrlBean yhdmViideoUrlBean = null;
                         for (String url : urls) {
                             if (!url.contains("$")) {
@@ -67,7 +64,9 @@ public class DownloadVideoModel extends BaseModel implements DownloadVideoContra
                             callback.error(playNumber);
                         else
                             callback.successYhdmVideoUrls(yhdmViideoUrlBean, playNumber);
-                    }
+                    }*/
+                    if (urls.size() > 0)
+                        callback.successYhdmVideoUrls(urls, playNumber);
                     else
                         callback.error(playNumber);
                 }

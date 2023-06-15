@@ -25,6 +25,11 @@ import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.base.Presenter;
 import my.project.sakuraproject.util.Utils;
 
+/**
+ * （旧）我的列表
+ * @deprecated 拆分为 {@link FavoriteActivity} {@link HistoryActivity} {@link DownloadActivity}
+ */
+@Deprecated
 public class MyActivity extends BaseActivity implements ViewPager.OnPageChangeListener {
     @BindView(R.id.toolbar)
     Toolbar toolbar;

@@ -1,6 +1,7 @@
 package my.project.sakuraproject.main.video;
 
-import my.project.sakuraproject.bean.YhdmVideoUrlBean;
+import java.util.List;
+
 import my.project.sakuraproject.main.base.BaseLoadDataCallback;
 import my.project.sakuraproject.main.base.BaseView;
 
@@ -10,7 +11,7 @@ public interface DownloadVideoContract {
     }
 
     interface View extends BaseView {
-        void showYhdmVideoSuccessView(YhdmVideoUrlBean yhdmViideoUrlBean, String playNumber);
+        void showYhdmVideoSuccessView(List<String> urls, String playNumber);
 
         void getVideoError(String playNumber);
 
@@ -18,7 +19,7 @@ public interface DownloadVideoContract {
     }
 
     interface LoadDataCallback extends BaseLoadDataCallback {
-        void successYhdmVideoUrls(YhdmVideoUrlBean yhdmViideoUrlBean, String playNumber);
+        void successYhdmVideoUrls(List<String> urls, String playNumber);
 
         void error(String playNumber);
 

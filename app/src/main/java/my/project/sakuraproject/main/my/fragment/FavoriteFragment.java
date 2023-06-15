@@ -39,6 +39,7 @@ import my.project.sakuraproject.main.my.UpdateImgPresenter;
 import my.project.sakuraproject.util.SharedPreferencesUtils;
 import my.project.sakuraproject.util.Utils;
 
+@Deprecated
 public class FavoriteFragment extends MyLazyFragment<FavoriteContract.View, FavoritePresenter> implements FavoriteContract.View, UpdateImgContract.View {
     @BindView(R.id.rv_list)
     RecyclerView mRecyclerView;

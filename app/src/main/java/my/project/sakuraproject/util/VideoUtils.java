@@ -89,6 +89,28 @@ public class VideoUtils {
     }
 
     /**
+     * 发现多个播放地址时弹窗 下载用
+     *
+     * @param context
+     * @param list
+     * @param listener
+     */
+    public static void showMultipleVideoSources4Download(Context context,
+                                                List<String> list,
+                                                DialogInterface.OnClickListener listener) {
+        String[] items = new String[list.size()];
+        for (int i = 0, size = list.size(); i < size; i++) {
+            items[i] = list.get(i);
+        }
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context, R.style.DialogStyle);
+        builder.setTitle("请选择下载资源");
+        builder.setCancelable(false);
+        builder.setItems(items, listener);
+        alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    /**
      * 网络出错时弹窗
      *
      * @param context

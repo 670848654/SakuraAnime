@@ -3,7 +3,7 @@
     android:id="@+id/tag_group"
     android:backgroundTint="@color/drama"
     android:insetBottom="0dp"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_centerInParent="true"
     android:layout_marginLeft="4dp"

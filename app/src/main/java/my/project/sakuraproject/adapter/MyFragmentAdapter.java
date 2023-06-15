@@ -15,6 +15,7 @@ import my.project.sakuraproject.main.my.fragment.DownloadFragment;
 import my.project.sakuraproject.main.my.fragment.FavoriteFragment;
 import my.project.sakuraproject.main.my.fragment.HistoryFragment;
 
+@Deprecated
 public class MyFragmentAdapter extends FragmentStatePagerAdapter {
     private int num;
     private HashMap<Integer, Fragment> mFragmentHashMap = new HashMap<>();

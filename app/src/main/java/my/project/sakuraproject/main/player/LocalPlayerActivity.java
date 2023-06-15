@@ -4,9 +4,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
-import com.alibaba.fastjson.JSONObject;
-
 import androidx.core.view.GravityCompat;
+
+import com.alibaba.fastjson.JSONObject;
 
 import java.util.List;
 

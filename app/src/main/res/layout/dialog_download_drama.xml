@@ -45,13 +45,14 @@
             android:layout_below="@+id/info"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
+            android:clipToPadding="false"
+            android:paddingBottom="10dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clipToPadding="false" />
+            android:layout_height="wrap_content" />
 
     </RelativeLayout>
 
-    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+    <!--<com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/download"
         android:text="点击下载"
         app:layout_anchor="@id/root"
@@ -64,5 +65,5 @@
         android:textColor="@color/text_color_primary"
         app:backgroundTint="@color/drama"
         app:iconTint="@color/text_color_primary"
-        app:icon="@drawable/baseline_download_white_48dp"/>
+        app:icon="@drawable/baseline_download_white_48dp"/>-->
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

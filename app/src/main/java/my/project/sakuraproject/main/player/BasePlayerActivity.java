@@ -13,6 +13,22 @@ import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.switchmaterial.SwitchMaterial;
+
+import org.greenrobot.eventbus.EventBus;
+
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -21,21 +37,16 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.google.android.material.button.MaterialButton;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.switchmaterial.SwitchMaterial;
-
-import org.greenrobot.eventbus.EventBus;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.jzvd.JZUtils;
 import cn.jzvd.Jzvd;
+import master.flame.danmaku.danmaku.loader.ILoader;
+import master.flame.danmaku.danmaku.loader.IllegalDataException;
+import master.flame.danmaku.danmaku.loader.android.DanmakuLoaderFactory;
+import master.flame.danmaku.danmaku.model.android.Danmakus;
+import master.flame.danmaku.danmaku.parser.BaseDanmakuParser;
+import master.flame.danmaku.danmaku.parser.IDataSource;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.adapter.DramaAdapter;
 import my.project.sakuraproject.bean.AnimeDescDetailsBean;
@@ -43,11 +54,13 @@ import my.project.sakuraproject.bean.DownloadDataBean;
 import my.project.sakuraproject.bean.ImomoeVideoUrlBean;
 import my.project.sakuraproject.bean.Refresh;
 import my.project.sakuraproject.bean.RefreshDownloadData;
+import my.project.sakuraproject.custom.CustomDanmakuParser;
 import my.project.sakuraproject.custom.CustomToast;
 import my.project.sakuraproject.database.DatabaseUtil;
 import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.base.BaseModel;
 import my.project.sakuraproject.main.base.Presenter;
+import my.project.sakuraproject.main.video.DanmuContract;
 import my.project.sakuraproject.main.video.DanmuPresenter;
 import my.project.sakuraproject.main.video.VideoPresenter;
 import my.project.sakuraproject.services.DLNAService;
@@ -56,7 +69,7 @@ import my.project.sakuraproject.util.StatusBarUtil;
 import my.project.sakuraproject.util.Utils;
 
 public abstract class BasePlayerActivity extends BaseActivity implements JZPlayer.CompleteListener, JZPlayer.TouchListener,
-        JZPlayer.ShowOrHideChangeViewListener,  JZPlayer.OnProgressListener, JZPlayer.PlayingListener, JZPlayer.PauseListener {
+        JZPlayer.ShowOrHideChangeViewListener,  JZPlayer.OnProgressListener, JZPlayer.PlayingListener, JZPlayer.PauseListener, DanmuContract.View {
     // 通用属性
     @BindView(R.id.player)
     JZPlayer player;
@@ -205,8 +218,8 @@ public abstract class BasePlayerActivity extends BaseActivity implements JZPlaye
             clickIndex++;
             changePlayUrl(clickIndex);
         });
-        if (isLocalVideo)
-            player.danmuView.setVisibility(View.GONE);
+        /*if (isLocalVideo)
+            player.danmuView.setVisibility(View.GONE);*/
         // 加载视频失败，嗅探视频
         player.snifferBtn.setOnClickListener(v -> snifferVideo());
         if (gtSdk23()) player.tvSpeed.setVisibility(View.VISIBLE);
@@ -408,7 +421,12 @@ public abstract class BasePlayerActivity extends BaseActivity implements JZPlaye
         getDanmu();
     }
 
-    protected abstract void getDanmu();
+    private void getDanmu() {
+        if (player.openDanmuConfig) {
+            danmuPresenter = new DanmuPresenter(animeTitle, isLocalVideo ? dramaTitle : witchTitle.split("-")[1].trim(), this);
+            danmuPresenter.loadDanmu();
+        }
+    }
 
     protected void toPlay(String path, String dramaTitle) {
         player.playingShow();
@@ -421,6 +439,7 @@ public abstract class BasePlayerActivity extends BaseActivity implements JZPlaye
         player.seekToInAdvance = userSavePosition;//跳转到指定的播放进度
         player.startButton.performClick();//响应点击事件
         hasPosition = userSavePosition > 0;
+        getDanmu();
     }
 
 
@@ -566,6 +585,69 @@ public abstract class BasePlayerActivity extends BaseActivity implements JZPlaye
     public void getPosition(long position, long duration) {
         playPosition = position;
         videoDuration = duration;
+    }
+
+    private BaseDanmakuParser createParser(InputStream stream) {
+        if (stream == null) {
+            return new BaseDanmakuParser() {
+
+                @Override
+                protected Danmakus parse() {
+                    return new Danmakus();
+                }
+            };
+        }
+        ILoader loader = DanmakuLoaderFactory.create(DanmakuLoaderFactory.TAG_ACFUN);
+        try {
+            loader.load(stream);
+        } catch (IllegalDataException e) {
+            e.printStackTrace();
+        }
+        BaseDanmakuParser parser = new CustomDanmakuParser();
+        IDataSource<?> dataSource = loader.getDataSource();
+        parser.load(dataSource);
+        return parser;
+    }
+
+    @Override
+    public void showSuccessDanmuView(JSONObject danmus) {
+        runOnUiThread(() -> {
+            if (!mActivityFinish) {
+                if (player.loadError) return;
+                try {
+                    JSONArray jsonArray = danmus.getJSONObject("data").getJSONArray("data");
+                    Toast.makeText(this, "查询弹幕API成功，共"+danmus.getJSONObject("data").getInteger("total")+"条弹幕~", Toast.LENGTH_SHORT).show();
+                    player.danmuInfoView.setText("已加载"+ danmus.getJSONObject("data").getInteger("total") + "条弹幕！");
+                    player.danmuInfoView.setVisibility(View.VISIBLE);
+                    InputStream result = new ByteArrayInputStream(jsonArray.toString().getBytes(StandardCharsets.UTF_8));
+                    player.danmakuParser = createParser(result);
+                    player.createDanmu();
+                    if (player.danmakuView.isPrepared()) {
+                        player.danmakuView.restart();
+                    }
+                    player.danmakuView.prepare(player.danmakuParser, player.danmakuContext);
+                    if (!player.open_danmu) {
+                        player.hideDanmmu();
+                    }
+                    if (userSavePosition > 0) {
+                        new Handler().postDelayed(() -> {
+                            // 一秒后定位弹幕时间为用户上次观看位置
+                            player.seekDanmu(userSavePosition);
+                        }, 1000);
+                    }
+                } catch (Exception e) {
+                    Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+    @Override
+    public void showErrorDanmuView(String msg) {
+        runOnUiThread(() -> {
+            if (!mActivityFinish)
+                Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+        });
     }
 
     @Override

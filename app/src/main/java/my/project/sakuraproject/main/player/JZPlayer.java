@@ -13,13 +13,12 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AlertDialog;
-
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.io.IOException;
 import java.util.HashMap;
 
+import androidx.appcompat.app.AlertDialog;
 import cn.jzvd.JZDataSource;
 import cn.jzvd.JZUtils;
 import cn.jzvd.Jzvd;
@@ -132,13 +131,13 @@ public class JZPlayer extends JzvdStd {
         overlappingEnablePair.put(BaseDanmaku.TYPE_SCROLL_RL, true);
         overlappingEnablePair.put(BaseDanmaku.TYPE_FIX_TOP, true);
         HashMap<Integer, Integer> maxLinesPair = new HashMap<Integer, Integer>();
-        maxLinesPair.put(BaseDanmaku.TYPE_SCROLL_RL, 5); // 滚动弹幕最大显示5行,可设置多种类型限制行数
-        maxLinesPair.put(BaseDanmaku.TYPE_FIX_TOP, 5);
+        maxLinesPair.put(BaseDanmaku.TYPE_SCROLL_RL, Utils.isPad() ? 10 : 5); // 滚动弹幕最大显示5行,可设置多种类型限制行数
+        maxLinesPair.put(BaseDanmaku.TYPE_FIX_TOP, Utils.isPad() ? 10 : 5);
         danmakuContext = DanmakuContext.create();
         danmakuContext.setDanmakuStyle(IDisplayer.DANMAKU_STYLE_STROKEN, 3)
                 .setDuplicateMergingEnabled(false)
                 .setScrollSpeedFactor(1.2f)
-                .setScaleTextSize(1.2f)
+                .setScaleTextSize(Utils.isPad() ? 2.2f : 1.2f)
                 .setMaximumLines(maxLinesPair)
                 .preventOverlapping(overlappingEnablePair).setDanmakuMargin(40);
         longPressBgView = findViewById(R.id.long_press_bg);

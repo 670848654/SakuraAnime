@@ -61,6 +61,7 @@ public class HomeAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity, Base
                     chip.setChipIconTint(ColorStateList.valueOf(context.getResources().getColor(R.color.text_color_primary)));
                     chip.setTextColor(context.getResources().getColor(R.color.text_color_primary));
                     chip.setChipStrokeColorResource(R.color.head);
+                    chip.setRippleColor(context.getResources().getColorStateList(R.color.ripple_color));
                     chip.setOnClickListener(view -> {
                         onItemClick.onHeaderClick(headerDataBean);
                     });

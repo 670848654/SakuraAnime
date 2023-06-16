@@ -187,6 +187,7 @@ public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> im
                     chip.setBackgroundColor(getResources().getColor(R.color.window_bg));
                     chip.setTextColor(getResources().getColor(R.color.text_color_primary));
                     chip.setChipStrokeColorResource(R.color.head);
+                    chip.setRippleColor(getResources().getColorStateList(R.color.ripple_color));
                     int index = i;
                     chip.setOnClickListener(view -> {
                         openSelectDialog(index);
@@ -212,9 +213,9 @@ public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> im
             singleChip.setText(tagSelectBean.getTitle());
             if (animeUrl.equals(tagSelectBean.getUrl()))
                 singleChip.setChecked(true);
-            singleChip.setBackgroundColor(getResources().getColor(R.color.window_bg));
+            /*singleChip.setBackgroundColor(getResources().getColor(R.color.window_bg));
             singleChip.setTextColor(getResources().getColor(R.color.text_color_primary));
-            singleChip.setChipStrokeColorResource(R.color.head);
+            singleChip.setChipStrokeColorResource(R.color.head);*/
             singleChip.setOnCheckedChangeListener((compoundButton, b) -> {
                 String title = compoundButton.getText().toString();
                 if (b) {

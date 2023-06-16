@@ -84,7 +84,7 @@
     <string name="domain">域名设置（备用）</string>
     <string name="domain_msg">该功能用于网站域名变更导致应用获取数据异常，应用未及时更新时使用。\n如果网站仅变更域名，网页布局无变动，你可在此输入相关站点的新域名保存即可。</string>
     <string name="domain_url">http://www.yinghuacd.com</string>
-    <string name="imomoe_url">https://www.arlnigdm.com</string>
+    <string name="imomoe_url">https://www.silisilifun.com</string>
     <string name="set_check_favorite_update">追番更新检测（仅支持YHDM源）</string>
     <string name="check_favorite_update_default">启用</string>
     <string name="set_download_number">同时下载任务数</string>

@@ -7,10 +7,11 @@ import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
 
+import androidx.core.app.NotificationCompat;
+
 import java.util.HashMap;
 import java.util.Map;
 
-import androidx.core.app.NotificationCompat;
 import my.project.sakuraproject.R;
 
 public class DownloadNotification {

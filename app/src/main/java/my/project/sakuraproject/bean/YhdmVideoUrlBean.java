@@ -2,6 +2,7 @@ package my.project.sakuraproject.bean;
 
 import java.io.Serializable;
 
+@Deprecated
 public class YhdmVideoUrlBean implements Serializable {
     private boolean isHttp;
     private String vidOrUrl;

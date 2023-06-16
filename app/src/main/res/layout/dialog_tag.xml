@@ -36,16 +36,19 @@
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:id="@+id/confirm"
-            android:text="确定"
-            android:layout_below="@+id/chip_group"
-            android:layout_margin="16dp"
-            android:layout_alignParentEnd="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="?attr/colorSecondaryContainer"
-            android:textColor="@color/text_color_primary"
+            android:layout_below="@+id/chip_group"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:backgroundTint="@color/colorAccent"
+            android:text="确定"
+            android:textColor="@color/white"
             app:icon="@drawable/outline_done_white_48dp"
-            app:iconTint="@color/text_color_primary" />
+            app:iconTint="@color/white" />
 
     </RelativeLayout>
 

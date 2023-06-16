@@ -27,7 +27,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.adapter.HomeAdapter;
-import my.project.sakuraproject.api.Api;
 import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.bean.AnimeUpdateInfoBean;
 import my.project.sakuraproject.bean.HomeBean;
@@ -39,7 +38,6 @@ import my.project.sakuraproject.main.animeTopic.AnimeTopicActivity;
 import my.project.sakuraproject.main.desc.DescActivity;
 import my.project.sakuraproject.main.home.HomeContract;
 import my.project.sakuraproject.main.home.HomePresenter;
-import my.project.sakuraproject.main.tag.MaliTagActivity;
 import my.project.sakuraproject.main.tag.TagActivity;
 import my.project.sakuraproject.main.updateList.UpdateListActivity;
 import my.project.sakuraproject.main.week.WeekActivity;
@@ -54,7 +52,6 @@ public class HomeFragment extends BaseFragment<HomeContract.View, HomePresenter>
     @BindView(R.id.rv_list)
     RecyclerView recyclerView;
     private HomeAdapter adapter;
-    private String maliHtml = "";
     @BindView(R.id.ref)
     MaterialButton ref;
 
@@ -142,15 +139,12 @@ public class HomeFragment extends BaseFragment<HomeContract.View, HomePresenter>
 
     @Override
     protected HomePresenter createPresenter() {
-        return new HomePresenter(false, "", this);
+        return new HomePresenter(false, this);
     }
 
     @Override
     protected void loadData() {
-        if (Utils.isImomoe())
-            mPresenter.loadMailiHtmlData();
-        else
-            mPresenter.loadData(true);
+        mPresenter.loadData(true);
     }
 
     @Override
@@ -168,7 +162,7 @@ public class HomeFragment extends BaseFragment<HomeContract.View, HomePresenter>
         Bundle bundle = new Bundle();
         switch (bean.getType()) {
             case HomeHeaderBean.TYPE_XFSJB:
-                startActivity(new Intent(getActivity(), WeekActivity.class).putExtra("html", maliHtml));
+                startActivity(new Intent(getActivity(), WeekActivity.class));
                 break;
             case HomeHeaderBean.TYPE_DMFL:
                 startActivity(new Intent(getActivity(), TagActivity.class));
@@ -185,7 +179,7 @@ public class HomeFragment extends BaseFragment<HomeContract.View, HomePresenter>
                 openAnimeListActivity(Utils.getString(R.string.home_jcb_title), Sakura.JCB_API, false);
                 break;
             //===========================================================
-            case HomeHeaderBean.TYPE_DMFL_MALIMALI_TAG:
+            /*case HomeHeaderBean.TYPE_DMFL_MALIMALI_TAG:
                 bundle.putString("homeParam", Api.MALIMALI_TAG_DEFAULT);
 //                bundle.putString("title", "全部类型");
                 bundle.putString("title", "全部");
@@ -205,7 +199,7 @@ public class HomeFragment extends BaseFragment<HomeContract.View, HomePresenter>
                 bundle.putString("homeParam", Api.MALIMALI_EUROPE);
                 bundle.putString("title", bean.getTitle());
                 startActivity(new Intent(getActivity(), MaliTagActivity.class).putExtras(bundle));
-                break;
+                break;*/
         }
     }
 
@@ -278,10 +272,12 @@ public class HomeFragment extends BaseFragment<HomeContract.View, HomePresenter>
                 headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("动漫专题", R.drawable.outline_video_library_white_48dp, HomeHeaderBean.TYPE_DMZT));
                 headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("剧场版", R.drawable.ic_ondemand_video_white_48dp, HomeHeaderBean.TYPE_JCB));
             } else {
-                headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("动漫分类", R.drawable.baseline_filter_white_48dp, HomeHeaderBean.TYPE_DMFL_MALIMALI_TAG));
-                headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("日韩动漫", R.drawable.baseline_movie_white_48dp, HomeHeaderBean.TYPE_DMFL_MALIMALI_JAPAN));
-                headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("国产动漫", R.drawable.outline_video_library_white_48dp, HomeHeaderBean.TYPE_DMFL_MALIMALI_CHINA));
-                headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("欧美动漫", R.drawable.ic_ondemand_video_white_48dp, HomeHeaderBean.TYPE_DMFL_MALIMALI_EUROPE));
+                headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("新番日漫", R.drawable.baseline_movie_white_48dp, HomeHeaderBean.TYPE_DMFL_SILISILI_XFRM));
+                headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("新番国漫", R.drawable.baseline_movie_white_48dp, HomeHeaderBean.TYPE_DMFL_SILISILI_XFGM));
+                headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("动漫番剧", R.drawable.baseline_movie_white_48dp, HomeHeaderBean.TYPE_DMFL_SILISILI_DMFJ));
+                headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("动漫专题", R.drawable.outline_video_library_white_48dp, HomeHeaderBean.TYPE_DMFL_SILISILI_ZT));
+                headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("剧场版", R.drawable.ic_ondemand_video_white_48dp, HomeHeaderBean.TYPE_DMFL_SILISILI_JCB));
+//                headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("排行榜", R.drawable.ic_ondemand_video_white_48dp, HomeHeaderBean.TYPE_DMFL_SILISILI_PHB));
             }
             multiItemEntities.add(new HomeHeaderBean(headerDataBeans));
             for (HomeBean homeBean : beans) {
@@ -294,12 +290,5 @@ public class HomeFragment extends BaseFragment<HomeContract.View, HomePresenter>
     @Override
     public void showUpdateInfoSuccess(List<AnimeUpdateInfoBean> beans) {
         application.animeUpdateInfoBeans = beans;
-    }
-
-    @Override
-    public void showMaliWeekInfoSuccess(String html) {
-        maliHtml = html;
-        mPresenter = new HomePresenter(false, html, this);
-        mPresenter.loadData(true);
     }
 }

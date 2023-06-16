@@ -19,7 +19,7 @@ public class DownloadVideoModel extends BaseModel implements DownloadVideoContra
     @Override
     public void getData(String url, String playNumber, int source, DownloadVideoContract.LoadDataCallback callback) {
         if (source == 1)
-            parserImomoeVideoUrls(getDomain(true) + url, playNumber, false, callback);
+            parserImomoeVideoUrls(getDomain(true) + url, playNumber, callback);
         else
             parserYhdmVideoUrls(getDomain(false) + url, playNumber, callback);
     }
@@ -74,7 +74,7 @@ public class DownloadVideoModel extends BaseModel implements DownloadVideoContra
         });
     }
 
-    private void parserImomoeVideoUrls( String url, String playNumber, boolean isJs, DownloadVideoContract.LoadDataCallback callback) {
+    private void parserImomoeVideoUrls( String url, String playNumber, DownloadVideoContract.LoadDataCallback callback) {
         callback.log(url);
         new HttpGet(url, new Callback() {
             @Override

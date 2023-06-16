@@ -24,7 +24,7 @@ public class SearchModel extends BaseModel implements SearchContract.Model {
     @Override
     public void getData(String url, int page, boolean isMain, String imomoeParam, SearchContract.LoadDataCallback callback) throws UnsupportedEncodingException {
         if (isImomoe()) {
-            url = url + String.format(Api.MALIMALI_SEARCH, imomoeParam, page);
+            url = url + String.format(Api.SILISILI_SEARCH, imomoeParam, page);
             Log.e("url", url);
             parserImomoe(url, isMain, callback);
         } else {
@@ -82,7 +82,7 @@ public class SearchModel extends BaseModel implements SearchContract.Model {
                 try {
                     String source = getBody(response);
                     if (isMain)
-                        callback.pageCount(ImomoeJsoupUtils.getPageCount(source));
+                        callback.pageCount(ImomoeJsoupUtils.getSearchPageCount(source));
                     List<AnimeListBean>  animeListBeans = ImomoeJsoupUtils.getSearchAnimeList(source);
                     if (animeListBeans.size() > 0)
                         callback.success(isMain, animeListBeans);

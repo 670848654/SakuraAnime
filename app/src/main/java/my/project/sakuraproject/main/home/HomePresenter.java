@@ -10,14 +10,12 @@ import my.project.sakuraproject.main.base.Presenter;
 
 public class HomePresenter extends Presenter<HomeContract.View> implements BasePresenter, HomeContract.LoadDataCallback {
     private boolean isWeek;
-    private String maliHtml;
     private HomeContract.View view;
     private HomeModel model;
 
-    public HomePresenter(boolean isWeek, String maliHtml, HomeContract.View view) {
+    public HomePresenter(boolean isWeek, HomeContract.View view) {
         super(view);
         this.isWeek = isWeek;
-        this.maliHtml = maliHtml;
         this.view = view;
         model = new HomeModel();
     }
@@ -33,13 +31,7 @@ public class HomePresenter extends Presenter<HomeContract.View> implements BaseP
     public void loadData(boolean isMain) {
         if (isMain)
             view.showLoadingView();
-//        model.getData(isWeek, this);
-        model.getData(isWeek, maliHtml, this);
-    }
-
-    public void loadMailiHtmlData() {
-        view.showLoadingView();
-        model.getMaliWeek(this);
+        model.getData(isWeek, this);
     }
 
     @Override
@@ -56,12 +48,6 @@ public class HomePresenter extends Presenter<HomeContract.View> implements BaseP
     public void updateInfoSuccess(List<AnimeUpdateInfoBean> animeUpdateInfoBeans) {
         view.showUpdateInfoSuccess(animeUpdateInfoBeans);
     }
-
-    @Override
-    public void maliWeekInfoSuccess(String html) {
-        view.showMaliWeekInfoSuccess(html);
-    }
-
 
     @Override
     public void error(String msg) {

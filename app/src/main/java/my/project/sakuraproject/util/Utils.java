@@ -416,7 +416,7 @@ public class Utils {
         if (img.contains("yhdmtu"))
             imgUrl = new GlideUrl(getImgUrl(img, false));
         else
-            imgUrl = new GlideUrl(getImgUrl(img, true));
+            imgUrl = new GlideUrl(img);
         Glide.with(context)
                 .asBitmap()
                 .transition(BitmapTransitionOptions.withCrossFade())

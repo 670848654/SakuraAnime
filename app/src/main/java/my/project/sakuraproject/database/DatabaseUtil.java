@@ -727,6 +727,14 @@ public class DatabaseUtil {
      */
     public static int queryDownloadCount() {
         Cursor cursor = db.rawQuery("SELECT * FROM T_DOWNLOAD" , null);
+        while (cursor.moveToNext()) {
+            String id = cursor.getString(1);
+            Cursor dataCursor = db.rawQuery("SELECT * FROM T_DOWNLOAD_DATA where F_LINK_ID = ?" , new String[]{id});
+            if (dataCursor.getCount() == 0)
+                db.execSQL("delete from T_DOWNLOAD where F_ID = ?", new String[]{id}); // 删除异常的数据
+            dataCursor.close();
+        }
+        cursor = db.rawQuery("SELECT * FROM T_DOWNLOAD" , null);
         int count = cursor.getCount();
         cursor.close();
         return count;

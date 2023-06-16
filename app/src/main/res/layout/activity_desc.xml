@@ -171,7 +171,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:ellipsize="end"
-                            android:maxLines="3"
+                            android:maxLines="2"
                             android:shadowColor="@color/light_toolbar_color_lt23"
                             android:shadowDx="1.0"
                             android:shadowDy="1.0"

@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">樱花动漫</string>
     <string name="yhdm">Yhdm</string>
-    <string name="imomoe">MaliMali</string>
+    <string name="imomoe">SiliSili</string>
     <string name="app_sub_name">时间表</string>
     <string name="search">搜索</string>
     <!-- 权限文本 -->
@@ -24,7 +24,7 @@
     <string name="exit_app">再按一次退出程序</string>
     <!-- 主页dialog文本 -->
     <string name="x5_info_title">注意事项</string>
-    <string name="x5_info">本应用只是爬取樱花动漫（Yhdm、MaliMali）网站部分内容编写的第三方APP，官方并未发布APP，仅供学习交流。\n一些番剧可能需要使用WebView播放。\n新番多数可以直接使用内置播放器或外部播放器播放(某些可能第一次播放失败，需多尝试几次)。\n注：并不是所有番剧都能正常播放（多为网站本身原因）~</string>
+    <string name="x5_info">本应用只是爬取樱花动漫（Yhdm、SiliSili）网站部分内容编写的第三方APP，官方并未发布APP，仅供学习交流。\n一些番剧可能需要使用WebView播放。\n新番多数可以直接使用内置播放器或外部播放器播放(某些可能第一次播放失败，需多尝试几次)。\n注：并不是所有番剧都能正常播放（多为网站本身原因）~</string>
     <string name="x5_info_positive">OJBK</string>
     <!-- 空文本 -->
     <string name="empty">未能获取到任何信息</string>
@@ -249,7 +249,7 @@
 
     <string-array name="source">
         <item>Yhdm</item>
-        <item>MaliMali</item>
+        <item>SiliSili</item>
     </string-array>
 
     <string-array name="my_titles">

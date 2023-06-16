@@ -258,7 +258,7 @@ public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatA
             DatabaseUtil.dataTransfer();
             DatabaseUtil.deleteImomoeData();
             DatabaseUtil.updatePlayUrl();
-            DatabaseUtil.deleteMaliMaliData();
+//            DatabaseUtil.deleteMaliMaliData();
         }
         hideGap();
         setStatusBarColor();

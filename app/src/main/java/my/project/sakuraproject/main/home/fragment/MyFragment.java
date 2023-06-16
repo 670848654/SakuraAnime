@@ -148,14 +148,14 @@ public class MyFragment extends MyLazyFragment {
             switch (index) {
                 case 0:
                     SharedPreferencesUtils.setParam(getActivity(), "isImomoe", false);
-                    setDomain();
+//                    setDomain();
                     break;
                 case 1:
-                    CustomToast.showToast(getActivity(), "该站点已关闭，后续将引入新站点...", CustomToast.WARNING);
-//                    SharedPreferencesUtils.setParam(getActivity(), "isImomoe", true);
+//                    CustomToast.showToast(getActivity(), "该站点已关闭，后续将引入新站点...", CustomToast.WARNING);
+                    SharedPreferencesUtils.setParam(getActivity(), "isImomoe", true);
                     break;
             }
-//            setDomain();
+            setDomain();
             dialog.dismiss();
         });
         AlertDialog alertDialog = builder.create();

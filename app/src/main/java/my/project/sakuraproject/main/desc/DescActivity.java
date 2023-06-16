@@ -170,6 +170,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     AutoCompleteTextView selectedDrama;
     private List<String> dramaTitles;
     private ArrayAdapter dramaTitlesApter;
+    private int sourceIndex = 0;
 
     @Override
     protected DescPresenter createPresenter() {
@@ -482,10 +483,8 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
             showView(desc);
         }
         update_time.setText("·"+animeListBean.getUpdateTime());
-        if (!isImomoe) {
-            score_view.setText("·"+animeListBean.getScore()+"分");
-            showView(score_view);
-        }
+        score_view.setText("·"+animeListBean.getScore()+ (isImomoe ? "" : "分"));
+        showView(score_view);
     }
 
     @Override
@@ -578,6 +577,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     }
 
     private void setAdapterData(int position) {
+        sourceIndex = position;
         dramaList = animeDescListBean.getAnimeDramasBeans().get(position).getAnimeDescDetailsBeanList();
         dramaListAdapter.setNewData(dramaList);
         downloadBean = new ArrayList<>();
@@ -588,10 +588,10 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
             downloadDramaBean.setUrl(b.getUrl());
             downloadBean.add(downloadDramaBean);
         }
-        setAnimeDescDramaAdapter(0);
+        setAnimeDescDramaAdapter();
     }
 
-    private void setAnimeDescDramaAdapter(int sourceIndex) {
+    private void setAnimeDescDramaAdapter() {
         showView(openDrama);
         expandListAdapter.setNewData(dramaList);
         downloadAdapter.setNewData(downloadBean);
@@ -798,7 +798,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
      */
     @Override
     public void showSuccessImomoeVideoUrlsView(String url, String playNumber) {
-
+        runOnUiThread(() -> startDownload(url, playNumber));
     }
 
     /**

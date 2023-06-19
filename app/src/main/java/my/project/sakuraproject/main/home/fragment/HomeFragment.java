@@ -6,10 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.google.android.material.button.MaterialButton;
@@ -22,6 +18,9 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -39,6 +38,7 @@ import my.project.sakuraproject.main.animeTopic.AnimeTopicActivity;
 import my.project.sakuraproject.main.desc.DescActivity;
 import my.project.sakuraproject.main.home.HomeContract;
 import my.project.sakuraproject.main.home.HomePresenter;
+import my.project.sakuraproject.main.rank.RankActivity;
 import my.project.sakuraproject.main.tag.TagActivity;
 import my.project.sakuraproject.main.updateList.UpdateListActivity;
 import my.project.sakuraproject.main.week.WeekActivity;
@@ -213,6 +213,9 @@ public class HomeFragment extends BaseFragment<HomeContract.View, HomePresenter>
                 siliParams[2] = String.format(siliArrStr, Api.SILISILI_JCB);
                 openSiliTagList("剧场版", String.format(tagUrl, "vodshow", "id", Api.SILISILI_JCB), siliParams);
                 break;
+            case HomeHeaderBean.TYPE_DMFL_SILISILI_PHB:
+                startActivity(new Intent(getActivity(), RankActivity.class));
+                break;
         }
     }
 
@@ -290,7 +293,7 @@ public class HomeFragment extends BaseFragment<HomeContract.View, HomePresenter>
                 headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("完结动漫", R.drawable.baseline_movie_white_48dp, HomeHeaderBean.TYPE_DMFL_SILISILI_WJDM));
                 headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("动漫专题", R.drawable.outline_video_library_white_48dp, HomeHeaderBean.TYPE_DMFL_SILISILI_ZT));
                 headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("剧场版", R.drawable.ic_ondemand_video_white_48dp, HomeHeaderBean.TYPE_DMFL_SILISILI_JCB));
-//                headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("排行榜", R.drawable.ic_ondemand_video_white_48dp, HomeHeaderBean.TYPE_DMFL_SILISILI_PHB));
+                headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("排行榜", R.drawable.ic_baseline_format_list_numbered_24, HomeHeaderBean.TYPE_DMFL_SILISILI_PHB));
             }
             multiItemEntities.add(new HomeHeaderBean(headerDataBeans));
             for (HomeBean homeBean : beans) {

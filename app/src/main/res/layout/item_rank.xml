@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingRight="8dp"
+    android:paddingLeft="8dp"
+    android:paddingTop="5dp"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:background="@color/window_bg">
+
+    <TextView
+        android:id="@+id/index"
+        android:textSize="14sp"
+        android:layout_centerVertical="true"
+        android:paddingTop="4dp"
+        android:paddingLeft="9dp"
+        android:paddingRight="9dp"
+        android:paddingBottom="4dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/rank_other"
+        android:textColor="@color/white"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginBottom="10dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:layout_toRightOf="@+id/index"
+        android:textColor="@color/text_color_primary" />
+
+    <TextView
+        android:id="@+id/score"
+        android:textSize="14sp"
+        android:layout_marginTop="15dp"
+        android:layout_below="@+id/title"
+        android:layout_toLeftOf="@+id/hot"
+        android:drawableStart="@drawable/ic_baseline_star_rate_24"
+        android:drawableTint="#73c9e5"
+        android:drawablePadding="2dp"
+        android:gravity="center"
+        android:textColor="@color/text_color_primary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/hot"
+        android:layout_marginTop="15dp"
+        android:textSize="14sp"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/title"
+        android:drawableStart="@drawable/ic_baseline_whatshot_24"
+        android:drawableTint="#FF4A4A"
+        android:drawablePadding="2dp"
+        android:gravity="center"
+        android:textColor="@color/text_color_primary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <View
+        android:layout_marginTop="5dp"
+        android:layout_below="@+id/hot"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/head"/>
+</RelativeLayout>

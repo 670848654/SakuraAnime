@@ -10,13 +10,12 @@ import android.view.View;
 import android.view.animation.AnticipateInterpolator;
 import android.widget.LinearLayout;
 
-import androidx.core.splashscreen.SplashScreen;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 
+import androidx.core.splashscreen.SplashScreen;
 import butterknife.BindView;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.api.Api;

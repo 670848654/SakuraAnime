@@ -4,10 +4,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
-import androidx.core.view.GravityCompat;
-
 import java.util.List;
 
+import androidx.core.view.GravityCompat;
 import my.project.sakuraproject.adapter.DramaAdapter;
 import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.bean.AnimeDescDetailsBean;

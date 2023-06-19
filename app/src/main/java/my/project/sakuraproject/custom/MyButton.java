@@ -4,10 +4,10 @@ import android.content.Context;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 
+import com.google.android.material.button.MaterialButton;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
-import com.google.android.material.button.MaterialButton;
 
 public class MyButton extends MaterialButton {
 

@@ -16,6 +16,7 @@ public class Api {
     public final static String SILISILI_XFGM = "xinfanguoman";
     public final static String SILISILI_WJDM = "dongmanfanju";
     public final static String SILISILI_JCB = "juchang";
+    public final static String SILISILI_RANK = "/map.html";
 
     // 免费的VIP解析接口用于解析类似： https://v.qq.com/x/cover/ww18u675tfmhas6/v0034fqhcph.html
     public final static String[] PARSE_TITLES = new String[] {"思古解析", "夜幕解析", "虾米解析", "M3U8.TV解析", "纯净/B站解析 [使用WebView播放]"};

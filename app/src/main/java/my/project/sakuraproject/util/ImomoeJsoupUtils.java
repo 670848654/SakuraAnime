@@ -26,15 +26,13 @@ import my.project.sakuraproject.bean.AnimeDescRecommendBean;
 import my.project.sakuraproject.bean.AnimeDramasBean;
 import my.project.sakuraproject.bean.AnimeListBean;
 import my.project.sakuraproject.bean.HomeBean;
+import my.project.sakuraproject.bean.SiliSiliRankBean;
 import my.project.sakuraproject.bean.TagBean;
 
 public class ImomoeJsoupUtils {
     private final static Pattern IMG_PATTERN = Pattern.compile("http(.*)");
     /** 星期数组 **/
     private static final String[] TABS = Utils.getArray(R.array.week_array);
-    private final static Pattern PAGE_PATTERN = Pattern.compile("/(\\d+)/");
-//    private final static Pattern PAGE_PATTERN = Pattern.compile("-[0-9].*?-");
-    private final static Pattern PLAY_URL_PATTERN = Pattern.compile("(https?|ftp|file):\\/\\/[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]");
 
     /**
      * 获取搜索列表的页数
@@ -82,6 +80,8 @@ public class ImomoeJsoupUtils {
         HomeBean homeBean;
         // 推荐
         Elements recommendLi = document.select("div.focus").select("div.swiper-slide");
+        if (recommendLi.size() == 0)
+            return homeBeanList;
         recommendLi.select("div.swiper-slide-votitle > span").remove();
         homeBean = new HomeBean();
         homeBean.setTitle("动漫推荐");
@@ -364,7 +364,9 @@ public class ImomoeJsoupUtils {
             List<AnimeDramasBean> animeDramasBeans = new ArrayList<>();
             for (Element element : playBox) {
                 AnimeDramasBean animeDramasBean = new AnimeDramasBean();
-                animeDramasBean.setListTitle(element.select("div.widget-title").text());
+                String playListTitle = element.select("div.widget-title").text();
+                if (playListTitle.contains("下载")) continue;
+                animeDramasBean.setListTitle(playListTitle);
                 Elements liList = element.select("ul > li");
                 List<AnimeDescDetailsBean> animeDescDramasBeans = new ArrayList<>();
                 for (Element drama : liList) {
@@ -377,8 +379,6 @@ public class ImomoeJsoupUtils {
                 animeDramasBeans.add(animeDramasBean);
             }
             animeDescListBean.setAnimeDramasBeans(animeDramasBeans);
-           /* multipleAnimeDescDetailsBeans.add(animeDescDramasBeans);
-            animeDescListBean.setMultipleAnimeDescDetailsBeans(multipleAnimeDescDetailsBeans);*/
             //** 封装推荐 **//
             Elements recommendElements = document.select("div.vod_hl_list").select("a"); //相关推荐
             if (recommendElements.size() > 0) {
@@ -519,5 +519,40 @@ public class ImomoeJsoupUtils {
             }
         }
         return animeListBeans;
+    }
+
+    /**
+     * 排行榜
+     * 2023年6月19日20:35:37 新增
+     * @param source
+     * @return
+     */
+    public static List<SiliSiliRankBean> getRankList(String source) {
+        Document document = Jsoup.parse(source);
+        List<SiliSiliRankBean> siliSiliRankBeans = new ArrayList<>();
+        Elements elements = document.select("div.top-item-box");
+        if (elements.size() > 0) {
+            for (Element e : elements) {
+                String topTitle = e.select("div.widget-title").text();
+                Elements items = e.select("div.top-item");
+                for (Element item : items) {
+                    String subTitle = item.select("h5").text();
+                    Elements as = item.select("ul.top-list > li > a");
+                    List<SiliSiliRankBean.RankItem> rankItems = new ArrayList<>();
+                    for (Element a : as) {
+                        SiliSiliRankBean.RankItem rankItem = new SiliSiliRankBean.RankItem();
+                        rankItem.setIndex(a.select("span.badge").text());
+                        rankItem.setTitle(a.select("span.tit").text());
+                        rankItem.setUrl(a.attr("href"));
+                        rankItem.setHot(a.select("span.remen").text());
+                        a.select("span.remen").remove();
+                        rankItem.setScore(a.select("span.score").text());
+                        rankItems.add(rankItem);
+                    }
+                    siliSiliRankBeans.add(new SiliSiliRankBean(topTitle + "-" + subTitle, rankItems));
+                }
+            }
+        }
+        return siliSiliRankBeans;
     }
 }

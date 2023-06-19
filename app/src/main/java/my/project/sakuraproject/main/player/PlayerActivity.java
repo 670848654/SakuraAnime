@@ -5,12 +5,11 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import androidx.core.view.GravityCompat;
-
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
 
+import androidx.core.view.GravityCompat;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.adapter.DramaAdapter;
 import my.project.sakuraproject.api.Api;

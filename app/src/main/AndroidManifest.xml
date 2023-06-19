@@ -156,6 +156,12 @@
             android:configChanges="screenLayout|orientation|screenSize|smallestScreenSize|keyboardHidden|uiMode"
             
             android:theme="@style/TranslucentTheme" />
+
+        <activity
+            android:name=".main.rank.RankActivity"
+            android:configChanges="screenLayout|orientation|screenSize|smallestScreenSize|keyboardHidden|uiMode"
+
+            android:theme="@style/TranslucentTheme" />
         <activity
             android:name=".cling.ui.DLNAActivity"
             android:configChanges="screenLayout|orientation|screenSize|smallestScreenSize|keyboardHidden|uiMode"

@@ -5,6 +5,8 @@ import android.app.Application;
 import android.os.Handler;
 import android.view.View;
 
+import androidx.appcompat.app.AppCompatDelegate;
+
 import com.arialyy.aria.core.Aria;
 import com.bumptech.glide.Glide;
 import com.google.android.material.snackbar.Snackbar;
@@ -19,7 +21,6 @@ import java.util.Set;
 
 import javax.net.ssl.HttpsURLConnection;
 
-import androidx.appcompat.app.AppCompatDelegate;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.bean.AnimeUpdateInfoBean;
 import my.project.sakuraproject.util.CropUtil;

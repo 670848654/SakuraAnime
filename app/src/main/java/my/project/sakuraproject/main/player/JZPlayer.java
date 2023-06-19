@@ -281,20 +281,24 @@ public class JZPlayer extends JzvdStd {
                 AlertDialog alertDialog;
                 MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context, R.style.DialogStyle);
                 View view = LayoutInflater.from(context).inflate(R.layout.dialog_query_danmu, null);
-                TextInputLayout layout = view.findViewById(R.id.name);
-                layout.getEditText().setText(queryDanmuTitle.isEmpty() ? (jzDataSource.title.contains("-") ? jzDataSource.title.split("-")[0].trim() : jzDataSource.title) : queryDanmuTitle);
+                TextInputLayout name = view.findViewById(R.id.name);
+                TextInputLayout drama = view.findViewById(R.id.drama);
+                name.getEditText().setText(queryDanmuTitle.isEmpty() ? (jzDataSource.title.contains("-") ? jzDataSource.title.split("-")[0].trim() : jzDataSource.title) : queryDanmuTitle);
+                drama.getEditText().setText(jzDataSource.title.contains("-") ? jzDataSource.title.split("-")[1].trim() : "");
                 builder.setTitle("手动查询弹幕");
-                builder.setPositiveButton("确定", null);
+                builder.setPositiveButton("查询弹幕", null);
                 builder.setNegativeButton("取消", null);
                 alertDialog = builder.setView(view).create();
                 alertDialog.show();
                 alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v2 -> {
                     Utils.hideKeyboard(v2);
-                    queryDanmuTitle = layout.getEditText().getText().toString().trim();
-                    onQueryDanmuListener.queryDamu(queryDanmuTitle);
+                    queryDanmuTitle = name.getEditText().getText().toString().trim();
+                    String queryDanmuDrama = drama.getEditText().getText().toString().trim();
+                    onQueryDanmuListener.queryDamu(queryDanmuTitle, queryDanmuDrama);
                     alertDialog.dismiss();
                 });
-                initTextInputLayout(alertDialog, layout);
+                initTextInputLayout(alertDialog, name);
+                initTextInputLayout(alertDialog, drama);
                 break;
         }
     }
@@ -606,7 +610,7 @@ public class JZPlayer extends JzvdStd {
     }
 
     public interface OnQueryDanmuListener {
-        void queryDamu(String queryDanmuTitle);
+        void queryDamu(String queryDanmuTitle, String queryDanmuDrama);
     }
 
     @Override

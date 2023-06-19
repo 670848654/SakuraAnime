@@ -9,12 +9,13 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Interpolator;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.ViewPropertyAnimatorListener;
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import my.project.sakuraproject.R;
 
 public class ScrollAwareBehavior extends FloatingActionButton.Behavior {

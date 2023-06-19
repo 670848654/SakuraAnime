@@ -5,6 +5,9 @@ import android.content.res.ColorStateList;
 import android.view.View;
 import android.widget.ImageView;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
@@ -13,8 +16,6 @@ import com.google.android.material.chip.ChipGroup;
 
 import java.util.List;
 
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.bean.HomeBean;
 import my.project.sakuraproject.bean.HomeHeaderBean;

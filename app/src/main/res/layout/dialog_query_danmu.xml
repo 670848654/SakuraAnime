@@ -6,13 +6,33 @@
     android:background="@color/window_bg"
     android:paddingLeft="25dp"
     android:paddingTop="20dp"
-    android:paddingRight="25dp">
+    android:paddingRight="25dp"
+    >
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="番剧名称"
+        app:errorEnabled="true"
+        android:textColorHint="@color/m3_textfield_label_color"
+        app:boxStrokeColor="@color/m3_textfield_label_color"
+        app:hintTextColor="@color/m3_textfield_label_color"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:inputType="text"
+            android:textCursorDrawable="@null"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/drama"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="番剧集数"
         app:errorEnabled="true"
         android:textColorHint="@color/m3_textfield_label_color"
         app:boxStrokeColor="@color/m3_textfield_label_color"

@@ -614,7 +614,11 @@ public abstract class BasePlayerActivity extends BaseActivity implements JZPlaye
                 if (player.loadError) return;
                 try {
                     JSONArray jsonArray = danmus.getJSONObject("data").getJSONArray("data");
-                    Toast.makeText(this, "查询弹幕API成功，共"+danmus.getJSONObject("data").getInteger("total")+"条弹幕~", Toast.LENGTH_SHORT).show();
+                    int total = danmus.getJSONObject("data").getInteger("total");
+                    if (total == 0)
+                        Toast.makeText(this, "未能查询到当前番剧弹幕信息，请检查番剧名称或集数名称是否异常，使用手动查询弹幕功能尝试~", Toast.LENGTH_LONG).show();
+                    else
+                        Toast.makeText(this, "查询弹幕API成功，共"+total+"条弹幕~", Toast.LENGTH_SHORT).show();
                     player.danmuInfoView.setText("已加载"+ danmus.getJSONObject("data").getInteger("total") + "条弹幕！");
                     player.danmuInfoView.setVisibility(View.VISIBLE);
                     InputStream result = new ByteArrayInputStream(jsonArray.toString().getBytes(StandardCharsets.UTF_8));
@@ -667,10 +671,10 @@ public abstract class BasePlayerActivity extends BaseActivity implements JZPlaye
     }
 
     @Override
-    public void queryDamu(String queryDanmuTitle) {
+    public void queryDamu(String queryDanmuTitle, String queryDanmuDrama) {
         player.releaseDanMu();
         player.danmuInfoView.setVisibility(View.GONE);
-        danmuPresenter = new DanmuPresenter(queryDanmuTitle, isLocalVideo ? dramaTitle : witchTitle.split("-")[1].trim(), this);
+        danmuPresenter = new DanmuPresenter(queryDanmuTitle, queryDanmuDrama, this);
         danmuPresenter.loadDanmu();
     }
 

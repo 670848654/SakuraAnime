@@ -249,7 +249,7 @@ public class HistoryActivity extends BaseActivity<HistoryContract.View, HistoryP
                         VideoUtils.openImomoePlayer(true, this, animeTitle + " - " +dramaTitle, animeUrl, animeTitle, dramaUrl, imomoeDramasBeans, imomoeVideoUrlBeans, playSource, clickIndex, animeId);
                         break;
                 }*/
-                VideoUtils.openPlayer(true, this, animeTitle + " - " + dramaTitle, animeUrl, animeTitle, dramaUrl, yhdmDramasBeans, clickIndex, animeId, source == 1);
+                VideoUtils.openPlayer(true, this, animeTitle + " - " + dramaTitle, animeUrl, animeTitle, dramaUrl, yhdmDramasBeans, clickIndex, animeId, playSource, source == 1);
 
                 break;
             case 1:

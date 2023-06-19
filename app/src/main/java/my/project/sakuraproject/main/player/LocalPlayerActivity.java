@@ -39,6 +39,7 @@ public class LocalPlayerActivity extends BasePlayerActivity {
     protected void initCustomData() {
         startService(new Intent(this, DLNAService.class));
         otherView.setVisibility(View.GONE);
+        player.snifferBtn.setVisibility(View.GONE);
     }
 
     @Override

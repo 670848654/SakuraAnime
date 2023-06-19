@@ -45,10 +45,10 @@ public class VideoModel extends BaseModel implements VideoContract.Model {
                 else if (YhdmJsoupUtils.hasRefresh(source))
                     parserYhdm(title, url, playSource, playNumber, callback);
                 else {
-                    /*String fid = DatabaseUtil.getAnimeID(title, 0);
+                    String fid = DatabaseUtil.getAnimeID(title, 0);
                     DatabaseUtil.addIndex(fid, url, playSource, playNumber);
                     String dataBaseDrama = DatabaseUtil.queryAllIndex(fid);
-                    callback.successYhdmDramas(YhdmJsoupUtils.getAllDrama(source, dataBaseDrama));*/
+                    callback.successYhdmDramas(YhdmJsoupUtils.getAllDrama(source, dataBaseDrama));
                     List<String> urls = YhdmJsoupUtils.getVideoUrlList(source);
                     if (urls.size() > 0)
                         callback.successYhdmVideoUrls(urls);
@@ -71,21 +71,11 @@ public class VideoModel extends BaseModel implements VideoContract.Model {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String source = getHtmlBody(response, true);
-                /*
                 String fid = DatabaseUtil.getAnimeID(title, 1);
                 DatabaseUtil.addIndex(fid, url, playSource, playNumber);
                 String dataBaseDrama = DatabaseUtil.queryAllIndex(fid);
                 List<AnimeDescDetailsBean> bean = ImomoeJsoupUtils.getAllDrama(source, dataBaseDrama);
-                if (bean.size() == 0) {
-                    callback.error();
-                } else {
-                    callback.successImomoeDramas(bean);
-                    String playUrl = ImomoeJsoupUtils.getImomoePlayUrl(source);
-                    if (!playUrl.isEmpty())
-                        callback.successImomoeVideoUrl(playUrl);
-                    else
-                        callback.empty();
-                }*/
+                callback.successImomoeDramas(bean);
                 String playUrl = ImomoeJsoupUtils.getImomoePlayUrl(source);
                 if (!playUrl.isEmpty())
                     callback.successImomoeVideoUrl(playUrl);

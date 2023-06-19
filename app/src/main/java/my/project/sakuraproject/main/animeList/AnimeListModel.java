@@ -5,11 +5,9 @@ import android.util.Log;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import my.project.sakuraproject.R;
-import my.project.sakuraproject.api.Api;
 import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.bean.AnimeListBean;
 import my.project.sakuraproject.main.base.BaseModel;
@@ -25,18 +23,18 @@ public class AnimeListModel extends BaseModel implements AnimeListContract.Model
     private final static Pattern MALIMALI_WD = Pattern.compile("-(.*)-");
 
     @Override
-    public void getData(String url, int page, boolean isMain, boolean isMovie, boolean isImomoe, AnimeListContract.LoadDataCallback callback) throws UnsupportedEncodingException {
+    public void getData(String url, int page, boolean isMain, boolean isMovie, boolean isImomoe, boolean isToptic, List<String> siliParams, AnimeListContract.LoadDataCallback callback) throws UnsupportedEncodingException {
         String htmlUrl = getUlr(url, page, isImomoe);
         if (isImomoe)
-            parserImomoe(htmlUrl, isMain, callback);
+            parserImomoe(htmlUrl, page, isMain, isToptic, siliParams, callback);
         else
             parserYhdm(htmlUrl, isMain, isMovie, callback);
     }
 
     @Override
     public void getData(String[] params, boolean isMain, AnimeListContract.LoadDataCallback callback) {
-        String url = getDomain(true) + String.format(Api.MALIMALI_TAG, params[0], params[1], params[2], params[3], params[4], params[5]);
-        parserImomoe(url, isMain, callback);
+        /*String url = getDomain(true) + String.format(Api.MALIMALI_TAG, params[0], params[1], params[2], params[3], params[4], params[5]);
+        parserImomoe(url, isMain, callback);*/
     }
 
     /**
@@ -58,11 +56,12 @@ public class AnimeListModel extends BaseModel implements AnimeListContract.Model
                 else
                     return encodeUrl(getDomain(true) + url);
             }*/
-            Matcher m = MALIMALI_WD.matcher(url);
+            /*Matcher m = MALIMALI_WD.matcher(url);
             if (m.find())
                 return getDomain(true) + String.format(Api.MALIMALI_SEARCH, m.group().replaceAll("-", ""), page);
             else
-                return "";
+                return "";*/
+            return getDomain(true) + url;
         } else {
             if (page != 1)
                 return getDomain(false) + url + page + ".html";
@@ -105,10 +104,11 @@ public class AnimeListModel extends BaseModel implements AnimeListContract.Model
         });
     }
 
-    private void parserImomoe(String url,boolean isMain, AnimeListContract.LoadDataCallback callback) {
-        Log.e("MalimaliUrl", url);
+    private void parserImomoe(String url, int page, boolean isMain, boolean isToptic, List<String> siliParams, AnimeListContract.LoadDataCallback callback) {
+        Log.e("SiliSiliUrl", url);
         callback.log(url);
-        new HttpGet(url, new Callback() {
+        if (isToptic)
+            new HttpGet(url, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 callback.error(e.getMessage());
@@ -119,8 +119,8 @@ public class AnimeListModel extends BaseModel implements AnimeListContract.Model
                 try {
                     String source = getHtmlBody(response, true);
                     if (isMain)
-                        callback.pageCount(ImomoeJsoupUtils.getPageCount(source));
-                    List<AnimeListBean>  animeListBeans = ImomoeJsoupUtils.getAnimeList(source);
+                        callback.pageCount(1); // 不知道是否有分页参数
+                    List<AnimeListBean>  animeListBeans = ImomoeJsoupUtils.getAnimeList(source, true);
                     if (animeListBeans.size() > 0)
                         callback.success(isMain, animeListBeans);
                     else
@@ -131,5 +131,37 @@ public class AnimeListModel extends BaseModel implements AnimeListContract.Model
                 }
             }
         });
+        else {
+            String pageStr = "/page/%s/";
+            String pageParam = String.format(pageStr, page);
+            for (String params : siliParams) {
+                url += params;
+            }
+            url += pageParam;
+            Log.e("SiliSiliUrl", url);
+            new HttpGet(url, new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    callback.error(e.getMessage());
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) {
+                    try {
+                        String source = getHtmlBody(response, true);
+                        if (isMain)
+                            callback.pageCount(ImomoeJsoupUtils.getPageCount(source));
+                        List<AnimeListBean>  animeListBeans = ImomoeJsoupUtils.getAnimeList(source, false);
+                        if (animeListBeans.size() > 0)
+                            callback.success(isMain, animeListBeans);
+                        else
+                            callback.error(isMain, Utils.getString(R.string.error_msg));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        callback.error(isMain, e.getMessage());
+                    }
+                }
+            });
+        }
     }
 }

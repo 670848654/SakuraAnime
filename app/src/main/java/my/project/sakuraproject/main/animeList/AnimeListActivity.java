@@ -43,18 +43,19 @@ public class AnimeListActivity extends BaseActivity<AnimeListContract.View, Anim
     private String title, url;
     private boolean isMovie;
     private boolean isImomoe;
+    private boolean isToptic;
     private int nowPage = 1;
     private int pageCount = 1;
     private boolean isErr = true;
 
     @Override
     protected AnimeListPresenter createPresenter() {
-        return new AnimeListPresenter(url, nowPage, this);
+        return new AnimeListPresenter(url, null, nowPage, this);
     }
 
     @Override
     protected void loadData() {
-        mPresenter.loadData(true, isMovie, isImomoe);
+        mPresenter.loadData(true, isMovie, isImomoe, isToptic);
     }
 
     @Override
@@ -84,6 +85,7 @@ public class AnimeListActivity extends BaseActivity<AnimeListContract.View, Anim
             url = bundle.getString("url");
             isMovie = bundle.getBoolean("isMovie");
             isImomoe = bundle.getBoolean("isImomoe");
+            isToptic = bundle.getBoolean("isToptic");
         }
     }
 
@@ -115,7 +117,7 @@ public class AnimeListActivity extends BaseActivity<AnimeListContract.View, Anim
             nowPage = 1;
             pageCount = 1;
             mPresenter = createPresenter();
-            mPresenter.loadData(true, isMovie, isImomoe);
+            mPresenter.loadData(true, isMovie, isImomoe, isToptic);
         });
     }
 
@@ -144,7 +146,7 @@ public class AnimeListActivity extends BaseActivity<AnimeListContract.View, Anim
                     //成功获取更多数据
                     nowPage++;
                     mPresenter = createPresenter();
-                    mPresenter.loadData(false, isMovie, isImomoe);
+                    mPresenter.loadData(false, isMovie, isImomoe, isToptic);
                 } else {
                     //获取更多数据失败
                     isErr = true;

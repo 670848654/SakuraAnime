@@ -73,6 +73,7 @@ import my.project.sakuraproject.database.DatabaseUtil;
 import my.project.sakuraproject.main.animeList.AnimeListActivity;
 import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.base.BaseModel;
+import my.project.sakuraproject.main.search.SearchActivity;
 import my.project.sakuraproject.main.video.DownloadVideoContract;
 import my.project.sakuraproject.main.video.DownloadVideoPresenter;
 import my.project.sakuraproject.main.video.VideoContract;
@@ -344,15 +345,20 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
 
     private void chipClick(int position) {
         Bundle bundle = new Bundle();
-        bundle.putString("title", animeListBean.getTagTitles().get(position));
-        bundle.putString("url", animeListBean.getTagUrls().get(position));
-        bundle.putBoolean("isMovie", animeListBean.getTagUrls().get(position).contains("movie") ? true : false);
         isImomoe = sakuraUrl.contains("/voddetail/");
         bundle.putBoolean("isImomoe", isImomoe);
-        if (!isImomoe)
+        if (!isImomoe) {
+            bundle.putString("title", animeListBean.getTagTitles().get(position));
+            bundle.putString("url", animeListBean.getTagUrls().get(position));
+            bundle.putBoolean("isMovie", animeListBean.getTagUrls().get(position).contains("movie") ? true : false);
             startActivity(new Intent(DescActivity.this, AnimeListActivity.class).putExtras(bundle));
-        else
-            CustomToast.showToast(DescActivity.this, "当前源不支持", CustomToast.WARNING);
+        }
+        else {
+            bundle.putString("title", animeListBean.getTagUrls().get(position).replaceAll("/vodsearch", ""));
+            bundle.putString("siliToolbarTitle", animeListBean.getTagTitles().get(position));
+            bundle.putBoolean("isSiliTag", true);
+            startActivity(new Intent(DescActivity.this, SearchActivity.class).putExtras(bundle));
+        }
     }
 
     @OnClick(R.id.open_drama)
@@ -387,7 +393,6 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         MaterialButton materialButton = (MaterialButton) adapter.getViewByPosition(recyclerView, position, R.id.tag_group);
         materialButton.setTextColor(getResources().getColor(R.color.tabSelectedTextColor));
         clickIndex = position;
-        int playSource = 0;
         String playNumber;
         dramaList.get(position).setSelected(true);
         dramaUrl = dramaList.get(position).getUrl();
@@ -395,7 +400,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         witchTitle = animeTitle + " - " + playNumber;
         dramaListAdapter.notifyDataSetChanged();
         expandListAdapter.notifyDataSetChanged();
-        videoPresenter = new VideoPresenter(animeTitle, dramaUrl, playSource, playNumber, DescActivity.this);
+        videoPresenter = new VideoPresenter(animeTitle, dramaUrl, sourceIndex, playNumber, DescActivity.this);
         videoPresenter.loadData(true);
     }
 
@@ -409,7 +414,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         switch ((Integer) SharedPreferencesUtils.getParam(getApplicationContext(), "player", 0)) {
             case 0:
                 //调用播放器
-                VideoUtils.openPlayer(true, this, witchTitle, animeUrl, animeTitle, dramaUrl, dramaList, clickIndex, animeId, isImomoe);
+                VideoUtils.openPlayer(true, this, witchTitle, animeUrl, animeTitle, dramaUrl, dramaList, clickIndex, animeId, sourceIndex,  isImomoe);
                 break;
             case 1:
                 Utils.selectVideoPlayer(this, animeUrl);
@@ -769,7 +774,9 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     private void startDownload(String url, String playNumber) {
         long taskId;
         String fileSavePath = savePath + playNumber;
-        taskId = createDownloadTask(url.contains(".m3u8"), url, fileSavePath);
+        boolean isM3U8 = url.contains(".m3u8");
+        taskId = createDownloadTask(isM3U8, url, fileSavePath);
+        if (isM3U8) CustomToast.showToast(this, "该视频格式为M3U8，可能无法下载成功！", CustomToast.WARNING);
         DatabaseUtil.insertDownload(animeTitle, source, animeListBean.getImg(), sakuraUrl);
         DatabaseUtil.insertDownloadData(animeTitle, source, playNumber, 0, taskId);
         // 开启下载服务

@@ -44,12 +44,15 @@ public class SearchActivity extends BaseActivity<SearchContract.View, SearchPres
     private SearchView mSearchView;
     private boolean isSearch = false;
 
+    private boolean isSiliTag = false;
+    private String siliToolbarTitle;
+
     @Override
     protected SearchPresenter createPresenter() {
         if (Utils.isImomoe())
-            return new SearchPresenter(Sakura.SEARCH_API, page,  title,this);
+            return new SearchPresenter(Sakura.SEARCH_API, page, title, isSiliTag, this);
         else
-            return new SearchPresenter(Sakura.SEARCH_API + title + "/", page,  "",this);
+            return new SearchPresenter(Sakura.SEARCH_API + title + "/", page,  "", false, this);
     }
 
     @Override
@@ -79,12 +82,18 @@ public class SearchActivity extends BaseActivity<SearchContract.View, SearchPres
 
     public void getBundle() {
         Bundle bundle = getIntent().getExtras();
-        if (null != bundle && !bundle.isEmpty())
+        if (null != bundle && !bundle.isEmpty()) {
+            siliToolbarTitle = bundle.getString("siliToolbarTitle");
             title = bundle.getString("title");
+            isSiliTag = bundle.getBoolean("isSiliTag");
+        }
     }
 
     public void initToolbar() {
         toolbar.setTitle("");
+        if (isSiliTag) {
+            toolbar.setTitle(siliToolbarTitle);
+        }
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbar.setNavigationOnClickListener(view -> finish());
@@ -141,6 +150,7 @@ public class SearchActivity extends BaseActivity<SearchContract.View, SearchPres
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        if (isSiliTag) return false;
         int id = item.getItemId();
         if (id == R.id.search) {
             return true;
@@ -150,6 +160,7 @@ public class SearchActivity extends BaseActivity<SearchContract.View, SearchPres
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        if (isSiliTag) return false;
         getMenuInflater().inflate(R.menu.search_menu, menu);
         final MenuItem item = menu.findItem(R.id.search);
         mSearchView = (SearchView) MenuItemCompat.getActionView(item);

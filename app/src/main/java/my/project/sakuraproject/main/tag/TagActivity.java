@@ -26,8 +26,8 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.adapter.AnimeListAdapter;
+import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.bean.AnimeListBean;
-import my.project.sakuraproject.bean.MaliTagBean;
 import my.project.sakuraproject.bean.TagBean;
 import my.project.sakuraproject.custom.CustomLoadMoreView;
 import my.project.sakuraproject.custom.CustomToast;
@@ -48,11 +48,15 @@ public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> im
     SwipeRefreshLayout mSwipe;
     private AnimeListPresenter animeListPresenter;
     private String animeUrl = "";
+    private String tagUrl = "";
+    private String title = "";
+    private String[] siliParams;
+    private List<String> siliTagParams = new ArrayList<>();
+    private List<String> siliTagSubTitle = new ArrayList<>();
     private String toolbarSubTitle;
     private int nowPage = 1;
     private int pageCount = 1;
     private boolean isErr = true;
-    private String title = "";
     // TAG
     private List<TagBean> tagBeans = new ArrayList<>();
     @BindView(R.id.chip_group)
@@ -64,7 +68,7 @@ public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> im
 
     @Override
     protected TagPresenter createPresenter() {
-        return new TagPresenter(this);
+        return new TagPresenter(Utils.isImomoe() ? tagUrl : Sakura.TAG_API, siliParams, this);
     }
 
     @Override
@@ -94,8 +98,10 @@ public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> im
     public void getBundle() {
         Bundle bundle = getIntent().getExtras();
         if (null != bundle && !bundle.isEmpty()) {
-            animeUrl = bundle.getString("url");
+            animeUrl = bundle.getString("url") == null ? "" : bundle.getString("url");
+            tagUrl = bundle.getString("tagUrl") == null ? "" : bundle.getString("tagUrl");
             title = bundle.getString("title");
+            siliParams = bundle.getStringArray("siliParams");
         }
 
     }
@@ -114,8 +120,8 @@ public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> im
             animeLists.clear();
             animeListAdapter.setNewData(animeLists);
             nowPage = 1;
-            animeListPresenter = new AnimeListPresenter(animeUrl, nowPage, this);
-            animeListPresenter.loadData(true, false, Utils.isImomoe());
+            animeListPresenter = new AnimeListPresenter(Utils.isImomoe() ? tagUrl : animeUrl, siliTagParams, nowPage, this);
+            animeListPresenter.loadData(true, false, Utils.isImomoe(), false);
         });
     }
 
@@ -144,8 +150,8 @@ public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> im
                 if (isErr) {
                     //成功获取更多数据
                     nowPage++;
-                    animeListPresenter = new AnimeListPresenter(animeUrl, nowPage, this);
-                    animeListPresenter.loadData(false, false, Utils.isImomoe());
+                    animeListPresenter = new AnimeListPresenter(Utils.isImomoe() ? tagUrl : animeUrl, siliTagParams, nowPage, this);
+                    animeListPresenter.loadData(false, false, Utils.isImomoe(), false);
                 } else {
                     //获取更多数据失败
                     isErr = true;
@@ -175,7 +181,7 @@ public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> im
     }
 
     @Override
-    public void showSuccessView(List<TagBean> list) {
+    public void showTagSuccessView(boolean isSilisili, List<TagBean> list) {
         runOnUiThread(() -> {
             if (!mActivityFinish) {
 //                ref.setVisibility(View.GONE);
@@ -190,14 +196,29 @@ public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> im
                     chip.setRippleColor(getResources().getColorStateList(R.color.ripple_color));
                     int index = i;
                     chip.setOnClickListener(view -> {
-                        openSelectDialog(index);
+                        if (isSilisili)
+                            openSiliSelectDialog(index);
+                        else
+                            openSelectDialog(index);
                     });
                     tagGroup.addView(chip);
                 }
                 if (!animeUrl.isEmpty()) {
-                    animeListPresenter = new AnimeListPresenter(animeUrl, nowPage, this);
-                    animeListPresenter.loadData(true, false, Utils.isImomoe());
+                    animeListPresenter = new AnimeListPresenter(Utils.isImomoe() ? tagUrl : animeUrl, siliTagParams, nowPage, this);
+                    animeListPresenter.loadData(true, false, Utils.isImomoe(), false);
                 }
+            }
+        });
+    }
+
+    @Override
+    public void showDefaultSiliAnimeList(List<AnimeListBean> animeListBeans, int pageCount) {
+        runOnUiThread(() -> {
+            if (!mActivityFinish) {
+                this.pageCount = pageCount;
+                setRecyclerViewView();
+                animeLists = animeListBeans;
+                animeListAdapter.setNewData(animeLists);
             }
         });
     }
@@ -213,9 +234,6 @@ public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> im
             singleChip.setText(tagSelectBean.getTitle());
             if (animeUrl.equals(tagSelectBean.getUrl()))
                 singleChip.setChecked(true);
-            /*singleChip.setBackgroundColor(getResources().getColor(R.color.window_bg));
-            singleChip.setTextColor(getResources().getColor(R.color.text_color_primary));
-            singleChip.setChipStrokeColorResource(R.color.head);*/
             singleChip.setOnCheckedChangeListener((compoundButton, b) -> {
                 String title = compoundButton.getText().toString();
                 if (b) {
@@ -253,16 +271,72 @@ public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> im
             animeListAdapter.setNewData(null);
             animeListAdapter.setEmptyView(getLayoutInflater().inflate(R.layout.base_emnty_view, null));
             nowPage = 1;
-            animeListPresenter = new AnimeListPresenter(animeUrl, nowPage, this);
-            animeListPresenter.loadData(true, false, Utils.isImomoe());
+            animeListPresenter = new AnimeListPresenter(Utils.isImomoe() ? tagUrl : animeUrl, siliTagParams, nowPage, this);
+            animeListPresenter.loadData(true, false, Utils.isImomoe(), false);
         });
         tagDialog.getBehavior().setState(BottomSheetBehavior.STATE_EXPANDED);
         tagDialog.show();
     }
 
-    @Override
-    public void showMaliSuccessView(List<MaliTagBean> list) {
-
+    private void openSiliSelectDialog(int position) {
+        View view = LayoutInflater.from(this).inflate(R.layout.dialog_tag, null);
+        TextView textView = view.findViewById(R.id.title);
+        textView.setText(tagBeans.get(position).getTitle());
+        ExtendedFloatingActionButton button = view.findViewById(R.id.confirm);
+        itemChipsView = view.findViewById(R.id.chip_group);
+        for (TagBean.TagSelectBean tagSelectBean : tagBeans.get(position).getTagSelectBeans()) {
+            Chip singleChip = (Chip) LayoutInflater.from(this).inflate(R.layout.dialog_chip, null);
+            singleChip.setText(tagSelectBean.getTitle());
+            if (siliTagParams.contains(tagSelectBean.getUrl()))
+                singleChip.setChecked(true);
+            singleChip.setOnCheckedChangeListener((compoundButton, b) -> {
+                String title = compoundButton.getText().toString();
+                if (b) {
+                    for (int i = 0; i < itemChipsView.getChildCount(); i++) {
+                        Chip chip1 = (Chip) itemChipsView.getChildAt(i);
+                        chip1.setChecked(chip1.getText().toString().equals(title));
+                    }
+                    for (TagBean.TagSelectBean selectBean : tagBeans.get(position).getTagSelectBeans()) {
+                        if (selectBean.getTitle().equals(title)) {
+                            selectBean.setSelected(true);
+                            toolbarSubTitle = selectBean.getTitle();
+                            siliTagParams.add(selectBean.getUrl());
+                            siliTagSubTitle.add(selectBean.getTitle());
+                        } else {
+                            if (siliTagParams.contains(selectBean.getUrl())) {
+                                siliTagParams.remove(selectBean.getUrl());
+                                siliTagSubTitle.remove(selectBean.getTitle());
+                            }
+                            selectBean.setSelected(false);
+                        }
+                    }
+                } else {
+                    for (int i=0,size=tagBeans.get(position).getTagSelectBeans().size(); i<size; i++) {
+                        tagBeans.get(position).getTagSelectBeans().get(i).setSelected(false);
+                        TagBean.TagSelectBean checkedBean = tagBeans.get(position).getTagSelectBeans().get(i);
+                        if (siliTagParams.contains(checkedBean.getUrl())) {
+                            siliTagParams.remove(checkedBean.getUrl());
+                            siliTagSubTitle.remove(checkedBean.getTagTitle());
+                        }
+                    }
+                }
+            });
+            itemChipsView.addView(singleChip);
+        }
+        tagDialog = new BottomSheetDialog(this);
+        tagDialog.setContentView(view);
+        button.setOnClickListener(view1 -> {
+            tagDialog.dismiss();
+            toolbar.setSubtitle(siliTagSubTitle.toString());
+            animeLists.clear();
+            animeListAdapter.setNewData(null);
+            animeListAdapter.setEmptyView(getLayoutInflater().inflate(R.layout.base_emnty_view, null));
+            nowPage = 1;
+            animeListPresenter = new AnimeListPresenter(Utils.isImomoe() ? tagUrl : animeUrl, siliTagParams, nowPage, this);
+            animeListPresenter.loadData(true, false, Utils.isImomoe(), false);
+        });
+        tagDialog.getBehavior().setState(BottomSheetBehavior.STATE_EXPANDED);
+        tagDialog.show();
     }
 
     @Override

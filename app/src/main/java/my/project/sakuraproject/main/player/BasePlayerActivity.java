@@ -52,7 +52,6 @@ import my.project.sakuraproject.R;
 import my.project.sakuraproject.adapter.DramaAdapter;
 import my.project.sakuraproject.bean.AnimeDescDetailsBean;
 import my.project.sakuraproject.bean.DownloadDataBean;
-import my.project.sakuraproject.bean.ImomoeVideoUrlBean;
 import my.project.sakuraproject.bean.Refresh;
 import my.project.sakuraproject.bean.RefreshDownloadData;
 import my.project.sakuraproject.custom.CustomDanmakuParser;
@@ -70,7 +69,7 @@ import my.project.sakuraproject.util.StatusBarUtil;
 import my.project.sakuraproject.util.Utils;
 
 public abstract class BasePlayerActivity extends BaseActivity implements JZPlayer.CompleteListener, JZPlayer.TouchListener,
-        JZPlayer.ShowOrHideChangeViewListener,  JZPlayer.OnProgressListener, JZPlayer.PlayingListener, JZPlayer.PauseListener, DanmuContract.View {
+        JZPlayer.ShowOrHideChangeViewListener,  JZPlayer.OnProgressListener, JZPlayer.PlayingListener, JZPlayer.PauseListener, JZPlayer.OnQueryDanmuListener, DanmuContract.View {
     // 通用属性
     @BindView(R.id.player)
     JZPlayer player;
@@ -120,8 +119,7 @@ public abstract class BasePlayerActivity extends BaseActivity implements JZPlaye
     // YHDM源相关属性
     protected List<AnimeDescDetailsBean> yhdmDescList = new ArrayList<>();
     protected VideoPresenter videoPresenter;
-    // IMOMOE源相关属性
-    protected List<List<ImomoeVideoUrlBean>> imomoeVideoUrls = new ArrayList<>();
+    // SILISILI源相关属性
     protected int nowSource = 0; // 当前源
     // Local相关属性
     protected List<AnimeDescDetailsBean> dramaList = new ArrayList<>();
@@ -208,7 +206,7 @@ public abstract class BasePlayerActivity extends BaseActivity implements JZPlaye
                 drawerLayout.closeDrawer(GravityCompat.END);
             else drawerLayout.openDrawer(GravityCompat.END);
         });
-        player.setListener(this, this, this, this, this, this, this);
+        player.setListener(this, this, this, this, this, this, this, this);
         player.WIFI_TIP_DIALOG_SHOWED = true;
         player.backButton.setOnClickListener(v -> finish());
         player.preVideo.setOnClickListener(v -> {
@@ -667,6 +665,14 @@ public abstract class BasePlayerActivity extends BaseActivity implements JZPlaye
         if (danmuPresenter != null)
             danmuPresenter.detachView();
         super.onDestroy();
+    }
+
+    @Override
+    public void queryDamu(String queryDanmuTitle) {
+        player.releaseDanMu();
+        player.danmuInfoView.setVisibility(View.GONE);
+        danmuPresenter = new DanmuPresenter(queryDanmuTitle, isLocalVideo ? dramaTitle : witchTitle.split("-")[1].trim(), this);
+        danmuPresenter.loadDanmu();
     }
 
     /*@OnClick(R.id.order)

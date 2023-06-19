@@ -28,7 +28,6 @@ import my.project.sakuraproject.util.Utils;
 import my.project.sakuraproject.util.VideoUtils;
 
 public class PlayerActivity extends BasePlayerActivity implements VideoContract.View, SniffingUICallback {
-    private boolean isMaliMali = false;
 
     @Override
     protected boolean isLocalVideo() {
@@ -49,7 +48,7 @@ public class PlayerActivity extends BasePlayerActivity implements VideoContract.
         yhdmDescList = (List<AnimeDescDetailsBean>) bundle.getSerializable("list");
         clickIndex = bundle.getInt("clickIndex");
         animeId = bundle.getString("animeId");
-        isMaliMali = bundle.getBoolean("isMaliMali");
+        nowSource = bundle.getInt("nowSource");
     }
 
     @Override
@@ -112,13 +111,13 @@ public class PlayerActivity extends BasePlayerActivity implements VideoContract.
     @Override
     protected AnimeDescDetailsBean setAnimeDescDetailsBean(int position) {
         alertDialog = Utils.getProDialog(this, R.string.parsing);
-        EventBus.getDefault().post(new Event(false, -1, position));
+        EventBus.getDefault().post(new Event(Utils.isImomoe(), nowSource, position));
         return dramaAdapter.getItem(position);
     }
 
     @Override
     protected void changeVideo(String title) {
-        videoPresenter = new VideoPresenter(animeTitle, dramaUrl, 0, title, this);
+        videoPresenter = new VideoPresenter(animeTitle, dramaUrl, nowSource, title, this);
         videoPresenter.loadData(true);
     }
 
@@ -165,8 +164,10 @@ public class PlayerActivity extends BasePlayerActivity implements VideoContract.
 
     @Override
     public void showSuccessYhdmDramasView(List<AnimeDescDetailsBean> dramaList) {
-        /*yhdmDescList = dramaList;
-        runOnUiThread(() -> dramaAdapter.setNewData(yhdmDescList));*/
+        if (yhdmDescList.size() == 0) {
+            yhdmDescList = dramaList;
+            runOnUiThread(() -> dramaAdapter.setNewData(yhdmDescList));
+        }
     }
 
     @Override
@@ -188,8 +189,10 @@ public class PlayerActivity extends BasePlayerActivity implements VideoContract.
 
     @Override
     public void showSuccessImomoeDramasView(List<AnimeDescDetailsBean> bean) {
-        yhdmDescList = bean;
-        runOnUiThread(() -> dramaAdapter.setNewData(yhdmDescList));
+        if (yhdmDescList.size() == 0) {
+            yhdmDescList = bean;
+            runOnUiThread(() -> dramaAdapter.setNewData(yhdmDescList));
+        }
     }
 
     @Override

@@ -27,6 +27,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.adapter.HomeAdapter;
+import my.project.sakuraproject.api.Api;
 import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.bean.AnimeUpdateInfoBean;
 import my.project.sakuraproject.bean.HomeBean;
@@ -137,6 +138,14 @@ public class HomeFragment extends BaseFragment<HomeContract.View, HomePresenter>
         startActivity(new Intent(getActivity(), AnimeListActivity.class).putExtras(bundle));
     }
 
+    private void openSiliTagList(String title, String tagUrl, String[] siliParams) {
+        Bundle bundle = new Bundle();
+        bundle.putString("title", title);
+        bundle.putString("tagUrl", tagUrl);
+        bundle.putStringArray("siliParams", siliParams);
+        startActivity(new Intent(getActivity(), TagActivity.class).putExtras(bundle));
+    }
+
     @Override
     protected HomePresenter createPresenter() {
         return new HomePresenter(false, this);
@@ -160,6 +169,11 @@ public class HomeFragment extends BaseFragment<HomeContract.View, HomePresenter>
     @Override
     public void onHeaderClick(HomeHeaderBean.HeaderDataBean bean) {
         Bundle bundle = new Bundle();
+        String tagUrl = "/%s/%s/%s";
+        String siliArrStr = "/%s/";
+        String[] siliParams = new String[3];
+        siliParams[0] = "/vodshow";
+        siliParams[1] = "/id";
         switch (bean.getType()) {
             case HomeHeaderBean.TYPE_XFSJB:
                 startActivity(new Intent(getActivity(), WeekActivity.class));
@@ -178,28 +192,27 @@ public class HomeFragment extends BaseFragment<HomeContract.View, HomePresenter>
             case HomeHeaderBean.TYPE_JCB:
                 openAnimeListActivity(Utils.getString(R.string.home_jcb_title), Sakura.JCB_API, false);
                 break;
-            //===========================================================
-            /*case HomeHeaderBean.TYPE_DMFL_MALIMALI_TAG:
-                bundle.putString("homeParam", Api.MALIMALI_TAG_DEFAULT);
-//                bundle.putString("title", "全部类型");
-                bundle.putString("title", "全部");
-                startActivity(new Intent(getActivity(), MaliTagActivity.class).putExtras(bundle));
+            case HomeHeaderBean.TYPE_DMFL_SILISILI_ZT:
+                bundle.putString("title", Utils.getString(R.string.home_zt_title2));
+                bundle.putString("url", Sakura.YHDM_ZT_API);
+                startActivity(new Intent(getActivity(), AnimeTopicActivity.class).putExtras(bundle));
                 break;
-            case HomeHeaderBean.TYPE_DMFL_MALIMALI_JAPAN:
-                bundle.putString("homeParam", Api.MALIMALI_JAPAN);
-                bundle.putString("title", bean.getTitle());
-                startActivity(new Intent(getActivity(), MaliTagActivity.class).putExtras(bundle));
+            case HomeHeaderBean.TYPE_DMFL_SILISILI_XFRM:
+                siliParams[2] = String.format(siliArrStr, Api.SLILISILI_XFRM);
+                openSiliTagList("新番日漫", String.format(tagUrl, "vodshow", "id", Api.SLILISILI_XFRM), siliParams);
                 break;
-            case HomeHeaderBean.TYPE_DMFL_MALIMALI_CHINA:
-                bundle.putString("homeParam", Api.MALIMALI_CHINA);
-                bundle.putString("title", bean.getTitle());
-                startActivity(new Intent(getActivity(), MaliTagActivity.class).putExtras(bundle));
+            case HomeHeaderBean.TYPE_DMFL_SILISILI_XFGM:
+                siliParams[2] = String.format(siliArrStr, Api.SILISILI_XFGM);
+                openSiliTagList("新番国漫", String.format(tagUrl, "vodshow", "id", Api.SILISILI_XFGM), siliParams);
                 break;
-            case HomeHeaderBean.TYPE_DMFL_MALIMALI_EUROPE:
-                bundle.putString("homeParam", Api.MALIMALI_EUROPE);
-                bundle.putString("title", bean.getTitle());
-                startActivity(new Intent(getActivity(), MaliTagActivity.class).putExtras(bundle));
-                break;*/
+            case HomeHeaderBean.TYPE_DMFL_SILISILI_WJDM:
+                siliParams[2] = String.format(siliArrStr, Api.SILISILI_WJDM);
+                openSiliTagList("完结动漫", String.format(tagUrl, "vodshow", "id", Api.SILISILI_WJDM), siliParams);
+                break;
+            case HomeHeaderBean.TYPE_DMFL_SILISILI_JCB:
+                siliParams[2] = String.format(siliArrStr, Api.SILISILI_JCB);
+                openSiliTagList("剧场版", String.format(tagUrl, "vodshow", "id", Api.SILISILI_JCB), siliParams);
+                break;
         }
     }
 
@@ -274,7 +287,7 @@ public class HomeFragment extends BaseFragment<HomeContract.View, HomePresenter>
             } else {
                 headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("新番日漫", R.drawable.baseline_movie_white_48dp, HomeHeaderBean.TYPE_DMFL_SILISILI_XFRM));
                 headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("新番国漫", R.drawable.baseline_movie_white_48dp, HomeHeaderBean.TYPE_DMFL_SILISILI_XFGM));
-                headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("动漫番剧", R.drawable.baseline_movie_white_48dp, HomeHeaderBean.TYPE_DMFL_SILISILI_DMFJ));
+                headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("完结动漫", R.drawable.baseline_movie_white_48dp, HomeHeaderBean.TYPE_DMFL_SILISILI_WJDM));
                 headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("动漫专题", R.drawable.outline_video_library_white_48dp, HomeHeaderBean.TYPE_DMFL_SILISILI_ZT));
                 headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("剧场版", R.drawable.ic_ondemand_video_white_48dp, HomeHeaderBean.TYPE_DMFL_SILISILI_JCB));
 //                headerDataBeans.add(new HomeHeaderBean.HeaderDataBean("排行榜", R.drawable.ic_ondemand_video_white_48dp, HomeHeaderBean.TYPE_DMFL_SILISILI_PHB));

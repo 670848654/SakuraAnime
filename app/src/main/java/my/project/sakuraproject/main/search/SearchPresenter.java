@@ -10,15 +10,17 @@ import my.project.sakuraproject.main.base.Presenter;
 public class SearchPresenter extends Presenter<SearchContract.View> implements BasePresenter, SearchContract.LoadDataCallback {
     private String url;
     private int page;
-    private String imomoeParam;
+    private String wd;
+    private boolean isSiliTag;
     private SearchContract.View view;
     private SearchModel model;
 
-    public SearchPresenter(String url, int page, String imomoeParam, SearchContract.View view) {
+    public SearchPresenter(String url, int page, String wd, boolean isSiliTag, SearchContract.View view) {
         super(view);
         this.url = url;
         this.page = page;
-        this.imomoeParam = imomoeParam;
+        this.wd = wd;
+        this.isSiliTag = isSiliTag;
         this.view = view;
         model = new SearchModel();
     }
@@ -30,7 +32,7 @@ public class SearchPresenter extends Presenter<SearchContract.View> implements B
             view.showEmptyVIew();
         }
         try {
-            model.getData(url, page, isMain, imomoeParam, this);
+            model.getData(url, page, isMain, wd, isSiliTag, this);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }

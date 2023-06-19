@@ -112,13 +112,12 @@
             android:layout_alignParentRight="true">
 
             <TextView
-                android:text="asdasdsadsa"
                 android:id="@+id/danmu_info"
                 android:visibility="gone"
                 android:layout_centerVertical="true"
-                android:layout_centerHorizontal="true"
+                android:layout_alignParentStart="true"
                 android:textColor="#d1d1d1"
-                android:paddingLeft="14dp"
+                android:layout_marginLeft="20dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
 
@@ -149,8 +148,19 @@
                     android:clickable="true" />
 
                 <TextView
-                    android:id="@+id/display"
+                    android:id="@+id/query_danmu"
                     android:layout_toRightOf="@+id/danmu"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:text="手动查询弹幕"
+                    android:clickable="true"
+                    android:paddingRight="20dp"
+                    android:textColor="#ffffff" />
+
+                <TextView
+                    android:id="@+id/display"
+                    android:layout_toRightOf="@+id/query_danmu"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"

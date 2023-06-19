@@ -249,7 +249,7 @@ public class HistoryFragment extends MyLazyFragment<HistoryContract.View, Histor
                         VideoUtils.openImomoePlayer(true, getActivity(), animeTitle + " - " +dramaTitle, animeUrl, animeTitle, dramaUrl, imomoeDramasBeans, imomoeVideoUrlBeans, playSource, clickIndex, animeId);
                         break;
                 }*/
-                VideoUtils.openPlayer(true, getActivity(), animeTitle + " - " + dramaTitle, animeUrl, animeTitle, dramaUrl, yhdmDramasBeans, clickIndex, animeId, source == 1);
+                VideoUtils.openPlayer(true, getActivity(), animeTitle + " - " + dramaTitle, animeUrl, animeTitle, dramaUrl, yhdmDramasBeans, clickIndex, animeId, playSource,source == 1);
 
                 break;
             case 1:

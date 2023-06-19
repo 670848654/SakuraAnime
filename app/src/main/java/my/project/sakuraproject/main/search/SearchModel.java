@@ -22,9 +22,9 @@ import okhttp3.Response;
 public class SearchModel extends BaseModel implements SearchContract.Model {
 
     @Override
-    public void getData(String url, int page, boolean isMain, String imomoeParam, SearchContract.LoadDataCallback callback) throws UnsupportedEncodingException {
+    public void getData(String url, int page, boolean isMain, String wd, boolean isSiliTag, SearchContract.LoadDataCallback callback) throws UnsupportedEncodingException {
         if (isImomoe()) {
-            url = url + String.format(Api.SILISILI_SEARCH, imomoeParam, page);
+            url = url + String.format(isSiliTag ? Api.SILISILI_DESC_TAG_SEARCH : Api.SILISILI_SEARCH, wd, page);
             Log.e("url", url);
             parserImomoe(url, isMain, callback);
         } else {

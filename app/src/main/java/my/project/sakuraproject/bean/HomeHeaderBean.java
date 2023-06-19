@@ -16,7 +16,7 @@ public class HomeHeaderBean implements MultiItemEntity {
     public static final int TYPE_JCB = 4;
     public static final int TYPE_DMFL_SILISILI_XFRM = 5;
     public static final int TYPE_DMFL_SILISILI_XFGM = 6;
-    public static final int TYPE_DMFL_SILISILI_DMFJ = 7;
+    public static final int TYPE_DMFL_SILISILI_WJDM = 7;
     public static final int TYPE_DMFL_SILISILI_JCB  = 8;
     public static final int TYPE_DMFL_SILISILI_PHB  = 9;
     public static final int TYPE_DMFL_SILISILI_ZT  = 10;

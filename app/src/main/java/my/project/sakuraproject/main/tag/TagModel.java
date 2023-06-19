@@ -6,9 +6,7 @@ import java.io.IOException;
 import java.util.List;
 
 import my.project.sakuraproject.R;
-import my.project.sakuraproject.api.Api;
-import my.project.sakuraproject.application.Sakura;
-import my.project.sakuraproject.bean.MaliTagBean;
+import my.project.sakuraproject.bean.AnimeListBean;
 import my.project.sakuraproject.bean.TagBean;
 import my.project.sakuraproject.main.base.BaseModel;
 import my.project.sakuraproject.net.HttpGet;
@@ -22,16 +20,16 @@ import okhttp3.Response;
 public class TagModel extends BaseModel implements TagContract.Model {
 
     @Override
-    public void getData(TagContract.LoadDataCallback callback) {
+    public void getData(String url, String[] siliParams, TagContract.LoadDataCallback callback) {
         if (isImomoe())
-            parserImomoe(callback);
+            parserImomoe(url, siliParams, callback);
         else
-            parserYhdm(callback, "");
+            parserYhdm(url, callback, "");
     }
 
-    private void parserYhdm(TagContract.LoadDataCallback callback, String RedirectedStr) {
-        callback.log(Sakura.TAG_API + RedirectedStr);
-        new HttpGet(Sakura.TAG_API + RedirectedStr, new Callback() {
+    private void parserYhdm(String url, TagContract.LoadDataCallback callback, String RedirectedStr) {
+        callback.log(url);
+        new HttpGet(url + RedirectedStr, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 callback.error(e.getMessage());
@@ -42,13 +40,13 @@ public class TagModel extends BaseModel implements TagContract.Model {
                 try {
                     String source = getBody(response);
                     if (YhdmJsoupUtils.hasRedirected(source))
-                        parserYhdm(callback, YhdmJsoupUtils.getRedirectedStr(source));
+                        parserYhdm(url, callback, YhdmJsoupUtils.getRedirectedStr(source));
                     else if (YhdmJsoupUtils.hasRefresh(source))
-                        parserYhdm(callback, "");
+                        parserYhdm(url, callback, "");
                     else {
                         List<TagBean> tagList = YhdmJsoupUtils.getTagList(source);
                         if (tagList.size() > 0)
-                            callback.success(tagList);
+                            callback.success(false, tagList);
                         else
                             callback.error(Utils.getString(R.string.parsing_error));
                     }
@@ -61,11 +59,11 @@ public class TagModel extends BaseModel implements TagContract.Model {
         });
     }
 
-    private void parserImomoe(TagContract.LoadDataCallback callback) {
-        callback.log(Sakura.TAG_API);
-        String url = getDomain(true) + String.format(Api.MALIMALI_TAG, Api.MALIMALI_TAG_DEFAULT, "", "", "", "", "");
-        Log.e("url", url);
-        new HttpGet(url, new Callback() {
+    private void parserImomoe(String url, String[] siliParams, TagContract.LoadDataCallback callback) {
+        callback.log(url);
+        String tagUrl = getDomain(true) + url;
+        Log.e("tagUrl", tagUrl);
+        new HttpGet(tagUrl, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 callback.error(e.getMessage());
@@ -75,9 +73,13 @@ public class TagModel extends BaseModel implements TagContract.Model {
             public void onResponse(Call call, Response response) {
                 try {
                     String source = getBody(response);
-                    List<MaliTagBean> tagList = ImomoeJsoupUtils.getTagList(source);
-                    if (tagList.size() > 0)
-                        callback.maliSuccess(tagList);
+                    List<TagBean> tagList = ImomoeJsoupUtils.getTagList(source, siliParams);
+                    if (tagList.size() > 0) {
+                        callback.success(true, tagList);
+                        List<AnimeListBean> animeListBeans = ImomoeJsoupUtils.getAnimeList(source, false);
+                        int pageCount = ImomoeJsoupUtils.getPageCount(source);
+                        callback.siliAnimeList(animeListBeans, pageCount);
+                    }
                     else
                         callback.error(Utils.getString(R.string.parsing_error));
                 } catch (Exception e) {

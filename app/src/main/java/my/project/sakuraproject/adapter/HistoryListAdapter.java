@@ -38,8 +38,8 @@ public class HistoryListAdapter extends BaseQuickAdapter<HistoryBean, BaseViewHo
         source.setVisibility(View.VISIBLE);
         helper.setText(R.id.play_date, item.getUpdateTime());
         helper.setText(R.id.time, JZUtils.stringForTime(item.getProgress()) + "/" + JZUtils.stringForTime(item.getDuration()));
-//        helper.setText(R.id.info, item.getDramaNumber() + (isImomoe ? " <播放源"+ (item.getPlaySource()+1) + ">" : ""));
-        helper.setText(R.id.info, item.getDramaNumber());
+        helper.setText(R.id.info, item.getDramaNumber() + (isImomoe ? " | 播放源"+ (item.getPlaySource()+1) : ""));
+//        helper.setText(R.id.info, item.getDramaNumber());
         ProgressBar progressBar = helper.getView(R.id.bottom_progress);
         progressBar.setMax((int) item.getDuration());
         progressBar.setProgress((int) item.getProgress());

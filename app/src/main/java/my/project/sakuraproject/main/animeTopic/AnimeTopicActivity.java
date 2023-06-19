@@ -21,12 +21,12 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.adapter.AnimeListAdapter;
+import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.bean.AnimeListBean;
 import my.project.sakuraproject.custom.CustomLoadMoreView;
 import my.project.sakuraproject.custom.CustomToast;
 import my.project.sakuraproject.main.animeList.AnimeListActivity;
 import my.project.sakuraproject.main.base.BaseActivity;
-import my.project.sakuraproject.main.base.BaseModel;
 import my.project.sakuraproject.main.search.SearchActivity;
 import my.project.sakuraproject.util.Utils;
 
@@ -48,7 +48,7 @@ public class AnimeTopicActivity extends BaseActivity<AnimeTopicContract.View, An
 
     @Override
     protected AnimeTopicPresenter createPresenter() {
-        return new AnimeTopicPresenter(BaseModel.getDomain(false) + url, nowPage, this);
+        return new AnimeTopicPresenter(Sakura.DOMAIN + url, nowPage, this);
     }
 
     @Override
@@ -127,6 +127,7 @@ public class AnimeTopicActivity extends BaseActivity<AnimeTopicContract.View, An
             bundle.putString("url", bean.getUrl());
             bundle.putBoolean("isMovie", false);
             bundle.putBoolean("isImomoe", Utils.isImomoe());
+            bundle.putBoolean("isToptic", true);
             startActivity(new Intent(this, AnimeListActivity.class).putExtras(bundle));
         });
         if (Utils.checkHasNavigationBar(this)) mRecyclerView.setPadding(0,0,0, Utils.getNavigationBarHeight(this));

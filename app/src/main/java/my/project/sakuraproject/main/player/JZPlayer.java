@@ -4,8 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.HapticFeedbackConstants;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +19,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -48,6 +52,7 @@ public class JZPlayer extends JzvdStd {
     private OnProgressListener onProgressListener;
     private PlayingListener playingListener;
     private PauseListener pauseListener;
+    private OnQueryDanmuListener onQueryDanmuListener;
     private ImageView ibLock;
     private boolean locked = false;
     public ImageView fastForward, quickRetreat, config, airplay;
@@ -68,7 +73,8 @@ public class JZPlayer extends JzvdStd {
     public DanmakuContext danmakuContext;
     public BaseDanmakuParser danmakuParser;
     public ImageView danmuView;
-    public TextView danmuInfoView;
+    public TextView queryDanmuView, danmuInfoView;
+    public String queryDanmuTitle = "";
     public boolean open_danmu = true;
     public boolean loadError = false;
     private String[] speeds = {"0.5x","1.0x", "1.25x", "1.5x", "1.75x", "2.0x", "2.5x", "3.0x"};
@@ -81,7 +87,8 @@ public class JZPlayer extends JzvdStd {
 
     public void setListener(Context context, CompleteListener listener,
                             TouchListener touchListener, ShowOrHideChangeViewListener showOrHideChangeViewListener,
-                            OnProgressListener onProgressListener, PlayingListener playingListener, PauseListener pauseListener) {
+                            OnProgressListener onProgressListener, PlayingListener playingListener, PauseListener pauseListener,
+                            OnQueryDanmuListener onQueryDanmuListener) {
         this.context = context;
         this.listener = listener;
         this.touchListener = touchListener;
@@ -89,6 +96,7 @@ public class JZPlayer extends JzvdStd {
         this.playingListener = playingListener;
         this.pauseListener = pauseListener;
         this.showOrHideChangeViewListener = showOrHideChangeViewListener;
+        this.onQueryDanmuListener = onQueryDanmuListener;
     }
 
     @Override
@@ -122,9 +130,12 @@ public class JZPlayer extends JzvdStd {
         pipView = findViewById(R.id.pip);
         danmuView = findViewById(R.id.danmu);
         danmuView.setOnClickListener(this);
+        queryDanmuView = findViewById(R.id.query_danmu);
+        queryDanmuView.setOnClickListener(this);
         openDanmuConfig = (Boolean) SharedPreferencesUtils.getParam(context, "open_danmu", true);
         if (!openDanmuConfig) {
             danmuView.setVisibility(GONE);
+            queryDanmuView.setVisibility(GONE);
             danmuInfoView.setVisibility(GONE);
         }
         danmakuView = findViewById(R.id.jz_danmu);
@@ -266,7 +277,50 @@ public class JZPlayer extends JzvdStd {
                     showDanmmu();
                 }
                 break;
+            case R.id.query_danmu:
+                // 手动查询弹幕
+                AlertDialog alertDialog;
+                MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context, R.style.DialogStyle);
+                View view = LayoutInflater.from(context).inflate(R.layout.dialog_query_danmu, null);
+                TextInputLayout layout = view.findViewById(R.id.name);
+                layout.getEditText().setText(queryDanmuTitle.isEmpty() ? (jzDataSource.title.contains("-") ? jzDataSource.title.split("-")[0].trim() : jzDataSource.title) : queryDanmuTitle);
+                builder.setTitle("手动查询弹幕");
+                builder.setPositiveButton("确定", null);
+                builder.setNegativeButton("取消", null);
+                alertDialog = builder.setView(view).create();
+                alertDialog.show();
+                alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v2 -> {
+                    Utils.hideKeyboard(v2);
+                    queryDanmuTitle = layout.getEditText().getText().toString().trim();
+                    onQueryDanmuListener.queryDamu(queryDanmuTitle);
+                    alertDialog.dismiss();
+                });
+                initTextInputLayout(alertDialog, layout);
+                break;
         }
+    }
+
+    private void initTextInputLayout(AlertDialog alertDialog, TextInputLayout textInputLayout) {
+        textInputLayout.getEditText().addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (alertDialog == null) return;
+                if (s.length() == 0) {
+                    alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                } else {
+                    alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                }
+                textInputLayout.setError(null);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
     }
 
     public void showSpeedDialog() {
@@ -550,6 +604,10 @@ public class JZPlayer extends JzvdStd {
 
     public interface OnProgressListener {
         void getPosition(long position, long duration);
+    }
+
+    public interface OnQueryDanmuListener {
+        void queryDamu(String queryDanmuTitle);
     }
 
     @Override

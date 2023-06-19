@@ -9,7 +9,7 @@ import my.project.sakuraproject.main.base.BaseView;
 
 public interface SearchContract {
     interface Model {
-        void getData(String url, int page, boolean isMain, String imomoeParam, LoadDataCallback callback) throws UnsupportedEncodingException;
+        void getData(String url, int page, boolean isMain, String wd, boolean isSiliTag,  LoadDataCallback callback) throws UnsupportedEncodingException;
     }
 
     interface View extends BaseView {

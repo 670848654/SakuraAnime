@@ -157,7 +157,7 @@ public class VideoUtils {
      * @param clickIndex
      */
     public static void openPlayer(boolean isDescActivity, Activity activity, String witchTitle, String url, String animeTitle, String dramaUrl,
-                                  List<AnimeDescDetailsBean> list, int clickIndex, String animeId, boolean isMaliMali) {
+                                  List<AnimeDescDetailsBean> list, int clickIndex, String animeId, int nowSource, boolean isSiliSili) {
         Bundle bundle = new Bundle();
         bundle.putString("title", witchTitle);
         bundle.putString("url", url);
@@ -166,7 +166,8 @@ public class VideoUtils {
         bundle.putSerializable("list", (Serializable) list);
         bundle.putInt("clickIndex", clickIndex);
         bundle.putString("animeId", animeId);
-        bundle.putBoolean("isMaliMali", isMaliMali);
+        bundle.putInt("nowSource", nowSource);
+        bundle.putBoolean("isSiliSili", isSiliSili);
         Sakura.destoryActivity("player");
         if (isDescActivity)
             activity.startActivityForResult(new Intent(activity, PlayerActivity.class).putExtras(bundle), 0x10);

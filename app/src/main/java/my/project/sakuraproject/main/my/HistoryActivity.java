@@ -3,6 +3,7 @@ package my.project.sakuraproject.main.my;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -177,6 +178,14 @@ public class HistoryActivity extends BaseActivity<HistoryContract.View, HistoryP
     }
 
     private void initFab() {
+        if (Utils.checkHasNavigationBar(this)) {
+            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) fab.getLayoutParams();
+            params.setMargins(Utils.dpToPx(this, 16),
+                    Utils.dpToPx(this, 16),
+                    Utils.dpToPx(this, 16),
+                    Utils.getNavigationBarHeight(this) + 15);
+            fab.setLayoutParams(params);
+        }
         fab.setVisibility(View.VISIBLE);
         fab.setOnClickListener(view -> showDeleteHistoryDialog(0, null, true));
     }

@@ -14,7 +14,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.arialyy.aria.core.Aria;
 import com.arialyy.aria.core.download.m3u8.M3U8VodOption;
@@ -772,11 +771,16 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
      * @param playNumber
      */
     private void startDownload(String url, String playNumber) {
+        downloadBottomSheetDialog.dismiss();
+        if (!url.endsWith("mp4") && !url.endsWith("m3u8")) {
+            VideoUtils.showInfoDialog(this, "不支持的下载格式，该地址可能非视频地址！ -> " + url);
+            return;
+        }
         long taskId;
         String fileSavePath = savePath + playNumber;
         boolean isM3U8 = url.contains(".m3u8");
         taskId = createDownloadTask(isM3U8, url, fileSavePath);
-        if (isM3U8) CustomToast.showToast(this, "该视频格式为M3U8，可能无法下载成功！", CustomToast.WARNING);
+        if (isM3U8)  VideoUtils.showInfoDialog(this, "该视频格式为M3U8，可能无法下载成功！");
         DatabaseUtil.insertDownload(animeTitle, source, animeListBean.getImg(), sakuraUrl);
         DatabaseUtil.insertDownloadData(animeTitle, source, playNumber, 0, taskId);
         // 开启下载服务
@@ -793,8 +797,8 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     public void getVideoError(String playNumber) {
         runOnUiThread(() -> {
             String msg = isImomoe ? animeTitle : animeTitle + playNumber;
-            Toast.makeText(getApplicationContext(),  msg + " -> 播放地址解析失败", Toast.LENGTH_SHORT).show();
             cancelDialog();
+            VideoUtils.showInfoDialog(this, msg + " -> 播放地址解析失败");
         });
     }
 
@@ -805,7 +809,10 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
      */
     @Override
     public void showSuccessImomoeVideoUrlsView(String url, String playNumber) {
-        runOnUiThread(() -> startDownload(url, playNumber));
+        runOnUiThread(() -> {
+            cancelDialog();
+            startDownload(url, playNumber);
+        });
     }
 
     /**

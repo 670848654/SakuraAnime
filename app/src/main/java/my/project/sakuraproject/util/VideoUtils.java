@@ -368,4 +368,21 @@ public class VideoUtils {
         List<Object> objects = DatabaseUtil.queryDownloadAnimeInfo(downloadTask.getEntity().getId());
         return objects.get(choose);
     }
+
+    /**
+     * 相关提示
+     * @param context
+     * @param msg
+     */
+    public static void showInfoDialog(Context context, String msg) {
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context, R.style.DialogStyle);
+        builder.setCancelable(true);
+        builder.setTitle("提示");
+        builder.setMessage(msg);
+        builder.setPositiveButton("好", (dialog, which) -> {
+          dialog.dismiss();
+        });
+        alertDialog = builder.create();
+        alertDialog.show();
+    }
 }

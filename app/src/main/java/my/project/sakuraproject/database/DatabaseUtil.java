@@ -338,7 +338,7 @@ public class DatabaseUtil {
      * @param animeId 番剧ID
      * @return
      */
-    public static String queryAllIndex(String animeId) {
+    public static String queryAllIndex(String animeId, boolean isHistory, int playSource) {
         Cursor cursor = db.rawQuery("select F_ID, F_DESC_URL from T_HISTORY WHERE F_LINK_ID = ? AND F_DESC_URL LIKE '%voddetail%'", new String[]{animeId});
         if (cursor.getCount() > 0) {
             while (cursor.moveToNext()) {
@@ -352,8 +352,15 @@ public class DatabaseUtil {
         }
         cursor.close();
         StringBuffer buffer = new StringBuffer();
-        String Query = "select t2.F_PLAY_URL from T_HISTORY t1 INNER JOIN T_HISTORY_DATA t2 ON t1.F_ID = t2.F_LINK_ID where t1.F_LINK_ID =?";
-        Cursor c = db.rawQuery(Query, new String[]{animeId});
+        String Query = "";
+        Cursor c;
+        if (isHistory) {
+            Query = "select t2.F_PLAY_URL from T_HISTORY t1 INNER JOIN T_HISTORY_DATA t2 ON t1.F_ID = t2.F_LINK_ID AND t2.F_PLAY_SOURCE=? where t1.F_LINK_ID =?";
+            c = db.rawQuery(Query, new String[]{String.valueOf(playSource), animeId});
+        } else {
+            Query = "select t2.F_PLAY_URL from T_HISTORY t1 INNER JOIN T_HISTORY_DATA t2 ON t1.F_ID = t2.F_LINK_ID where t1.F_LINK_ID =?";
+            c = db.rawQuery(Query, new String[]{animeId});
+        }
         while (c.moveToNext()) {
             buffer.append(c.getString(0));
         }

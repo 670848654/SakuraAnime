@@ -149,7 +149,8 @@ public class JZPlayer extends JzvdStd {
                 .setDuplicateMergingEnabled(false)
                 .setScrollSpeedFactor(1.2f)
                 .setScaleTextSize(Utils.isPad() ? 2.2f : 1.2f)
-                .setMaximumLines(maxLinesPair)
+//                .setMaximumLines(maxLinesPair)
+                .setMaximumLines(null)
                 .preventOverlapping(overlappingEnablePair).setDanmakuMargin(40);
         longPressBgView = findViewById(R.id.long_press_bg);
         LongPressEventView viewLongPress = findViewById(R.id.surface_container);

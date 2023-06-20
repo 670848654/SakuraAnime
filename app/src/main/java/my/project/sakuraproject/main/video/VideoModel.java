@@ -47,7 +47,7 @@ public class VideoModel extends BaseModel implements VideoContract.Model {
                 else {
                     String fid = DatabaseUtil.getAnimeID(title, 0);
                     DatabaseUtil.addIndex(fid, url, playSource, playNumber);
-                    String dataBaseDrama = DatabaseUtil.queryAllIndex(fid);
+                    String dataBaseDrama = DatabaseUtil.queryAllIndex(fid, true, playSource);
                     callback.successYhdmDramas(YhdmJsoupUtils.getAllDrama(source, dataBaseDrama));
                     List<String> urls = YhdmJsoupUtils.getVideoUrlList(source);
                     if (urls.size() > 0)
@@ -73,7 +73,7 @@ public class VideoModel extends BaseModel implements VideoContract.Model {
                 String source = getHtmlBody(response, true);
                 String fid = DatabaseUtil.getAnimeID(title, 1);
                 DatabaseUtil.addIndex(fid, url, playSource, playNumber);
-                String dataBaseDrama = DatabaseUtil.queryAllIndex(fid);
+                String dataBaseDrama = DatabaseUtil.queryAllIndex(fid, true, playSource);
                 List<AnimeDescDetailsBean> bean = ImomoeJsoupUtils.getAllDrama(source, dataBaseDrama);
                 callback.successImomoeDramas(bean);
                 String playUrl = ImomoeJsoupUtils.getImomoePlayUrl(source);

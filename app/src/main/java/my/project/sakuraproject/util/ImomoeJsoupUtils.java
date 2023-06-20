@@ -16,6 +16,7 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -365,6 +366,7 @@ public class ImomoeJsoupUtils {
             for (Element element : playBox) {
                 AnimeDramasBean animeDramasBean = new AnimeDramasBean();
                 String playListTitle = element.select("div.widget-title").text();
+                if (playListTitle.toLowerCase(Locale.ROOT).contains("no.x")) playListTitle += " → 需二次解析，无法播放（网站问题？）";
                 if (playListTitle.contains("下载")) continue;
                 animeDramasBean.setListTitle(playListTitle);
                 Elements liList = element.select("ul > li");

@@ -57,7 +57,7 @@ public class DescModel extends BaseModel implements DescContract.Model {
                         DatabaseUtil.addOrUpdateHistory(fid, animeListBean.getUrl(), animeListBean.getImg());
                         //是否收藏
                         callback.isFavorite(DatabaseUtil.checkFavorite(fid));
-                        dramaStr = DatabaseUtil.queryAllIndex(fid);
+                        dramaStr = DatabaseUtil.queryAllIndex(fid, false, 0);
                         callback.successDesc(animeListBean);
                         callback.isImomoe(false);
                         callback.getAnimeId(fid);
@@ -100,7 +100,7 @@ public class DescModel extends BaseModel implements DescContract.Model {
                         DatabaseUtil.addOrUpdateHistory(fid, animeListBean.getUrl(), animeListBean.getImg());
                         //是否收藏
                         callback.isFavorite(DatabaseUtil.checkFavorite(fid));
-                        dramaStr = DatabaseUtil.queryAllIndex(fid);
+                        dramaStr = DatabaseUtil.queryAllIndex(fid, false, 0);
                         Log.e("dramaStr", dramaStr);
                         callback.successDesc(animeListBean);
                         callback.isImomoe(true);

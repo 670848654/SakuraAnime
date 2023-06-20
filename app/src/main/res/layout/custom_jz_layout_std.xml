@@ -482,8 +482,7 @@
 
     <master.flame.danmaku.ui.widget.DanmakuView
         android:id="@+id/jz_danmu"
-        android:layout_below="@+id/layout_top"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="15dp" />
+        android:layout_margin="8dp" />
 </RelativeLayout>

@@ -2,6 +2,7 @@ package my.project.sakuraproject.adapter;
 
 import android.content.Context;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -26,8 +27,11 @@ public class FavoriteListAdapter extends BaseQuickAdapter<AnimeListBean, BaseVie
 
     @Override
     protected void convert(BaseViewHolder helper, AnimeListBean item) {
+        String imgUrl = item.getImg();
+        ImageView imageView = helper.getView(R.id.img);
+        imageView.setTag(R.id.imageid, imgUrl);
         Utils.setCardDefaultBg(context, helper.getView(R.id.card_view), helper.getView(R.id.title));
-        Utils.setDefaultImage(context, item.getImg(), item.getUrl(), helper.getView(R.id.img), true, helper.getView(R.id.card_view), helper.getView(R.id.title));
+        Utils.setDefaultImage(context, item.getImg(), item.getUrl(), imageView, true, helper.getView(R.id.card_view), helper.getView(R.id.title));
         TextView source = helper.getView(R.id.source);
         source.setBackground(context.getDrawable(item.getSource() == 1 ? R.drawable.imomoe_bg : R.drawable.yhdm_bg));
         source.setText(Utils.getString(item.getSource() == 1 ? R.string.imomoe : R.string.yhdm));

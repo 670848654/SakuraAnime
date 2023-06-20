@@ -410,12 +410,7 @@ public class Utils {
      */
     public static void setDefaultImage(Context context, String img, String htmlUrl, ImageView imageView, boolean setPalette, CardView cardView, TextView textView) {
         imageView.setImageDrawable(getTheme() ? context.getDrawable(R.drawable.loading_night) : context.getDrawable(R.drawable.loading_light));
-        DrawableCrossFadeFactory drawableCrossFadeFactory = new DrawableCrossFadeFactory.Builder(300).setCrossFadeEnabled(true).build();
-        GlideUrl imgUrl;
-        if (img.contains("yhdmtu"))
-            imgUrl = new GlideUrl(getImgUrl(img, false));
-        else
-            imgUrl = new GlideUrl(img);
+        GlideUrl imgUrl = new GlideUrl(img.contains("yhdmtu") ? getImgUrl(img, false) : img);
         Glide.with(context)
                 .asBitmap()
                 .transition(BitmapTransitionOptions.withCrossFade())
@@ -423,7 +418,19 @@ public class Utils {
                 .into(new SimpleTarget<Bitmap>() {
                     @Override
                     public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                        imageView.setImageBitmap(resource);
+                        if (img == imageView.getTag(R.id.imageid)) {
+                            imageView.setImageBitmap(resource);
+                            if (!getTheme() && setPalette) {
+                                // 设置Palette
+                                Palette.from(resource).generate(palette -> {
+                                    Palette.Swatch swatch = palette.getDarkVibrantSwatch();
+                                    if (swatch != null) {
+                                        cardView.setCardBackgroundColor(swatch.getRgb());
+                                        textView.setTextColor(swatch.getBodyTextColor());
+                                    }
+                                });
+                            }
+                        }
                     }
 
                     @Override
@@ -432,26 +439,6 @@ public class Utils {
                         EventBus.getDefault().post(new UpdateImgBean(img, htmlUrl));
                     }
                 });
-        if (!getTheme() && setPalette)
-            // 设置Palette
-            Glide.with(context).asBitmap().load(imgUrl).into(new SimpleTarget<Bitmap>() {
-                @Override
-                public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                    Palette.from(resource).generate(palette -> {
-                        Palette.Swatch swatch = palette.getDarkVibrantSwatch();
-                        if (swatch != null) {
-                            cardView.setCardBackgroundColor(swatch.getRgb());
-                            textView.setTextColor(swatch.getBodyTextColor());
-                        }
-                    });
-                }
-
-                @Override
-                public void onLoadFailed(@Nullable @org.jetbrains.annotations.Nullable Drawable errorDrawable) {
-                    imageView.setImageDrawable(context.getDrawable(R.drawable.error));
-                    EventBus.getDefault().post(new UpdateImgBean(img, htmlUrl));
-                }
-            });
     }
 
     public static void setCardDefaultBg(Context context, CardView cardView, TextView textView) {
@@ -476,7 +463,8 @@ public class Utils {
                 .into(new SimpleTarget<Bitmap>() {
                     @Override
                     public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                        imageView.setImageBitmap(resource);
+                        if (img == imageView.getTag(R.id.imageid))
+                            imageView.setImageBitmap(resource);
                     }
 
                     @Override

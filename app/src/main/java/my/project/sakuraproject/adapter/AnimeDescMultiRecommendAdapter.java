@@ -1,6 +1,7 @@
 package my.project.sakuraproject.adapter;
 
 import android.content.Context;
+import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
 
@@ -26,8 +27,11 @@ public class AnimeDescMultiRecommendAdapter extends BaseQuickAdapter<AnimeDescRe
 
     @Override
     protected void convert(final BaseViewHolder helper, AnimeDescRecommendBean item) {
+        String imgUrl = item.getImg();
+        ImageView imageView = helper.getView(R.id.img);
+        imageView.setTag(R.id.imageid, imgUrl);
         Utils.setCardDefaultBg(context, helper.getView(R.id.card_view), helper.getView(R.id.title));
+        Utils.setDefaultImage(context, item.getImg(), item.getUrl(), imageView, true, helper.getView(R.id.card_view), helper.getView(R.id.title));
         helper.setText(R.id.title, item.getTitle());
-        Utils.setDefaultImage(context, item.getImg(), item.getUrl(), helper.getView(R.id.img), true, helper.getView(R.id.card_view), helper.getView(R.id.title));
     }
 }

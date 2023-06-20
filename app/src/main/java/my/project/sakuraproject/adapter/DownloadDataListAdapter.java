@@ -3,6 +3,7 @@ package my.project.sakuraproject.adapter;
 import android.content.Context;
 import android.text.Html;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -28,6 +29,9 @@ public class DownloadDataListAdapter extends BaseQuickAdapter<DownloadDataBean, 
 
     @Override
     protected void convert(BaseViewHolder helper, DownloadDataBean item) {
+        String imgUrl = item.getAnimeImg();
+        ImageView imageView = helper.getView(R.id.img);
+        imageView.setTag(R.id.imageid, imgUrl);
         helper.setText(R.id.title, item.getPlayNumber());
         helper.setText(R.id.file_size, item.getFileSize() != 0 ? Utils.getNetFileSizeDescription(item.getFileSize()) : "0B");
         helper.setVisible(R.id.bottom_progress, false);
@@ -64,7 +68,7 @@ public class DownloadDataListAdapter extends BaseQuickAdapter<DownloadDataBean, 
             Utils.loadVideoScreenshot(context, item.getPath(), item.getAnimeImg(), helper.getView(R.id.img), (item.getProgress() == 0 ? 1000 : item.getProgress()) * 1000);
         } else {
             helper.setBackgroundColor(R.id.img_box, R.drawable.download_img_gradient);
-            Utils.setImgViewBg(context, item.getSource(), item.getAnimeImg(), "", helper.getView(R.id.img));
+            Utils.setImgViewBg(context, item.getSource(), item.getAnimeImg(), "", imageView);
         }
     }
 }

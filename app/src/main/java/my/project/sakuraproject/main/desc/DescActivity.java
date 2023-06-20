@@ -462,6 +462,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
                 .apply(options)
                 .apply(RequestOptions.bitmapTransform( new BlurTransformation(15, 5)))
                 .into(bg);
+        animeImg.setTag(R.id.imageid, animeListBean.getImg());
         Utils.setDefaultImage(this, animeListBean.getImg(), animeListBean.getUrl(), animeImg, false, null, null);
         title.setText(animeListBean.getTitle());
         if (animeListBean.getTagTitles() != null) {

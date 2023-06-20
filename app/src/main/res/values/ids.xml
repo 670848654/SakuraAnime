@@ -2,4 +2,5 @@
 <resources>
     <item type="id" name="statusbarutil_fake_status_bar_view" />
     <item type="id" name="statusbarutil_translucent_view" />
+    <item name="imageid" type="id"/>
 </resources>

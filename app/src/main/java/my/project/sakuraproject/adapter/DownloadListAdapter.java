@@ -3,6 +3,7 @@ package my.project.sakuraproject.adapter;
 import android.content.Context;
 import android.text.Html;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -28,12 +29,15 @@ public class DownloadListAdapter extends BaseQuickAdapter<DownloadBean, BaseView
 
     @Override
     protected void convert(BaseViewHolder helper, DownloadBean item) {
+        String imgUrl = item.getImgUrl();
+        ImageView imageView = helper.getView(R.id.img);
+        imageView.setTag(R.id.imageid, imgUrl);
         helper.setText(R.id.title, item.getAnimeTitle());
         String imgContent = String.format(Utils.getString(R.string.download_anime_list_content_title), item.getDownloadDataSize());
         if (item.getNoCompleteSize() > 0)
             imgContent += String.format(NOT_COMPLETE_TEXT, item.getNoCompleteSize());
         helper.setText(R.id.number, Html.fromHtml(imgContent));
-        Utils.setImgViewBg(context, item.getSource(), item.getImgUrl(), item.getDescUrl(), helper.getView(R.id.img));
+        Utils.setImgViewBg(context, item.getSource(), item.getImgUrl(), item.getDescUrl(), imageView);
         TextView source = helper.getView(R.id.source);
         boolean isImomoe = item.getSource() == 1;
         source.setBackground(context.getDrawable(isImomoe ? R.drawable.imomoe_bg : R.drawable.yhdm_bg));

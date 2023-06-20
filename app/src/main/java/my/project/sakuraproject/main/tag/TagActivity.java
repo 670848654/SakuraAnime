@@ -214,6 +214,7 @@ public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> im
     public void showDefaultSiliAnimeList(List<AnimeListBean> animeListBeans, int pageCount) {
         runOnUiThread(() -> {
             if (!mActivityFinish) {
+                toolbar.setSubtitle("[全部]");
                 this.pageCount = pageCount;
                 setRecyclerViewView();
                 animeLists = animeListBeans;
@@ -326,7 +327,7 @@ public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> im
         tagDialog.setContentView(view);
         button.setOnClickListener(view1 -> {
             tagDialog.dismiss();
-            toolbar.setSubtitle(siliTagSubTitle.toString());
+            toolbar.setSubtitle(siliTagSubTitle.size() > 0 ? siliTagSubTitle.toString() : "[全部]");
             animeLists.clear();
             animeListAdapter.setNewData(null);
             animeListAdapter.setEmptyView(getLayoutInflater().inflate(R.layout.base_emnty_view, null));

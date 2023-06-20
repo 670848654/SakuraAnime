@@ -345,7 +345,7 @@ public class ImomoeJsoupUtils {
         Elements desc = document.select("div.v_cont");
         desc.select("div.v_sd").remove();
         desc.select("span").remove();
-        animeListBean.setDesc(desc.text());
+        animeListBean.setDesc(desc.text().replaceAll(" ", ""));
         return animeListBean;
     }
 

@@ -47,7 +47,7 @@
     <string name="join_ok">(´・ω・`) 自己追的番就要好好看完哦！</string>
     <string name="join_error">(﹁"﹁) 哼！竟然真的抛弃了人家。</string>
     <string name="parsing_error">OH~解析出错了\n代码无法解析该界面信息~\n</string>
-    <string name="error_msg">抱歉，未找到相关信息~</string>
+    <string name="error_msg">无数据</string>
     <string name="no_playlist_error">该番剧暂无播放列表。</string>
     <string name="get_drama_error">获取剧集信息出错</string>
     <string name="should_be_sniffer">非可直接播放的地址，尝试嗅探获取播放地址&#8230;</string>

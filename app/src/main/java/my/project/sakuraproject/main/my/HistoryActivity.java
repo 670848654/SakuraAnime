@@ -52,7 +52,7 @@ public class HistoryActivity extends BaseActivity<HistoryContract.View, HistoryP
     private HistoryListAdapter adapter;
     private List<HistoryBean> historyBeans = new ArrayList<>();
     CoordinatorLayout msg;
-    private int limit = 100;
+    private int limit = 10;
     private int historyCount = 0;
     private boolean isMain = true;
     protected boolean isErr = true;

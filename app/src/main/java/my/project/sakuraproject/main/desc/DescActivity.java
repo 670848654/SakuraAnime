@@ -729,9 +729,9 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
      */
     private void createDownloadConfig() {
         if (isImomoe)
-            savePath = Environment.getExternalStorageDirectory() + "/SakuraAnime/Downloads/" + "MALIMALI/" + animeTitle + "/";
+            savePath = Environment.getExternalStorageDirectory() + "/SakuraAnime/Downloads/SILISILI/" + animeTitle + "/";
         else
-            savePath = Environment.getExternalStorageDirectory() + "/SakuraAnime/Downloads/" + "YHDM/" + animeTitle + "/";
+            savePath = Environment.getExternalStorageDirectory() + "/SakuraAnime/Downloads/YHDM/" + animeTitle + "/";
         File dir = new File(savePath);
         if (!dir.exists()) dir.mkdirs();
         // m3u8下载配置
@@ -779,9 +779,9 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         }
         long taskId;
         String fileSavePath = savePath + playNumber;
-        boolean isM3U8 = url.contains(".m3u8");
+        boolean isM3U8 = url.endsWith("m3u8");
         taskId = createDownloadTask(isM3U8, url, fileSavePath);
-        if (isM3U8)  VideoUtils.showInfoDialog(this, "该视频格式为M3U8，可能无法下载成功！");
+        if (isM3U8) VideoUtils.showInfoDialog(this, "该视频资源格式为M3U8，可能无法正常下载成功！");
         DatabaseUtil.insertDownload(animeTitle, source, animeListBean.getImg(), sakuraUrl);
         DatabaseUtil.insertDownloadData(animeTitle, source, playNumber, 0, taskId);
         // 开启下载服务

@@ -377,7 +377,7 @@ public class VideoUtils {
     public static void showInfoDialog(Context context, String msg) {
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context, R.style.DialogStyle);
         builder.setCancelable(true);
-        builder.setTitle("提示");
+        builder.setTitle("操作提示");
         builder.setMessage(msg);
         builder.setPositiveButton("好", (dialog, which) -> {
           dialog.dismiss();

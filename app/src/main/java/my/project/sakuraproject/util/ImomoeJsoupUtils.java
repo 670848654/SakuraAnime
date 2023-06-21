@@ -345,7 +345,7 @@ public class ImomoeJsoupUtils {
         Elements desc = document.select("div.v_cont");
         desc.select("div.v_sd").remove();
         desc.select("span").remove();
-        animeListBean.setDesc(desc.text().replaceAll(" ", ""));
+        animeListBean.setDesc(desc.text().replaceAll("^(\\s+)", ""));
         return animeListBean;
     }
 
@@ -536,6 +536,16 @@ public class ImomoeJsoupUtils {
         if (elements.size() > 0) {
             for (Element e : elements) {
                 String topTitle = e.select("div.widget-title").text();
+                // 网站标题有问题，根据自己理解变更^^
+                if (topTitle.contains("电影")) {
+                    topTitle = topTitle.replaceAll("电影排行榜", "日漫排行榜");
+                }
+                else if (topTitle.contains("电视剧")) {
+                    topTitle = topTitle.replaceAll("电视剧排行榜", "国漫排行榜");
+                }
+                else if (topTitle.contains("经典动漫")) {
+                    topTitle = topTitle.replaceAll("经典动漫排行榜", "剧场版排行榜");
+                }
                 Elements items = e.select("div.top-item");
                 for (Element item : items) {
                     String subTitle = item.select("h5").text();
@@ -551,7 +561,7 @@ public class ImomoeJsoupUtils {
                         rankItem.setScore(a.select("span.score").text());
                         rankItems.add(rankItem);
                     }
-                    siliSiliRankBeans.add(new SiliSiliRankBean(topTitle + "-" + subTitle, rankItems));
+                    siliSiliRankBeans.add(new SiliSiliRankBean(topTitle + "【"+subTitle+"】", rankItems));
                 }
             }
         }

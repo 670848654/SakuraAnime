@@ -2,6 +2,7 @@ package my.project.sakuraproject.main.my;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.text.Html;
 import android.util.Log;
@@ -58,7 +59,7 @@ public class DownloadDataActivity extends BaseActivity<DownloadDataContract.View
     private DownloadDataListAdapter adapter;
     private String downloadId;
     private String animeTitle;
-    private int limit = 100;
+    private int limit = 10;
     private int downloadDataCount = 0;
     private boolean isMain = true;
     protected boolean isErr = true;
@@ -66,6 +67,8 @@ public class DownloadDataActivity extends BaseActivity<DownloadDataContract.View
     private static final String[] DOWNLOAD_STR = new String[]{"继续任务", "暂停任务", "删除任务"};
     private static final String[] COMPLETE_STR = new String[]{"使用内置播放器播放", "使用外部播放器播放", "删除任务"};
     private static final String[] DOWNLOAD_ERROR_STR = new String[]{"尝试重新下载", "删除任务"};
+    private File downloadDir;
+    private static final String DOWNLOAD_PATH = Environment.getExternalStorageDirectory() + "/SakuraAnime/Downloads/%s/%s/";;
 
     @Override
     protected DownloadDataPresenter createPresenter() {
@@ -180,22 +183,6 @@ public class DownloadDataActivity extends BaseActivity<DownloadDataContract.View
             }
             builder.create().show();
         });
-        /*adapter.setOnItemLongClickListener((adapter, view, position) -> {
-            if (!Utils.isFastClick()) return false;
-            View v = adapter.getViewByPosition(mRecyclerView, position, R.id.title);
-            final androidx.appcompat.widget.PopupMenu popupMenu = new androidx.appcompat.widget.PopupMenu(this, v);
-            popupMenu.getMenuInflater().inflate(R.menu.delete_menu, popupMenu.getMenu());
-            popupMenu.setOnMenuItemClickListener(menuItem -> {
-                switch (menuItem.getItemId()) {
-                    case R.id.delete:
-                        showDeleteDataDialog(downloadDataBeans.get(position), position);
-                        break;
-                }
-                return true;
-            });
-            popupMenu.show();
-            return true;
-        });*/
         if (Utils.checkHasNavigationBar(this)) mRecyclerView.setPadding(0,0,0, Utils.getNavigationBarHeight(this));
         adapter.setLoadMoreView(new CustomLoadMoreView());
         adapter.setOnLoadMoreListener(() -> mRecyclerView.postDelayed(() -> {
@@ -232,53 +219,68 @@ public class DownloadDataActivity extends BaseActivity<DownloadDataContract.View
 
     private void deleteData(boolean removeFile, DownloadDataBean bean, int position) {
         DatabaseUtil.deleteDownloadData(bean.getId());
+        String downloadPath = String.format(DOWNLOAD_PATH, (bean.getSource() == 0 ? "YHDM" : "SILISILI"), bean.getAnimeTitle());
+        downloadDir = new File(downloadPath);
         if (bean.getTaskId() == -1) {
             // -1直接删除
             adapter.remove(position);
             CustomToast.showToast(this, "已删除该剧集任务", CustomToast.SUCCESS);
         } else {
-            String path = bean.getPath();
-            if (path != null && !path.isEmpty()) {
-                path = path.substring(0, path.lastIndexOf('/'));
-                File file = new File(path);
-                if (!file.exists()) file.mkdirs(); // 如果从文件管理器中手动删除整个目录 Aria会报错，在这里重建目录
-            }
+            if (!downloadDir.exists()) downloadDir.mkdirs(); // 如果从文件管理器中手动删除整个目录 Aria会报错，在这里重建目录
             // 获取所有下载任务
             List<DownloadEntity> list = Aria.download(this).getTaskList();
-            for (DownloadEntity entity : list) {
-                if (bean.getTaskId() != -99) {
+            // 判断任务列表是否存在，当应用卸载重装时为NULL会报错
+            if (list != null && list.size() > 0) {
+                for (DownloadEntity entity : list) {
                     // 未下载完成
-                    if (bean.getTaskId() == entity.getId()) {
+                    if (bean.getTaskId() != -99 && bean.getTaskId() == entity.getId()) {
+                        // 从Aria数据库中删除任务
                         Aria.download(this).load(entity.getId()).cancel(removeFile);
-                        CustomToast.showToast(this, "已删除该剧集任务", CustomToast.SUCCESS);
-                        adapter.remove(position);
+                        break;
+                        // 已下载完成通过path对比
+                    } else if (bean.getPath().equals(entity.getFilePath().replaceAll("m3u8", "mp4"))) {
+                        // 从Aria数据库中删除任务
+                        Aria.download(this).load(entity.getId()).cancel(removeFile);
                         break;
                     }
                 }
-                else if (bean.getPath().equals(entity.getFilePath().replaceAll(".m3u8", ".mp4"))) {
-                    // 如果是m3u8且已完成的任务
-                    if (bean.getComplete() == 1 && removeFile) {
-                        File f = new File(bean.getPath());
-                        if (f.exists()) f.delete();
-                    }
-                    Aria.download(this).load(entity.getId()).cancel(removeFile);
-                    CustomToast.showToast(this, "已删除该剧集任务", CustomToast.SUCCESS);
-                    adapter.remove(position);
-                    break;
-                }
             }
+            // 是否删除文件
+            deleteDownloadData(removeFile, bean, position);
         }
         downloadDataCount = DatabaseUtil.queryDownloadDataCount(downloadId);
         if (downloadDataBeans.size() <= 0) {
-            /*setRecyclerViewView();
-            DatabaseUtil.deleteDownload(downloadId);
-            adapter.setNewData(downloadDataBeans);
-            errorTitle.setText(Utils.getString(R.string.empty_download));
-            adapter.setEmptyView(errorView);*/
+            shouldDeleteDownloadDir();
             DatabaseUtil.deleteDownload(downloadId);
             EventBus.getDefault().post(new Refresh(3));
             finish();
         }
+    }
+
+    /**
+     * 删除数据
+     * @param removeFile
+     * @param bean
+     * @param position
+     */
+    private void deleteDownloadData(boolean removeFile, DownloadDataBean bean, int position) {
+        // 如果已完成的任务
+        if (bean.getComplete() == 1 && removeFile) {
+            File mp4File = new File(bean.getPath());
+            if (mp4File.exists()) mp4File.delete();
+            File m3u8File = new File(bean.getPath().replaceAll("mp4", "m3u8"));
+            if (m3u8File.exists()) m3u8File.delete();
+        }
+        CustomToast.showToast(this, "已删除该剧集任务", CustomToast.SUCCESS);
+        adapter.remove(position);
+    }
+
+    /**
+     * 是否应该删除下载主目录
+     */
+    private void shouldDeleteDownloadDir() {
+        if (downloadDir.list().length == 0) // 文件夹下没有任何文件才删除主目录
+            downloadDir.delete();
     }
 
     public void setLoadState(boolean loadState) {
@@ -346,6 +348,7 @@ public class DownloadDataActivity extends BaseActivity<DownloadDataContract.View
     @Download.onTaskCancel
     public void onTaskCancel(DownloadTask downloadTask) {
         Log.e("Service onTaskCancel", downloadTask.getTaskName() + "，取消下载");
+        shouldDeleteDownloadDir();
 //        List<Object> objects = DatabaseUtil.queryDownloadAnimeInfo(downloadTask.getEntity().getId());
         EventBus.getDefault().post(new Refresh(3));
     }

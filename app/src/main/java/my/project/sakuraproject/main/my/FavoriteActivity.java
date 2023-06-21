@@ -41,7 +41,7 @@ public class FavoriteActivity extends BaseActivity<FavoriteContract.View, Favori
     CoordinatorLayout msg;
     private FavoriteListAdapter adapter;
     private List<AnimeListBean> favoriteList = new ArrayList<>();
-    private int limit = 100;
+    private int limit = 10;
     private int favoriteCount = 0;
     private boolean isMain = true;
     protected boolean isErr = true;

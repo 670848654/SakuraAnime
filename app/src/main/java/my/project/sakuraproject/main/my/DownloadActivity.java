@@ -52,7 +52,7 @@ public class DownloadActivity extends BaseActivity<DownloadContract.View, Downlo
     @BindView(R.id.loading)
     ProgressBar loading;
     CoordinatorLayout msg;
-    private int limit = 100;
+    private int limit = 10;
     private int downloadCount = 0;
     private boolean isMain = true;
     protected boolean isErr = true;

@@ -2,7 +2,6 @@ package my.project.sakuraproject.main.base;
 
 import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.net.Uri;
@@ -13,29 +12,28 @@ import android.provider.Settings;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-
-import java.util.List;
-
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
-import androidx.core.app.ActivityCompat;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.permissionx.guolindev.PermissionX;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.application.Sakura;
-import my.project.sakuraproject.custom.CustomToast;
 import my.project.sakuraproject.database.DatabaseUtil;
 import my.project.sakuraproject.util.StatusBarUtil;
 import my.project.sakuraproject.util.Utils;
-import pub.devrel.easypermissions.EasyPermissions;
-import pub.devrel.easypermissions.PermissionRequest;
 
-public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
+public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatActivity {
     protected P mPresenter;
     public View errorView, emptyView;
     public TextView errorTitle;
@@ -97,18 +95,32 @@ public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatA
             application = (Sakura) getApplication();
         }
         application.addActivity(this);
-        if (EasyPermissions.hasPermissions(this, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.POST_NOTIFICATIONS)) {
-            isManager();
+        List<String> permissions = new ArrayList<>();
+        if (gtSdk33()) {
+            permissions.add(Manifest.permission.READ_MEDIA_IMAGES);
+            permissions.add(Manifest.permission.READ_MEDIA_AUDIO);
+            permissions.add(Manifest.permission.READ_MEDIA_VIDEO);
+            permissions.add(Manifest.permission.POST_NOTIFICATIONS);
         } else {
-/*            EasyPermissions.requestPermissions(this, Utils.getString(R.string.permissions),
-                    300, Manifest.permission.WRITE_EXTERNAL_STORAGE);*/
-            EasyPermissions.requestPermissions(
-                    new PermissionRequest.Builder(this, 300, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                            .setRationale(R.string.permissions)
-                            .setPositiveButtonText(R.string.page_positive)
-                            .setTheme(R.style.DialogStyle)
-                            .build());
+            permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            permissions.add(Manifest.permission.READ_EXTERNAL_STORAGE);
         }
+        PermissionX.init(this)
+                .permissions(permissions)
+                .onExplainRequestReason((scope, deniedList) -> {
+                    scope.showRequestReasonDialog(deniedList, getString(R.string.permissions), "同意", "不同意");
+                })
+                .onForwardToSettings((scope, deniedList) -> {
+                    scope.showForwardToSettingsDialog(deniedList, getString(R.string.permissions), "同意", "不同意");
+                })
+                .request((allGranted, grantedList, deniedList) -> {
+                    if (allGranted) {
+                        isManager();
+                    } else {
+                        Toast.makeText(this, getString(R.string.permissions_error), Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
+                });
     }
 
     protected abstract P createPresenter();
@@ -169,38 +181,6 @@ public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatA
         super.onDestroy();
     }
 
-    @Override
-    public void onPermissionsGranted(int requestCode, List<String> perms) {
-        isManager();
-    }
-
-    @Override
-    public void onPermissionsDenied(int requestCode, List<String> perms) {
-//        application.showErrorToastMsg(Utils.getString(R.string.permissions_error));
-        if (perms.size() == 1 && perms.contains("POST_NOTIFICATIONS")) return;
-        CustomToast.showToast(this, Utils.getString(R.string.permissions_error), CustomToast.ERROR);
-        application.removeALLActivity();
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == 0x100 && grantResults.length > 0) {
-            build();
-        } else
-        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
-    }
-
-    private void request_notification_api13_permission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (this.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.POST_NOTIFICATIONS}, 0x100);
-            } else
-                build();
-        } else
-            build();
-    }
-
     public boolean gtSdk23() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
     }
@@ -242,11 +222,11 @@ public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatA
     private void isManager() {
         if (gtSdk30()) {
             if (Environment.isExternalStorageManager())
-                request_notification_api13_permission();
+                build();
             else
                 getManager();
         } else
-            request_notification_api13_permission();
+            build();
     }
 
     private void build() {

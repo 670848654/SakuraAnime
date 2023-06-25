@@ -77,7 +77,8 @@ public class OpenSourceActivity extends BaseActivity {
         list.add(new SourceBean("BaseRecyclerView\nAdapterHelper", "CymChad", "BRVAH:Powerful and flexible RecyclerAdapter", "https://github.com/CymChad/BaseRecyclerViewAdapterHelper"));
         list.add(new SourceBean("Glide", "bumptech", "An image loading and caching library for Android focused on smooth scrolling", "https://github.com/bumptech/glide"));
         list.add(new SourceBean("glide-transformations", "wasabeef", "An Android transformation library providing a variety of image transformations for Glide.", "https://github.com/wasabeef/glide-transformations"));
-        list.add(new SourceBean("EasyPermissions", "googlesamples", "Simplify Android M system permissions", "https://github.com/googlesamples/easypermissions"));
+        list.add(new SourceBean("PermissionX", "guolindev", "An open source Android library that makes handling runtime permissions extremely easy.", "https://github.com/guolindev/PermissionX"));
+//        list.add(new SourceBean("EasyPermissions", "googlesamples", "Simplify Android M system permissions", "https://github.com/googlesamples/easypermissions"));
         list.add(new SourceBean("MaterialEditText", "rengwuxian", "EditText in Material Design", "https://github.com/rengwuxian/MaterialEditText"));
         list.add(new SourceBean("JZVideo", "Jzvd", "高度自定义的安卓视频框架 MediaPlayer exoplayer ijkplayer ffmpeg", "https://github.com/Jzvd/JZVideo"));
         list.add(new SourceBean("ExoPlayer", "google", "An extensible media player for Android", "https://github.com/google/ExoPlayer"));

@@ -2,9 +2,11 @@ package my.project.sakuraproject.main.home.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
@@ -46,6 +48,8 @@ import my.project.sakuraproject.util.Utils;
 
 public class HomeFragment extends BaseFragment<HomeContract.View, HomePresenter> implements HomeContract.View, HomeAdapter.OnItemClick {
     private View view;
+    @BindView(R.id.root)
+    RelativeLayout rootView;
     @BindView(R.id.mSwipe)
     SwipeRefreshLayout mSwipe;
     private List<HomeHeaderBean.HeaderDataBean> headerDataBeans;
@@ -159,10 +163,16 @@ public class HomeFragment extends BaseFragment<HomeContract.View, HomePresenter>
     @Override
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(Refresh refresh) {
-        if (refresh.getIndex() == 0) {
-            multiItemEntities.clear();
-            adapter.setNewData(multiItemEntities);
-            mPresenter.loadData(true);
+        switch (refresh.getIndex()) {
+            case -2:
+                rootView.setBackgroundColor(Utils.getTheme() ? getResources().getColor(R.color.dark_toolbar_color) : getResources().getColor(R.color.light_toolbar_color));
+                adapter.notifyDataSetChanged();
+                break;
+            case 0:
+                multiItemEntities.clear();
+                adapter.setNewData(multiItemEntities);
+                mPresenter.loadData(true);
+                break;
         }
     }
 

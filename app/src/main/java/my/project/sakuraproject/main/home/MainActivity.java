@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -89,6 +90,7 @@ public class MainActivity extends BaseActivity {
                 getResources().getColor(R.color.colorAccent)
         };
         ColorStateList csl = new ColorStateList(states, colors);
+        bottomNavigationView.setItemActiveIndicatorEnabled(false);
         bottomNavigationView.setItemIconTintList(csl);
         bottomNavigationView.setItemTextColor(csl);
         Fragment fragmentById = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment_activity_main);
@@ -161,8 +163,27 @@ public class MainActivity extends BaseActivity {
             SharedPreferencesUtils.setParam(getApplicationContext(), "darkTheme", true);
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         }
-        recreate();
+//        recreate();
+        setThemeConfig();
     }
+
+    private void setThemeConfig() {
+        if (gtSdk23()) {
+            if (isDarkTheme) getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN & ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            else getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+        }
+        /** 设置Toolbar相关颜色 **/
+        toolbar.setBackgroundColor(isDarkTheme ? getResources().getColor(R.color.dark_toolbar_color) : getResources().getColor(R.color.light_toolbar_color));
+        toolbar.setTitleTextColor(isDarkTheme ? getResources().getColor(R.color.light_toolbar_color) : getResources().getColor(R.color.dark_toolbar_color));
+        toolbar.setSubtitleTextColor(isDarkTheme ? getResources().getColor(R.color.light_toolbar_color) : getResources().getColor(R.color.dark_toolbar_color));
+        searchView.setIcon(isDarkTheme ? getResources().getDrawable(R.drawable.baseline_search_white_48dp) : getResources().getDrawable(R.drawable.baseline_search_black_48dp));
+        setStatusBarColor();
+        bottomNavigationView.setBackgroundColor(isDarkTheme ? getResources().getColor(R.color.dark_toolbar_color) : getResources().getColor(R.color.light_toolbar_color));
+        bottomNavigationView.setItemIconTintList(getResources().getColorStateList(R.color.bottom_view_color));
+        bottomNavigationView.setItemTextColor(getResources().getColorStateList(R.color.bottom_view_color));
+        EventBus.getDefault().post(new Refresh(-2));
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

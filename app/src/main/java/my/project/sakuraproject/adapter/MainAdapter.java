@@ -2,6 +2,7 @@ package my.project.sakuraproject.adapter;
 
 import android.content.Context;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -25,6 +26,10 @@ public class MainAdapter extends BaseQuickAdapter<MainBean, BaseViewHolder> {
 
     @Override
     protected void convert(BaseViewHolder helper, MainBean bean) {
+        helper.setBackgroundColor(R.id.card, context.getResources().getColor(R.color.window_bg));
+        helper.setTextColor(R.id.title, context.getResources().getColor(R.color.text_color_primary));
+        ImageView img = helper.getView(R.id.img);
+        img.setColorFilter(context.getResources().getColor(R.color.text_color_primary));
         helper.setText(R.id.title, bean.getTitle());
         helper.setImageDrawable(R.id.img, context.getDrawable(bean.getImg()));
         if (bean.getNumber() == 0)

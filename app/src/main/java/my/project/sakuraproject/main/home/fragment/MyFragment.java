@@ -3,12 +3,15 @@ package my.project.sakuraproject.main.home.fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.wuyr.rippleanimation.RippleAnimation;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -50,10 +53,16 @@ import okhttp3.Response;
 
 public class MyFragment extends MyLazyFragment {
     private View view;
+    @BindView(R.id.root)
+    LinearLayout rootView;
     @BindView(R.id.video_layout)
     LinearLayout videoView;
+    @BindView(R.id.video_title)
+    TextView videoTitle;
     @BindView(R.id.other_layout)
     LinearLayout otherView;
+    @BindView(R.id.other_title)
+    TextView otherTitle;
     @BindView(R.id.video_list)
     RecyclerView videoRvList;
     @BindView(R.id.other_list)
@@ -119,6 +128,8 @@ public class MyFragment extends MyLazyFragment {
                     setDefaultSource();
                     break;
                 case 1:
+                    otherList.get(position).setTitle(!Utils.getTheme() ? "亮色主题" : "暗色主题");
+                    RippleAnimation.create(view).setDuration(1000).start();
                     EventBus.getDefault().post(new Refresh(-1));
                     break;
                 case 2:
@@ -252,10 +263,17 @@ public class MyFragment extends MyLazyFragment {
     @Override
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(Refresh refresh) {
-       /* videoList.get(0).setNumber(DatabaseUtil.queryFavoriteCount());
-        videoList.get(1).setNumber(DatabaseUtil.queryHistoryCount());
-        videoList.get(2).setNumber(DatabaseUtil.queryAllDownloadCount());
-        videoAdapter.setNewData(videoList);*/
+        switch (refresh.getIndex()) {
+            case -2:
+                rootView.setBackgroundColor(Utils.getTheme() ? getResources().getColor(R.color.dark_toolbar_color) : getResources().getColor(R.color.light_toolbar_color));
+                videoView.setBackgroundColor(Utils.getTheme() ? getResources().getColor(R.color.dark_toolbar_color) : getResources().getColor(R.color.light_toolbar_color));
+                otherView.setBackgroundColor(Utils.getTheme() ? getResources().getColor(R.color.dark_toolbar_color) : getResources().getColor(R.color.light_toolbar_color));
+                videoTitle.setTextColor(Utils.getTheme() ? getResources().getColor(R.color.light_toolbar_color) : getResources().getColor(R.color.dark_toolbar_color));
+                otherTitle.setTextColor(Utils.getTheme() ? getResources().getColor(R.color.light_toolbar_color) : getResources().getColor(R.color.dark_toolbar_color));
+                videoAdapter.notifyDataSetChanged();
+                otherAdapter.notifyDataSetChanged();
+                break;
+        }
     }
 
     private void setRecyclerViewView(boolean isMain) {

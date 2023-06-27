@@ -28,6 +28,7 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/video_title"
                     android:text="视频相关"
                     android:textSize="16sp"
                     android:textStyle="bold"
@@ -55,6 +56,7 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/other_title"
                     android:text="其他"
                     android:textSize="16sp"
                     android:textStyle="bold"

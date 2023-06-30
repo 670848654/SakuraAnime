@@ -2,6 +2,7 @@ package my.project.sakuraproject.main.home;
 
 import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -182,6 +183,9 @@ public class MainActivity extends BaseActivity {
         bottomNavigationView.setItemIconTintList(getResources().getColorStateList(R.color.bottom_view_color));
         bottomNavigationView.setItemTextColor(getResources().getColorStateList(R.color.bottom_view_color));
         EventBus.getDefault().post(new Refresh(-2));
+        new Handler().postDelayed(() -> {
+            recreate();
+        },1000);
     }
 
 

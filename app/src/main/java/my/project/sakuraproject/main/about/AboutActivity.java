@@ -137,6 +137,7 @@ public class AboutActivity extends BaseActivity {
 
     public List createUpdateLogList() {
         List logsList = new ArrayList();
+        logsList.add(new LogBean("版本：2.5.3", "修复已知问题"));
         logsList.add(new LogBean("版本：2.5.2", "修复切换主题时崩溃的问题"));
         logsList.add(new LogBean("版本：2.5.1", "修复在原生安卓13下闪退问题"));
         logsList.add(new LogBean("版本：2.5.0", "修复大部分M3U8格式的番剧下载失败的问题\n移除批量选择下载模式，提升下载成功率\n番剧详情页新增列表反序操作\n优化在平板上显示的弹幕字体大小\n新增播放界面手动查询弹幕功能（某些番剧名称不规范导致查询不到弹幕时可尝试使用手动查询）\n本地播放下载的视频时也支持弹幕显示了\n其他问题修复改进\n初步完成对【嘶哩嘶哩】站点的支持"));

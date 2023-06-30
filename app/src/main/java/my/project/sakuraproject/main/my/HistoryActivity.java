@@ -186,7 +186,6 @@ public class HistoryActivity extends BaseActivity<HistoryContract.View, HistoryP
                     Utils.getNavigationBarHeight(this) + 15);
             fab.setLayoutParams(params);
         }
-        fab.setVisibility(View.VISIBLE);
         fab.setOnClickListener(view -> showDeleteHistoryDialog(0, null, true));
     }
 
@@ -229,6 +228,7 @@ public class HistoryActivity extends BaseActivity<HistoryContract.View, HistoryP
         else
             historyBeans.clear();
         if (historyBeans.size() <= 0) {
+            fab.setVisibility(View.GONE);
             setRecyclerViewEmpty();
             adapter.setNewData(historyBeans);
             errorTitle.setText(Utils.getString(R.string.empty_history));
@@ -291,6 +291,7 @@ public class HistoryActivity extends BaseActivity<HistoryContract.View, HistoryP
             if (isMain) {
                 setRecyclerViewEmpty();
                 loading.setVisibility(View.GONE);
+                fab.setVisibility(View.GONE);
                 errorTitle.setText(msg);
                 adapter.setEmptyView(errorView);
             }
@@ -318,8 +319,10 @@ public class HistoryActivity extends BaseActivity<HistoryContract.View, HistoryP
             if (isMain) {
                 loading.setVisibility(View.GONE);
                 historyBeans = list;
-                if (historyBeans.size() > 0)
+                if (historyBeans.size() > 0) {
                     setRecyclerViewView();
+                    fab.setVisibility(View.VISIBLE);
+                }
                 else
                     setRecyclerViewEmpty();
                 adapter.setNewData(historyBeans);

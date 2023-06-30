@@ -181,6 +181,12 @@ public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatA
         super.onDestroy();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        DatabaseUtil.openDB();
+    }
+
     public boolean gtSdk23() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
     }

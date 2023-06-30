@@ -104,7 +104,7 @@ public class HomeFragment extends BaseFragment<HomeContract.View, HomePresenter>
             }
         });
         recyclerView.setAdapter(adapter);
-        if (Utils.checkHasNavigationBar(getActivity())) recyclerView.setPadding(0,0,0, Utils.getNavigationBarHeight(getActivity()));
+//        if (Utils.checkHasNavigationBar(getActivity())) recyclerView.setPadding(0,0,0, Utils.getNavigationBarHeight(getActivity()));
     }
 
     public void onMoreClick(String title, String url) {

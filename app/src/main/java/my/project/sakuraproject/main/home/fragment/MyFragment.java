@@ -97,6 +97,7 @@ public class MyFragment extends MyLazyFragment {
     }
 
     private void initAdapter() {
+        DatabaseUtil.openDB();
         videoList.add(new MainBean("追番列表", 1, R.drawable.outline_movie_filter_white_48dp, DatabaseUtil.queryFavoriteCount()));
         videoList.add(new MainBean("历史播放记录", 2, R.drawable.baseline_history_white_48dp, DatabaseUtil.queryHistoryCount()));
         videoList.add(new MainBean("视频下载列表", 3, R.drawable.baseline_download_white_48dp, DatabaseUtil.queryAllDownloadCount()));
@@ -238,7 +239,7 @@ public class MyFragment extends MyLazyFragment {
         videoList.get(0).setNumber(DatabaseUtil.queryFavoriteCount());
         videoList.get(1).setNumber(DatabaseUtil.queryHistoryCount());
         videoList.get(2).setNumber(DatabaseUtil.queryAllDownloadCount());
-        videoAdapter.setNewData(videoList);
+        videoAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -247,7 +248,7 @@ public class MyFragment extends MyLazyFragment {
         videoList.get(0).setNumber(DatabaseUtil.queryFavoriteCount());
         videoList.get(1).setNumber(DatabaseUtil.queryHistoryCount());
         videoList.get(2).setNumber(DatabaseUtil.queryAllDownloadCount());
-        videoAdapter.setNewData(videoList);
+        videoAdapter.notifyDataSetChanged();
     }
 
     @Override

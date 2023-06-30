@@ -11,6 +11,7 @@ import java.util.List;
 
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.bean.MainBean;
+import my.project.sakuraproject.util.Utils;
 
 
 /**
@@ -26,10 +27,10 @@ public class MainAdapter extends BaseQuickAdapter<MainBean, BaseViewHolder> {
 
     @Override
     protected void convert(BaseViewHolder helper, MainBean bean) {
-        helper.setBackgroundColor(R.id.card, context.getResources().getColor(R.color.window_bg));
-        helper.setTextColor(R.id.title, context.getResources().getColor(R.color.text_color_primary));
+        helper.setBackgroundColor(R.id.card, context.getResources().getColor(Utils.getTheme() ? R.color.dark_window_color : R.color.light_window_color));
+        helper.setTextColor(R.id.title, context.getResources().getColor(Utils.getTheme() ? R.color.dark_navigation_text_color : R.color.light_navigation_text_color));
         ImageView img = helper.getView(R.id.img);
-        img.setColorFilter(context.getResources().getColor(R.color.text_color_primary));
+        img.setColorFilter(context.getResources().getColor(Utils.getTheme() ? R.color.dark_navigation_text_color : R.color.light_navigation_text_color));
         helper.setText(R.id.title, bean.getTitle());
         helper.setImageDrawable(R.id.img, context.getDrawable(bean.getImg()));
         if (bean.getNumber() == 0)

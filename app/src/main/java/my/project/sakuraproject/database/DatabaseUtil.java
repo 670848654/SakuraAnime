@@ -190,6 +190,8 @@ public class DatabaseUtil {
         Toast.makeText(Sakura.getInstance(), "数据迁移完毕", Toast.LENGTH_SHORT).show();
     }
 
+    public static void openDB() { if (null != db) db = SQLiteDatabase.openOrCreateDatabase(DB_PATH, null);}
+
     /**
      * 关闭数据库连接
      */

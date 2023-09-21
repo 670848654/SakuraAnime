@@ -371,11 +371,13 @@ public class ImomoeJsoupUtils {
                 animeDramasBean.setListTitle(playListTitle);
                 Elements liList = element.select("ul > li");
                 List<AnimeDescDetailsBean> animeDescDramasBeans = new ArrayList<>();
+                int index = 0;
                 for (Element drama : liList) {
+                    index += 1;
                     String name = drama.select("a").text();
                     String watchUrl = drama.select("a").attr("href");
 //                    Log.e("dramaStr - > " , dramaStr + "- > " + watchUrl);
-                    animeDescDramasBeans.add(new AnimeDescDetailsBean(name, watchUrl, dramaStr.contains(watchUrl)));
+                    animeDescDramasBeans.add(new AnimeDescDetailsBean(index, name, watchUrl, dramaStr.contains(watchUrl)));
                 }
                 animeDramasBean.setAnimeDescDetailsBeanList(animeDescDramasBeans);
                 animeDramasBeans.add(animeDramasBean);
@@ -450,10 +452,12 @@ public class ImomoeJsoupUtils {
                 }
             }
             if (playing != null) {
+                int index = 0;
                 for (Element element : playing) {
+                    index += 1;
                     String name = element.text();
                     String watchUrl = element.attr("href");
-                    animeDescDramasBeans.add(new AnimeDescDetailsBean(name, watchUrl, dramaStr.contains(watchUrl)));
+                    animeDescDramasBeans.add(new AnimeDescDetailsBean(index, name, watchUrl, dramaStr.contains(watchUrl)));
                 }
             }
             /*Elements playElements = dataElement.select("li").get(0).select("a"); //剧集列表

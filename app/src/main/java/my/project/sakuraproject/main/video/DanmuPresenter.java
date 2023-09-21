@@ -34,6 +34,11 @@ public class DanmuPresenter extends Presenter<DanmuContract.View> implements Bas
     }
 
     @Override
+    public void successDanmuXml(String content) {
+        view.showSuccessDanmuXmlView(content);
+    }
+
+    @Override
     public void errorDanmu(String msg) {
         view.showErrorDanmuView(msg);
     }

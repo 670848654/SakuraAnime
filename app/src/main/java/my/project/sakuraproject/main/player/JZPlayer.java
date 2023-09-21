@@ -285,7 +285,7 @@ public class JZPlayer extends JzvdStd {
                 TextInputLayout name = view.findViewById(R.id.name);
                 TextInputLayout drama = view.findViewById(R.id.drama);
                 name.getEditText().setText(queryDanmuTitle.isEmpty() ? (jzDataSource.title.contains("-") ? jzDataSource.title.split("-")[0].trim() : jzDataSource.title) : queryDanmuTitle);
-                drama.getEditText().setText(jzDataSource.title.contains("-") ? jzDataSource.title.split("-")[1].trim() : "");
+//                drama.getEditText().setText(jzDataSource.title.contains("-") ? jzDataSource.title.split("-")[1].trim() : "");
                 builder.setTitle("手动查询弹幕");
                 builder.setPositiveButton("查询弹幕", null);
                 builder.setNegativeButton("取消", null);

@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
@@ -53,6 +54,7 @@ import my.project.sakuraproject.bean.AnimeDescDetailsBean;
 import my.project.sakuraproject.bean.DownloadDataBean;
 import my.project.sakuraproject.bean.Refresh;
 import my.project.sakuraproject.bean.RefreshDownloadData;
+import my.project.sakuraproject.custom.BiliDanmukuParser;
 import my.project.sakuraproject.custom.CustomDanmakuParser;
 import my.project.sakuraproject.custom.CustomToast;
 import my.project.sakuraproject.database.DatabaseUtil;
@@ -420,8 +422,13 @@ public abstract class BasePlayerActivity extends BaseActivity implements JZPlaye
     }
 
     private void getDanmu() {
+        // 2023年9月19日16:18:50 不再支持本地自动获取弹幕，可以手动
+        if (isLocalVideo)
+            return;
         if (player.openDanmuConfig) {
-            danmuPresenter = new DanmuPresenter(animeTitle, isLocalVideo ? dramaTitle : witchTitle.split("-")[1].trim(), this);
+            if (!Utils.isImomoe()) // YHDM源也可以使用弹幕接口，但有局限性
+                Toast.makeText(this, "当前为YHDM源，使用SILISILI弹幕接口对应集数可能不一致！", Toast.LENGTH_LONG).show();
+            danmuPresenter = new DanmuPresenter(animeTitle, String.valueOf(yhdmDescList.get(clickIndex).getIndex()),this);
             danmuPresenter.loadDanmu();
         }
     }
@@ -585,7 +592,7 @@ public abstract class BasePlayerActivity extends BaseActivity implements JZPlaye
         videoDuration = duration;
     }
 
-    private BaseDanmakuParser createParser(InputStream stream) {
+    private BaseDanmakuParser createParser(boolean json, InputStream stream) {
         if (stream == null) {
             return new BaseDanmakuParser() {
 
@@ -595,16 +602,49 @@ public abstract class BasePlayerActivity extends BaseActivity implements JZPlaye
                 }
             };
         }
-        ILoader loader = DanmakuLoaderFactory.create(DanmakuLoaderFactory.TAG_ACFUN);
+        ILoader loader = DanmakuLoaderFactory.create(json ? DanmakuLoaderFactory.TAG_ACFUN : DanmakuLoaderFactory.TAG_BILI);
+
         try {
             loader.load(stream);
         } catch (IllegalDataException e) {
             e.printStackTrace();
         }
-        BaseDanmakuParser parser = new CustomDanmakuParser();
+        BaseDanmakuParser parser = json ? new CustomDanmakuParser() : new BiliDanmukuParser();
         IDataSource<?> dataSource = loader.getDataSource();
         parser.load(dataSource);
         return parser;
+    }
+
+    @Override
+    public void showSuccessDanmuXmlView(String content) {
+        runOnUiThread(() -> {
+            if (!mActivityFinish) {
+                if (player.loadError) return;
+                try {
+                    Toast.makeText(this, "弹幕接口响应正常", Toast.LENGTH_LONG).show();
+                    player.danmuInfoView.setText("弹幕接口响应正常");
+                    player.danmuInfoView.setVisibility(View.VISIBLE);
+                    InputStream result = new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8));
+                    player.danmakuParser = createParser(false, result);
+                    player.createDanmu();
+                    if (player.danmakuView.isPrepared()) {
+                        player.danmakuView.restart();
+                    }
+                    player.danmakuView.prepare(player.danmakuParser, player.danmakuContext);
+                    if (!player.open_danmu) {
+                        player.hideDanmmu();
+                    }
+                    if (userSavePosition > 0) {
+                        new Handler().postDelayed(() -> {
+                            // 一秒后定位弹幕时间为用户上次观看位置
+                            player.seekDanmu(userSavePosition);
+                        }, 1000);
+                    }
+                } catch (Exception e) {
+                    Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     @Override
@@ -622,7 +662,7 @@ public abstract class BasePlayerActivity extends BaseActivity implements JZPlaye
                     player.danmuInfoView.setText("已加载"+ danmus.getJSONObject("data").getInteger("total") + "条弹幕！");
                     player.danmuInfoView.setVisibility(View.VISIBLE);
                     InputStream result = new ByteArrayInputStream(jsonArray.toString().getBytes(StandardCharsets.UTF_8));
-                    player.danmakuParser = createParser(result);
+                    player.danmakuParser = createParser(true, result);
                     player.createDanmu();
                     if (player.danmakuView.isPrepared()) {
                         player.danmakuView.restart();

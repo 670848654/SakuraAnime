@@ -371,7 +371,7 @@ public class YhdmJsoupUtils {
                 String watchUrl = dramaElements.get(i).select("a").attr("href");
                 if (dramaStr.contains(watchUrl)) select = true;
                 else select = false;
-                animeDescDramasBeans.add(new AnimeDescDetailsBean(name, watchUrl, select));
+                animeDescDramasBeans.add(new AnimeDescDetailsBean(i+1, name, watchUrl, select));
             }
             animeDramasBean.setAnimeDescDetailsBeanList(animeDescDramasBeans);
             animeDramasBeans.add(animeDramasBean);
@@ -424,9 +424,9 @@ public class YhdmJsoupUtils {
                 dramaUrl = elements.get(i).select("a").attr("href");
                 dramaTitle = elements.get(i).select("a").text();
                 if (dataBaseDrama.contains(dramaUrl)) // 是否已经观看
-                    animeDescDetailsBeans.add(new AnimeDescDetailsBean(dramaTitle, dramaUrl, true));
+                    animeDescDetailsBeans.add(new AnimeDescDetailsBean(i+1, dramaTitle, dramaUrl, true));
                 else
-                    animeDescDetailsBeans.add(new AnimeDescDetailsBean(dramaTitle, dramaUrl, false));
+                    animeDescDetailsBeans.add(new AnimeDescDetailsBean(i+1, dramaTitle, dramaUrl, false));
             }
         } catch (Exception e) {
             e.printStackTrace();

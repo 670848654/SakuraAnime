@@ -14,11 +14,15 @@ public interface DanmuContract {
     interface View extends BaseView {
         void showSuccessDanmuView(JSONObject danmus);
 
+        void showSuccessDanmuXmlView(String content);
+
         void showErrorDanmuView(String msg);
     }
 
     interface LoadDataCallback extends BaseLoadDataCallback {
         void successDanmu(JSONObject danmus);
+
+        void successDanmuXml(String content);
 
         void errorDanmu(String msg);
     }

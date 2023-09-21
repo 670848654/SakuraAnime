@@ -32,7 +32,7 @@
         android:id="@+id/drama"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="番剧集数"
+        android:hint="集数列表下标"
         app:errorEnabled="true"
         android:textColorHint="@color/m3_textfield_label_color"
         app:boxStrokeColor="@color/m3_textfield_label_color"
@@ -40,7 +40,7 @@
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:inputType="text"
+            android:inputType="numberSigned"
             android:textCursorDrawable="@null"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />

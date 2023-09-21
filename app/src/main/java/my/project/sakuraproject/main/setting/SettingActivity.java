@@ -328,6 +328,7 @@ public class SettingActivity extends BaseActivity {
         alertDialog.show();
         alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
             EventBus.getDefault().post(new Refresh(99));
+            Aria.download(this).removeAllTask(false);
             DatabaseUtil.deleteAllDownloads();
             CustomToast.showToast(this, "已删除所有下载记录", CustomToast.DEFAULT);
             alertDialog.dismiss();

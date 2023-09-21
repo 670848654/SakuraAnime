@@ -27,6 +27,7 @@ import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.bean.LogBean;
 import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.base.Presenter;
+import my.project.sakuraproject.util.SharedPreferencesUtils;
 import my.project.sakuraproject.util.Utils;
 
 public class AboutActivity extends BaseActivity {
@@ -80,7 +81,7 @@ public class AboutActivity extends BaseActivity {
     private void initViews() {
         LinearLayout.LayoutParams Params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Utils.getNavigationBarHeight(this));
         footer.findViewById(R.id.footer).setLayoutParams(Params);
-        sourceTitleView.setText(Utils.isImomoe() ? Utils.getString(R.string.imomoe_url) : Utils.getString(R.string.domain_url));
+        sourceTitleView.setText(Utils.isImomoe() ? (String) SharedPreferencesUtils.getParam(AboutActivity.this, "imomoe_domain", Utils.getString(R.string.imomoe_url)) : (String) SharedPreferencesUtils.getParam(AboutActivity.this, "domain", Utils.getString(R.string.domain)));
         cache.setText(Environment.getExternalStorageDirectory() + Utils.getString(R.string.cache_text));
     }
 

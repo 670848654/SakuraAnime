@@ -7,12 +7,15 @@ public class AnimeDescDetailsBean implements Serializable {
     private String title;
     // 链接
     private String url;
+    // 集数列表下标，用于silisili弹幕接口
+    private Integer index;
     // 是否选中
     private boolean selected;
 
     private String downloadDataId;
 
-    public AnimeDescDetailsBean(String title, String url, boolean selected) {
+    public AnimeDescDetailsBean(int index, String title, String url, boolean selected) {
+        this.index = index;
         this.title = title;
         this.url = url;
         this.selected = selected;
@@ -40,6 +43,14 @@ public class AnimeDescDetailsBean implements Serializable {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public Integer getIndex() {
+        return index;
+    }
+
+    public void setIndex(Integer index) {
+        this.index = index;
     }
 
     public boolean isSelected() {

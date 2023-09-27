@@ -28,7 +28,9 @@ public class Api {
             "https://z1.m1907.cn/?jx=%s"
     };
 
-    // 弹幕接口 [my_danmu_pub]不公开了~
+    /**
+     * @deprecated 弹幕接口 [my_danmu_pub]不公开了~ {@link Api#SILISILI_PARSE_API}
+     */
     @Deprecated
     public final static String DANMU_API = "https://api.danmu.oyyds.top/api/message/getSomeV3?keyword=%s&number=%s&type=1&platforms=base,dandan&dandanRelated=true";
 
@@ -37,4 +39,10 @@ public class Api {
      * @param {站点地址} {番剧名称} {集数列表下标}
      */
     public final static String SILISILI_DANMU_API = "%s/static/player/AB/api.php?act=dm&m=get&id=%s%s";
+
+    /**
+     * 嘶哩嘶哩站点需解析的播放路劲解析地址
+     * @param {站点地址} {播放地址}
+     */
+    public final static String SILISILI_PARSE_API = "%s/static/player/Aliplayer/iindex.php?url=%s";
 }

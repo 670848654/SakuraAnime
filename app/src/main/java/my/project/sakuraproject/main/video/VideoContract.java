@@ -11,6 +11,8 @@ public interface VideoContract {
         void getData(String title, String url, int source, String playNumber, LoadDataCallback callback);
 
 //        void getVideoUrl(String url, LoadDataCallback callback);
+
+        void getSilisiliVideoUrl(String url, LoadDataCallback callback);
     }
 
     interface View extends BaseView {

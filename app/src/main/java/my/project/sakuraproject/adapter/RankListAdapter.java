@@ -41,7 +41,8 @@ public class RankListAdapter extends BaseQuickAdapter<SiliSiliRankBean.RankItem,
                 break;
         }
         helper.setText(R.id.title, item.getTitle());
-        helper.setText(R.id.score, item.getScore());
-        helper.setText(R.id.hot, item.getHot());
+        // 站点好像是反的。。。手动调整
+        helper.setText(R.id.score, item.getHot());
+        helper.setText(R.id.hot, item.getScore());
     }
 }

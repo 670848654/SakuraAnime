@@ -9,7 +9,7 @@ android {
         targetSdkVersion 33
         versionCode 58
         versionName "2.5.3"
-        ndk{abiFilters "arm64-v8a", "x86_64"}
+        ndk{abiFilters "armeabi-v7a", "arm64-v8a", "x86_64"}
         resConfigs"zh"
     }
     compileOptions {
@@ -43,7 +43,7 @@ dependencies {
     implementation 'androidx.navigation:navigation-fragment:2.3.0'
     implementation 'androidx.navigation:navigation-ui:2.3.0'
     implementation files('src/libs/nanohttpd-2.3.1.jar')
-    implementation files('src/libs/servlet-api.jar')
+//    implementation files('src/libs/servlet-api.jar')
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.palette:palette:1.0.0'
     implementation 'com.google.android.material:material:1.5.0-beta01'
@@ -62,6 +62,13 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:3.12.0'
     implementation 'cn.jzvd:jiaozivideoplayer:7.2.0'
     implementation 'com.google.android.exoplayer:exoplayer:2.12.1'
+    implementation 'tv.danmaku.ijk.media:ijkplayer-java:0.8.8'
+//    implementation 'tv.danmaku.ijk.media:ijkplayer-armv7a:0.8.4'
+    api 'com.github.CarGuo.GSYVideoPlayer:gsyVideoPlayer-arm64:v8.1.9-release-jitpack'
+    api 'com.github.CarGuo.GSYVideoPlayer:gsyVideoPlayer-armv7a:v8.1.9-release-jitpack'
+    api 'com.github.CarGuo.GSYVideoPlayer:gsyVideoPlayer-armv5:v8.1.9-release-jitpack'
+    api 'com.github.CarGuo.GSYVideoPlayer:gsyVideoPlayer-x86:v8.1.9-release-jitpack'
+    api 'com.github.CarGuo.GSYVideoPlayer:gsyVideoPlayer-x64:v8.1.9-release-jitpack'
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
     implementation 'jp.wasabeef:glide-transformations:4.3.0'

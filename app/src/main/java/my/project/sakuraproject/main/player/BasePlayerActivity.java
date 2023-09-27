@@ -27,6 +27,7 @@ import org.greenrobot.eventbus.EventBus;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
+import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -412,7 +413,8 @@ public abstract class BasePlayerActivity extends BaseActivity implements JZPlaye
         Jzvd.releaseAllVideos();
         /*player.currentSpeedIndex = 1;
         player.displayIndex = 1;*/
-        player.setUp(playUrl, witchTitle, Jzvd.SCREEN_FULLSCREEN, JZExoPlayer.class);
+//        player.setUp(playUrl, witchTitle, Jzvd.SCREEN_FULLSCREEN, JZExoPlayer.class);
+        player.setUp(playUrl, witchTitle, Jzvd.SCREEN_FULLSCREEN, JZMediaIjk.class);
         player.startVideo();
         userSavePosition = DatabaseUtil.getPlayPosition(animeId, dramaUrl);
         player.seekToInAdvance = userSavePosition;//跳转到指定的播放进度
@@ -438,7 +440,14 @@ public abstract class BasePlayerActivity extends BaseActivity implements JZPlaye
         /*player.currentSpeedIndex = 1;
         player.displayIndex = 1;*/
         player.localVideoPath = path;
-        player.setUp(Uri.fromFile(new File(path)).toString(), animeTitle + " - " + dramaTitle, Jzvd.SCREEN_FULLSCREEN, JZExoPlayer.class);
+//        player.setUp(Uri.fromFile(new File(path)).toString(), animeTitle + " - " + dramaTitle, Jzvd.SCREEN_FULLSCREEN, JZExoPlayer.class);
+        String playPath = Uri.fromFile(new File(path)).toString();
+        try {
+            playPath = URLDecoder.decode(playPath, "UTF-8");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        player.setUp(playPath, animeTitle + " - " + dramaTitle, Jzvd.SCREEN_FULLSCREEN, JZMediaIjk.class);
         player.startVideo();
         userSavePosition = DatabaseUtil.queryDownloadDataProgressById(downloadDataId);
         player.seekToInAdvance = userSavePosition;//跳转到指定的播放进度

@@ -34,6 +34,7 @@ public class ImomoeJsoupUtils {
     private final static Pattern IMG_PATTERN = Pattern.compile("http(.*)");
     /** 星期数组 **/
     private static final String[] TABS = Utils.getArray(R.array.week_array);
+    private final static Pattern SILISILI_SOURCE = Pattern.compile("\"source\":.*\\\"");
 
     /**
      * 获取搜索列表的页数
@@ -366,7 +367,7 @@ public class ImomoeJsoupUtils {
             for (Element element : playBox) {
                 AnimeDramasBean animeDramasBean = new AnimeDramasBean();
                 String playListTitle = element.select("div.widget-title").text();
-                if (playListTitle.toLowerCase(Locale.ROOT).contains("no.x")) playListTitle += " → 需二次解析，无法播放（网站问题？）";
+//                if (playListTitle.toLowerCase(Locale.ROOT).contains("no.x")) playListTitle += " → 需二次解析，无法播放（网站问题？）";
                 if (playListTitle.contains("下载")) continue;
                 animeDramasBean.setListTitle(playListTitle);
                 Elements liList = element.select("ul > li");
@@ -422,6 +423,14 @@ public class ImomoeJsoupUtils {
             Log.e("playUrl", playUrl);
             return playUrl;
         }
+        return "";
+    }
+
+    public static String getSilisiliVideoUrl(String source) {
+        Document document = Jsoup.parse(source);
+        Matcher m = SILISILI_SOURCE.matcher(document.html());
+        while (m.find())
+            return m.group().replaceAll("\"source\":", "").replaceAll("\"", "");
         return "";
     }
 

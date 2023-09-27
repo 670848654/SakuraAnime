@@ -36,6 +36,10 @@ public class VideoPresenter extends Presenter<VideoContract.View> implements Bas
         playModel.getData(title, url, source, playNumber, this);
     }
 
+    public void tryGetSilisiliPlayUrl() {
+        playModel.getSilisiliVideoUrl(url, this);
+    }
+
     /*public void loadVideoUrls() {
         playModel.getVideoUrl(url, this);
     }*/

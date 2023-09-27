@@ -127,10 +127,15 @@ public class BiliDanmukuParser extends BaseDanmakuParser {
                     // int poolType = parseInteger(values[5]); // 弹幕池类型（忽略
                     item = mContext.mDanmakuFactory.createDanmaku(type, mContext);
                     if (item != null) {
-                        item.setTime(time);
-                        item.textSize = textSize * (mDispDensity - 0.6f);
+                        item.setTime(time + 1200);
                         item.textColor = color;
                         item.textShadowColor = color <= Color.BLACK ? Color.WHITE : Color.BLACK;
+                        item.flags = mContext.mGlobalFlagValues;
+                        item.setTimer(mTimer);
+                        item.underlineColor = Color.TRANSPARENT;
+                        item.borderColor = Color.TRANSPARENT;
+                        item.priority = 0;
+                        item.textSize = 25 * (mDispDensity - 0.6f);
                     }
                 }
             }

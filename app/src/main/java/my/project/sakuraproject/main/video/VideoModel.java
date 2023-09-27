@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import my.project.sakuraproject.api.Api;
 import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.bean.AnimeDescDetailsBean;
 import my.project.sakuraproject.database.DatabaseUtil;
@@ -24,9 +25,9 @@ public class VideoModel extends BaseModel implements VideoContract.Model {
     public void getData(String title, String url, int source, String playNumber, VideoContract.LoadDataCallback callback) {
         isImomoe = url.contains("/vodplay/");
         if (isImomoe)
-            parserImomoe(title, BaseModel.getDomain(true) + url, source, playNumber, callback);
+            parserImomoe(title, getDomain(true) + url, source, playNumber, callback);
         else
-            parserYhdm(title, BaseModel.getDomain(false) + url, source, playNumber, callback);
+            parserYhdm(title, getDomain(false) + url, source, playNumber, callback);
     }
 
     private void parserYhdm(String title, String url, int playSource, String playNumber, VideoContract.LoadDataCallback callback) {
@@ -77,6 +78,30 @@ public class VideoModel extends BaseModel implements VideoContract.Model {
                 List<AnimeDescDetailsBean> bean = ImomoeJsoupUtils.getAllDrama(source, dataBaseDrama);
                 callback.successImomoeDramas(bean);
                 String playUrl = ImomoeJsoupUtils.getImomoePlayUrl(source);
+                if (!playUrl.isEmpty())
+                    callback.successImomoeVideoUrl(playUrl);
+                else
+                    callback.empty();
+            }
+        });
+    }
+
+    @Override
+    public void getSilisiliVideoUrl(String url, VideoContract.LoadDataCallback callback) {
+        String parseUrl = String.format(Api.SILISILI_PARSE_API, getDomain(true), url);
+        callback.log(parseUrl);
+        Log.e("parseUrl", parseUrl);
+        new HttpGet(parseUrl, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                callback.error();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String source = getHtmlBody(response, false);
+                String playUrl = ImomoeJsoupUtils.getSilisiliVideoUrl(source);
+                Log.e("playUrl", playUrl);
                 if (!playUrl.isEmpty())
                     callback.successImomoeVideoUrl(playUrl);
                 else

@@ -146,6 +146,7 @@ public class PlayerActivity extends BasePlayerActivity implements VideoContract.
     @Override
     public void getVideoEmpty() {
         runOnUiThread(() -> {
+            player.onStateError();
             hideNavBar();
             VideoUtils.showErrorInfo(this, BaseModel.getDomain(false) + dramaUrl);
         });
@@ -155,6 +156,7 @@ public class PlayerActivity extends BasePlayerActivity implements VideoContract.
     public void getVideoError() {
         //网络出错
         runOnUiThread(() -> {
+            player.onStateError();
             hideNavBar();
 //            application.showErrorToastMsg(Utils.getString(R.string.error_700));
             VideoUtils.showPlayerNetworkErrorDialog(this, (dialog, index) -> videoPresenter.loadData(true));
@@ -257,10 +259,22 @@ public class PlayerActivity extends BasePlayerActivity implements VideoContract.
     }
 
     private void checkPlayUrl(String url) {
-        if (!url.contains("$"))
-            play(url);
-        else
-            snifferPlayUrl(url);
+        if (Utils.isImomoe()) {
+            // 当为silisili源时校验
+            if (!url.contains("http")) {
+                // 尝试获取真实的播放地址
+                Toast.makeText(this, "不是播放地址，尝试第二套解析方式", Toast.LENGTH_SHORT).show();
+                videoPresenter = new VideoPresenter(url, this);
+                videoPresenter.tryGetSilisiliPlayUrl();
+            } else
+                play(url);
+        } else {
+            // yhdm
+            if (!url.contains("$"))
+                play(url);
+            else
+                snifferPlayUrl(url);
+        }
     }
 
     /**

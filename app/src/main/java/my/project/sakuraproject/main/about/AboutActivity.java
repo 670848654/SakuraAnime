@@ -81,7 +81,7 @@ public class AboutActivity extends BaseActivity {
     private void initViews() {
         LinearLayout.LayoutParams Params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Utils.getNavigationBarHeight(this));
         footer.findViewById(R.id.footer).setLayoutParams(Params);
-        sourceTitleView.setText(Utils.isImomoe() ? (String) SharedPreferencesUtils.getParam(AboutActivity.this, "imomoe_domain", Utils.getString(R.string.imomoe_url)) : (String) SharedPreferencesUtils.getParam(AboutActivity.this, "domain", Utils.getString(R.string.domain)));
+        sourceTitleView.setText(Utils.isImomoe() ? (String) SharedPreferencesUtils.getParam(AboutActivity.this, "imomoe_domain", Utils.getString(R.string.imomoe_url)) : (String) SharedPreferencesUtils.getParam(AboutActivity.this, "domain", Utils.getString(R.string.domain_url)));
         cache.setText(Environment.getExternalStorageDirectory() + Utils.getString(R.string.cache_text));
     }
 
@@ -138,6 +138,7 @@ public class AboutActivity extends BaseActivity {
 
     public List createUpdateLogList() {
         List logsList = new ArrayList();
+        logsList.add(new LogBean("版本：2.5.4", "修复YHDM源首页解析错误\n添加Ijkplayer播放器内核，设置中切换\n原弹幕接口作者不公开了，暂时更换为S站弹幕接口\nS站支持No.A/X播放地址获取"));
         logsList.add(new LogBean("版本：2.5.3", "修复已知问题"));
         logsList.add(new LogBean("版本：2.5.2", "修复切换主题时崩溃的问题"));
         logsList.add(new LogBean("版本：2.5.1", "修复在原生安卓13下闪退问题"));

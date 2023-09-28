@@ -3,6 +3,10 @@ package my.project.sakuraproject.api;
 public class Api {
     //检测更新
     public final static String CHECK_UPDATE = "https://api.github.com/repos/670848654/SakuraAnime/releases/latest";
+    /**
+     * 2023年9月27日14:49:27 发现YHDM需要加前缀
+     */
+    public final static String YHDM_PLAY_PATH = "https://tup.iyinghua.com/?vid=%s";
     //樱花动漫解析Api
     @Deprecated
     public final static String PARSE_API = "http://tup.yhdm.so/?vid=%s";

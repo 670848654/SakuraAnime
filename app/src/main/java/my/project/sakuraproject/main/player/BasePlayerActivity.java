@@ -69,6 +69,7 @@ import my.project.sakuraproject.services.DLNAService;
 import my.project.sakuraproject.util.SharedPreferencesUtils;
 import my.project.sakuraproject.util.StatusBarUtil;
 import my.project.sakuraproject.util.Utils;
+import my.project.sakuraproject.util.VideoUtils;
 
 public abstract class BasePlayerActivity extends BaseActivity implements JZPlayer.CompleteListener, JZPlayer.TouchListener,
         JZPlayer.ShowOrHideChangeViewListener,  JZPlayer.OnProgressListener, JZPlayer.PlayingListener, JZPlayer.PauseListener, JZPlayer.OnQueryDanmuListener, DanmuContract.View {
@@ -196,7 +197,7 @@ public abstract class BasePlayerActivity extends BaseActivity implements JZPlaye
     }
 
     private void initPlayerView() {
-        player.config.setOnClickListener(v -> {
+        player.configView.setOnClickListener(v -> {
             if (!Utils.isFastClick()) return;
             if (drawerLayout.isDrawerOpen(GravityCompat.START))
                 drawerLayout.closeDrawer(GravityCompat.START);
@@ -223,8 +224,8 @@ public abstract class BasePlayerActivity extends BaseActivity implements JZPlaye
             player.danmuView.setVisibility(View.GONE);*/
         // 加载视频失败，嗅探视频
         player.snifferBtn.setOnClickListener(v -> snifferVideo());
-        if (gtSdk23()) player.tvSpeed.setVisibility(View.VISIBLE);
-        else player.tvSpeed.setVisibility(View.GONE);
+        if (gtSdk23()) player.tvSpeedView.setVisibility(View.VISIBLE);
+        else player.tvSpeedView.setVisibility(View.GONE);
         player.selectDramaView.setOnClickListener(view -> {
             if (!Utils.isFastClick()) return;
             if (drawerLayout.isDrawerOpen(GravityCompat.END))
@@ -414,7 +415,7 @@ public abstract class BasePlayerActivity extends BaseActivity implements JZPlaye
         /*player.currentSpeedIndex = 1;
         player.displayIndex = 1;*/
 //        player.setUp(playUrl, witchTitle, Jzvd.SCREEN_FULLSCREEN, JZExoPlayer.class);
-        player.setUp(playUrl, witchTitle, Jzvd.SCREEN_FULLSCREEN, JZMediaIjk.class);
+        player.setUp(playUrl, witchTitle, Jzvd.SCREEN_FULLSCREEN, VideoUtils.getUserPlayerKernel(this));
         player.startVideo();
         userSavePosition = DatabaseUtil.getPlayPosition(animeId, dramaUrl);
         player.seekToInAdvance = userSavePosition;//跳转到指定的播放进度
@@ -447,7 +448,7 @@ public abstract class BasePlayerActivity extends BaseActivity implements JZPlaye
         } catch (Exception e) {
             e.printStackTrace();
         }
-        player.setUp(playPath, animeTitle + " - " + dramaTitle, Jzvd.SCREEN_FULLSCREEN, JZMediaIjk.class);
+        player.setUp(playPath, animeTitle + " - " + dramaTitle, Jzvd.SCREEN_FULLSCREEN, VideoUtils.getUserPlayerKernel(this));
         player.startVideo();
         userSavePosition = DatabaseUtil.queryDownloadDataProgressById(downloadDataId);
         player.seekToInAdvance = userSavePosition;//跳转到指定的播放进度

@@ -65,11 +65,6 @@ public class SettingActivity extends BaseActivity {
     @BindView(R.id.download_number)
     TextView downloadNumber;
     private String[] downloadNumbers = Utils.getArray(R.array.download_numbers);
-    @BindView(R.id.slidr_config)
-    TextView slidrConfig;
-    private String[] slidrConfigs = Utils.getArray(R.array.slidr_configs);
-    @BindView(R.id.version)
-    TextView version;
     private AlertDialog alertDialog;
     private String downloadUrl;
     private Call downCall;
@@ -78,7 +73,9 @@ public class SettingActivity extends BaseActivity {
     @BindView(R.id.danmu_select)
     TextView danmuSelectView;
     private String[] danmuItems = {"开", "关"};
-
+    @BindView(R.id.kernel_default)
+    TextView kernelDefaultView;
+    private String[] playerKernelItems = {"ExoPlayer", "Ijkplayer"};
     @Override
     protected Presenter createPresenter() {
         return null;
@@ -125,7 +122,6 @@ public class SettingActivity extends BaseActivity {
         LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) show.getLayoutParams();
         params.setMargins(10, 0, 10, Utils.getNavigationBarHeight(this) - 5);
         show.setLayoutParams(params);
-        version.setText(Utils.getASVersionName());
     }
 
     public void getUserCustomSet() {
@@ -138,6 +134,8 @@ public class SettingActivity extends BaseActivity {
                 player_default.setText(playerItems[1]);
                 break;
         }
+        int playerKernel = (Integer) SharedPreferencesUtils.getParam(this, "player_kernel", 0);
+        kernelDefaultView.setText(playerKernelItems[playerKernel]);
         /*if (Utils.getX5State())
             x5_state_title.append(Html.fromHtml("<font color=\"#259b24\">加载成功</font>"));
         else
@@ -149,11 +147,10 @@ public class SettingActivity extends BaseActivity {
         checkFavoriteUpdateView.setText((Boolean) SharedPreferencesUtils.getParam(this, "check_favorite_update", true) ? checkFavoriteUpdateItems[0] : checkFavoriteUpdateItems[1]);
         domain_default.setText(Sakura.DOMAIN);
         downloadNumber.setText(((Integer) SharedPreferencesUtils.getParam(this, "download_number", 0) + 1) + "");
-        slidrConfig.setText((Boolean) SharedPreferencesUtils.getParam(this, "slidr_config", false) ? slidrConfigs[1] : slidrConfigs[0]);
         danmuSelectView.setText((Boolean) SharedPreferencesUtils.getParam(this, "open_danmu", true) ? danmuItems[0] : danmuItems[1]);
     }
 
-    @OnClick({R.id.set_domain, R.id.set_player, R.id.set_favorite_update, R.id.set_download_number, R.id.set_sildr, R.id.check_update, R.id.about, R.id.remove_downloads, R.id.set_danmu})
+    @OnClick({R.id.set_domain, R.id.set_player, R.id.set_player_kernel, R.id.set_favorite_update, R.id.set_download_number, R.id.remove_downloads, R.id.set_danmu})
     public void onClick(RelativeLayout layout) {
         switch (layout.getId()) {
             case R.id.set_domain:
@@ -162,26 +159,14 @@ public class SettingActivity extends BaseActivity {
             case R.id.set_player:
                 setDefaultPlayer();
                 break;
+            case R.id.set_player_kernel:
+                setPlayerKernel();
+                break;
             case R.id.set_favorite_update:
                 setCheckFavoriteUpdateState();
                 break;
             case R.id.set_download_number:
                 setDownloadNumber();
-                break;
-            case R.id.set_sildr:
-                setSildr();
-                break;
-            /*case R.id.set_x5:
-                if (Utils.getX5State())
-                    setX5State();
-                else
-                    application.showErrorToastMsg("X5内核未能加载成功，无法设置");
-                break;*/
-            case  R.id.check_update:
-                checkUpdate();
-                break;
-            case R.id.about:
-                startActivity(new Intent(this, AboutActivity.class));
                 break;
             case R.id.remove_downloads:
                 removeDownloads();
@@ -256,16 +241,20 @@ public class SettingActivity extends BaseActivity {
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this, R.style.DialogStyle);
         builder.setTitle(Utils.getString(R.string.select_player));
         builder.setSingleChoiceItems(playerItems, (Integer) SharedPreferencesUtils.getParam(getApplicationContext(), "player", 0), (dialog, which) -> {
-            switch (which) {
-                case 0:
-                    SharedPreferencesUtils.setParam(getApplicationContext(), "player", 0);
-                    player_default.setText(playerItems[0]);
-                    break;
-                case 1:
-                    SharedPreferencesUtils.setParam(getApplicationContext(), "player", 1);
-                    player_default.setText(playerItems[1]);
-                    break;
-            }
+            player_default.setText(playerItems[which]);
+            SharedPreferencesUtils.setParam(getApplicationContext(), "player", which);
+            dialog.dismiss();
+        });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    public void setPlayerKernel() {
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this, R.style.DialogStyle);
+        builder.setTitle(Utils.getString(R.string.set_player_kernel));
+        builder.setSingleChoiceItems(playerKernelItems, (Integer) SharedPreferencesUtils.getParam(getApplicationContext(), "player_kernel", 0), (dialog, which) -> {
+            kernelDefaultView.setText(playerKernelItems[which]);
+            SharedPreferencesUtils.setParam(getApplicationContext(), "player_kernel", which);
             dialog.dismiss();
         });
         AlertDialog alertDialog = builder.create();
@@ -299,19 +288,6 @@ public class SettingActivity extends BaseActivity {
             SharedPreferencesUtils.setParam(this, "download_number", which);
             downloadNumber.setText(downloadNumbers[which]);
             Aria.get(this).getDownloadConfig().setMaxTaskNum(Integer.valueOf(downloadNumbers[which]));
-            dialog.dismiss();
-        });
-        AlertDialog alertDialog = builder.create();
-        alertDialog.show();
-    }
-
-    private void setSildr() {
-        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this, R.style.DialogStyle);
-        builder.setTitle("设置滑动返回方式");
-        builder.setSingleChoiceItems(slidrConfigs, (Boolean) SharedPreferencesUtils.getParam(this, "slidr_config", false) ? 1 : 0, (dialog, which) -> {
-            SharedPreferencesUtils.setParam(this, "slidr_config", which == 0 ? false : true);
-            slidrConfig.setText(slidrConfigs[which]);
-            CustomToast.showToast(this, "设置成功，下次打开界面生效~", CustomToast.DEFAULT);
             dialog.dismiss();
         });
         AlertDialog alertDialog = builder.create();

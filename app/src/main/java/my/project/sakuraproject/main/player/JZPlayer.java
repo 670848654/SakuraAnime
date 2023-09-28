@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -54,25 +55,24 @@ public class JZPlayer extends JzvdStd {
     private OnQueryDanmuListener onQueryDanmuListener;
     private ImageView ibLock;
     private boolean locked = false;
-    public ImageView fastForward, quickRetreat, config, airplay;
-    public TextView tvSpeed, snifferBtn, openDrama, preVideo, nextVideo, display;
+    public ImageView fastForward, quickRetreat;
+    public TextView snifferBtn, openDrama, preVideo, nextVideo, queryDanmuView, displayView, tvSpeedView, selectDramaView;
+    public MaterialButton pipView, airplayView, configView;
     public int currentSpeedIndex = 1;
     public float speedRet = 1.0f;
     public boolean isLocalVideo;
     public String localVideoPath;
     private LocalVideoDLNAServer localVideoDLNAServer;
     public int displayIndex = 1;
-    public TextView selectDramaView;
     private RelativeLayout longPressBgView;
     private boolean isLongClick = false;
-    public ImageView pipView;
     // 弹幕
     public boolean openDanmuConfig; // 是否启用弹幕功能
     public DanmakuView danmakuView;
     public DanmakuContext danmakuContext;
     public BaseDanmakuParser danmakuParser;
     public ImageView danmuView;
-    public TextView queryDanmuView, danmuInfoView;
+    public TextView danmuInfoView;
     public String queryDanmuTitle = "";
     public boolean open_danmu = true;
     public boolean loadError = false;
@@ -113,17 +113,17 @@ public class JZPlayer extends JzvdStd {
         quickRetreat.setOnClickListener(this);
         fastForward = findViewById(R.id.fast_forward);
         fastForward.setOnClickListener(this);
-        config = findViewById(R.id.config);
-        tvSpeed = findViewById(R.id.tvSpeed);
-        tvSpeed.setOnClickListener(this);
-        airplay = findViewById(R.id.airplay);
-        airplay.setOnClickListener(this);
+        configView = findViewById(R.id.config);
+        tvSpeedView = findViewById(R.id.tvSpeed);
+        tvSpeedView.setOnClickListener(this);
+        airplayView = findViewById(R.id.airplay);
+        airplayView.setOnClickListener(this);
         snifferBtn = findViewById(R.id.sniffer_btn);
         openDrama = findViewById(R.id.open_drama_list);
         preVideo = findViewById(R.id.pre_video);
         nextVideo = findViewById(R.id.next_video);
-        display = findViewById(R.id.display);
-        display.setOnClickListener(this);
+        displayView = findViewById(R.id.display);
+        displayView.setOnClickListener(this);
         selectDramaView = findViewById(R.id.select_drama);
         danmuInfoView = findViewById(R.id.danmu_info);
         pipView = findViewById(R.id.pip);
@@ -133,9 +133,9 @@ public class JZPlayer extends JzvdStd {
         queryDanmuView.setOnClickListener(this);
         openDanmuConfig = (Boolean) SharedPreferencesUtils.getParam(context, "open_danmu", true);
         if (!openDanmuConfig) {
-            danmuView.setVisibility(GONE);
-            queryDanmuView.setVisibility(GONE);
-            danmuInfoView.setVisibility(GONE);
+            danmuView.setVisibility(INVISIBLE);
+            queryDanmuView.setVisibility(INVISIBLE);
+            danmuInfoView.setVisibility(INVISIBLE);
         }
         danmakuView = findViewById(R.id.jz_danmu);
         HashMap<Integer, Boolean> overlappingEnablePair = new HashMap<Integer, Boolean>();
@@ -260,7 +260,7 @@ public class JZPlayer extends JzvdStd {
             case R.id.display:
                 if (displayIndex == 4) displayIndex = 1;
                 else displayIndex += 1;
-                display.setText(getDisplayIndex(displayIndex));
+                displayView.setText(getDisplayIndex(displayIndex));
                 break;
             case R.id.danmu:
                 if (danmakuView == null)
@@ -333,7 +333,7 @@ public class JZPlayer extends JzvdStd {
         builder.setSingleChoiceItems(speeds, currentSpeedIndex, (dialog, which) -> {
             currentSpeedIndex = which;
             mediaInterface.setSpeed(getSpeedFromIndex(currentSpeedIndex));
-            tvSpeed.setText(currentSpeedIndex == 1 ? "倍速" : "倍速X" + getSpeedFromIndex(currentSpeedIndex));
+            tvSpeedView.setText(currentSpeedIndex == 1 ? "倍速" : "倍速X" + getSpeedFromIndex(currentSpeedIndex));
             dialog.dismiss();
         });
         AlertDialog alertDialog = builder.create();
@@ -402,8 +402,8 @@ public class JZPlayer extends JzvdStd {
             fastForward.setVisibility(VISIBLE);
             quickRetreat.setVisibility(VISIBLE);
             setPipView();
-            config.setVisibility(VISIBLE);
-            airplay.setVisibility(VISIBLE);
+            configView.setVisibility(VISIBLE);
+            airplayView.setVisibility(VISIBLE);
             fullscreenButton.setVisibility(GONE);
             showOrHideChangeViewListener.showOrHideChangeView();
         }
@@ -418,8 +418,8 @@ public class JZPlayer extends JzvdStd {
         fastForward.setVisibility(GONE);
         quickRetreat.setVisibility(GONE);
         pipView.setVisibility(GONE);
-        config.setVisibility(GONE);
-        airplay.setVisibility(GONE);
+        configView.setVisibility(GONE);
+        airplayView.setVisibility(GONE);
         preVideo.setVisibility(GONE);
         nextVideo.setVisibility(GONE);
     }
@@ -496,8 +496,8 @@ public class JZPlayer extends JzvdStd {
         fastForward.setVisibility(INVISIBLE);
         quickRetreat.setVisibility(INVISIBLE);
         pipView.setVisibility(INVISIBLE);
-        config.setVisibility(INVISIBLE);
-        airplay.setVisibility(INVISIBLE);
+        configView.setVisibility(INVISIBLE);
+        airplayView.setVisibility(INVISIBLE);
         preVideo.setVisibility(INVISIBLE);
         nextVideo.setVisibility(INVISIBLE);
     }
@@ -510,8 +510,8 @@ public class JZPlayer extends JzvdStd {
         fastForward.setVisibility(INVISIBLE);
         quickRetreat.setVisibility(INVISIBLE);
         pipView.setVisibility(INVISIBLE);
-        config.setVisibility(INVISIBLE);
-        airplay.setVisibility(INVISIBLE);
+        configView.setVisibility(INVISIBLE);
+        airplayView.setVisibility(INVISIBLE);
         preVideo.setVisibility(INVISIBLE);
         nextVideo.setVisibility(INVISIBLE);
         pauseListener.pause();
@@ -540,8 +540,8 @@ public class JZPlayer extends JzvdStd {
         fastForward.setVisibility(INVISIBLE);
         quickRetreat.setVisibility(INVISIBLE);
         pipView.setVisibility(INVISIBLE);
-        config.setVisibility(INVISIBLE);
-        airplay.setVisibility(INVISIBLE);
+        configView.setVisibility(INVISIBLE);
+        airplayView.setVisibility(INVISIBLE);
         preVideo.setVisibility(INVISIBLE);
         nextVideo.setVisibility(INVISIBLE);
     }
@@ -554,8 +554,8 @@ public class JZPlayer extends JzvdStd {
         fastForward.setVisibility(INVISIBLE);
         quickRetreat.setVisibility(INVISIBLE);
         pipView.setVisibility(INVISIBLE);
-        config.setVisibility(INVISIBLE);
-        airplay.setVisibility(INVISIBLE);
+        configView.setVisibility(INVISIBLE);
+        airplayView.setVisibility(INVISIBLE);
         preVideo.setVisibility(INVISIBLE);
         nextVideo.setVisibility(INVISIBLE);
     }
@@ -570,8 +570,8 @@ public class JZPlayer extends JzvdStd {
             fastForward.setVisibility(INVISIBLE);
             quickRetreat.setVisibility(INVISIBLE);
             pipView.setVisibility(INVISIBLE);
-            config.setVisibility(INVISIBLE);
-            airplay.setVisibility(state == STATE_ERROR ? INVISIBLE : VISIBLE);
+            configView.setVisibility(INVISIBLE);
+            airplayView.setVisibility(state == STATE_ERROR ? INVISIBLE : VISIBLE);
             if ((Boolean) SharedPreferencesUtils.getParam(context, "hide_progress", false))
                 bottomProgressBar.setVisibility(View.INVISIBLE);// 全屏播放时隐藏底部进度条
             preVideo.setVisibility(INVISIBLE);

@@ -32,6 +32,8 @@ import my.project.sakuraproject.api.Api;
 import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.bean.AnimeDescDetailsBean;
 import my.project.sakuraproject.database.DatabaseUtil;
+import my.project.sakuraproject.main.player.JZExoPlayer;
+import my.project.sakuraproject.main.player.JZMediaIjk;
 import my.project.sakuraproject.main.player.PlayerActivity;
 import my.project.sakuraproject.main.webview.normal.DefaultNormalWebActivity;
 
@@ -384,5 +386,20 @@ public class VideoUtils {
         });
         alertDialog = builder.create();
         alertDialog.show();
+    }
+
+    /**
+     * 播放器内核
+     * @param context
+     * @return
+     */
+    public static Class getUserPlayerKernel(Context context) {
+        int userSet = (Integer) SharedPreferencesUtils.getParam(context, "player_kernel", 0);
+        switch (userSet) {
+            case 1:
+                return JZMediaIjk.class;
+            default:
+                return JZExoPlayer.class;
+        }
     }
 }

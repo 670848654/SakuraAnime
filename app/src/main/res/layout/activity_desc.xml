@@ -398,16 +398,36 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
-                    <androidx.appcompat.widget.AppCompatTextView
+                    <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="8dp"
-                        android:layout_marginBottom="8dp"
-                        android:text="多季"
-                        android:textSize="16sp"
-                        android:textColor="@color/white"
-                        android:textStyle="bold">
-                    </androidx.appcompat.widget.AppCompatTextView>
+                        android:layout_height="50dp"
+                        android:background="@drawable/desc_stroke"
+                        android:layout_marginBottom="10dp"
+                        android:orientation="vertical"
+                        android:padding="10dp">
+
+                        <!--<androidx.appcompat.widget.AppCompatTextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="8dp"
+                            android:layout_marginBottom="8dp"
+                            android:text="多季"
+                            android:textSize="16sp"
+                            android:textColor="@color/white"
+                            android:textStyle="bold">-->
+
+                        <TextView
+                            android:layout_centerVertical="true"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="8dp"
+                            android:text="多季"
+                            android:textSize="16sp"
+                            android:textColor="@color/text_color_primary"
+                            android:textStyle="bold"/>
+
+                    </RelativeLayout>
+
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/multi_list"
                         android:layout_width="match_parent"
@@ -426,15 +446,35 @@
                     android:padding="5dp"
                     android:visibility="gone">
 
-                    <androidx.appcompat.widget.AppCompatTextView
+                    <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="8dp"
-                        android:layout_marginBottom="8dp"
-                        android:text="相关推荐"
-                        android:textSize="16sp"
-                        android:textColor="@color/white"
-                        android:textStyle="bold"/>
+                        android:layout_height="50dp"
+                        android:background="@drawable/desc_stroke"
+                        android:layout_marginBottom="10dp"
+                        android:orientation="vertical"
+                        android:padding="10dp">
+
+                        <!--<androidx.appcompat.widget.AppCompatTextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="8dp"
+                            android:layout_marginBottom="8dp"
+                            android:text="相关推荐"
+                            android:textSize="16sp"
+                            android:textColor="@color/text_color_primary"
+                            android:textStyle="bold"/>-->
+
+                        <TextView
+                            android:layout_centerVertical="true"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="8dp"
+                            android:text="相关推荐"
+                            android:textSize="16sp"
+                            android:textColor="@color/text_color_primary"
+                            android:textStyle="bold"/>
+
+                    </RelativeLayout>
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/recommend_list"

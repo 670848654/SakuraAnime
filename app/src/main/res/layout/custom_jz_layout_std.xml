@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@android:color/black"
     android:descendantFocusability="afterDescendants">
 
@@ -111,15 +112,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true">
 
-            <TextView
-                android:id="@+id/danmu_info"
-                android:visibility="gone"
-                android:layout_centerVertical="true"
-                android:layout_alignParentStart="true"
-                android:textColor="#d1d1d1"
-                android:layout_marginLeft="20dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+
 
             <RelativeLayout
                 android:layout_width="wrap_content"
@@ -137,9 +130,20 @@
                     android:textAlignment="center"
                     android:textColor="#ffffff" />
 
+                <TextView
+                    android:id="@+id/danmu_info"
+                    android:layout_toRightOf="@+id/clarity"
+                    android:visibility="gone"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentStart="true"
+                    android:textColor="#d1d1d1"
+                    android:layout_marginRight="20dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
                 <ImageView
                     android:id="@+id/danmu"
-                    android:layout_toRightOf="@+id/clarity"
+                    android:layout_toRightOf="@+id/danmu_info"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
@@ -251,6 +255,21 @@
             android:scaleType="centerInside"
             android:src="@drawable/baseline_arrow_back_white_48dp" />
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/download"
+            style="@style/Widget.Material3.Button.TextButton.Icon"
+            android:textColor="@color/white"
+            app:iconTint="@color/white"
+            app:elevation="5dp"
+            android:layout_marginLeft="2dp"
+            android:layout_marginRight="2dp"
+            android:text="下载"
+            app:iconGravity="top"
+            app:icon="@drawable/baseline_download_white_48dp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+
         <TextView
             android:id="@+id/title"
             android:layout_width="wrap_content"
@@ -267,33 +286,44 @@
             android:textSize="18sp" />
 
 
-        <ImageView
+        <com.google.android.material.button.MaterialButton
+            style="@style/Widget.Material3.Button.TextButton.Icon"
+            android:textColor="@color/white"
+            app:iconTint="@color/white"
             android:id="@+id/config"
             android:visibility="invisible"
-            android:layout_marginRight="14dp"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/ic_settings_white_48dp"
+            android:text="设置"
+            app:icon="@drawable/ic_settings_white_48dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
-        <ImageView
+        <com.google.android.material.button.MaterialButton
+            style="@style/Widget.Material3.Button.TextButton.Icon"
+            android:textColor="@color/white"
+            app:iconTint="@color/white"
             android:id="@+id/airplay"
             android:visibility="invisible"
             android:layout_toLeftOf="@+id/config"
             android:layout_centerVertical="true"
-            android:layout_marginEnd="14dp"
-            android:src="@drawable/baseline_airplay_white_48dp"
+            android:text="投屏[存在问题]"
+            android:layout_marginEnd="8dp"
+            app:icon="@drawable/baseline_airplay_white_48dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
-        <ImageView
+        <com.google.android.material.button.MaterialButton
+            style="@style/Widget.Material3.Button.TextButton.Icon"
+            android:textColor="@color/white"
+            app:iconTint="@color/white"
             android:id="@+id/pip"
             android:visibility="invisible"
             android:layout_toLeftOf="@+id/airplay"
-            android:layout_marginRight="14dp"
             android:layout_centerVertical="true"
-            android:src="@drawable/baseline_picture_in_picture_alt_white_48dp"
+            android:text="画中画"
+            android:layout_marginEnd="8dp"
+            app:icon="@drawable/baseline_picture_in_picture_alt_white_48dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 

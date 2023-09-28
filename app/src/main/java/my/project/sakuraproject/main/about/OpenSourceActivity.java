@@ -82,7 +82,8 @@ public class OpenSourceActivity extends BaseActivity {
         list.add(new SourceBean("MaterialEditText", "rengwuxian", "EditText in Material Design", "https://github.com/rengwuxian/MaterialEditText"));
         list.add(new SourceBean("JZVideo", "Jzvd", "高度自定义的安卓视频框架 MediaPlayer exoplayer ijkplayer ffmpeg", "https://github.com/Jzvd/JZVideo"));
         list.add(new SourceBean("ExoPlayer", "google", "An extensible media player for Android", "https://github.com/google/ExoPlayer"));
-//        list.add(new SourceBean("Slidr", "r0adkll", "Easily add slide to dismiss functionality to an Activity", "https://github.com/r0adkll/Slidr"));
+        list.add(new SourceBean("Ijkplayer", "bilibili", "Android/iOS video player based on FFmpeg n3.4, with MediaCodec, VideoToolbox support.", "https://github.com/bilibili/ijkplayer"));
+        //        list.add(new SourceBean("Slidr", "r0adkll", "Easily add slide to dismiss functionality to an Activity", "https://github.com/r0adkll/Slidr"));
         list.add(new SourceBean("butterknife", "JakeWharton", "Bind Android views and callbacks to fields and methods.", "https://github.com/JakeWharton/butterknife"));
         list.add(new SourceBean("okhttp", "square", "An HTTP+HTTP/2 client for Android and Java applications.", "https://github.com/square/okhttp"));
 //        list.add(new SourceBean("customtabs", "GoogleChrome", "mirrored from https://chromium.googlesource.com/custom-tabs-client", "https://github.com/GoogleChrome/custom-tabs-client"));
@@ -97,7 +98,7 @@ public class OpenSourceActivity extends BaseActivity {
         list.add(new SourceBean("EventBus", "greenrobot", "Event bus for Android and Java that simplifies communication between Activities, Fragments, Threads, Services, etc. Less code, better quality.", "https://github.com/greenrobot/EventBus"));
         list.add(new SourceBean("Aria", "AriaLyy", "下载可以很简单\naria.laoyuyu.me/aria_doc/", "https://github.com/AriaLyy/Aria"));
         list.add(new SourceBean("nanohttpd", "NanoHttpd", "Tiny, easily embeddable HTTP server in Java.", "https://github.com/NanoHttpd/nanohttpd"));
-        list.add(new SourceBean("my_danmu_pub", "MaybeQHL", "免费、公开的弹幕系统API。", "https://github.com/MaybeQHL/my_danmu_pub"));
+//        list.add(new SourceBean("my_danmu_pub", "MaybeQHL", "免费、公开的弹幕系统API。", "https://github.com/MaybeQHL/my_danmu_pub"));
         list.add(new SourceBean("DanmakuFlameMaster", "bilibili", "Android开源弹幕引擎·烈焰弹幕使 ～", "https://github.com/bilibili/DanmakuFlameMaster"));
     }
 

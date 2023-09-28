@@ -41,8 +41,8 @@ public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatA
     private Unbinder mUnBinder;
     protected boolean mActivityFinish = false;
     protected boolean isDarkTheme;
-    protected static String PREVIDEOSTR = "上一集：%s";
-    protected static String NEXTVIDEOSTR = "下一集：%s";
+    protected static String PREVIDEOSTR = "上一集 %s";
+    protected static String NEXTVIDEOSTR = "下一集 %s";
     protected boolean isPortrait;
     protected int position = 0;
     protected int change;

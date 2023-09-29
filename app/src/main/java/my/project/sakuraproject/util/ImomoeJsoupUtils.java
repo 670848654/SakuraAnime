@@ -21,6 +21,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import my.project.sakuraproject.R;
+import my.project.sakuraproject.adapter.HomeAdapter;
 import my.project.sakuraproject.bean.AnimeDescDetailsBean;
 import my.project.sakuraproject.bean.AnimeDescListBean;
 import my.project.sakuraproject.bean.AnimeDescRecommendBean;
@@ -86,8 +87,9 @@ public class ImomoeJsoupUtils {
             return homeBeanList;
         recommendLi.select("div.swiper-slide-votitle > span").remove();
         homeBean = new HomeBean();
-        homeBean.setTitle("动漫推荐");
-        homeBean.setMoreUrl("");
+//        homeBean.setTitle("动漫推荐");
+//        homeBean.setMoreUrl("");
+        homeBean.setDataType(HomeAdapter.TYPE_LEVEL_1);
         List<HomeBean.HomeItemBean> recommendItemBeanList = new ArrayList<>();
         for (Element recommend : recommendLi) {
             HomeBean.HomeItemBean homeItemBean = new HomeBean.HomeItemBean();
@@ -116,6 +118,7 @@ public class ImomoeJsoupUtils {
         homeBean = new HomeBean();
         homeBean.setTitle("今日热门");
         homeBean.setMoreUrl("");
+        homeBean.setDataType(HomeAdapter.TYPE_LEVEL_2);
         List<HomeBean.HomeItemBean> hotTodayItemBeanList = new ArrayList<>();
         for (Element hotToday : hotTodayLi) {
             HomeBean.HomeItemBean homeItemBean = new HomeBean.HomeItemBean();
@@ -137,6 +140,7 @@ public class ImomoeJsoupUtils {
         homeBean = new HomeBean();
         homeBean.setTitle("更新动态");
         homeBean.setMoreUrl("");
+        homeBean.setDataType(HomeAdapter.TYPE_LEVEL_2);
         List<HomeBean.HomeItemBean> updateItemBeanList = new ArrayList<>();
         for (Element update : updateLi) {
             HomeBean.HomeItemBean homeItemBean = new HomeBean.HomeItemBean();

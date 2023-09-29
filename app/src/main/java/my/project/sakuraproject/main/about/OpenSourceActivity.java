@@ -100,6 +100,7 @@ public class OpenSourceActivity extends BaseActivity {
         list.add(new SourceBean("nanohttpd", "NanoHttpd", "Tiny, easily embeddable HTTP server in Java.", "https://github.com/NanoHttpd/nanohttpd"));
 //        list.add(new SourceBean("my_danmu_pub", "MaybeQHL", "免费、公开的弹幕系统API。", "https://github.com/MaybeQHL/my_danmu_pub"));
         list.add(new SourceBean("DanmakuFlameMaster", "bilibili", "Android开源弹幕引擎·烈焰弹幕使 ～", "https://github.com/bilibili/DanmakuFlameMaster"));
+        list.add(new SourceBean("banner", "youth5201314", "\uD83D\uDD25\uD83D\uDD25\uD83D\uDD25Banner 2.0 来了！Android广告图片轮播控件，内部基于ViewPager2实现，Indicator和UI都可以自定义。", "https://github.com/youth5201314/banner"));
     }
 
     public void initAdapter() {

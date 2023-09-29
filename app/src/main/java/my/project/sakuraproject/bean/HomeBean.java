@@ -9,11 +9,13 @@ import my.project.sakuraproject.adapter.HomeAdapter;
 public class HomeBean implements MultiItemEntity {
     private String title;
     private String moreUrl;
+    private int dataType;
     private List<HomeItemBean> data;
 
     public HomeBean () {};
 
-    public HomeBean (String title, String moreUrl, List<HomeItemBean> data) {
+    public HomeBean (int dataType, String title, String moreUrl, List<HomeItemBean> data) {
+        this.dataType = dataType;
         this.title = title;
         this.moreUrl = moreUrl;
         this.data = data;
@@ -35,6 +37,14 @@ public class HomeBean implements MultiItemEntity {
         this.moreUrl = moreUrl;
     }
 
+    public int getDataType() {
+        return dataType;
+    }
+
+    public void setDataType(int dataType) {
+        this.dataType = dataType;
+    }
+
     public List<HomeItemBean> getData() {
         return data;
     }
@@ -45,7 +55,7 @@ public class HomeBean implements MultiItemEntity {
 
     @Override
     public int getItemType() {
-        return HomeAdapter.TYPE_LEVEL_1;
+        return dataType;
     }
 
     public static class HomeItemBean {

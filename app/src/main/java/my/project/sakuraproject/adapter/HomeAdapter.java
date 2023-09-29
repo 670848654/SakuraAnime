@@ -13,6 +13,10 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
+import com.youth.banner.Banner;
+import com.youth.banner.indicator.CircleIndicator;
+import com.youth.banner.listener.OnBannerListener;
+import com.youth.banner.transformer.DepthPageTransformer;
 
 import java.util.List;
 
@@ -23,8 +27,10 @@ import my.project.sakuraproject.bean.HomeHeaderBean;
 public class HomeAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity, BaseViewHolder> {
     public static final int TYPE_LEVEL_0 = 0;
     public static final int TYPE_LEVEL_1 = 1;
+    public static final int TYPE_LEVEL_2 = 2;
     private Context context;
     private RecyclerView recyclerView;
+    private Banner banner;
     private HomeHeaderAdapter homeHeaderAdapter;
     private HomeItemAdapter homeItemAdapter;
     private OnItemClick onItemClick;
@@ -34,7 +40,8 @@ public class HomeAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity, Base
         this.context = context;
         this.onItemClick = onItemClick;
         addItemType(TYPE_LEVEL_0, R.layout.item_home_header);
-        addItemType(TYPE_LEVEL_1, R.layout.item_home);
+        addItemType(TYPE_LEVEL_1, R.layout.item_banner);
+        addItemType(TYPE_LEVEL_2, R.layout.item_home);
     }
 
     @Override
@@ -69,6 +76,18 @@ public class HomeAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity, Base
                 }
                 break;
             case TYPE_LEVEL_1:
+                // banner
+                HomeBean bannerBean = (HomeBean) item;
+                List<HomeBean.HomeItemBean> bannerItem = bannerBean.getData();
+                banner = helper.getView(R.id.banner);
+                banner.setAdapter(new HomeBannerAdapter(context, bannerItem))
+//                        .setBannerGalleryMZ(20)
+                        .setIndicator(new CircleIndicator(context));
+                banner.setOnBannerListener((data, position) -> {
+                    onItemClick.onAnimeClick(bannerItem.get(position));
+                });
+                break;
+            case TYPE_LEVEL_2:
                 HomeBean homeBean = (HomeBean) item;
                 List<HomeBean.HomeItemBean> homeItemBean = homeBean.getData();
                 helper.setText(R.id.title, homeBean.getTitle());

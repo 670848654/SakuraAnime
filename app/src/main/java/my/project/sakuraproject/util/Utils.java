@@ -46,6 +46,7 @@ import com.bumptech.glide.load.model.LazyHeaders;
 import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
 import com.bumptech.glide.request.transition.Transition;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -397,6 +398,28 @@ public class Utils {
         return (getContext().getResources().getConfiguration().screenLayout
                 & Configuration.SCREENLAYOUT_SIZE_MASK)
                 >= Configuration.SCREENLAYOUT_SIZE_LARGE;
+    }
+
+    /**
+     * 设置默认图片
+     * @param context
+     * @param img
+     * @param imageView
+     */
+    public static void setDefaultImage(Context context, String img, ImageView imageView) {
+        DrawableCrossFadeFactory drawableCrossFadeFactory = new DrawableCrossFadeFactory.Builder(300).setCrossFadeEnabled(true).build();
+        RequestOptions options = new RequestOptions()
+                .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL);
+        GlideUrl imgUrl = new GlideUrl(img, new LazyHeaders.Builder()
+                .addHeader("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36")
+                .build());
+        Glide.with(context)
+                .load(imgUrl)
+                .apply(options)
+                .placeholder(getTheme() ? context.getDrawable(R.drawable.loading_night) : context.getDrawable(R.drawable.loading_light))
+                .error(context.getDrawable(R.drawable.error))
+//                .transition(DrawableTransitionOptions.withCrossFade(drawableCrossFadeFactory))
+                .into(imageView);
     }
 
     /**

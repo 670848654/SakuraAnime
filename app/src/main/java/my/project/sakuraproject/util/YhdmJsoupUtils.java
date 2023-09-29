@@ -15,6 +15,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import my.project.sakuraproject.R;
+import my.project.sakuraproject.adapter.HomeAdapter;
 import my.project.sakuraproject.bean.AnimeDescDetailsBean;
 import my.project.sakuraproject.bean.AnimeDescListBean;
 import my.project.sakuraproject.bean.AnimeDescRecommendBean;
@@ -81,12 +82,29 @@ public class YhdmJsoupUtils {
     /**************************************  获取首页相关信息解析方法开始  **************************************/
     public static List<HomeBean> getHomeAllData(String source) {
         Document document = Jsoup.parse(source);
+        List<HomeBean> homeBeanList = new ArrayList<>();
+        // banner 数据
+        Elements bannerEle = document.select("div.hero-wrap > ul.heros > li");
+        List<HomeBean.HomeItemBean> bannerItems = new ArrayList<>();
+        HomeBean bannerBean = new HomeBean();
+        bannerBean.setDataType(HomeAdapter.TYPE_LEVEL_1);
+        for (Element element : bannerEle) {
+            HomeBean.HomeItemBean itemBean = new HomeBean.HomeItemBean();
+            itemBean.setTitle(element.select("a").attr("title"));
+            itemBean.setUrl(element.select("a").attr("href"));
+            itemBean.setImg(element.select("img").attr("src"));
+            itemBean.setEpisodes(element.getElementsByTag("em").text());
+            bannerItems.add(itemBean);
+        }
+        bannerBean.setData(bannerItems);
+        homeBeanList.add(bannerBean);
         Elements titles = document.select("div.firs > div.dtit");
         Log.e("titles", titles.size() + "");
         Elements data = document.select("div.firs > div.img");
-        List<HomeBean> homeBeanList = new ArrayList<>();
+
         for (int i=0,size=titles.size(); i<size; i++) {
             HomeBean homeBean = new HomeBean();
+            homeBean.setDataType(HomeAdapter.TYPE_LEVEL_2);
             String title = titles.get(i).select("h2 > a").text();
             String moreUrl = titles.get(i).select("h2 > a").attr("href");
             homeBean.setTitle(title);

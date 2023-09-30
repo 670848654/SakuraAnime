@@ -138,6 +138,7 @@ public class AboutActivity extends BaseActivity {
 
     public List createUpdateLogList() {
         List logsList = new ArrayList();
+        logsList.add(new LogBean("版本：2.5.7", "修复SiliSili源No.A/X路线播放时切换集数不进行二次解析的问题"));
         logsList.add(new LogBean("版本：2.5.6", "修复更新改动导致YHDM源首页更多点击失效的问题"));
         logsList.add(new LogBean("版本：2.5.5", "修正YHDM源默认域名地址"));
         logsList.add(new LogBean("版本：2.5.4", "修复YHDM源首页解析错误\n添加Ijkplayer播放器内核，设置中切换\n原弹幕接口作者不公开了，暂时更换为S站弹幕接口\nS站支持No.A/X播放地址获取"));

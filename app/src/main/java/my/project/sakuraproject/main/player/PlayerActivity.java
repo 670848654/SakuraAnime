@@ -184,7 +184,7 @@ public class PlayerActivity extends BasePlayerActivity implements VideoContract.
         runOnUiThread(() -> {
             hideNavBar();
             cancelDialog();
-            play(playUrl);
+            checkPlayUrl(playUrl);
         });
     }
 

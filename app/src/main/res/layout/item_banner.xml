@@ -7,5 +7,8 @@
     android:layout_height="250dp"
     app:banner_loop_time="5000"
     app:banner_indicator_marginBottom="2dp"
+    app:banner_radius="4dp"
+    android:layout_marginLeft="4dp"
+    android:layout_marginRight="4dp"
     app:banner_indicator_selected_color="@color/logo_bg"
     android:background="@color/window_bg"/>

@@ -95,7 +95,7 @@ public class HomeFragment extends BaseFragment<HomeContract.View, HomePresenter>
         adapter.openLoadAnimation(BaseQuickAdapter.SCALEIN);
         adapter.setOnItemChildClickListener((adapter, view, position) -> {
             switch (adapter.getItemViewType(position)) {
-                case HomeAdapter.TYPE_LEVEL_1:
+                case HomeAdapter.TYPE_LEVEL_2:
                     HomeBean homeBean = (HomeBean) adapter.getData().get(position);
                     if (homeBean.getMoreUrl().isEmpty()) return;
                     onMoreClick(homeBean.getTitle(), homeBean.getMoreUrl());

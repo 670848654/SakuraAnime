@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.arialyy.aria.core.Aria;
 import com.arialyy.aria.core.download.m3u8.M3U8VodOption;
@@ -773,7 +774,11 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
      */
     private void startDownload(String url, String playNumber) {
         downloadBottomSheetDialog.dismiss();
-        if (!url.endsWith("mp4") && !url.endsWith("m3u8")) {
+        /*if (!url.endsWith("mp4") && !url.endsWith("m3u8")) {
+            VideoUtils.showInfoDialog(this, "不支持的下载格式，该地址可能非视频地址！ -> " + url);
+            return;
+        }*/
+        if (!url.contains("http")) {
             VideoUtils.showInfoDialog(this, "不支持的下载格式，该地址可能非视频地址！ -> " + url);
             return;
         }
@@ -781,9 +786,10 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         String fileSavePath = savePath + playNumber;
         boolean isM3U8 = url.endsWith("m3u8");
         taskId = createDownloadTask(isM3U8, url, fileSavePath);
-        if (isM3U8) VideoUtils.showInfoDialog(this, "该视频资源格式为M3U8，可能无法正常下载成功！");
+        if (isM3U8) VideoUtils.showInfoDialog(this, "该视频资源类型为M3U8，可能无法正常下载成功！");
         DatabaseUtil.insertDownload(animeTitle, source, animeListBean.getImg(), sakuraUrl);
         DatabaseUtil.insertDownloadData(animeTitle, source, playNumber, 0, taskId);
+        Toast.makeText(this, "开始下载 -> " +playNumber, Toast.LENGTH_SHORT).show();
         // 开启下载服务
         startService(new Intent(this, DownloadService.class));
         EventBus.getDefault().post(new Refresh(3));

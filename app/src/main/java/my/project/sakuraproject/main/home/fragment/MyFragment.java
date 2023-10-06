@@ -99,8 +99,8 @@ public class MyFragment extends MyLazyFragment {
     private void initAdapter() {
         DatabaseUtil.openDB();
         videoList.add(new MainBean("追番列表", 1, R.drawable.outline_movie_filter_white_48dp, DatabaseUtil.queryFavoriteCount()));
-        videoList.add(new MainBean("历史播放记录", 2, R.drawable.baseline_history_white_48dp, DatabaseUtil.queryHistoryCount()));
-        videoList.add(new MainBean("视频下载列表", 3, R.drawable.baseline_download_white_48dp, DatabaseUtil.queryAllDownloadCount()));
+        videoList.add(new MainBean("历史记录", 2, R.drawable.baseline_history_white_48dp, DatabaseUtil.queryHistoryCount()));
+        videoList.add(new MainBean("下载列表", 3, R.drawable.baseline_download_white_48dp, DatabaseUtil.queryAllDownloadCount()));
         videoAdapter = new MainAdapter(getActivity(), videoList);
         videoAdapter.setOnItemClickListener((adapter, view, position) -> {
             switch (videoList.get(position).getType()) {

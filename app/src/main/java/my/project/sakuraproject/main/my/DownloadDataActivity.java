@@ -127,16 +127,19 @@ public class DownloadDataActivity extends BaseActivity<DownloadDataContract.View
                                 switch (i) {
                                     case 0:
                                         // 继续下载
-                                        Aria.download(this).load(taskId).resume();
+                                        Aria.download(this).load(taskId).ignoreCheckPermissions().resume();
                                         downloadDataBeans.get(position).setComplete(0);
                                         startService(new Intent(this, DownloadService.class));
                                         break;
                                     case 1:
-                                        Aria.download(this).load(taskId).stop();
+                                        // 暂停任务
+                                        Aria.download(this).load(taskId).ignoreCheckPermissions().stop();
                                         downloadDataBeans.get(position).setComplete(0);
                                         adapter.notifyItemChanged(position);
+                                        stopService(new Intent(this, DownloadService.class));
                                         break;
                                     case 2:
+                                        // 删除任务
                                         showDeleteDataDialog(downloadDataBeans.get(position), position);
                                         break;
                                 }
@@ -170,7 +173,7 @@ public class DownloadDataActivity extends BaseActivity<DownloadDataContract.View
                                 dialogInterface.dismiss();
                                 switch (i) {
                                     case 0:
-                                        Aria.download(this).load(taskId).resume();
+                                        Aria.download(this).load(taskId).ignoreCheckPermissions().resume();
                                         downloadDataBeans.get(position).setComplete(0);
                                         DatabaseUtil.updateDownloadState(taskId);
                                         break;
@@ -235,12 +238,12 @@ public class DownloadDataActivity extends BaseActivity<DownloadDataContract.View
                     // 未下载完成
                     if (bean.getTaskId() != -99 && bean.getTaskId() == entity.getId()) {
                         // 从Aria数据库中删除任务
-                        Aria.download(this).load(entity.getId()).cancel(removeFile);
+                        Aria.download(this).load(entity.getId()).ignoreCheckPermissions().cancel(removeFile);
                         break;
                         // 已下载完成通过path对比
                     } else if (bean.getPath().equals(entity.getFilePath().replaceAll("m3u8", "mp4"))) {
                         // 从Aria数据库中删除任务
-                        Aria.download(this).load(entity.getId()).cancel(removeFile);
+                        Aria.download(this).load(entity.getId()).ignoreCheckPermissions().cancel(removeFile);
                         break;
                     }
                 }

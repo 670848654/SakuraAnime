@@ -1,9 +1,12 @@
 package my.project.sakuraproject.main.video;
 
+import android.util.Log;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import my.project.sakuraproject.api.Api;
 import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.main.base.BaseModel;
 import my.project.sakuraproject.net.HttpGet;
@@ -86,6 +89,40 @@ public class DownloadVideoModel extends BaseModel implements DownloadVideoContra
             public void onResponse(Call call, Response response) throws IOException {
                 String source = getHtmlBody(response, true);
                 String playUrl = ImomoeJsoupUtils.getImomoePlayUrl(source);
+                if (!playUrl.isEmpty()) {
+                    if (!playUrl.contains("http")) {
+                        // 不是连接 使用第二套解析方案
+                        getSilisiliVideoUrl(playUrl, playNumber, callback);
+                    } else
+                        callback.successImomoeVideoUrls(playUrl, playNumber);
+                }
+                else
+                    callback.error(playNumber);
+            }
+        });
+    }
+
+    /**
+     * 第二套解析方案
+     * @param url
+     * @param playNumber
+     * @param callback
+     */
+    public void getSilisiliVideoUrl(String url, String playNumber, DownloadVideoContract.LoadDataCallback callback) {
+        String parseUrl = String.format(Api.SILISILI_PARSE_API, getDomain(true), url);
+        callback.log(parseUrl);
+        Log.e("parseUrl", parseUrl);
+        new HttpGet(parseUrl, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                callback.error(playNumber);
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String source = getHtmlBody(response, false);
+                String playUrl = ImomoeJsoupUtils.getSilisiliVideoUrl(source);
+                Log.e("playUrl", playUrl);
                 if (!playUrl.isEmpty())
                     callback.successImomoeVideoUrls(playUrl, playNumber);
                 else

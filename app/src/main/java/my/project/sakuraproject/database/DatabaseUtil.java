@@ -1173,4 +1173,19 @@ public class DatabaseUtil {
             cursor.close();
         }
     }
+
+    /**
+     * 删除数据库中不存在的任务
+     * @param context
+     * @param taskId
+     */
+    public static void deleteAbsentTask(Context context, long taskId) {
+        Cursor cursor = db.rawQuery("select * from T_DOWNLOAD_DATA where F_TASK_ID = ?", new String[]{String.valueOf(taskId)});
+        if (cursor.getCount() == 0) {
+            // 数据库中不存在 删除任务
+            Aria.download(context).load(taskId).ignoreCheckPermissions().cancel();
+            Log.e("删除不存在的任务", "TaskId：" + taskId);
+        }
+        cursor.close();
+    }
 }

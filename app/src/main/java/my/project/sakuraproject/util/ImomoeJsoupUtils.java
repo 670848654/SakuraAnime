@@ -334,6 +334,7 @@ public class ImomoeJsoupUtils {
         List<String> tagTitles = new ArrayList<>();
         List<String> tagUrls = new ArrayList<>();
         for (Element tag : tags) {
+            if (tag.text().isEmpty()) continue;
             tagTitles.add(tag.text().toUpperCase());
             tagUrls.add(tag.attr("href"));
         }
@@ -370,7 +371,13 @@ public class ImomoeJsoupUtils {
             List<AnimeDramasBean> animeDramasBeans = new ArrayList<>();
             for (Element element : playBox) {
                 AnimeDramasBean animeDramasBean = new AnimeDramasBean();
-                String playListTitle = element.select("div.widget-title").text();
+                String playListName = element.select("div.widget-title").text();
+                String playListTip = element.select("span.pull-right").text();
+                String playListTitle;
+                if (playListTip.isEmpty())
+                    playListTitle = playListName;
+                else
+                    playListTitle = playListName + "  ["+playListTip+"]";
 //                if (playListTitle.toLowerCase(Locale.ROOT).contains("no.x")) playListTitle += " → 需二次解析，无法播放（网站问题？）";
                 if (playListTitle.contains("下载")) continue;
                 animeDramasBean.setListTitle(playListTitle);

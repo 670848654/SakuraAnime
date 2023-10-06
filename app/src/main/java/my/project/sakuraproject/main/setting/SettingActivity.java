@@ -75,7 +75,7 @@ public class SettingActivity extends BaseActivity {
     private String[] danmuItems = {"开", "关"};
     @BindView(R.id.kernel_default)
     TextView kernelDefaultView;
-    private String[] playerKernelItems = {"ExoPlayer", "Ijkplayer"};
+    private String[] playerKernelItems = {"ExoPlayer", "IjkPlayer"};
     @Override
     protected Presenter createPresenter() {
         return null;

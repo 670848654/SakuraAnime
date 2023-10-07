@@ -407,6 +407,10 @@ public class Utils {
      * @param imageView
      */
     public static void setDefaultImage(Context context, String img, ImageView imageView) {
+        if (img == null || img.isEmpty()) {
+            imageView.setImageDrawable(context.getDrawable(R.drawable.error));
+            return;
+        }
         DrawableCrossFadeFactory drawableCrossFadeFactory = new DrawableCrossFadeFactory.Builder(300).setCrossFadeEnabled(true).build();
         RequestOptions options = new RequestOptions()
                 .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL);
@@ -433,6 +437,10 @@ public class Utils {
      */
     public static void setDefaultImage(Context context, String img, String htmlUrl, ImageView imageView, boolean setPalette, CardView cardView, TextView textView) {
         imageView.setImageDrawable(getTheme() ? context.getDrawable(R.drawable.loading_night) : context.getDrawable(R.drawable.loading_light));
+        if (img == null || img.isEmpty()) {
+            imageView.setImageDrawable(context.getDrawable(R.drawable.error));
+            return;
+        }
         GlideUrl imgUrl = new GlideUrl(img.contains("yhdmtu") ? getImgUrl(img, false) : img);
         Glide.with(context)
                 .asBitmap()
@@ -470,6 +478,10 @@ public class Utils {
     }
 
     public static void setImgViewBg(Context context, int source, String img, String descUrl, ImageView imageView) {
+        if (img == null || img.isEmpty()) {
+            imageView.setImageDrawable(context.getDrawable(R.drawable.error));
+            return;
+        }
         imageView.setImageDrawable(getTheme() ? context.getDrawable(R.drawable.loading_night) : context.getDrawable(R.drawable.loading_light));
         GlideUrl imgUrl;
         if (source == 1)

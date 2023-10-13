@@ -138,6 +138,7 @@ public class AboutActivity extends BaseActivity {
 
     public List createUpdateLogList() {
         List logsList = new ArrayList();
+        logsList.add(new LogBean("版本：2.6.1", "修复SiliSili源获取播放地址失败的问题[且行且珍惜]"));
         logsList.add(new LogBean("版本：2.6.0", "修复YHDM源部分动漫进入详情时闪退的问题"));
         logsList.add(new LogBean("版本：2.5.9", "修复下载功能相关问题"));
         logsList.add(new LogBean("版本：2.5.8", "临时方案解决SiliSili源无法访问的问题，*如更改过源域名地址请恢复默认"));

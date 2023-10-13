@@ -110,7 +110,7 @@ public class PlayerActivity extends BasePlayerActivity implements VideoContract.
     @Override
     protected AnimeDescDetailsBean setAnimeDescDetailsBean(int position) {
         alertDialog = Utils.getProDialog(this, R.string.parsing);
-        EventBus.getDefault().post(new Event(Utils.isImomoe(), nowSource, position));
+        EventBus.getDefault().post(new Event(isSiliSili(), nowSource, position));
         return dramaAdapter.getItem(position);
     }
 
@@ -148,7 +148,7 @@ public class PlayerActivity extends BasePlayerActivity implements VideoContract.
         runOnUiThread(() -> {
             player.onStateError();
             hideNavBar();
-            VideoUtils.showErrorInfo(this, BaseModel.getDomain(false) + dramaUrl);
+            VideoUtils.showErrorInfo(this, dramaUrl);
         });
     }
 
@@ -259,14 +259,15 @@ public class PlayerActivity extends BasePlayerActivity implements VideoContract.
     }
 
     private void checkPlayUrl(String url) {
-        if (Utils.isImomoe()) {
+        if (isSiliSili()) {
             // 当为silisili源时校验
-            if (!url.contains("http")) {
+            // 2023年10月13日16:13:43 新版解析不需要校验
+            /*if (!url.contains("http")) {
                 // 尝试获取真实的播放地址
                 Toast.makeText(this, "不是播放地址，尝试第二套解析方式", Toast.LENGTH_SHORT).show();
                 videoPresenter = new VideoPresenter(url, this);
                 videoPresenter.tryGetSilisiliPlayUrl();
-            } else
+            } else*/
                 play(url);
         } else {
             // yhdm

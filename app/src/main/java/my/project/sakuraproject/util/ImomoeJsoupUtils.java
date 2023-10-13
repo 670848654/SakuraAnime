@@ -1,8 +1,11 @@
 package my.project.sakuraproject.util;
 
-import android.util.Base64;
 import android.util.Log;
 
+import com.alibaba.fastjson.JSON;
+import com.google.firebase.crashlytics.buildtools.reloc.org.apache.commons.codec.binary.Base64;
+
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -13,12 +16,18 @@ import org.jsoup.select.Elements;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.security.Security;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.crypto.Cipher;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.adapter.HomeAdapter;
@@ -420,8 +429,9 @@ public class ImomoeJsoupUtils {
      * @param source
      * @return
      */
+    @Deprecated
     public static String getImomoePlayUrl(String source) throws UnsupportedEncodingException {
-        Document document = Jsoup.parse(source);
+        /*Document document = Jsoup.parse(source);
         Elements element = document.select("div.play_hl");
         Matcher matcher = Pattern.compile("\\{.*\\}").matcher(element.html());
         if (matcher.find()) {
@@ -433,10 +443,16 @@ public class ImomoeJsoupUtils {
             String playUrl = URLDecoder.decode(decodedString,"UTF-8");
             Log.e("playUrl", playUrl);
             return playUrl;
-        }
+        }*/
         return "";
     }
 
+    /**
+     * 第二套解析方案
+     * @param source
+     * @return
+     */
+    @Deprecated
     public static String getSilisiliVideoUrl(String source) {
         Document document = Jsoup.parse(source);
         Matcher m = SILISILI_SOURCE.matcher(document.html());
@@ -447,14 +463,12 @@ public class ImomoeJsoupUtils {
 
     /**************************************  选集解析方法开始  **************************************/
     /**
-     * deprecated
      * 获取番剧所有剧集(用于播放界面选集)
      * 2022年6月29日21:03:25 修改
      * @param source
      * @param dramaStr 用户已观看过的url
      * @return
      */
-    @Deprecated
     public static List<AnimeDescDetailsBean> getAllDrama(String source, String dramaStr) {
         Document document = Jsoup.parse(source);
         List<AnimeDescDetailsBean> animeDescDramasBeans = new ArrayList<>();
@@ -493,7 +507,6 @@ public class ImomoeJsoupUtils {
             String watchUrl = dramaList.attr("href");
             animeDescDramasBeans.add(new AnimeDescDetailsBean(name, watchUrl, dramaStr.contains(watchUrl)));
         }*/
-            Log.e("size", animeDescDramasBeans.size() + "");
         }
         return animeDescDramasBeans;
     }
@@ -591,4 +604,56 @@ public class ImomoeJsoupUtils {
         }
         return siliSiliRankBeans;
     }
+
+    /** 2023年10月13日16:32:44变更 **/
+    /**************************************  获取视频播放地址解析方法开始  **************************************/
+    static {
+        Security.addProvider(new BouncyCastleProvider());
+    }
+
+    /**
+     * 获取数据
+     * @param getPlayUrl true 返回播放地址 false 返回分集HTML
+     * @param jsonStr 解密数据
+     * @return
+     */
+    public static String getJsonData(boolean getPlayUrl, String jsonStr) {
+        try {
+            com.alibaba.fastjson.JSONObject jsonObject = JSON.parseObject(jsonStr);
+            return jsonObject.getString(getPlayUrl? "url" : "fenjihtml");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
+
+    private static final String CIPHER_ALGORITHM = "AES/CBC/PKCS7Padding";
+
+    /**
+     * 解密数据
+     * @param encryptData 加密数据
+     * @return
+     */
+    public static String getDecodeData(String encryptData) {
+        Log.e("encryptData", encryptData);
+        try {
+            Security.addProvider(new BouncyCastleProvider());
+            String params1 = encryptData.substring(9);
+            String params2 = encryptData.substring(0, 9);
+            params2 = DigestUtils.md5DigestAsHex((params2).getBytes());
+            String ivT = params2.substring(0, 16);
+            String keyT = params2.substring(16);
+            IvParameterSpec iv = new IvParameterSpec(ivT.getBytes(StandardCharsets.UTF_8));
+            SecretKeySpec sKeySpec = new SecretKeySpec(keyT.getBytes(StandardCharsets.UTF_8), "AES");
+            Cipher cipher = Cipher.getInstance(CIPHER_ALGORITHM);
+            cipher.init(Cipher.DECRYPT_MODE, sKeySpec, iv);
+            byte[] original = cipher.doFinal(Base64.decodeBase64(params1.getBytes()));
+            String result = new String(original, StandardCharsets.UTF_8);
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
+    /**************************************  获取视频播放地址解析方法结束  **************************************/
 }

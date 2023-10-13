@@ -429,7 +429,7 @@ public abstract class BasePlayerActivity extends BaseActivity implements JZPlaye
         if (isLocalVideo)
             return;
         if (player.openDanmuConfig) {
-            if (!Utils.isImomoe()) // YHDM源也可以使用弹幕接口，但有局限性
+            if (!isSiliSili()) // YHDM源也可以使用弹幕接口，但有局限性
                 Toast.makeText(this, "当前为YHDM源，使用SILISILI弹幕接口对应集数可能不一致！", Toast.LENGTH_LONG).show();
             danmuPresenter = new DanmuPresenter(animeTitle, String.valueOf(yhdmDescList.get(clickIndex).getIndex()),this);
             danmuPresenter.loadDanmu();
@@ -726,6 +726,10 @@ public abstract class BasePlayerActivity extends BaseActivity implements JZPlaye
         player.danmuInfoView.setVisibility(View.GONE);
         danmuPresenter = new DanmuPresenter(queryDanmuTitle, queryDanmuDrama, this);
         danmuPresenter.loadDanmu();
+    }
+
+    protected boolean isSiliSili() {
+        return dramaUrl.contains("vodplay");
     }
 
     /*@OnClick(R.id.order)

@@ -8,12 +8,16 @@ import java.util.regex.Pattern;
 
 import my.project.sakuraproject.api.Api;
 import my.project.sakuraproject.application.Sakura;
+import my.project.sakuraproject.bean.AnimeDescDetailsBean;
+import my.project.sakuraproject.database.DatabaseUtil;
 import my.project.sakuraproject.main.base.BaseModel;
 import my.project.sakuraproject.net.HttpGet;
+import my.project.sakuraproject.net.HttpPost;
 import my.project.sakuraproject.util.ImomoeJsoupUtils;
 import my.project.sakuraproject.util.YhdmJsoupUtils;
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.FormBody;
 import okhttp3.Response;
 
 public class DownloadVideoModel extends BaseModel implements DownloadVideoContract.Model {
@@ -79,7 +83,8 @@ public class DownloadVideoModel extends BaseModel implements DownloadVideoContra
 
     private void parserImomoeVideoUrls( String url, String playNumber, DownloadVideoContract.LoadDataCallback callback) {
         callback.log(url);
-        new HttpGet(url, new Callback() {
+        // 2023年10月13日 失效
+        /*new HttpGet(url, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 callback.error(playNumber);
@@ -99,6 +104,29 @@ public class DownloadVideoModel extends BaseModel implements DownloadVideoContra
                 else
                     callback.error(playNumber);
             }
+        });*/
+        FormBody body =  new FormBody.Builder().add("player", "sili").build();
+        new HttpPost(url, body, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                callback.error(playNumber);
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String source = getHtmlBody(response, true);
+                String decodeData = ImomoeJsoupUtils.getDecodeData(source);
+                if (decodeData.isEmpty())
+                    callback.error(playNumber);
+                else {
+                    String playUrl = ImomoeJsoupUtils.getJsonData(true, decodeData);
+                    if (playUrl.isEmpty()) {
+                        callback.error(playNumber);
+                        return;
+                    }
+                    callback.successImomoeVideoUrls(playUrl, playNumber);
+                }
+            }
         });
     }
 
@@ -108,6 +136,7 @@ public class DownloadVideoModel extends BaseModel implements DownloadVideoContra
      * @param playNumber
      * @param callback
      */
+    @Deprecated
     public void getSilisiliVideoUrl(String url, String playNumber, DownloadVideoContract.LoadDataCallback callback) {
         String parseUrl = String.format(Api.SILISILI_PARSE_API, getDomain(true), url);
         callback.log(parseUrl);

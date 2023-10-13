@@ -42,11 +42,11 @@ public class VideoUtils {
     /**
      * 解析失败提示弹窗
      *
-     * @param context
+     * @param activity
      * @param HTML_url
      */
-    public static void showErrorInfo(Context context, String HTML_url) {
-        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context, R.style.DialogStyle);
+    public static void showErrorInfo(Activity activity, String HTML_url) {
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(activity, R.style.DialogStyle);
         builder.setPositiveButton(Utils.getString(R.string.play_not_found_positive), null);
         builder.setNegativeButton(Utils.getString(R.string.play_not_found_negative), null);
         builder.setTitle(Utils.getString(R.string.play_not_found_title));
@@ -57,9 +57,12 @@ public class VideoUtils {
         alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
             alertDialog.dismiss();
 //            context.startActivity(new Intent(context, DefaultNormalWebActivity.class).putExtra("url", HTML_url));
-            Utils.viewInChrome(context, HTML_url);
+            Utils.viewInChrome(activity, HTML_url);
         });
-        alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(v -> alertDialog.dismiss());
+        alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(v -> {
+            alertDialog.dismiss();
+            activity.finish();
+        });
     }
 
     /**

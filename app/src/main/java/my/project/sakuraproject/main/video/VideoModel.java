@@ -12,10 +12,12 @@ import my.project.sakuraproject.bean.AnimeDescDetailsBean;
 import my.project.sakuraproject.database.DatabaseUtil;
 import my.project.sakuraproject.main.base.BaseModel;
 import my.project.sakuraproject.net.HttpGet;
+import my.project.sakuraproject.net.HttpPost;
 import my.project.sakuraproject.util.ImomoeJsoupUtils;
 import my.project.sakuraproject.util.YhdmJsoupUtils;
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.FormBody;
 import okhttp3.Response;
 
 public class VideoModel extends BaseModel implements VideoContract.Model {
@@ -63,7 +65,8 @@ public class VideoModel extends BaseModel implements VideoContract.Model {
     private void parserImomoe(String title, String url, int playSource, String playNumber, VideoContract.LoadDataCallback callback) {
         callback.log(url);
         Log.e("url", url);
-        new HttpGet(url, new Callback() {
+        // 2023年10月13日 失效
+        /*new HttpGet(url, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 callback.error();
@@ -83,10 +86,44 @@ public class VideoModel extends BaseModel implements VideoContract.Model {
                 else
                     callback.empty();
             }
+        });*/
+        FormBody body =  new FormBody.Builder().add("player", "sili").build();
+        new HttpPost(url, body, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                callback.error();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String source = getHtmlBody(response, true);
+                String decodeData = ImomoeJsoupUtils.getDecodeData(source);
+                if (decodeData.isEmpty())
+                    callback.empty();
+                else {
+                    String playUrl = ImomoeJsoupUtils.getJsonData(true, decodeData);
+                    if (playUrl.isEmpty()) {
+                        callback.empty();
+                        return;
+                    }
+                    String fid = DatabaseUtil.getAnimeID(title, 1);
+                    DatabaseUtil.addIndex(fid, url, playSource, playNumber);
+                    String dataBaseDrama = DatabaseUtil.queryAllIndex(fid, true, playSource);
+                    String html = ImomoeJsoupUtils.getJsonData(false, decodeData);
+                    List<AnimeDescDetailsBean> bean = ImomoeJsoupUtils.getAllDrama(html, dataBaseDrama);
+                    callback.successImomoeDramas(bean);
+                    callback.successImomoeVideoUrl(playUrl);
+                }
+            }
         });
     }
-
+    /**
+     * 第二套解析方案
+     * @param url
+     * @param callback
+     */
     @Override
+    @Deprecated
     public void getSilisiliVideoUrl(String url, VideoContract.LoadDataCallback callback) {
         String parseUrl = String.format(Api.SILISILI_PARSE_API, getDomain(true), url);
         callback.log(parseUrl);

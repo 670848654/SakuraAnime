@@ -92,7 +92,7 @@ public class HomeFragment extends BaseFragment<HomeContract.View, HomePresenter>
     private void initAdapter() {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         adapter = new HomeAdapter(getActivity(), multiItemEntities, this);
-        adapter.openLoadAnimation(BaseQuickAdapter.SCALEIN);
+        adapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
         adapter.setOnItemChildClickListener((adapter, view, position) -> {
             switch (adapter.getItemViewType(position)) {
                 case HomeAdapter.TYPE_LEVEL_2:

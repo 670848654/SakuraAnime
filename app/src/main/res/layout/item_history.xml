@@ -19,13 +19,11 @@
             android:layout_height="wrap_content"
             android:layout_weight="4">
 
-            <androidx.cardview.widget.CardView
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:cardCornerRadius="8dp"
                 android:layout_marginRight="5dp"
-                app:cardElevation="0dp"
-                app:cardUseCompatPadding="false">
+                style="?attr/materialCardViewElevatedStyle">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/img_box"
@@ -69,18 +67,22 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            </androidx.cardview.widget.CardView>
+                <TextView
+                    android:id="@+id/source"
+                    android:textSize="12sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="20dp"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:gravity="center"
+                    android:textColor="@color/white"
+                    android:visibility="invisible"
+                    app:layout_constraintTop_toTopOf="@+id/img"
+                    app:layout_constraintRight_toLeftOf="@+id/img" />
 
-            <TextView
-                android:id="@+id/source"
-                android:textSize="12sp"
-                android:layout_width="wrap_content"
-                android:layout_height="20dp"
-                android:paddingLeft="5dp"
-                android:paddingRight="5dp"
-                android:gravity="center"
-                android:textColor="@color/white"
-                android:visibility="invisible" />
+            </com.google.android.material.card.MaterialCardView>
+
+
 
         </RelativeLayout>
 

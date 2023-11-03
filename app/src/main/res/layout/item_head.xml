@@ -1,15 +1,13 @@
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/header_view"
     android:layout_width="match_parent"
     android:layout_height="40dip"
     android:layout_gravity="center"
     android:layout_marginTop="4dp"
-    android:foreground="?android:attr/selectableItemBackground"
-    card_view:cardBackgroundColor="@color/window_bg"
-    card_view:cardCornerRadius="0dp"
-    card_view:cardElevation="2dp"
-    card_view:cardUseCompatPadding="false">
+    style="?attr/materialCardViewElevatedStyle"
+    app:rippleColor="@color/ripple_color"
+    app:cardBackgroundColor="@color/window_bg">
 
 
     <LinearLayout
@@ -41,4 +39,4 @@
 
     </LinearLayout>
 
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

@@ -19,13 +19,12 @@
             android:layout_height="wrap_content"
             android:layout_weight="4">
 
-            <androidx.cardview.widget.CardView
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="8dp"
                 android:layout_marginRight="5dp"
-                app:cardElevation="0dp"
-                app:cardUseCompatPadding="false">
+                style="?attr/materialCardViewElevatedStyle">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/img_box"
@@ -71,7 +70,7 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-            </androidx.cardview.widget.CardView>
+            </com.google.android.material.card.MaterialCardView>
 
             <TextView
                 android:id="@+id/number"

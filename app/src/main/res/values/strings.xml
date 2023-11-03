@@ -104,6 +104,9 @@
     <string name="set_player_kernel">请选择播放器内核</string>
     <string name="exoplayer">ExoPlayer</string>
     <string name="ijkplayer">IjkPlayer</string>
+    <string name="start_check_update">启动时检查更新</string>
+    <string name="open_check_update">开启</string>
+    <string name="close_check_update">关闭</string>
     <!-- webViewDialog 文本 -->
     <string name="other_operation">操作</string>
     <string name="anthology">选集</string>
@@ -164,6 +167,7 @@
     <string name="delete_single_history">是否删除该历史记录？</string>
     <string name="delete_all_history">清空之后就什么都没有了哦~</string>
     <string name="get_anime_info">拉取数据中，请稍后&#8230;</string>
+    <string name="desc_history_menu">详情页</string>
     <string name="delete_history_menu">删除</string>
     <string name="delete_all_menu">清空历史</string>
     <!-- 下载相关 -->

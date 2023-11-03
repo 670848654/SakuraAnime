@@ -18,12 +18,31 @@
         android:layout_height="wrap_content"
         android:entries="@array/prefix" />
 
-    <com.rengwuxian.materialedittext.MaterialEditText
+    <!--<com.rengwuxian.materialedittext.MaterialEditText
         android:id="@+id/domain"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         app:met_baseColor="@color/text_color_primary"
         app:met_errorColor="#FF0000"
-        app:met_primaryColor="@color/colorAccent" />
+        app:met_primaryColor="@color/colorAccent" />-->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/domain"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="站点域名"
+        android:layout_marginTop="8dp"
+        app:errorEnabled="true"
+        android:textColorHint="@color/m3_textfield_label_color"
+        app:boxStrokeColor="@color/m3_textfield_label_color"
+        app:hintTextColor="@color/m3_textfield_label_color"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:inputType="text"
+            android:textCursorDrawable="@null"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </com.google.android.material.textfield.TextInputLayout>
 </LinearLayout>

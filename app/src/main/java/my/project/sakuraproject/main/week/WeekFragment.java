@@ -24,7 +24,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import my.project.sakuraproject.R;
-import my.project.sakuraproject.adapter.FragmentAdapter;
+import my.project.sakuraproject.adapter.WeekAdapter;
 import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.bean.HomeWekBean;
 import my.project.sakuraproject.main.base.LazyFragment;
@@ -37,7 +37,7 @@ public class WeekFragment extends LazyFragment {
     RecyclerView recyclerView;
     @BindView(R.id.loading)
     ProgressBar loading;
-    protected FragmentAdapter adapter;
+    protected WeekAdapter adapter;
     private List<HomeWekBean> list = new ArrayList<>();
     private Sakura application;
     private View view;
@@ -77,7 +77,7 @@ public class WeekFragment extends LazyFragment {
     public void initAdapter() {
         if (adapter == null) {
 //            recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), Utils.isPad() ? 4 : 2));
-            adapter = new FragmentAdapter(getActivity(), list);
+            adapter = new WeekAdapter(getActivity(), list);
             adapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
             adapter.setOnItemClickListener((adapter, view, position) -> {
                 if (!Utils.isFastClick()) return;

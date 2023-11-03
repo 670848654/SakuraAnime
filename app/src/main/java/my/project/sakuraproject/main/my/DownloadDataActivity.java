@@ -238,12 +238,12 @@ public class DownloadDataActivity extends BaseActivity<DownloadDataContract.View
                     // 未下载完成
                     if (bean.getTaskId() != -99 && bean.getTaskId() == entity.getId()) {
                         // 从Aria数据库中删除任务
-                        Aria.download(this).load(entity.getId()).ignoreCheckPermissions().cancel(removeFile);
+                        Aria.download(this).load(entity.getId()).ignoreCheckPermissions().cancel(false);
                         break;
                         // 已下载完成通过path对比
                     } else if (bean.getPath().equals(entity.getFilePath().replaceAll("m3u8", "mp4"))) {
                         // 从Aria数据库中删除任务
-                        Aria.download(this).load(entity.getId()).ignoreCheckPermissions().cancel(removeFile);
+                        Aria.download(this).load(entity.getId()).ignoreCheckPermissions().cancel(false);
                         break;
                     }
                 }
@@ -252,7 +252,7 @@ public class DownloadDataActivity extends BaseActivity<DownloadDataContract.View
             deleteDownloadData(removeFile, bean, position);
         }
         downloadDataCount = DatabaseUtil.queryDownloadDataCount(downloadId);
-        if (downloadDataBeans.size() <= 0) {
+        if (downloadDataBeans.size() == 0) {
             shouldDeleteDownloadDir();
             DatabaseUtil.deleteDownload(downloadId);
             EventBus.getDefault().post(new Refresh(3));
@@ -282,8 +282,10 @@ public class DownloadDataActivity extends BaseActivity<DownloadDataContract.View
      * 是否应该删除下载主目录
      */
     private void shouldDeleteDownloadDir() {
-        if (downloadDir.list().length == 0) // 文件夹下没有任何文件才删除主目录
-            downloadDir.delete();
+        try {
+            if (downloadDir.list().length == 0) // 文件夹下没有任何文件才删除主目录
+                downloadDir.delete();
+        } catch (Exception e) {}
     }
 
     public void setLoadState(boolean loadState) {

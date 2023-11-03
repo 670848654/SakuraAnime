@@ -88,11 +88,13 @@ public class StartActivity extends BaseActivity {
     /**Will cause a second process to run on the main thread**/
     private final Runnable runner = () -> {
         keep = false;
-        SharedPreferencesUtils.setParam(this, "initX5", "init");
-        new Handler().postDelayed(() -> {
-            linearLayout.setVisibility(View.VISIBLE);
-            checkUpdate();
-        }, 1000);
+        if ((Integer) SharedPreferencesUtils.getParam(this, "start_check_update", 0) == 0) {
+            new Handler().postDelayed(() -> {
+                linearLayout.setVisibility(View.VISIBLE);
+                checkUpdate();
+            }, 1000);
+        } else
+            openMain();
     };
 
     @Override

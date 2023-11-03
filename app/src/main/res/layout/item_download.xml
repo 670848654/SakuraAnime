@@ -18,13 +18,11 @@
             android:layout_height="wrap_content"
             android:layout_weight="4">
 
-            <androidx.cardview.widget.CardView
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:cardCornerRadius="8dp"
                 android:layout_marginRight="5dp"
-                app:cardElevation="0dp"
-                app:cardUseCompatPadding="false">
+                style="?attr/materialCardViewElevatedStyle">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/img_box"
@@ -43,35 +41,42 @@
                         android:scaleType="centerCrop"
                         android:transitionName="sharedImg" />
 
+                    <TextView
+                        android:id="@+id/number"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="14sp"
+                        android:gravity="center"
+                        android:textColor="@android:color/white"
+                        android:shadowColor="@color/text_color_primary"
+                        android:shadowDx="1.0"
+                        android:shadowDy="1.0"
+                        android:shadowRadius="2.0"
+                        android:layout_centerHorizontal="true"
+                        android:layout_centerVertical="true"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        />
+
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-            </androidx.cardview.widget.CardView>
+                <TextView
+                    android:id="@+id/source"
+                    android:textSize="12sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="20dp"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:gravity="center"
+                    android:textColor="@color/white"
+                    android:visibility="invisible"
+                    app:layout_constraintTop_toTopOf="@+id/img"
+                    app:layout_constraintRight_toLeftOf="@+id/img" />
 
-            <TextView
-                android:id="@+id/number"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="14sp"
-                android:gravity="center"
-                android:textColor="@android:color/white"
-                android:shadowColor="@color/text_color_primary"
-                android:shadowDx="1.0"
-                android:shadowDy="1.0"
-                android:shadowRadius="2.0"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"/>
-
-            <TextView
-                android:id="@+id/source"
-                android:textSize="12sp"
-                android:layout_width="wrap_content"
-                android:layout_height="20dp"
-                android:paddingLeft="5dp"
-                android:paddingRight="5dp"
-                android:gravity="center"
-                android:textColor="@color/white"
-                android:visibility="invisible" />
-
+            </com.google.android.material.card.MaterialCardView>
         </RelativeLayout>
         <LinearLayout
             android:layout_width="0dp"
@@ -88,6 +93,7 @@
                 android:layout_weight="2"
                 android:id="@+id/title"
                 android:maxLines="1"
+                android:ellipsize="end"
                 android:textColor="@color/text_color_primary"
                 android:textSize="16sp" />
 

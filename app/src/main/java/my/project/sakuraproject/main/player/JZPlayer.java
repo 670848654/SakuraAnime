@@ -693,12 +693,12 @@ public class JZPlayer extends JzvdStd {
     }
 
     public void showDanmmu() {
-        if (danmuView != null)
+        if (danmuView != null && openDanmuConfig)
             danmakuView.show();
     }
 
     public void hideDanmmu() {
-        if (danmuView != null)
+        if (danmuView != null && openDanmuConfig)
             danmakuView.hide();
     }
 

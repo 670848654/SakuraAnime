@@ -69,19 +69,17 @@
                         android:layout_width="wrap_content"
                         android:layout_height="150dp">
 
-                        <androidx.cardview.widget.CardView
+                        <com.google.android.material.card.MaterialCardView
                             android:id="@+id/card_view"
                             android:layout_width="0dp"
                             android:layout_height="0dp"
                             app:cardBackgroundColor="@android:color/transparent"
-                            app:cardCornerRadius="4dp"
-                            app:cardElevation="4dp"
                             app:layout_constraintDimensionRatio="W,1:1.4"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
-                            app:cardUseCompatPadding="false">
+                            style="?attr/materialCardViewElevatedStyle">
 
                             <RelativeLayout
                                 android:layout_width="match_parent"
@@ -135,7 +133,7 @@
                                 </LinearLayout>-->
 
                             </RelativeLayout>
-                        </androidx.cardview.widget.CardView>
+                        </com.google.android.material.card.MaterialCardView>
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 

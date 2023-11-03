@@ -144,6 +144,12 @@ public class HistoryActivity extends BaseActivity<HistoryContract.View, HistoryP
             popupMenu.getMenuInflater().inflate(R.menu.delete_menu, popupMenu.getMenu());
             popupMenu.setOnMenuItemClickListener(menuItem -> {
                 switch (menuItem.getItemId()) {
+                    case R.id.desc:
+                        Bundle bundle = new Bundle();
+                        bundle.putString("name", historyBeans.get(position).getTitle());
+                        bundle.putString("url", historyBeans.get(position).getDescUrl());
+                        startActivityForResult(new Intent(this, DescActivity.class).putExtras(bundle), 3000);
+                        break;
                     case R.id.delete:
                         showDeleteHistoryDialog(position, historyBeans.get(position).getHistoryId(), false);
                         break;

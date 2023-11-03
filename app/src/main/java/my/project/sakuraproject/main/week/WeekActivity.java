@@ -16,7 +16,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 import my.project.sakuraproject.R;
-import my.project.sakuraproject.adapter.WeekAdapter;
+import my.project.sakuraproject.adapter.WeekFragmentAdapter;
 import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.bean.AnimeUpdateInfoBean;
 import my.project.sakuraproject.bean.HomeBean;
@@ -38,7 +38,7 @@ public class WeekActivity extends BaseActivity<HomeContract.View, HomePresenter>
     TabLayout tab;
     @BindView(R.id.viewpager)
     ViewPager viewpager;
-    private WeekAdapter adapter;
+    private WeekFragmentAdapter adapter;
     private int week;
     private String[] tabs = Utils.getArray(R.array.week_array);
     private int[][] states = new int[][]{
@@ -157,7 +157,7 @@ public class WeekActivity extends BaseActivity<HomeContract.View, HomePresenter>
     }
 
     public void setWeekAdapter(int pos) {
-        adapter = new WeekAdapter(getSupportFragmentManager(), tab.getTabCount());
+        adapter = new WeekFragmentAdapter(getSupportFragmentManager(), tab.getTabCount());
         try {
             Field field = ViewPager.class.getDeclaredField("mRestoredCurItem");
             field.setAccessible(true);

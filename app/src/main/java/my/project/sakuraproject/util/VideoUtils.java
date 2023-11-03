@@ -384,9 +384,7 @@ public class VideoUtils {
         builder.setCancelable(true);
         builder.setTitle("操作提示");
         builder.setMessage(msg);
-        builder.setPositiveButton("好", (dialog, which) -> {
-          dialog.dismiss();
-        });
+        builder.setPositiveButton("好", (dialog, which) -> dialog.dismiss());
         alertDialog = builder.create();
         alertDialog.show();
     }

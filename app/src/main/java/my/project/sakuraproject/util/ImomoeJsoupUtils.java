@@ -620,7 +620,8 @@ public class ImomoeJsoupUtils {
     public static String getJsonData(boolean getPlayUrl, String jsonStr) {
         try {
             com.alibaba.fastjson.JSONObject jsonObject = JSON.parseObject(jsonStr);
-            return jsonObject.getString(getPlayUrl? "url" : "fenjihtml");
+            String data = jsonObject.getString(getPlayUrl? "url" : "fenjihtml");
+            return data == null ? "" : data;
         } catch (Exception e) {
             e.printStackTrace();
             return "";

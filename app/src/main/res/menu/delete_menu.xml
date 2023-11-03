@@ -2,6 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/desc"
+        android:orderInCategory="60"
+        android:title="@string/desc_history_menu"
+        app:showAsAction="ifRoom" />
+    <item
         android:id="@+id/delete"
         android:orderInCategory="60"
         android:title="@string/delete_history_menu"

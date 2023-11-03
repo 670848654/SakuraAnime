@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
@@ -99,7 +98,6 @@ public abstract class BasePlayerActivity extends BaseActivity implements JZPlaye
     protected AlertDialog alertDialog;
     //播放网址
     protected String webUrl;
-    private boolean isPip = false;
     @BindView(R.id.speed)
     TextView speedTextView;
     protected String[] speeds = Utils.getArray(R.array.speed_item);
@@ -483,19 +481,22 @@ public abstract class BasePlayerActivity extends BaseActivity implements JZPlaye
         else return false;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onPictureInPictureModeChanged(boolean isInPictureInPictureMode, Configuration newConfig) {
         super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig);
         if (isInPictureInPictureMode) {
             player.startPIP();
-            isPip = true;
             player.hideDanmmu();
         } else {
-            player.showDanmmu();
-            isPip = false;
+            if (getWindow().getDecorView().getVisibility() == View.VISIBLE)
+                player.showDanmmu();
+            else
+                onDestroy();
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onMultiWindowModeChanged(boolean isInMultiWindowMode, Configuration newConfig) {
         super.onMultiWindowModeChanged(isInMultiWindowMode, newConfig);
@@ -518,8 +519,14 @@ public abstract class BasePlayerActivity extends BaseActivity implements JZPlaye
 
     @Override
     protected void onStop() {
+        if (null != videoPresenter) videoPresenter.detachView();
+        stopService(new Intent(this, DLNAService.class));
+        saveProgress();
+        if (!isLocalVideo) {
+            EventBus.getDefault().post(new Refresh(1));
+            EventBus.getDefault().post(new Refresh(2));
+        }
         super.onStop();
-        if (isPip) onDestroy();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -704,13 +711,6 @@ public abstract class BasePlayerActivity extends BaseActivity implements JZPlaye
 
     @Override
     protected void onDestroy() {
-        if (null != videoPresenter) videoPresenter.detachView();
-        stopService(new Intent(this, DLNAService.class));
-        saveProgress();
-        if (!isLocalVideo) {
-            EventBus.getDefault().post(new Refresh(1));
-            EventBus.getDefault().post(new Refresh(2));
-        }
 //        handler.removeCallbacksAndMessages(null);
         player.releaseDanMu();
         player.releaseAllVideos();

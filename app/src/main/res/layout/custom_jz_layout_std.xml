@@ -406,7 +406,7 @@
         <ImageView
             android:id="@+id/left_lock"
             android:layout_alignParentLeft="true"
-            android:layout_marginLeft="12dp"
+            android:layout_marginLeft="18dp"
             android:layout_centerVertical="true"
             android:src="@drawable/player_btn_locking"
             android:visibility="invisible"
@@ -415,13 +415,13 @@
 
         <ImageView
             android:id="@+id/right_lock"
-            android:layout_alignParentRight="true"
-            android:layout_marginLeft="12dp"
-            android:layout_centerVertical="true"
-            android:src="@drawable/player_btn_locking"
-            android:visibility="invisible"
             android:layout_width="@dimen/jz_start_button_w_h_normal"
-            android:layout_height="@dimen/jz_start_button_w_h_normal"/>
+            android:layout_height="@dimen/jz_start_button_w_h_normal"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="18dp"
+            android:src="@drawable/player_btn_locking"
+            android:visibility="invisible" />
 
         <ImageView
             android:id="@+id/start"

@@ -202,6 +202,9 @@ public class Utils {
      * @param url
      */
     public static void viewInChrome(Context context, String url) {
+        boolean isSilisili = url.contains("/vodplay/");
+        if (!url.contains("http"))
+            url = BaseModel.getDomain(isSilisili) + url;
         CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
         //Sets the toolbar color.
         builder.setToolbarColor(context.getResources().getColor(R.color.night));

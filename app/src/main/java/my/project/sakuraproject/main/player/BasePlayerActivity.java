@@ -302,7 +302,7 @@ public abstract class BasePlayerActivity extends BaseActivity implements JZPlaye
                 Utils.selectVideoPlayer(this, url);
                 break;
             case R.id.browser_config:
-                Utils.viewInChrome(this, BaseModel.getDomain(false) + dramaUrl);
+                Utils.viewInChrome(this, dramaUrl);
                 break;
         }
     }
@@ -492,7 +492,7 @@ public abstract class BasePlayerActivity extends BaseActivity implements JZPlaye
             if (getWindow().getDecorView().getVisibility() == View.VISIBLE)
                 player.showDanmmu();
             else
-                onDestroy();
+                finish();
         }
     }
 
@@ -519,13 +519,7 @@ public abstract class BasePlayerActivity extends BaseActivity implements JZPlaye
 
     @Override
     protected void onStop() {
-        if (null != videoPresenter) videoPresenter.detachView();
-        stopService(new Intent(this, DLNAService.class));
         saveProgress();
-        if (!isLocalVideo) {
-            EventBus.getDefault().post(new Refresh(1));
-            EventBus.getDefault().post(new Refresh(2));
-        }
         super.onStop();
     }
 
@@ -638,7 +632,7 @@ public abstract class BasePlayerActivity extends BaseActivity implements JZPlaye
             if (!mActivityFinish) {
                 if (player.loadError) return;
                 try {
-                    Toast.makeText(this, "弹幕接口响应正常", Toast.LENGTH_LONG).show();
+//                    Toast.makeText(this, "弹幕接口响应正常", Toast.LENGTH_LONG).show();
                     player.danmuInfoView.setText("弹幕接口响应正常");
                     player.danmuInfoView.setVisibility(View.VISIBLE);
                     InputStream result = new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8));
@@ -712,6 +706,11 @@ public abstract class BasePlayerActivity extends BaseActivity implements JZPlaye
     @Override
     protected void onDestroy() {
 //        handler.removeCallbacksAndMessages(null);
+        stopService(new Intent(this, DLNAService.class));
+        if (!isLocalVideo) {
+            EventBus.getDefault().post(new Refresh(1));
+            EventBus.getDefault().post(new Refresh(2));
+        }
         player.releaseDanMu();
         player.releaseAllVideos();
         player.danmakuView = null;

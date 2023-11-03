@@ -52,7 +52,7 @@
     <string name="get_drama_error">获取剧集信息出错</string>
     <string name="should_be_sniffer">尝试嗅探获取播放地址&#8230;</string>
     <string name="should_be_used_web">尝试嗅探获取播放地址&#8230;</string>
-    <string name="open_web_view">解析视频地址失败，尝试使用WebView打开</string>
+    <string name="open_web_view">解析视频地址失败，请尝试通过浏览器访问</string>
     <string name="loading_video__failed">视频地址无法访问，加载失败！</string>
     <!-- 详情界面文本 -->
     <string name="online">在线</string>

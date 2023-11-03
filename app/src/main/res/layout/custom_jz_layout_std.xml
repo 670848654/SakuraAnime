@@ -257,6 +257,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/download"
+            app:rippleColor="@color/ripple_color"
             style="@style/Widget.Material3.Button.TextButton.Icon"
             android:textColor="@color/white"
             app:iconTint="@color/white"
@@ -288,6 +289,7 @@
 
         <com.google.android.material.button.MaterialButton
             style="@style/Widget.Material3.Button.TextButton.Icon"
+            app:rippleColor="@color/ripple_color"
             android:textColor="@color/white"
             app:iconTint="@color/white"
             android:id="@+id/config"
@@ -301,6 +303,7 @@
 
         <com.google.android.material.button.MaterialButton
             style="@style/Widget.Material3.Button.TextButton.Icon"
+            app:rippleColor="@color/ripple_color"
             android:textColor="@color/white"
             app:iconTint="@color/white"
             android:id="@+id/airplay"
@@ -315,6 +318,7 @@
 
         <com.google.android.material.button.MaterialButton
             style="@style/Widget.Material3.Button.TextButton.Icon"
+            app:rippleColor="@color/ripple_color"
             android:textColor="@color/white"
             app:iconTint="@color/white"
             android:id="@+id/pip"
@@ -400,8 +404,18 @@
         android:layout_centerVertical="true">
 
         <ImageView
-            android:id="@+id/std_lock"
+            android:id="@+id/left_lock"
             android:layout_alignParentLeft="true"
+            android:layout_marginLeft="12dp"
+            android:layout_centerVertical="true"
+            android:src="@drawable/player_btn_locking"
+            android:visibility="invisible"
+            android:layout_width="@dimen/jz_start_button_w_h_normal"
+            android:layout_height="@dimen/jz_start_button_w_h_normal"/>
+
+        <ImageView
+            android:id="@+id/right_lock"
+            android:layout_alignParentRight="true"
             android:layout_marginLeft="12dp"
             android:layout_centerVertical="true"
             android:src="@drawable/player_btn_locking"

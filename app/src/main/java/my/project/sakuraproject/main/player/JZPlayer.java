@@ -53,7 +53,7 @@ public class JZPlayer extends JzvdStd {
     private PlayingListener playingListener;
     private PauseListener pauseListener;
     private OnQueryDanmuListener onQueryDanmuListener;
-    private ImageView ibLock;
+    private ImageView leftBLock, rightBlock;
     private boolean locked = false;
     public ImageView fastForward, quickRetreat;
     public TextView snifferBtn, openDrama, preVideo, nextVideo, queryDanmuView, displayView, tvSpeedView, selectDramaView;
@@ -107,8 +107,10 @@ public class JZPlayer extends JzvdStd {
     public void init(Context context) {
         super.init(context);
         // 获取自定义添加的控件
-        ibLock = findViewById(R.id.std_lock);
-        ibLock.setOnClickListener(this);
+        leftBLock = findViewById(R.id.left_lock);
+        leftBLock.setOnClickListener(this);
+        rightBlock = findViewById(R.id.right_lock);
+        rightBlock.setOnClickListener(this);
         quickRetreat = findViewById(R.id.quick_retreat);
         quickRetreat.setOnClickListener(this);
         fastForward = findViewById(R.id.fast_forward);
@@ -189,17 +191,21 @@ public class JZPlayer extends JzvdStd {
     public void onClick(View v) {
         super.onClick(v);
         switch (v.getId()) {
-            case R.id.std_lock:
-                ibLock.setTag(1);
+            case R.id.left_lock:
+            case R.id.right_lock:
+                leftBLock.setTag(1);
+                rightBlock.setTag(1);
                 if (locked) {
                     // 已经上锁，再次点击解锁
                     changeUiToPlayingShow();
-                    ibLock.setImageResource(R.drawable.player_btn_locking);
+                    leftBLock.setImageResource(R.drawable.player_btn_locking);
+                    rightBlock.setImageResource(R.drawable.player_btn_locking);
                     CustomToast.showToast(context, "屏幕锁定关闭", CustomToast.SUCCESS);
                 } else {
                     // 上锁
                     changeUiToPlayingClear();
-                    ibLock.setImageResource(R.drawable.player_btn_locking_pre);
+                    leftBLock.setImageResource(R.drawable.player_btn_locking_pre);
+                    rightBlock.setImageResource(R.drawable.player_btn_locking_pre);
                     CustomToast.showToast(context, "屏幕锁定开启", CustomToast.SUCCESS);
 //                    Drawable up = ContextCompat.getDrawable(context,R.drawable.player_btn_locking_pre);
 //                    Drawable drawableUp= DrawableCompat.wrap(up);
@@ -407,14 +413,17 @@ public class JZPlayer extends JzvdStd {
             fullscreenButton.setVisibility(GONE);
             showOrHideChangeViewListener.showOrHideChangeView();
         }
-        if (screen == SCREEN_FULLSCREEN)
-            ibLock.setVisibility(ibLock.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+        if (screen == SCREEN_FULLSCREEN) {
+            leftBLock.setVisibility(leftBLock.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+            rightBlock.setVisibility(rightBlock.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+        }
     }
 
     public void playingShow() {
         setAllControlsVisiblity(View.GONE, View.GONE, View.GONE,
                 View.VISIBLE, View.GONE, View.GONE, View.GONE);
-        ibLock.setVisibility(GONE);
+        leftBLock.setVisibility(GONE);
+        rightBlock.setVisibility(GONE);
         fastForward.setVisibility(GONE);
         quickRetreat.setVisibility(GONE);
         pipView.setVisibility(GONE);
@@ -462,14 +471,17 @@ public class JZPlayer extends JzvdStd {
         }
         if (!locked) {
             if (bottomContainer.getVisibility() == View.VISIBLE) {
-                ibLock.setVisibility(View.VISIBLE);
+                leftBLock.setVisibility(View.VISIBLE);
+                rightBlock.setVisibility(View.VISIBLE);
             } else {
-                ibLock.setVisibility(View.GONE);
+                leftBLock.setVisibility(GONE);
+                rightBlock.setVisibility(View.GONE);
             }
         } else {
-            if ((int) ibLock.getTag() == 1) {
+            if ((int) leftBLock.getTag() == 1) {
                 bottomProgressBar.setVisibility(GONE);
-                ibLock.setVisibility(View.VISIBLE);
+                leftBLock.setVisibility(View.VISIBLE);
+                rightBlock.setVisibility(VISIBLE);
             }
         }
     }
@@ -492,7 +504,8 @@ public class JZPlayer extends JzvdStd {
                     View.INVISIBLE, View.INVISIBLE, View.INVISIBLE, View.INVISIBLE);// 全屏播放时隐藏底部进度条
         else
             super.changeUiToPlayingClear();
-        ibLock.setVisibility(View.INVISIBLE);
+        leftBLock.setVisibility(View.INVISIBLE);
+        rightBlock.setVisibility(INVISIBLE);
         fastForward.setVisibility(INVISIBLE);
         quickRetreat.setVisibility(INVISIBLE);
         pipView.setVisibility(INVISIBLE);
@@ -506,7 +519,8 @@ public class JZPlayer extends JzvdStd {
     @Override
     public void onStatePause() {
         super.onStatePause();
-        ibLock.setVisibility(View.INVISIBLE);
+        leftBLock.setVisibility(View.INVISIBLE);
+        rightBlock.setVisibility(INVISIBLE);
         fastForward.setVisibility(INVISIBLE);
         quickRetreat.setVisibility(INVISIBLE);
         pipView.setVisibility(INVISIBLE);
@@ -536,7 +550,8 @@ public class JZPlayer extends JzvdStd {
     @Override
     public void changeUiToPauseClear() {
         super.changeUiToPauseClear();
-        ibLock.setVisibility(View.INVISIBLE);
+        leftBLock.setVisibility(View.INVISIBLE);
+        rightBlock.setVisibility(INVISIBLE);
         fastForward.setVisibility(INVISIBLE);
         quickRetreat.setVisibility(INVISIBLE);
         pipView.setVisibility(INVISIBLE);
@@ -550,7 +565,8 @@ public class JZPlayer extends JzvdStd {
     @Override
     public void changeUiToError() {
         super.changeUiToError();
-        ibLock.setVisibility(View.INVISIBLE);
+        leftBLock.setVisibility(View.INVISIBLE);
+        rightBlock.setVisibility(INVISIBLE);
         fastForward.setVisibility(INVISIBLE);
         quickRetreat.setVisibility(INVISIBLE);
         pipView.setVisibility(INVISIBLE);
@@ -566,7 +582,8 @@ public class JZPlayer extends JzvdStd {
         super.dissmissControlView();
         // 需要在UI线程进行隐藏
         post(() -> {
-            ibLock.setVisibility(View.INVISIBLE);
+            leftBLock.setVisibility(View.INVISIBLE);
+            rightBlock.setVisibility(INVISIBLE);
             fastForward.setVisibility(INVISIBLE);
             quickRetreat.setVisibility(INVISIBLE);
             pipView.setVisibility(INVISIBLE);

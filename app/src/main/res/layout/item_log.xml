@@ -1,3 +1,4 @@
+<!--
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -32,4 +33,22 @@
         app:dividerInsetStart="10dp"
         app:dividerInsetEnd="10dp"/>
 
-</LinearLayout>
+</LinearLayout>-->
+<com.google.android.material.textfield.TextInputLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginTop="10dp"
+    android:id="@+id/title_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:boxStrokeColor="@color/log_text_input_layout_stroke_color"
+    app:hintTextColor="@color/text_color_primary"
+    style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/content_view"
+        android:enabled="false"
+        android:textColor="@color/text_color_primary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+</com.google.android.material.textfield.TextInputLayout>

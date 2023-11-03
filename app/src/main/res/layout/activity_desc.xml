@@ -230,6 +230,7 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/favorite"
+                            app:rippleColor="@color/ripple_color"
                             style="@style/Widget.Material3.Button.TextButton.Icon"
                             android:textColor="@color/white"
                             app:iconTint="@color/white"
@@ -245,6 +246,7 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/download"
+                            app:rippleColor="@color/ripple_color"
                             style="@style/Widget.Material3.Button.TextButton.Icon"
                             android:textColor="@color/white"
                             app:iconTint="@color/white"
@@ -260,6 +262,7 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/browser"
+                            app:rippleColor="@color/ripple_color"
                             style="@style/Widget.Material3.Button.TextButton.Icon"
                             android:textColor="@color/white"
                             app:iconTint="@color/white"
@@ -317,7 +320,7 @@
                             android:layout_height="wrap_content"
                             app:endIconTint="@android:color/white"
                             app:boxStrokeColor="@color/text_input_layout_stroke_color"
-                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+                            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
 
                             <AutoCompleteTextView
                                 android:id="@+id/selected_text"

@@ -20,6 +20,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/ref_btn"
+                app:rippleColor="@color/ripple_color"
                 android:visibility="gone"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"

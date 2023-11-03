@@ -397,8 +397,9 @@ public class HistoryActivity extends BaseActivity<HistoryContract.View, HistoryP
         if (mActivityFinish) return;
         runOnUiThread(() -> {
 //            application.showToastMsg(Utils.getString(R.string.open_web_view));
-            CustomToast.showToast(this, Utils.getString(R.string.open_web_view), CustomToast.WARNING);
-            VideoUtils.openDefaultWebview(this, dramaUrl.contains("/voddetail/") ? BaseModel.getDomain(true) + dramaUrl : BaseModel.getDomain(false) + dramaUrl);
+//            CustomToast.showToast(this, Utils.getString(R.string.open_web_view), CustomToast.WARNING);
+//            VideoUtils.openDefaultWebview(this, dramaUrl.contains("/voddetail/") ? BaseModel.getDomain(true) + dramaUrl : BaseModel.getDomain(false) + dramaUrl);
+            VideoUtils.showErrorInfo(this, dramaUrl, false);
         });
     }
 
@@ -407,7 +408,8 @@ public class HistoryActivity extends BaseActivity<HistoryContract.View, HistoryP
         if (mActivityFinish) return;
         runOnUiThread(() -> {
 //            application.showErrorToastMsg(Utils.getString(R.string.error_700));
-            CustomToast.showToast(this, Utils.getString(R.string.loading_video__failed), CustomToast.ERROR);
+//            CustomToast.showToast(this, Utils.getString(R.string.loading_video__failed), CustomToast.ERROR);
+            VideoUtils.showErrorInfo(this, dramaUrl, false);
         });
     }
 

@@ -29,9 +29,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="8dp"
                     android:layout_marginRight="8dp"
-                    app:endIconTint="@color/colorAccent"
+                    app:endIconTint="@color/text_color_primary"
                     app:boxStrokeColor="@color/rank_text_input_layout_stroke_color"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
 
                 <AutoCompleteTextView
                     android:id="@+id/selected_text"

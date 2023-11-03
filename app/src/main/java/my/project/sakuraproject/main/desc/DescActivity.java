@@ -549,6 +549,7 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
                 chip.setBackgroundColor(getResources().getColor(R.color.window_bg));
                 chip.setTextColor(getResources().getColor(R.color.text_color_primary));
                 chip.setChipStrokeColorResource(R.color.head);
+                chip.setRippleColor(getResources().getColorStateList(R.color.ripple_color));
                 int position = i;
                 chip.setOnClickListener(view -> {
                     chipClick(position);
@@ -748,14 +749,16 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
     @Override
     public void getVideoEmpty() {
         runOnUiThread(() -> {
-            CustomToast.showToast(this, Utils.getString(R.string.error_600), CustomToast.ERROR);
+            VideoUtils.showErrorInfo(this, dramaUrl, false);
+//            CustomToast.showToast(this, Utils.getString(R.string.error_600), CustomToast.ERROR);
         });
     }
 
     @Override
     public void getVideoError() {
         runOnUiThread(() -> {
-            CustomToast.showToast(this, Utils.getString(R.string.error_600), CustomToast.ERROR);
+            VideoUtils.showErrorInfo(this, dramaUrl, false);
+//            CustomToast.showToast(this, Utils.getString(R.string.error_600), CustomToast.ERROR);
         });
     }
 

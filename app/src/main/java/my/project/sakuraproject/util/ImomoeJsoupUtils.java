@@ -96,9 +96,13 @@ public class ImomoeJsoupUtils {
             return homeBeanList;
         recommendLi.select("div.swiper-slide-votitle > span").remove();
         homeBean = new HomeBean();
-//        homeBean.setTitle("动漫推荐");
-//        homeBean.setMoreUrl("");
-        homeBean.setDataType(HomeAdapter.TYPE_LEVEL_1);
+        if (Utils.isPad()) {
+            // 平板不显示banner轮播
+            homeBean.setTitle("动漫推荐");
+            homeBean.setMoreUrl("");
+            homeBean.setDataType(HomeAdapter.TYPE_LEVEL_2);
+        } else
+            homeBean.setDataType(HomeAdapter.TYPE_LEVEL_1);
         List<HomeBean.HomeItemBean> recommendItemBeanList = new ArrayList<>();
         for (Element recommend : recommendLi) {
             HomeBean.HomeItemBean homeItemBean = new HomeBean.HomeItemBean();

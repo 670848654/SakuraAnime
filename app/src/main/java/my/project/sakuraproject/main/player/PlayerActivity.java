@@ -72,13 +72,15 @@ public class PlayerActivity extends BasePlayerActivity implements VideoContract.
         */
         if (webUrl.contains("jx.618g.com")) {
             cancelDialog();
-            VideoUtils.openDefaultWebview(this, webUrl);
+//            VideoUtils.openDefaultWebview(this, webUrl);
+            Utils.viewInChrome(this, webUrl);
         } else if (webUrl.contains("html")) {
             VideoUtils.showParseAlert(this, (dialog, index) -> {
                 dialog.dismiss();
                 url = String.format(Api.PARSE_INTERFACE[index], url);
                 if (index == Api.PARSE_INTERFACE.length -1) {
-                    VideoUtils.openDefaultWebview(this, url);
+//                    VideoUtils.openDefaultWebview(this, url);
+                    Utils.viewInChrome(this, webUrl);
                     this.finish();
                 } else {
                     SniffingUtil.get().activity(this).referer(url).callback(this).url(url).start();
@@ -148,7 +150,7 @@ public class PlayerActivity extends BasePlayerActivity implements VideoContract.
         runOnUiThread(() -> {
             player.onStateError();
             hideNavBar();
-            VideoUtils.showErrorInfo(this, dramaUrl);
+            VideoUtils.showErrorInfo(this, dramaUrl, true);
         });
     }
 
@@ -159,7 +161,8 @@ public class PlayerActivity extends BasePlayerActivity implements VideoContract.
             player.onStateError();
             hideNavBar();
 //            application.showErrorToastMsg(Utils.getString(R.string.error_700));
-            VideoUtils.showPlayerNetworkErrorDialog(this, (dialog, index) -> videoPresenter.loadData(true));
+//            VideoUtils.showPlayerNetworkErrorDialog(this, (dialog, index) -> videoPresenter.loadData(true));
+            VideoUtils.showErrorInfo(this, dramaUrl, true);
         });
     }
 
@@ -233,7 +236,8 @@ public class PlayerActivity extends BasePlayerActivity implements VideoContract.
     private void GetRealPlayingAddressError(String url) {
 //        Sakura.getInstance().showToastMsg(Utils.getString(R.string.open_web_view));
         CustomToast.showToast(this, Utils.getString(R.string.open_web_view), CustomToast.WARNING);
-        VideoUtils.openDefaultWebview(this, url);
+//        VideoUtils.openDefaultWebview(this, url);
+        Utils.viewInChrome(this, url);
         finish();
     }
 
@@ -296,7 +300,8 @@ public class PlayerActivity extends BasePlayerActivity implements VideoContract.
         */
         if (webUrl.contains("jx.618g.com")) {
             cancelDialog();
-            VideoUtils.openDefaultWebview(this, webUrl);
+//            VideoUtils.openDefaultWebview(this, webUrl);
+            Utils.viewInChrome(this, webUrl);
         } else {
             url = String.format(Api.PARSE_API, url);
             SniffingUtil.get().activity(this).referer(url).callback(this).url(url).start();

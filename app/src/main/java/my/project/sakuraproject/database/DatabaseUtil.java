@@ -1042,7 +1042,7 @@ public class DatabaseUtil {
         if (cursor.getCount() > 0) {
             objects.add(cursor.getString(0));
             objects.add(cursor.getInt(1));
-            Log.e("????" , "taskId：" +taskId + ",番剧名称：" +cursor.getString(0) + cursor.getInt(1));
+//            Log.e("????" , "taskId：" +taskId + ",番剧名称：" +cursor.getString(0) + cursor.getInt(1));
         }
         cursor.close();
         return objects;

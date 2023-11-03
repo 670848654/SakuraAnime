@@ -87,7 +87,13 @@ public class YhdmJsoupUtils {
         Elements bannerEle = document.select("div.hero-wrap > ul.heros > li");
         List<HomeBean.HomeItemBean> bannerItems = new ArrayList<>();
         HomeBean bannerBean = new HomeBean();
-        bannerBean.setDataType(HomeAdapter.TYPE_LEVEL_1);
+        if (Utils.isPad()) {
+            // 平板不显示banner轮播
+            bannerBean.setTitle("动漫推荐");
+            bannerBean.setMoreUrl("");
+            bannerBean.setDataType(HomeAdapter.TYPE_LEVEL_2);
+        } else
+            bannerBean.setDataType(HomeAdapter.TYPE_LEVEL_1);
         for (Element element : bannerEle) {
             HomeBean.HomeItemBean itemBean = new HomeBean.HomeItemBean();
             itemBean.setTitle(element.select("a").attr("title"));

@@ -2,6 +2,7 @@ package my.project.sakuraproject.adapter;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.List;
 
@@ -15,7 +16,10 @@ public class LogAdapter extends BaseQuickAdapter<LogBean, BaseViewHolder> {
 
     @Override
     protected void convert(BaseViewHolder helper, LogBean item) {
-        helper.setText(R.id.title, item.getTitle());
-        helper.setText(R.id.desc, item.getDesc());
+        TextInputLayout textInputLayout = helper.getView(R.id.title_view);
+        textInputLayout.setHint(item.getTitle());
+        textInputLayout.getEditText().setText(item.getDesc());
+        /*helper.setText(R.id.title, item.getTitle());
+        helper.setText(R.id.desc, item.getDesc());*/
     }
 }

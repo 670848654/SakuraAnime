@@ -31,7 +31,6 @@ public class HomeAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity, Base
     private Context context;
     private RecyclerView recyclerView;
     private Banner banner;
-    private HomeHeaderAdapter homeHeaderAdapter;
     private HomeItemAdapter homeItemAdapter;
     private OnItemClick onItemClick;
 

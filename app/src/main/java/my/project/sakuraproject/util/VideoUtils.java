@@ -44,8 +44,9 @@ public class VideoUtils {
      *
      * @param activity
      * @param HTML_url
+     * @param finish
      */
-    public static void showErrorInfo(Activity activity, String HTML_url) {
+    public static void showErrorInfo(Activity activity, String HTML_url, boolean finish) {
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(activity, R.style.DialogStyle);
         builder.setPositiveButton(Utils.getString(R.string.play_not_found_positive), null);
         builder.setNegativeButton(Utils.getString(R.string.play_not_found_negative), null);
@@ -61,7 +62,8 @@ public class VideoUtils {
         });
         alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(v -> {
             alertDialog.dismiss();
-            activity.finish();
+            if (finish)
+                activity.finish();
         });
     }
 
@@ -123,7 +125,7 @@ public class VideoUtils {
     public static void showPlayerNetworkErrorDialog(Context context, DialogInterface.OnClickListener listener) {
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context, R.style.DialogStyle);
         builder.setCancelable(false);
-        builder.setMessage(Utils.getString(R.string.error_700));
+        builder.setMessage(Utils.getString(R.string.error_600));
         builder.setNegativeButton(Utils.getString(R.string.try_again), listener);
         alertDialog = builder.create();
         alertDialog.show();
@@ -220,6 +222,7 @@ public class VideoUtils {
      * @param activity
      * @param url
      */
+    @Deprecated
     public static void openDefaultWebview(Activity activity, String url) {
         /*if (Utils.loadX5())
             activity.startActivity(new Intent(activity, DefaultX5WebActivity.class).putExtra("url",url));
@@ -230,8 +233,6 @@ public class VideoUtils {
     public static String getUrl(String url) {
         return url.contains(Sakura.DOMAIN) ? url : Sakura.DOMAIN + url;
     }
-
-
 
     /**
      * 读取key内容

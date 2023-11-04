@@ -38,7 +38,7 @@
         <item name="materialAlertDialogTheme">@style/DialogStyle</item>
         <item name="switchStyle">@style/Widget.App.Switch</item>
         <item name="popupMenuBackground">@drawable/custom_popup_background</item>
-        <item name="colorControlHighlight">@color/ripple_color</item>
+<!--        <item name="colorControlHighlight">@color/ripple_color</item>-->
     </style>
 
     <!-- Snackbar Style -->

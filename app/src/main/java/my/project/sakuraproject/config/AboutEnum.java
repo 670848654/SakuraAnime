@@ -6,6 +6,7 @@ import java.util.List;
 import my.project.sakuraproject.bean.LogBean;
 
 public enum AboutEnum {
+    VERSION_2_6_3("版本：2.6.3", "修复某些设备可能出现闪退的问题"),
     VERSION_2_6_2("版本：2.6.2", "修复S站部分番剧获取播放地址失败导致闪退的问题"),
     VERSION_2_6_1("版本：2.6.1", "修复SiliSili源获取播放地址失败的问题[且行且珍惜]"),
     VERSION_2_6_0("版本：2.6.0", "修复YHDM源部分动漫进入详情时闪退的问题"),

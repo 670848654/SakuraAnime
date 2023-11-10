@@ -6,6 +6,7 @@
     android:layout_gravity="center"
     android:layout_marginTop="4dp"
     style="?attr/materialCardViewElevatedStyle"
+    app:cardCornerRadius="2dp"
     app:rippleColor="@color/ripple_color"
     app:cardBackgroundColor="@color/window_bg">
 

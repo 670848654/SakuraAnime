@@ -3,6 +3,7 @@ package my.project.sakuraproject.main.start;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Path;
 import android.os.Handler;
@@ -130,20 +131,20 @@ public class StartActivity extends BaseActivity {
                     else {
                         downUrl = obj.getJSONArray("assets").getJSONObject(0).getString("browser_download_url");
                         String body = obj.getString("body");
-                        runOnUiThread(() -> Utils.findNewVersion(StartActivity.this,
-                                newVersion,
+                        runOnUiThread(() ->
+                        Utils.showAlert(StartActivity.this,
+                                getString(R.string.find_new_version) + newVersion,
                                 body,
-                                (dialog, which) -> {
-                                    dialog.dismiss();
-                                    Utils.putTextIntoClip(downUrl);
-//                                    application.showSuccessToastMsg(Utils.getString(R.string.url_copied));
-                                    CustomToast.showToast(StartActivity.this, Utils.getString(R.string.url_copied), CustomToast.SUCCESS);
-                                    Utils.viewInChrome(StartActivity.this, downUrl);
+                                false,
+                                getString(R.string.update_now),
+                                getString(R.string.update_after),
+                                null,
+                                (DialogInterface.OnClickListener) (dialogInterface, i) -> {
+                                    dialogInterface.dismiss();
+                                    viewInBrowser();
                                 },
-                                (dialog, which) -> {
-                                    dialog.dismiss();
-                                    openMain();
-                                })
+                                null,
+                                null)
                         );
                     }
                 } catch (JSONException e) {
@@ -154,6 +155,12 @@ public class StartActivity extends BaseActivity {
                 }
             }
         });
+    }
+
+    private void viewInBrowser() {
+        Utils.putTextIntoClip(downUrl);
+        CustomToast.showToast(this, Utils.getString(R.string.url_copied), CustomToast.SUCCESS);
+        Utils.viewInChrome(this, downUrl);
     }
 
     private void openMain() {

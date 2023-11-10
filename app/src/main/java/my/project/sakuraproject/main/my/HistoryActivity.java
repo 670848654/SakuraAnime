@@ -210,14 +210,16 @@ public class HistoryActivity extends BaseActivity<HistoryContract.View, HistoryP
      * @param isAll
      */
     private void showDeleteHistoryDialog(int position, String historyId, boolean isAll) {
-        AlertDialog alertDialog;
-        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this, R.style.DialogStyle);
-        builder.setTitle(Utils.getString(R.string.other_operation));
-        builder.setMessage(isAll ? Utils.getString(R.string.delete_all_history) : Utils.getString(R.string.delete_single_history));
-        builder.setPositiveButton(getString(R.string.page_positive), (dialog, which) -> deleteHistory(position, historyId, isAll));
-        builder.setNegativeButton(getString(R.string.page_negative), (dialog, which) -> dialog.dismiss());
-        alertDialog = builder.create();
-        alertDialog.show();
+        Utils.showAlert(this,
+                Utils.getString(R.string.other_operation),
+                isAll ? Utils.getString(R.string.delete_all_history) : Utils.getString(R.string.delete_single_history),
+                true,
+                getString(R.string.page_positive),
+                getString(R.string.page_negative),
+                null,
+                (dialogInterface, i) -> deleteHistory(position, historyId, isAll),
+                (dialogInterface, i) -> dialogInterface.dismiss(),
+                null);
     }
 
     /**

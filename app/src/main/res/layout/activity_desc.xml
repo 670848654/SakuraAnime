@@ -74,6 +74,7 @@
                             android:layout_width="0dp"
                             android:layout_height="0dp"
                             app:cardBackgroundColor="@android:color/transparent"
+                            app:cardCornerRadius="2dp"
                             app:layout_constraintDimensionRatio="W,1:1.4"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"

@@ -10,6 +10,7 @@
     android:layout_marginLeft="8dp"
     android:layout_marginRight="8dp"
     style="?attr/materialCardViewElevatedStyle"
+    app:cardCornerRadius="2dp"
     app:rippleColor="@color/ripple_color"
     app:cardBackgroundColor="@color/window_bg">
 

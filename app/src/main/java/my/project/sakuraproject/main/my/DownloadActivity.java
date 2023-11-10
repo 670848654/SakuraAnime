@@ -92,7 +92,6 @@ public class DownloadActivity extends BaseActivity<DownloadContract.View, Downlo
         }
         /*if (!Utils.isServiceRunning(Sakura.getInstance(), "my.project.sakuraproject.services.DownloadService"))
             new Handler().postDelayed(() -> checkNotCompleteDownloadTask(), 200);*/
-        startService(new Intent(this, DownloadService.class));
         List<DownloadEntity> downloadEntities = Aria.download(this).getDRunningTask();
         if (downloadEntities == null || downloadEntities.size() == 0) {
             checkNotCompleteDownloadTask();
@@ -102,29 +101,28 @@ public class DownloadActivity extends BaseActivity<DownloadContract.View, Downlo
     private void checkNotCompleteDownloadTask() {
         List<DownloadEntity> list = Aria.download(this).getAllNotCompleteTask();
         if (list != null && list.size() > 0) {
-            AlertDialog alertDialog;
-            MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this, R.style.DialogStyle);
-            builder.setTitle("下载任务操作");
-            builder.setMessage(String.format("你有%s个未完成的下载任务，是否继续下载？", list.size()+""));
-            builder.setPositiveButton(Utils.getString(R.string.download_positive), (dialog, which) -> {
-                setM3U8VodOption();
-                for (DownloadEntity entity : list) {
-                    if (entity.getUrl().contains("m3u8")) {
-                        Log.e("恢复下载M3U8", "....");
-                        Aria.download(this).load(entity.getId()).ignoreCheckPermissions().m3u8VodOption(m3U8VodOption).resume();
-                    } else {
-                        Aria.download(this).load(entity.getId()).ignoreCheckPermissions().resume();
-                        Log.e("恢复下载MP4", "....");
-                    }
-                }
-            });
-            builder.setNegativeButton(Utils.getString(R.string.download_negative), (dialog, which) -> dialog.dismiss());
-            /*builder.setNeutralButton(Utils.getString(R.string.download_neutral), (dialog, which) -> {
-                Aria.download(this).removeAllTask(false);
-            });*/
-            builder.setCancelable(false);
-            alertDialog = builder.create();
-            alertDialog.show();
+            Utils.showAlert(this,
+                    "下载任务操作",
+                    String.format("你有%s个未完成的下载任务，是否继续下载？", list.size()+""),
+                    false,
+                    Utils.getString(R.string.download_positive),
+                    Utils.getString(R.string.download_negative),
+                    null,
+                    (dialogInterface, i) -> {
+                        startService(new Intent(this, DownloadService.class));
+                        setM3U8VodOption();
+                        for (DownloadEntity entity : list) {
+                            if (entity.getUrl().contains("m3u8")) {
+                                Log.e("恢复下载M3U8", "....");
+                                Aria.download(this).load(entity.getId()).ignoreCheckPermissions().m3u8VodOption(m3U8VodOption).resume();
+                            } else {
+                                Aria.download(this).load(entity.getId()).ignoreCheckPermissions().resume();
+                                Log.e("恢复下载MP4", "....");
+                            }
+                        }
+                    },
+                    (dialogInterface, i) -> dialogInterface.dismiss(),
+                    null);
         }
     }
 

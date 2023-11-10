@@ -43,7 +43,7 @@ dependencies {
     implementation 'androidx.navigation:navigation-fragment:2.3.0'
     implementation 'androidx.navigation:navigation-ui:2.3.0'
     implementation files('src/libs/nanohttpd-2.3.1.jar')
-//    implementation files('src/libs/servlet-api.jar')
+    implementation files('src/libs/servlet-api.jar')
     implementation files('src/libs/bcprov-jdk14-138.jar')
     implementation 'com.google.firebase:firebase-crashlytics-buildtools:2.9.9'
     implementation 'androidx.appcompat:appcompat:1.2.0'

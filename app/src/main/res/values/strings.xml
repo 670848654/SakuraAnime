@@ -173,7 +173,7 @@
     <!-- 下载相关 -->
     <string name="empty_download">没有下载记录呢(－∀＝)</string>
     <string name="download_anime_desc">转到番剧详情页</string>
-    <string name="create_download_task">创建下载任务中，请稍后&#8230;</string>
+    <string name="create_download_task">解析视频地址中，请稍后&#8230;</string>
     <string name="create_parse_download_task">解析视频真实地址中，请稍后&#8230;</string>
     <string name="download_m3u8_error">该</string>
     <string name="select_download_number">选择需要下载的剧集</string>
@@ -210,8 +210,10 @@
     <string name="click_to_sniffer">尝试网页嗅探解析</string>
     <string name="open_drama_list">打开选集列表</string>
     <string name="authorize_msg">点击前往授权</string>
-    <string name="authorize_title_msg">缺少必要权限</string>
-    <string name="file_manger_msg">Android 11 以上需要授予所有文件的管理权限。\n注：仅用于保存追番列表、历史记录、视频下载信息。</string>
+    <string name="accept_msg">同意</string>
+    <string name="refuse_msg">拒绝</string>
+    <string name="authorize_title_msg">特殊权限说明</string>
+    <string name="file_manger_msg">Android 11 及以上需要授予所有文件的管理权限。\n注：仅用于保存追番列表、历史记录、视频下载信息。\n如果你不需要下载功能，可以拒绝授权。</string>
 
     <string name="device_title">设备列表</string>
     <string name="notice">请选择连接设备，连接设备后才可播放</string>
@@ -233,6 +235,13 @@
         <item>15s</item>
         <item>30s</item>
     </string-array>
+
+    <integer-array name="speed_set_item">
+        <item>5</item>
+        <item>10</item>
+        <item>15</item>
+        <item>30</item>
+    </integer-array>
 
     <string-array name="week_array">
         <item>周一</item>

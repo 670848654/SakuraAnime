@@ -1,5 +1,6 @@
 package my.project.sakuraproject.main.home;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -155,7 +156,15 @@ public class HomeActivity extends BaseActivity<HomeContract.View, HomePresenter>
 
     public void initDialog() {
         if (Boolean.parseBoolean(SharedPreferencesUtils.getParam(Sakura.getInstance(), "show_x5_info", true).toString()))
-            Utils.showX5Info(this);
+            Utils.showAlert(this,
+                    getString(R.string.x5_info_title),
+                    getString(R.string.x5_info),
+                    false,
+                    getString(R.string.x5_info_positive),
+                    null, null, (dialogInterface, i) ->{
+                        SharedPreferencesUtils.setParam(this, "show_x5_info", false);
+                        dialogInterface.dismiss();
+                    } , null, null);
     }
 
     public void initSwipe() {

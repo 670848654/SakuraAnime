@@ -52,6 +52,7 @@ import com.bumptech.glide.request.transition.Transition;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import org.greenrobot.eventbus.EventBus;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.text.DecimalFormat;
@@ -108,7 +109,22 @@ public class Utils {
         throw new NullPointerException("u should init first");
     }
 
+    public static String getPrivateDbPath() {
+        return context.getFilesDir().getPath()+"/sakura.db";
+    }
+
+    /**
+     * 用户是否有读写权限
+     * @return
+     */
+    public static boolean hasFilePermission() {
+        int userSet = (int) SharedPreferencesUtils.getParam(context, "set_file_manager_permission", 0);
+        return userSet == 2;
+    }
+
     public static void createFile() {
+        if (!hasFilePermission())
+            return;
         File dataDir = new File(Environment.getExternalStorageDirectory() + "/SakuraAnime/Database");
         if (!dataDir.exists())
             dataDir.mkdirs();
@@ -179,6 +195,23 @@ public class Utils {
     }
 
     /**
+     * 选择视频播放器
+     *
+     * @param url
+     */
+    public static void openOtherSoftware(Context context, String url) {
+        final Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_VIEW);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setDataAndType(Uri.parse(url), "*/*");
+        try {
+            context.startActivity(Intent.createChooser(intent, "请选择相关软件进行操作"));
+        } catch (ActivityNotFoundException e) {
+            CustomToast.showToast(getContext(), "没有找到匹配的程序", CustomToast.WARNING);
+        }
+    }
+
+    /**
      * 通过浏览器打开
      *
      * @param url
@@ -228,6 +261,10 @@ public class Utils {
         return getContext().getResources().getStringArray(id);
     }
 
+    public static int[] getIntArray(@ArrayRes int id) {
+        return getContext().getResources().getIntArray(id);
+    }
+
     /**
      * 获取当前日期是星期几
      *
@@ -242,24 +279,6 @@ public class Utils {
         if (w < 0)
             w = 0;
         return weekDays[w];
-    }
-
-    /**
-     * 首次进入主页弹窗
-     */
-    public static void showX5Info(Context context) {
-        AlertDialog alertDialog;
-        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context, R.style.DialogStyle);
-        builder.setPositiveButton(getString(R.string.x5_info_positive), null);
-        builder.setMessage(getString(R.string.x5_info));
-        builder.setTitle(getString(R.string.x5_info_title));
-        builder.setCancelable(false);
-        alertDialog = builder.create();
-        alertDialog.show();
-        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
-            SharedPreferencesUtils.setParam(getContext(), "show_x5_info", false);
-            alertDialog.dismiss();
-        });
     }
 
     public static void hideKeyboard(View view) {
@@ -631,32 +650,6 @@ public class Utils {
     }
 
     /**
-     * 发现新版本弹窗
-     * @param context
-     * @param version
-     * @param body
-     * @param posListener
-     * @param negListener
-     */
-    public static void findNewVersion(Context context,
-                                      String version,
-                                      String body,
-                                      DialogInterface.OnClickListener posListener,
-                                      DialogInterface.OnClickListener negListener) {
-        AlertDialog alertDialog;
-        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context, R.style.DialogStyle);
-        builder.setMessage(body);
-        builder.setTitle(getString(R.string.find_new_version) + version);
-        builder.setPositiveButton(getString(R.string.update_now), posListener);
-        builder.setNegativeButton(getString(R.string.update_after), negListener);
-        builder.setCancelable(false);
-        alertDialog = builder.create();
-        alertDialog.show();
-    }
-
-    private static final String NAVIGATION= "navigationBarBackground";
-
-    /**
      * 判断是否有NavigationBar
      *
      * @param activity
@@ -979,5 +972,59 @@ public class Utils {
             result = context.getResources().getDimension(resourceId);
         }
         return (int) result;
+    }
+
+    /**
+     * 统一处理弹出窗
+     * @param context
+     * @param title
+     * @param msg
+     * @param cancelable
+     * @param positiveButtonTitle
+     * @param negativeButtonTitle
+     * @param neutralButtonTitle
+     * @param positiveButtonListener
+     * @param negativeButtonListener
+     * @param neutralButtonListener
+     */
+    public static void showAlert(@NotNull Context context,
+                                 @NotNull String title, @NotNull String msg, boolean cancelable,
+                                 String positiveButtonTitle,
+                                 String negativeButtonTitle,
+                                 String neutralButtonTitle,
+                                 DialogInterface.OnClickListener positiveButtonListener,
+                                 DialogInterface.OnClickListener negativeButtonListener,
+                                 DialogInterface.OnClickListener neutralButtonListener) {
+        AlertDialog alertDialog;
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context, R.style.DialogStyle);
+        if (positiveButtonTitle != null && !positiveButtonTitle.isEmpty())
+            builder.setPositiveButton(positiveButtonTitle, positiveButtonListener);
+        if (negativeButtonTitle != null && !negativeButtonTitle.isEmpty())
+            builder.setNegativeButton(negativeButtonTitle, negativeButtonListener);
+        if (neutralButtonTitle != null && !neutralButtonTitle.isEmpty())
+            builder.setNeutralButton(neutralButtonTitle, neutralButtonListener);
+        builder.setCancelable(cancelable);
+        builder.setMessage(msg);
+        builder.setTitle(title);
+        alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    /**
+     * 单选弹出窗统一处理
+     * @param context
+     * @param title
+     * @param items
+     * @param cancelable
+     * @param defaultChoice
+     * @param listener
+     */
+    public static void showSingleChoiceAlert(@NotNull Context context, @NotNull String title, @NotNull String[] items, boolean cancelable, int defaultChoice, @Nullable DialogInterface.OnClickListener listener) {
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context, R.style.DialogStyle);
+        builder.setTitle(title);
+        builder.setSingleChoiceItems(items, defaultChoice, listener);
+        builder.setCancelable(cancelable);
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
     }
 }

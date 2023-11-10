@@ -1,6 +1,7 @@
 package my.project.sakuraproject.main.base;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
@@ -9,6 +10,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
@@ -30,6 +32,7 @@ import butterknife.Unbinder;
 import my.project.sakuraproject.R;
 import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.database.DatabaseUtil;
+import my.project.sakuraproject.util.SharedPreferencesUtils;
 import my.project.sakuraproject.util.StatusBarUtil;
 import my.project.sakuraproject.util.Utils;
 
@@ -95,6 +98,39 @@ public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatA
             application = (Sakura) getApplication();
         }
         application.addActivity(this);
+        if (gtSdk30()) {
+            // 安卓11及以上
+            if (Environment.isExternalStorageManager()) // 如果授予了所有文件授权
+                SharedPreferencesUtils.setParam(this, "set_file_manager_permission", 2);
+            int userSetPermission = (int) SharedPreferencesUtils.getParam(this, "set_file_manager_permission", 0);
+            if (userSetPermission == 0 && !Environment.isExternalStorageManager())
+            {
+                Utils.showAlert(this,
+                        getString(R.string.authorize_title_msg),
+                        getString(R.string.file_manger_msg),
+                        false,
+                        getString(R.string.accept_msg),
+                        Utils.getString(R.string.refuse_msg),
+                        null,
+                        (dialogInterface, i) -> {
+                            dialogInterface.dismiss();
+                            checkPermissions();
+                        },
+                        (dialogInterface, i) -> {
+                            SharedPreferencesUtils.setParam(this, "set_file_manager_permission", 1);
+                            dialogInterface.dismiss();
+                            build();
+                        },
+                        null);
+            } else if (userSetPermission == 2)
+                checkPermissions();
+            else
+                build();
+        } else // 其他版本获取权限
+            checkPermissions();
+    }
+
+    private void checkPermissions() {
         List<String> permissions = new ArrayList<>();
         if (gtSdk33()) {
             permissions.add(Manifest.permission.READ_MEDIA_IMAGES);
@@ -227,12 +263,23 @@ public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatA
 
     private void isManager() {
         if (gtSdk30()) {
-            if (Environment.isExternalStorageManager())
+            if (Environment.isExternalStorageManager()) {
+                SharedPreferencesUtils.setParam(this, "set_file_manager_permission", 2);
                 build();
-            else
-                getManager();
-        } else
+            } else {
+                /*int userSetPermission = (int) SharedPreferencesUtils.getParam(this, "set_file_manager_permission", 0);
+                if (userSetPermission == 0)
+                    getManager();
+                else
+                    build();*/
+                Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+                intent.setData(Uri.parse("package:" + getPackageName()));
+                startActivityForResult(intent, 0x99);
+            }
+        } else {
+            SharedPreferencesUtils.setParam(this, "set_file_manager_permission", 2);
             build();
+        }
     }
 
     private void build() {
@@ -254,20 +301,25 @@ public abstract class BaseActivity<V, P extends Presenter<V>> extends AppCompatA
     }
 
     private void getManager() {
-        AlertDialog alertDialog;
-        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this, R.style.DialogStyle);
-        builder.setPositiveButton(Utils.getString(R.string.authorize_msg), null);
-        builder.setTitle(Utils.getString(R.string.authorize_title_msg));
-        builder.setMessage(Utils.getString(R.string.file_manger_msg));
-        builder.setCancelable(false);
-        alertDialog = builder.create();
-        alertDialog.show();
-        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
-            alertDialog.dismiss();
-            Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
-            intent.setData(Uri.parse("package:" + getPackageName()));
-            startActivityForResult(intent, 0x99);
-        });
+        Utils.showAlert(this,
+                getString(R.string.authorize_title_msg),
+                getString(R.string.file_manger_msg),
+                false,
+                getString(R.string.authorize_msg),
+                Utils.getString(R.string.refuse_msg),
+                null,
+                (dialogInterface, i) -> {
+                    dialogInterface.dismiss();
+                    Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+                    intent.setData(Uri.parse("package:" + getPackageName()));
+                    startActivityForResult(intent, 0x99);
+                },
+                (dialogInterface, i) -> {
+                    SharedPreferencesUtils.setParam(this, "set_file_manager_permission", 1);
+                    dialogInterface.dismiss();
+                    build();
+                },
+                null);
     }
 
     @Override

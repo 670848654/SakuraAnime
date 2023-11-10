@@ -1,6 +1,7 @@
 package my.project.sakuraproject.main.player;
 
 import android.app.PictureInPictureParams;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
@@ -100,7 +101,8 @@ public abstract class BasePlayerActivity extends BaseActivity implements JZPlaye
     protected String webUrl;
     @BindView(R.id.speed)
     TextView speedTextView;
-    protected String[] speeds = Utils.getArray(R.array.speed_item);
+    protected String[] speedsStrItems = Utils.getArray(R.array.speed_item);
+    protected int[] speedsIntItems = Utils.getIntArray(R.array.speed_set_item);
     protected int userSpeed = 2;
     protected int clickIndex; // 当前点击剧集
     protected boolean hasPreVideo = false;
@@ -259,16 +261,16 @@ public abstract class BasePlayerActivity extends BaseActivity implements JZPlaye
     private void initUserConfig() {
         switch ((Integer) SharedPreferencesUtils.getParam(this, "user_speed", 15)) {
             case 5:
-                setUserSpeedConfig(speeds[0], 0);
+                setUserSpeedConfig(0);
                 break;
             case 10:
-                setUserSpeedConfig(speeds[1], 1);
+                setUserSpeedConfig(1);
                 break;
             case 15:
-                setUserSpeedConfig(speeds[2], 2);
+                setUserSpeedConfig(2);
                 break;
             case 30:
-                setUserSpeedConfig(speeds[3], 3);
+                setUserSpeedConfig(3);
                 break;
         }
         hideProgressSc.setChecked((Boolean) SharedPreferencesUtils.getParam(this, "hide_progress", false));
@@ -283,9 +285,10 @@ public abstract class BasePlayerActivity extends BaseActivity implements JZPlaye
         });
     }
 
-    private void setUserSpeedConfig(String text, int speed) {
-        speedTextView.setText(text);
-        userSpeed = speed;
+    private void setUserSpeedConfig(int userSet) {
+        SharedPreferencesUtils.setParam(getApplicationContext(), "user_speed", speedsIntItems[userSet]);
+        speedTextView.setText(speedsStrItems[userSet]);
+        userSpeed = userSet;
     }
 
 //    @OnClick({R.id.speed_config, R.id.pic_config, R.id.player_config, R.id.browser_config})
@@ -308,31 +311,16 @@ public abstract class BasePlayerActivity extends BaseActivity implements JZPlaye
     }
 
     private void setDefaultSpeed() {
-        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
-        builder.setTitle(Utils.getString(R.string.set_user_speed));
-        builder.setSingleChoiceItems(speeds, userSpeed, (dialog, which) -> {
-            switch (which) {
-                case 0:
-                    SharedPreferencesUtils.setParam(getApplicationContext(), "user_speed", 5);
-                    setUserSpeedConfig(speeds[0], which);
-                    break;
-                case 1:
-                    SharedPreferencesUtils.setParam(getApplicationContext(), "user_speed", 10);
-                    setUserSpeedConfig(speeds[1], which);
-                    break;
-                case 2:
-                    SharedPreferencesUtils.setParam(getApplicationContext(), "user_speed", 15);
-                    setUserSpeedConfig(speeds[2], which);
-                    break;
-                case 3:
-                    SharedPreferencesUtils.setParam(getApplicationContext(), "user_speed", 30);
-                    setUserSpeedConfig(speeds[3], which);
-                    break;
-            }
-            dialog.dismiss();
-        });
-        AlertDialog alertDialog = builder.create();
-        alertDialog.show();
+        Utils.showSingleChoiceAlert(this,
+                Utils.getString(R.string.set_user_speed),
+                speedsStrItems,
+                true,
+                userSpeed,
+                (dialogInterface, i) -> {
+                    setUserSpeedConfig(i);
+                    dialogInterface.dismiss();
+                }
+        );
     }
 
     protected void changePlayUrl(int position) {

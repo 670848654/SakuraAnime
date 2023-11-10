@@ -69,7 +69,7 @@ public class MainActivity extends BaseActivity {
         initToolbar();
         initDialog();
         initNavBar();
-        startService(new Intent(this, DownloadService.class));
+//        startService(new Intent(this, DownloadService.class));
     }
 
     private void initToolbar() {
@@ -79,7 +79,15 @@ public class MainActivity extends BaseActivity {
 
     public void initDialog() {
         if (Boolean.parseBoolean(SharedPreferencesUtils.getParam(Sakura.getInstance(), "show_x5_info", true).toString()))
-            Utils.showX5Info(this);
+            Utils.showAlert(this,
+                    getString(R.string.x5_info_title),
+                    getString(R.string.x5_info),
+                    false,
+                    getString(R.string.x5_info_positive),
+                    null, null, (dialogInterface, i) ->{
+                        SharedPreferencesUtils.setParam(this, "show_x5_info", false);
+                        dialogInterface.dismiss();
+                    } , null, null);
     }
 
     private void initNavBar() {

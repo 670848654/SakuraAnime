@@ -104,7 +104,15 @@ public class WeekActivity extends BaseActivity<HomeContract.View, HomePresenter>
         tab.getTabAt(week).select();
         tab.setSelectedTabIndicatorColor(getResources().getColor(R.color.pinka200));
         if (Boolean.parseBoolean(SharedPreferencesUtils.getParam(Sakura.getInstance(), "show_x5_info", true).toString()))
-            Utils.showX5Info(this);
+            Utils.showAlert(this,
+                    getString(R.string.x5_info_title),
+                    getString(R.string.x5_info),
+                    false,
+                    getString(R.string.x5_info_positive),
+                    null, null, (dialogInterface, i) ->{
+                        SharedPreferencesUtils.setParam(this, "show_x5_info", false);
+                        dialogInterface.dismiss();
+                    } , null, null);
     }
 
     @Override

@@ -1,52 +1,43 @@
 package my.project.sakuraproject.main.setting;
 
-import static my.project.sakuraproject.config.SettingEnum.*;
+import static my.project.sakuraproject.config.SettingEnum.CHECK_AMINE_UPDATE;
+import static my.project.sakuraproject.config.SettingEnum.CHECK_APP_UPDATE;
+import static my.project.sakuraproject.config.SettingEnum.VIDEO_PLAYER;
+import static my.project.sakuraproject.config.SettingEnum.VIDEO_PLAYER_DANMU;
+import static my.project.sakuraproject.config.SettingEnum.VIDEO_PLAYER_KERNEL;
 
-import android.content.Intent;
-import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.Toolbar;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import com.arialyy.aria.core.Aria;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputLayout;
 
 import org.greenrobot.eventbus.EventBus;
-import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.io.IOException;
-
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.Toolbar;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import butterknife.BindView;
 import butterknife.OnClick;
 import my.project.sakuraproject.R;
-import my.project.sakuraproject.api.Api;
 import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.bean.Refresh;
-import my.project.sakuraproject.config.SettingEnum;
 import my.project.sakuraproject.custom.CustomToast;
 import my.project.sakuraproject.database.DatabaseUtil;
-import my.project.sakuraproject.main.about.AboutActivity;
 import my.project.sakuraproject.main.base.BaseActivity;
 import my.project.sakuraproject.main.base.Presenter;
-import my.project.sakuraproject.net.HttpGet;
 import my.project.sakuraproject.util.SharedPreferencesUtils;
 import my.project.sakuraproject.util.Utils;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.Response;
 
 public class SettingActivity extends BaseActivity {
     @BindView(R.id.toolbar)
@@ -64,9 +55,6 @@ public class SettingActivity extends BaseActivity {
     @BindView(R.id.download_number)
     TextView downloadNumberTV;
     private String[] downloadNumbers = Utils.getArray(R.array.download_numbers);
-    private AlertDialog alertDialog;
-    private String downloadUrl;
-    private Call downCall;
     @BindView(R.id.show)
     CoordinatorLayout show;
     @BindView(R.id.danmu_select)
@@ -75,6 +63,8 @@ public class SettingActivity extends BaseActivity {
     TextView kernelDefaultTV;
     @BindView(R.id.check_update_default)
     TextView checkUpdateDefaultTV;
+    @BindView(R.id.remove_downloads)
+    RelativeLayout removeDownloadsView;
 
     @Override
     protected Presenter createPresenter() {
@@ -117,6 +107,7 @@ public class SettingActivity extends BaseActivity {
     }
 
     public void initViews() {
+        removeDownloadsView.setVisibility(Utils.hasFilePermission() ? View.VISIBLE : View.GONE);
         LinearLayout.LayoutParams Params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Utils.getNavigationBarHeight(this));
         footer.findViewById(R.id.footer).setLayoutParams(Params);
         LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) show.getLayoutParams();
@@ -168,6 +159,9 @@ public class SettingActivity extends BaseActivity {
         }
     }
 
+    /**
+     * 域名设置
+     */
     public void setDomain() {
         AlertDialog alertDialog;
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this, R.style.DialogStyle);
@@ -244,94 +238,123 @@ public class SettingActivity extends BaseActivity {
         });
     }
 
+    /**
+     * 选择视频播放器
+     */
     public void setDefaultPlayer() {
-        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this, R.style.DialogStyle);
-        builder.setTitle(VIDEO_PLAYER.getDialogTitle());
-        builder.setSingleChoiceItems(VIDEO_PLAYER.getItems(), (Integer) SharedPreferencesUtils.getParam(getApplicationContext(), "player", 0), (dialog, which) -> {
-            playerDefaultTV.setText(VIDEO_PLAYER.getItems()[which]);
-            SharedPreferencesUtils.setParam(getApplicationContext(), "player", which);
-            dialog.dismiss();
-        });
-        AlertDialog alertDialog = builder.create();
-        alertDialog.show();
+        Utils.showSingleChoiceAlert(this,
+                VIDEO_PLAYER.getDialogTitle(),
+                VIDEO_PLAYER.getItems(),
+                true,
+                (Integer) SharedPreferencesUtils.getParam(getApplicationContext(), "player", 0),
+                (dialogInterface, i) -> {
+                    playerDefaultTV.setText(VIDEO_PLAYER.getItems()[i]);
+                    SharedPreferencesUtils.setParam(getApplicationContext(), "player", i);
+                    dialogInterface.dismiss();
+                });
     }
 
+    /**
+     * 选择播放器内核
+     */
     public void setPlayerKernel() {
-        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this, R.style.DialogStyle);
-        builder.setTitle(VIDEO_PLAYER_KERNEL.getDialogTitle());
-        builder.setSingleChoiceItems(VIDEO_PLAYER_KERNEL.getItems(), (Integer) SharedPreferencesUtils.getParam(getApplicationContext(), "player_kernel", 0), (dialog, which) -> {
-            kernelDefaultTV.setText(VIDEO_PLAYER_KERNEL.getItems()[which]);
-            SharedPreferencesUtils.setParam(getApplicationContext(), "player_kernel", which);
-            dialog.dismiss();
-        });
-        AlertDialog alertDialog = builder.create();
-        alertDialog.show();
+        Utils.showSingleChoiceAlert(this,
+                VIDEO_PLAYER_KERNEL.getDialogTitle(),
+                VIDEO_PLAYER_KERNEL.getItems(),
+                true,
+                (Integer) SharedPreferencesUtils.getParam(getApplicationContext(), "player_kernel", 0),
+                (dialogInterface, i) -> {
+                    kernelDefaultTV.setText(VIDEO_PLAYER_KERNEL.getItems()[i]);
+                    SharedPreferencesUtils.setParam(getApplicationContext(), "player_kernel", i);
+                    dialogInterface.dismiss();
+                });
     }
 
+    /**
+     * 启动时是否检查更新
+     */
     public void setCheckUpdate() {
-        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this, R.style.DialogStyle);
-        builder.setTitle(CHECK_APP_UPDATE.getDialogTitle());
-        builder.setSingleChoiceItems(CHECK_APP_UPDATE.getItems(), (Integer) SharedPreferencesUtils.getParam(getApplicationContext(), "start_check_update", 0), (dialog, which) -> {
-            checkUpdateDefaultTV.setText(CHECK_APP_UPDATE.getItems()[which]);
-            SharedPreferencesUtils.setParam(getApplicationContext(), "start_check_update", which);
-            dialog.dismiss();
-        });
-        AlertDialog alertDialog = builder.create();
-        alertDialog.show();
+        Utils.showSingleChoiceAlert(this,
+                CHECK_APP_UPDATE.getDialogTitle(),
+                CHECK_APP_UPDATE.getItems(),
+                true,
+                (Integer) SharedPreferencesUtils.getParam(getApplicationContext(), "start_check_update", 0),
+                (dialogInterface, i) -> {
+                    checkUpdateDefaultTV.setText(CHECK_APP_UPDATE.getItems()[i]);
+                    SharedPreferencesUtils.setParam(getApplicationContext(), "start_check_update", i);
+                    dialogInterface.dismiss();
+                });
     }
 
+    /**
+     * 追番更新检测
+     */
     public void setCheckFavoriteUpdateState() {
-        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this, R.style.DialogStyle);
-        builder.setTitle(CHECK_AMINE_UPDATE.getDialogTitle());
-        builder.setSingleChoiceItems(CHECK_AMINE_UPDATE.getItems(), (Boolean) SharedPreferencesUtils.getParam(this, "check_favorite_update", true) ? 0 : 1, (dialog, which) -> {
-            SharedPreferencesUtils.setParam(getApplicationContext(), "check_favorite_update", which == 0);
-            checkFavoriteUpdateTV.setText(CHECK_AMINE_UPDATE.getItems()[which]);
-            dialog.dismiss();
-        });
-        AlertDialog alertDialog = builder.create();
-        alertDialog.show();
+        Utils.showSingleChoiceAlert(this,
+                CHECK_AMINE_UPDATE.getDialogTitle(),
+                CHECK_AMINE_UPDATE.getItems(),
+                true,
+                (Boolean) SharedPreferencesUtils.getParam(this, "check_favorite_update", true) ? 0 : 1,
+                (dialogInterface, i) -> {
+                    checkFavoriteUpdateTV.setText(CHECK_AMINE_UPDATE.getItems()[i]);
+                    SharedPreferencesUtils.setParam(getApplicationContext(), "check_favorite_update", i == 0);
+                    dialogInterface.dismiss();
+                });
     }
 
+    /**
+     * 同时下载任务数量
+     */
+    @Deprecated
     public void setDownloadNumber() {
-        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this, R.style.DialogStyle);
-        builder.setTitle("设置同时下载任务数量");
-        builder.setSingleChoiceItems(downloadNumbers, (Integer) SharedPreferencesUtils.getParam(this, "download_number", 0), (dialog, which) -> {
-            SharedPreferencesUtils.setParam(this, "download_number", which);
-            downloadNumberTV.setText(downloadNumbers[which]);
-            Aria.get(this).getDownloadConfig().setMaxTaskNum(Integer.valueOf(downloadNumbers[which]));
-            dialog.dismiss();
-        });
-        AlertDialog alertDialog = builder.create();
-        alertDialog.show();
+        Utils.showSingleChoiceAlert(this,
+                "设置同时下载任务数量",
+                downloadNumbers,
+                true,
+                (Integer) SharedPreferencesUtils.getParam(this, "download_number", 0),
+                (dialogInterface, i) -> {
+                    downloadNumberTV.setText(downloadNumbers[i]);
+                    Aria.get(this).getDownloadConfig().setMaxTaskNum(Integer.valueOf(downloadNumbers[i]));
+                    SharedPreferencesUtils.setParam(getApplicationContext(), "download_number", i);
+                    dialogInterface.dismiss();
+                });
     }
 
+    /**
+     * 清除Aria所有下载记录
+     */
     private void removeDownloads() {
-        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this, R.style.DialogStyle);
-        builder.setPositiveButton(Utils.getString(R.string.page_positive), null);
-        builder.setNegativeButton(Utils.getString(R.string.cancel), null);
-        builder.setTitle(Utils.getString(R.string.remove_downloads_title));
-        builder.setMessage(Utils.getString(R.string.remove_downloads_content));
-        alertDialog = builder.create();
-        alertDialog.show();
-        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
-            EventBus.getDefault().post(new Refresh(99));
-            Aria.download(this).removeAllTask(false);
-            DatabaseUtil.deleteAllDownloads();
-            CustomToast.showToast(this, "已删除所有下载记录", CustomToast.DEFAULT);
-            alertDialog.dismiss();
-        });
-        alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(v -> alertDialog.dismiss());
+        Utils.showAlert(this,
+                Utils.getString(R.string.remove_downloads_title),
+                Utils.getString(R.string.remove_downloads_content),
+                false,
+                Utils.getString(R.string.page_positive),
+                Utils.getString(R.string.cancel),
+                null,
+                (dialogInterface, i) -> {
+                    EventBus.getDefault().post(new Refresh(99));
+                    Aria.download(this).removeAllTask(false);
+                    DatabaseUtil.deleteAllDownloads();
+                    CustomToast.showToast(this, "已删除所有下载记录", CustomToast.DEFAULT);
+                    dialogInterface.dismiss();
+                },
+                (dialogInterface, i) -> dialogInterface.dismiss(),
+                null);
     }
 
+    /**
+     * 是否开启弹幕
+     */
     public void setDanmu() {
-        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this, R.style.DialogStyle);
-        builder.setTitle(VIDEO_PLAYER_DANMU.getDialogTitle());
-        builder.setSingleChoiceItems(VIDEO_PLAYER_DANMU.getItems(), (Boolean) SharedPreferencesUtils.getParam(this, "open_danmu", true) ? 0 : 1, (dialog, which) -> {
-            SharedPreferencesUtils.setParam(getApplicationContext(), "open_danmu", which == 0);
-            danmuSelectTV.setText(VIDEO_PLAYER_DANMU.getItems()[which]);
-            dialog.dismiss();
-        });
-        AlertDialog alertDialog = builder.create();
-        alertDialog.show();
+        Utils.showSingleChoiceAlert(this,
+                VIDEO_PLAYER_DANMU.getDialogTitle(),
+                VIDEO_PLAYER_DANMU.getItems(),
+                true,
+                (Boolean) SharedPreferencesUtils.getParam(this, "open_danmu", true) ? 0 : 1,
+                (dialogInterface, i) -> {
+                    danmuSelectTV.setText(VIDEO_PLAYER_DANMU.getItems()[i]);
+                    SharedPreferencesUtils.setParam(getApplicationContext(), "open_danmu", i == 0);
+                    dialogInterface.dismiss();
+                });
     }
 }

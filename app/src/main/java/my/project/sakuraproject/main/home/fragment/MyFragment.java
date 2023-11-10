@@ -1,5 +1,6 @@
 package my.project.sakuraproject.main.home.fragment;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -152,25 +153,16 @@ public class MyFragment extends MyLazyFragment {
     }
 
     private void setDefaultSource() {
-        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(getActivity(), R.style.DialogStyle);
-        builder.setTitle(Utils.getString(R.string.select_source));
-        int selected = Utils.isImomoe() ? 1 : 0;
-        builder.setSingleChoiceItems(sourceItems, selected, (dialog, index) -> {
-            switch (index) {
-                case 0:
-                    SharedPreferencesUtils.setParam(getActivity(), "isImomoe", false);
-//                    setDomain();
-                    break;
-                case 1:
-//                    CustomToast.showToast(getActivity(), "该站点已关闭，后续将引入新站点...", CustomToast.WARNING);
-                    SharedPreferencesUtils.setParam(getActivity(), "isImomoe", true);
-                    break;
-            }
-            setDomain();
-            dialog.dismiss();
-        });
-        AlertDialog alertDialog = builder.create();
-        alertDialog.show();
+        Utils.showSingleChoiceAlert(getActivity(),
+                Utils.getString(R.string.select_source),
+                sourceItems,
+                true,
+                Utils.isImomoe() ? 1 : 0,
+                (dialogInterface, i) -> {
+                    SharedPreferencesUtils.setParam(getActivity(), "isImomoe", i == 1);
+                    setDomain();
+                    dialogInterface.dismiss();
+                });
     }
 
     private void setDomain() {
@@ -205,14 +197,19 @@ public class MyFragment extends MyLazyFragment {
                         String body = obj.getString("body");
                         getActivity().runOnUiThread(() -> {
                             Utils.cancelDialog(alertDialog);
-                            Utils.findNewVersion(getActivity(),
-                                    newVersion,
+                            Utils.showAlert(getActivity(),
+                                    getString(R.string.find_new_version) + newVersion,
                                     body,
-                                    (dialog, which) -> {
-                                        dialog.dismiss();
+                                    false,
+                                    getString(R.string.update_now),
+                                    getString(R.string.update_after),
+                                    null,
+                                    (DialogInterface.OnClickListener) (dialogInterface, i) -> {
+                                        dialogInterface.dismiss();
                                         viewInBrowser();
                                     },
-                                    (dialog, which) -> dialog.dismiss()
+                                    null,
+                                    null
                             );
                         });
                     }
@@ -229,7 +226,7 @@ public class MyFragment extends MyLazyFragment {
     private void viewInBrowser() {
         Utils.putTextIntoClip(downloadUrl);
         CustomToast.showToast(getActivity(), Utils.getString(R.string.url_copied), CustomToast.SUCCESS);
-        Utils.viewInBrowser(getActivity(), downloadUrl);
+        Utils.viewInChrome(getActivity(), downloadUrl);
     }
 
 

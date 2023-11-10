@@ -38,7 +38,7 @@ public class DatabaseUtil {
      * 创建tables
      */
     public static void CREATE_TABLES() {
-        db = SQLiteDatabase.openOrCreateDatabase(DB_PATH, null);
+        db = SQLiteDatabase.openOrCreateDatabase(Utils.hasFilePermission() ? DB_PATH : Utils.getPrivateDbPath(), null);
         db.execSQL("create table if not exists T_ANIME(F_INDEX integer primary key autoincrement, F_ID text, F_TITLE text, F_SOURCE integer)");
         db.execSQL("create table if not exists T_FAVORITE(F_INDEX integer primary key autoincrement, F_ID text, F_LINK_ID text, F_IMG_URL text, F_URL text, F_DESC text, F_LAST_PLAY_NUMBER text, F_LAST_UPDATE_NUMBER text, F_STATE integer)");
         db.execSQL("create table if not exists T_HISTORY(F_INDEX integer primary key autoincrement, F_ID text, F_LINK_ID text, F_DESC_URL text, F_IMG_URL text, F_VISIBLE integer, F_UPDATE_TIME text)");
@@ -190,7 +190,7 @@ public class DatabaseUtil {
         Toast.makeText(Sakura.getInstance(), "数据迁移完毕", Toast.LENGTH_SHORT).show();
     }
 
-    public static void openDB() { if (null != db) db = SQLiteDatabase.openOrCreateDatabase(DB_PATH, null);}
+    public static void openDB() { if (null != db) db = SQLiteDatabase.openOrCreateDatabase(Utils.hasFilePermission() ? DB_PATH : Utils.getPrivateDbPath(), null);}
 
     /**
      * 关闭数据库连接

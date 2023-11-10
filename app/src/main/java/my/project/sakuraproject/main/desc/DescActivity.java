@@ -807,6 +807,8 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
      * 下载配置
      */
     private void createDownloadConfig() {
+        if (!Utils.hasFilePermission())
+            return;
         if (isImomoe)
             savePath = Environment.getExternalStorageDirectory() + "/SakuraAnime/Downloads/SILISILI/" + detailsTitle + "/";
         else
@@ -851,11 +853,10 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
      * @param playNumber
      */
     private void startDownload(String url, String playNumber) {
-//        downloadBottomSheetDialog.dismiss();
-        /*if (!url.endsWith("mp4") && !url.endsWith("m3u8")) {
-            VideoUtils.showInfoDialog(this, "不支持的下载格式，该地址可能非视频地址！ -> " + url);
+        if (!Utils.hasFilePermission()) {
+            Utils.openOtherSoftware(this, url);
             return;
-        }*/
+        }
         if (!url.contains("http")) {
             VideoUtils.showInfoDialog(this, "不支持的下载格式，该地址可能非视频地址！ -> " + url);
             return;

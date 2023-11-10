@@ -150,7 +150,7 @@ public class JZPlayer extends JzvdStd {
         danmakuContext.setDanmakuStyle(IDisplayer.DANMAKU_STYLE_STROKEN, 3)
                 .setDuplicateMergingEnabled(false)
                 .setScrollSpeedFactor(1.2f)
-                .setScaleTextSize(Utils.isPad() ? 2f : 1.2f)
+                .setScaleTextSize(Utils.isPad() ? 1.3f : 1f)
 //                .setMaximumLines(maxLinesPair)
                 .setMaximumLines(null)
                 .preventOverlapping(overlappingEnablePair).setDanmakuMargin(40);

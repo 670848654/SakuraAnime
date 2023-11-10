@@ -43,6 +43,7 @@ public class HomeBannerAdapter extends BannerAdapter<HomeBean.HomeItemBean, Home
     @Override
     public void onBindView(BannerViewHolder holder, HomeBean.HomeItemBean homeItemBean, int position, int size) {
         ImageView imageView = holder.imageView;
+        imageView.setTag(R.id.imageid,  homeItemBean.getImg());
         if (Utils.isPad()) {
             imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
         } else

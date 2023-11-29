@@ -1,5 +1,6 @@
 package my.project.sakuraproject.main.player;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -45,6 +46,7 @@ import my.project.sakuraproject.util.Utils;
 
 public class JZPlayer extends JzvdStd {
     float starX, startY;
+    private Activity activity;
     private Context context;
     private CompleteListener listener;
     private TouchListener touchListener;
@@ -84,10 +86,11 @@ public class JZPlayer extends JzvdStd {
         super(context, attrs);
     }
 
-    public void setListener(Context context, CompleteListener listener,
+    public void setListener(Activity activity, Context context, CompleteListener listener,
                             TouchListener touchListener, ShowOrHideChangeViewListener showOrHideChangeViewListener,
                             OnProgressListener onProgressListener, PlayingListener playingListener, PauseListener pauseListener,
                             OnQueryDanmuListener onQueryDanmuListener) {
+        this.activity = activity;
         this.context = context;
         this.listener = listener;
         this.touchListener = touchListener;
@@ -200,13 +203,13 @@ public class JZPlayer extends JzvdStd {
                     changeUiToPlayingShow();
                     leftBLock.setImageResource(R.drawable.player_btn_locking);
                     rightBlock.setImageResource(R.drawable.player_btn_locking);
-                    CustomToast.showToast(context, "屏幕锁定关闭", CustomToast.SUCCESS);
+                    CustomToast.showToast(activity, "屏幕锁定关闭", CustomToast.SUCCESS);
                 } else {
                     // 上锁
                     changeUiToPlayingClear();
                     leftBLock.setImageResource(R.drawable.player_btn_locking_pre);
                     rightBlock.setImageResource(R.drawable.player_btn_locking_pre);
-                    CustomToast.showToast(context, "屏幕锁定开启", CustomToast.SUCCESS);
+                    CustomToast.showToast(activity, "屏幕锁定开启", CustomToast.SUCCESS);
 //                    Drawable up = ContextCompat.getDrawable(context,R.drawable.player_btn_locking_pre);
 //                    Drawable drawableUp= DrawableCompat.wrap(up);
 //                    DrawableCompat.setTint(drawableUp, ContextCompat.getColor(context,R.color.colorAccent));
@@ -243,7 +246,7 @@ public class JZPlayer extends JzvdStd {
                 break;
             case R.id.airplay:
                 if (!Utils.isWifi(context)) {
-                    CustomToast.showToast(context, "投屏需要连接Wifi，确保与投屏设备网络环境一致~", CustomToast.WARNING);
+                    CustomToast.showToast(activity, "投屏需要连接Wifi，确保与投屏设备网络环境一致~", CustomToast.ERROR);
                     return;
                 }
                 if (isLocalVideo) {

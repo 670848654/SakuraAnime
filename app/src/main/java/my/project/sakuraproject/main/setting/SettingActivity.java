@@ -222,6 +222,7 @@ public class SettingActivity extends BaseActivity {
                     EventBus.getDefault().post(new Refresh(0));
 //                    application.showSuccessToastMsg(Utils.getString(R.string.set_domain_ok));
                     CustomToast.showToast(this, Utils.getString(R.string.set_domain_ok), CustomToast.SUCCESS);
+//                    application.showSnackbar(toolbar, Utils.getString(R.string.set_domain_ok));
                 } else textInputLayout.getEditText().setError(Utils.getString(R.string.set_domain_error2));
             } else textInputLayout.getEditText().setError(Utils.getString(R.string.set_domain_error1));
         });
@@ -336,6 +337,7 @@ public class SettingActivity extends BaseActivity {
                     Aria.download(this).removeAllTask(false);
                     DatabaseUtil.deleteAllDownloads();
                     CustomToast.showToast(this, "已删除所有下载记录", CustomToast.DEFAULT);
+//                    application.showSnackbar(toolbar, "已删除所有下载记录");
                     dialogInterface.dismiss();
                 },
                 (dialogInterface, i) -> dialogInterface.dismiss(),

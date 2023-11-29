@@ -399,7 +399,8 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         downloadAdapter.setOnItemClickListener((adapter, view, position) -> {
             DownloadDramaBean bean = downloadBean.get(position);
             if (bean.isHasDownload()) {
-                CustomToast.showToast(this, "已存在下载任务，请勿重复执行！", CustomToast.WARNING);
+//                CustomToast.showToast(this, "已存在下载任务，请勿重复执行！", CustomToast.WARNING);
+                application.showToastMsg("已存在下载任务，请勿重复执行！");
                 return;
             }
             // 下载开始
@@ -515,7 +516,8 @@ public class DescActivity extends BaseActivity<DescContract.View, DescPresenter>
         isFavorite = DatabaseUtil.favorite(animeListBean, animeId);
         favoriteBtn.setIcon(ContextCompat.getDrawable(this, isFavorite ? R.drawable.baseline_favorite_white_48dp : R.drawable.baseline_favorite_border_white_48dp));
         favoriteBtn.setText(isFavorite ? Utils.getString(R.string.has_favorite) : Utils.getString(R.string.favorite));
-        application.showSnackbarMsg(favoriteBtn, isFavorite ? Utils.getString(R.string.join_ok) : Utils.getString(R.string.join_error), playLinearLayout);
+//        application.showSnackbarMsg(favoriteBtn, isFavorite ? Utils.getString(R.string.join_ok) : Utils.getString(R.string.join_error), playLinearLayout);
+        CustomToast.showToast(this, isFavorite ? Utils.getString(R.string.join_ok) : Utils.getString(R.string.join_error), CustomToast.DEFAULT);
         EventBus.getDefault().post(new Refresh(1));
     }
 

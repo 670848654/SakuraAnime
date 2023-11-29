@@ -166,7 +166,7 @@
     <string name="empty_history">没有历史记录呢(－∀＝)</string>
     <string name="delete_single_history">是否删除该历史记录？</string>
     <string name="delete_all_history">清空之后就什么都没有了哦~</string>
-    <string name="get_anime_info">拉取数据中，请稍后&#8230;</string>
+    <string name="get_anime_info">解析视频地址中，请稍后&#8230;</string>
     <string name="desc_history_menu">详情页</string>
     <string name="delete_history_menu">删除</string>
     <string name="delete_all_menu">清空历史</string>
@@ -216,6 +216,7 @@
     <string name="file_manger_msg">Android 11 及以上需要授予所有文件的管理权限。\n注：仅用于保存追番列表、历史记录、视频下载信息。\n如果你不需要下载功能，可以拒绝授权。</string>
 
     <string name="device_title">设备列表</string>
+    <string name="video_url">播放地址：%s</string>
     <string name="notice">请选择连接设备，连接设备后才可播放</string>
     <string name="selectedText">已选中: %s</string>
     <string name="progress">进度</string>
@@ -225,6 +226,7 @@
     <string name="pause">暂停</string>
     <string name="stop">停止</string>
     <string name="exit">退出</string>
+    <string name="main_title">首页</string>
     <string name="my_title">我的</string>
     <string name="history_detail">详情页&#187;</string>
     <string name="download_anime_list_content_title">共 %s 个内容</string>

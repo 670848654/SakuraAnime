@@ -159,7 +159,7 @@ public class ImomoeJsoupUtils {
             HomeBean.HomeItemBean homeItemBean = new HomeBean.HomeItemBean();
             String animeTitle = update.select("h2.entry-title").text();
             String url = update.select("h2.entry-title > a").attr("href");
-            String img = update.select("img.scrollLoading").attr("data-url");
+            String img = update.select("img.scrollLoading").attr("src");
             String episodes = update.select("div.entry-meta").text();
             homeItemBean.setTitle(animeTitle);
             homeItemBean.setUrl(url);

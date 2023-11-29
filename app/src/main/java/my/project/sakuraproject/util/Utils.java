@@ -77,6 +77,7 @@ import androidx.palette.graphics.Palette;
 import jp.wasabeef.glide.transformations.BlurTransformation;
 import my.project.sakuraproject.BuildConfig;
 import my.project.sakuraproject.R;
+import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.bean.UpdateImgBean;
 import my.project.sakuraproject.custom.CustomToast;
 import my.project.sakuraproject.main.base.BaseModel;
@@ -189,8 +190,8 @@ public class Utils {
         try {
             context.startActivity(Intent.createChooser(intent, "请选择视频播放器"));
         } catch (ActivityNotFoundException e) {
-//            Sakura.getInstance().showToastMsg("没有找到匹配的程序");
-            CustomToast.showToast(getContext(), "没有找到匹配的程序", CustomToast.WARNING);
+            Sakura.getInstance().showToastMsg("没有找到匹配的程序");
+//            CustomToast.showToast(getContext(), "没有找到匹配的程序", CustomToast.WARNING);
         }
     }
 
@@ -207,7 +208,8 @@ public class Utils {
         try {
             context.startActivity(Intent.createChooser(intent, "请选择相关软件进行操作"));
         } catch (ActivityNotFoundException e) {
-            CustomToast.showToast(getContext(), "没有找到匹配的程序", CustomToast.WARNING);
+            Sakura.getInstance().showToastMsg("没有找到匹配的程序");
+//            CustomToast.showToast(getContext(), "没有找到匹配的程序", CustomToast.WARNING);
         }
     }
 
@@ -224,8 +226,8 @@ public class Utils {
         if (intent.resolveActivity(context.getPackageManager()) != null) {
             context.startActivity(Intent.createChooser(intent, "请通过浏览器打开"));
         } else {
-//            Sakura.getInstance().showToastMsg("没有找到匹配的程序");
-            CustomToast.showToast(getContext(), "没有找到匹配的程序", CustomToast.WARNING);
+            Sakura.getInstance().showToastMsg("没有找到匹配的程序");
+//            CustomToast.showToast(getContext(), "没有找到匹配的程序", CustomToast.WARNING);
         }
     }
 

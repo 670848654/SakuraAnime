@@ -122,7 +122,7 @@ public class MainActivity extends BaseActivity {
             toolbar.setNavigationIcon(null);
             switch (destination.getId()) {
                 case R.id.home:
-                    toolbar.setTitle(getString(R.string.app_name));
+                    toolbar.setTitle(getString(R.string.main_title));
                     toolbar.setSubtitle(Utils.isImomoe() ? getResources().getString(R.string.imomoe) : getResources().getString(R.string.yhdm));
                     break;
                 case R.id.my:

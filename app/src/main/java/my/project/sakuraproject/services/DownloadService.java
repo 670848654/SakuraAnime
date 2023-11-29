@@ -124,6 +124,7 @@ public class DownloadService extends Service {
     public void onTaskComplete(DownloadTask downloadTask) {
         String animeTitle = (String) VideoUtils.getAnimeInfo(downloadTask, 0);
         mNotify.uploadInfo(new Long(downloadTask.getEntity().getId()).intValue(), animeTitle, downloadTask.getTaskName(), "下载成功");
+        taskIds.remove(downloadTask.getEntity().getId());
         DatabaseUtil.updateDownloadSuccess(animeTitle, (Integer) VideoUtils.getAnimeInfo(downloadTask, 1), downloadTask.getFilePath(), downloadTask.getEntity().getId(), downloadTask.getFileSize());
         Aria.download(this).load(downloadTask.getEntity().getId()).ignoreCheckPermissions().cancel(false); // 下载完成删除任务
         EventBus.getDefault().post(new DownloadEvent(animeTitle, downloadTask.getTaskName(), downloadTask.getFilePath(), downloadTask.getFileSize()));

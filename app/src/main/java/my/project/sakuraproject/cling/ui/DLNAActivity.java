@@ -65,7 +65,8 @@ public class DLNAActivity extends BaseActivity implements SeekBar.OnSeekBarChang
 
     private Context mContext;
     private Handler mHandler = new InnerHandler();
-
+    @BindView(R.id.video_url)
+    TextView videoUrlView;
     @BindView(R.id.lv_devices)
     ListView mDeviceList;
     @BindView(R.id.tv_selected)
@@ -148,6 +149,7 @@ public class DLNAActivity extends BaseActivity implements SeekBar.OnSeekBarChang
         getWindow().setAttributes(attributes);
         mContext = this;
         playUrl = getIntent().getExtras().getString("playUrl");
+        videoUrlView.setText(String.format(getString(R.string.video_url), playUrl));
         duration = getIntent().getExtras().getLong("duration");
         initView();
         initListeners();

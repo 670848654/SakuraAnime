@@ -1,7 +1,6 @@
 package my.project.sakuraproject.main.player;
 
 import android.app.PictureInPictureParams;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
@@ -19,7 +18,6 @@ import android.widget.Toast;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import org.greenrobot.eventbus.EventBus;
@@ -60,7 +58,6 @@ import my.project.sakuraproject.custom.CustomDanmakuParser;
 import my.project.sakuraproject.custom.CustomToast;
 import my.project.sakuraproject.database.DatabaseUtil;
 import my.project.sakuraproject.main.base.BaseActivity;
-import my.project.sakuraproject.main.base.BaseModel;
 import my.project.sakuraproject.main.base.Presenter;
 import my.project.sakuraproject.main.video.DanmuContract;
 import my.project.sakuraproject.main.video.DanmuPresenter;
@@ -209,7 +206,7 @@ public abstract class BasePlayerActivity extends BaseActivity implements JZPlaye
                 drawerLayout.closeDrawer(GravityCompat.END);
             else drawerLayout.openDrawer(GravityCompat.END);
         });
-        player.setListener(this, this, this, this, this, this, this, this);
+        player.setListener(this, this, this, this, this, this, this, this, this);
         player.WIFI_TIP_DIALOG_SHOWED = true;
         player.backButton.setOnClickListener(v -> finish());
         player.preVideo.setOnClickListener(v -> {

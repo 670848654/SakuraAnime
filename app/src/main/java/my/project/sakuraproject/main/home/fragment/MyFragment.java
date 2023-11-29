@@ -4,14 +4,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.wuyr.rippleanimation.RippleAnimation;
 
 import org.greenrobot.eventbus.EventBus;
@@ -177,7 +175,10 @@ public class MyFragment extends MyLazyFragment {
             public void onFailure(Call call, IOException e) {
                 getActivity().runOnUiThread(() -> {
                     Utils.cancelDialog(alertDialog);
-                    CustomToast.showToast(getActivity(), Utils.getString(R.string.ck_network_error_start), CustomToast.ERROR);
+//                    CustomToast.showToast(getActivity(), Utils.getString(R.string.ck_network_error_start), CustomToast.ERROR);
+                    application.showSnackbarMsgAction(rootView, Utils.getString(R.string.ck_network_error_start), "重试", view -> {
+                        checkUpdate();
+                    });
                 });
             }
 
@@ -190,7 +191,8 @@ public class MyFragment extends MyLazyFragment {
                     if (newVersion.equals(Utils.getASVersionName()))
                         getActivity().runOnUiThread(() -> {
                             Utils.cancelDialog(alertDialog);
-                            CustomToast.showToast(getActivity(), Utils.getString(R.string.no_new_version), CustomToast.SUCCESS);
+                            CustomToast.showToast(getActivity(), Utils.getString(R.string.no_new_version), CustomToast.DEFAULT);
+//                            application.showSnackbar(rootView, Utils.getString(R.string.no_new_version));
                         });
                     else {
                         downloadUrl = obj.getJSONArray("assets").getJSONObject(0).getString("browser_download_url");
@@ -216,8 +218,11 @@ public class MyFragment extends MyLazyFragment {
                 } catch (JSONException e) {
                     e.printStackTrace();
 //                    application.showErrorToastMsg(Utils.getString(R.string.ck_error_start));
-                    CustomToast.showToast(getActivity(), Utils.getString(R.string.ck_error_start), CustomToast.ERROR);
+//                    CustomToast.showToast(getActivity(), Utils.getString(R.string.ck_error_start), CustomToast.ERROR);
                     Utils.cancelDialog(alertDialog);
+                    application.showSnackbarMsgAction(rootView, Utils.getString(R.string.ck_network_error_start), "重试", view -> {
+                        checkUpdate();
+                    });
                 }
             }
         }), 1000);
@@ -225,7 +230,8 @@ public class MyFragment extends MyLazyFragment {
 
     private void viewInBrowser() {
         Utils.putTextIntoClip(downloadUrl);
-        CustomToast.showToast(getActivity(), Utils.getString(R.string.url_copied), CustomToast.SUCCESS);
+        CustomToast.showToast(getActivity(), Utils.getString(R.string.url_copied), CustomToast.DEFAULT);
+//        application.showSnackbar(rootView, Utils.getString(R.string.url_copied));
         Utils.viewInChrome(getActivity(), downloadUrl);
     }
 

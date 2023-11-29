@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Application;
 import android.os.Handler;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatDelegate;
 
@@ -99,16 +100,20 @@ public class Sakura extends Application {
         YHDM_UPDATE = String.format("%s/new/", SharedPreferencesUtils.getParam(appContext, "domain", Utils.getString(R.string.domain_url)));
     }
 
+    public void showToastMsg(String msg) {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+    }
+
     public void showSnackbarMsgAction(View view, String msg, String actionMsg, View.OnClickListener listener) {
         Snackbar.make(view, msg, Snackbar.LENGTH_LONG).setAction(actionMsg, listener).show();
     }
 
-    public void showSnackbarMsg(View view, String msg, View anchorView) {
+    /*public void showSnackbarMsg(View view, String msg, View anchorView) {
         Snackbar snackbar = Snackbar.make(view, msg, Snackbar.LENGTH_LONG);
         snackbar.setAnchorView(anchorView);
         snackbar.getView().setBackgroundColor(getResources().getColor(R.color.colorAccent));
         snackbar.show();
-    }
+    }*/
 
     public void addActivity(Activity activity) {
         if (!oList.contains(activity)) {

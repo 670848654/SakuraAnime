@@ -373,7 +373,7 @@ public class ImomoeJsoupUtils {
      * 2022年6月29日20:40:53 修改
      * @param source
      * @param dramaStr
-     * @return 如果没有播放列表则返回null
+     * @return 如果没有播放列表则返回空对象
      */
     public static AnimeDescListBean getAnimeDescList(String source, String dramaStr) {
         AnimeDescListBean animeDescListBean = new AnimeDescListBean();
@@ -407,6 +407,8 @@ public class ImomoeJsoupUtils {
                 animeDramasBean.setAnimeDescDetailsBeanList(animeDescDramasBeans);
                 animeDramasBeans.add(animeDramasBean);
             }
+            if (animeDramasBeans.size() == 0)
+                return animeDescListBean;
             animeDescListBean.setAnimeDramasBeans(animeDramasBeans);
             //** 封装推荐 **//
             Elements recommendElements = document.select("div.vod_hl_list").select("a"); //相关推荐
@@ -422,7 +424,7 @@ public class ImomoeJsoupUtils {
             }
             return animeDescListBean;
         } else
-            return null;
+            return animeDescListBean;
     }
     /**************************************  动漫详情解析方法结束  **************************************/
 

@@ -106,12 +106,10 @@ public class DescModel extends BaseModel implements DescContract.Model {
                         callback.isImomoe(true);
                         callback.getAnimeId(fid);
                         AnimeDescListBean animeDescListBean = ImomoeJsoupUtils.getAnimeDescList(source, dramaStr);
-                        if (animeDescListBean != null)
-                            callback.successMain(animeDescListBean);
-                        else if (animeDescListBean.getAnimeDramasBeans().size() == 0)
+                        if (animeDescListBean.getAnimeDramasBeans().size() == 0)
                             callback.emptyDram(Utils.getString(R.string.no_playlist_error));
                         else
-                            callback.emptyDram(Utils.getString(R.string.no_playlist_error));
+                            callback.successMain(animeDescListBean);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();

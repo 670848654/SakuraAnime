@@ -2,6 +2,7 @@ package my.project.sakuraproject.main.updateList;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.HapticFeedbackConstants;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 
@@ -74,7 +75,10 @@ public class UpdateListActivity extends BaseActivity<UpdateListContract.View, Up
         toolbar.setTitle(title);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        toolbar.setNavigationOnClickListener(view -> finish());
+        toolbar.setNavigationOnClickListener(view -> {
+            view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+            finish();
+        });
     }
 
     public void initSwipe() {

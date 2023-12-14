@@ -6,6 +6,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.text.Html;
 import android.util.Log;
+import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -104,7 +105,10 @@ public class DownloadDataActivity extends BaseActivity<DownloadDataContract.View
         toolbar.setTitle(animeTitle);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        toolbar.setNavigationOnClickListener(view -> finish());
+        toolbar.setNavigationOnClickListener(view -> {
+            view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+            finish();
+        });
     }
 
     private void initSwipe() {

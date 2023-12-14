@@ -4,6 +4,9 @@ import com.chad.library.adapter.base.loadmore.LoadMoreView;
 
 import my.project.sakuraproject.R;
 
+/**
+ * 自定义BRVAH加载更多视图
+ */
 public class CustomLoadMoreView extends LoadMoreView {
 
     @Override

@@ -26,8 +26,13 @@ public class HomeItemAdapter extends BaseQuickAdapter<HomeBean.HomeItemBean, Bas
         String imgUrl = item.getImg();
         ImageView imageView = helper.getView(R.id.img);
         imageView.setTag(R.id.imageid, imgUrl);
-        helper.getView(R.id.episodes).setVisibility(View.VISIBLE);
-        helper.setText(R.id.update_time, item.getEpisodes().isEmpty() ? "NULL" : item.getEpisodes());
+        String episodes = item.getEpisodes();
+        if (Utils.isNullOrEmpty(episodes))
+            helper.getView(R.id.episodes).setVisibility(View.GONE);
+        else {
+            helper.getView(R.id.episodes).setVisibility(View.VISIBLE);
+            helper.setText(R.id.update_time, item.getEpisodes());
+        }
         Utils.setCardDefaultBg(context, helper.getView(R.id.card_view), helper.getView(R.id.title));
         Utils.setDefaultImage(context, item.getImg(), item.getUrl(), imageView, true, helper.getView(R.id.card_view), helper.getView(R.id.title));
         helper.setText(R.id.title, item.getTitle());

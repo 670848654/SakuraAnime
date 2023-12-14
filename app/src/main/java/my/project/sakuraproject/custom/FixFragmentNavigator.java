@@ -21,6 +21,9 @@ import java.util.ArrayDeque;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 解决Navigation重复创建
+ */
 @Navigator.Name("fixFragment")
 public class FixFragmentNavigator extends FragmentNavigator {
     private final String TAG = "ReLoadFragmentNavictor";

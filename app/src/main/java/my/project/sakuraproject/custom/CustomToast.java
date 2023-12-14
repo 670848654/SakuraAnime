@@ -21,6 +21,9 @@ import my.project.sakuraproject.R;
 import my.project.sakuraproject.application.Sakura;
 import my.project.sakuraproject.util.Utils;
 
+/**
+ * 自定义提示窗
+ */
 public class CustomToast {
     private static PopupWindow popupWindow;
     public static final int DEFAULT = 0;

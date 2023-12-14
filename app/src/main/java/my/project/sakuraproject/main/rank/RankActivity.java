@@ -2,6 +2,7 @@ package my.project.sakuraproject.main.rank;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.HapticFeedbackConstants;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -68,7 +69,10 @@ public class RankActivity extends BaseActivity<RankContract.View, RankPresenter>
         toolbar.setTitle("排行榜");
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        toolbar.setNavigationOnClickListener(view -> finish());
+        toolbar.setNavigationOnClickListener(view -> {
+            view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+            finish();
+        });
     }
 
     public void initSwipe() {

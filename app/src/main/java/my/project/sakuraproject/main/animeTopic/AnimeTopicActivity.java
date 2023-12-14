@@ -3,6 +3,7 @@ package my.project.sakuraproject.main.animeTopic;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.HapticFeedbackConstants;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -87,7 +88,10 @@ public class AnimeTopicActivity extends BaseActivity<AnimeTopicContract.View, An
         toolbar.setTitle(title);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        toolbar.setNavigationOnClickListener(view -> finish());
+        toolbar.setNavigationOnClickListener(view -> {
+            view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+            finish();
+        });
     }
 
     @SuppressLint("RestrictedApi")

@@ -9,6 +9,9 @@ import android.widget.FrameLayout;
 
 import androidx.annotation.Nullable;
 
+/**
+ * 长按控件实现
+ */
 public class LongPressEventView extends FrameLayout {
     private LongPressEventListener longPressEventListener;
     private boolean isScroll = false;

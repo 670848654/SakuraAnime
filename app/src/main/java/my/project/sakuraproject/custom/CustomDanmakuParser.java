@@ -12,6 +12,10 @@ import master.flame.danmaku.danmaku.model.android.Danmakus;
 import master.flame.danmaku.danmaku.parser.BaseDanmakuParser;
 import master.flame.danmaku.danmaku.parser.android.JSONSource;
 
+/**
+ * JSON格式弹幕解析
+ */
+@Deprecated
 public class CustomDanmakuParser extends BaseDanmakuParser {
     @Override
     protected IDanmakus parse() {

@@ -2,6 +2,9 @@ package my.project.sakuraproject.bean;
 
 import java.util.List;
 
+/**
+ * 分类
+ */
 public class TagBean {
     private String title;
     private List<TagSelectBean> tagSelectBeans;

@@ -7,6 +7,9 @@ import android.view.ViewConfiguration;
 
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+/**
+ * 解决SwipeRefreshLayout与ViewPager滑动冲突
+ */
 public class VpSwipeRefreshLayout extends SwipeRefreshLayout {
 
     private float startY;

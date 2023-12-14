@@ -1,5 +1,7 @@
 package my.project.sakuraproject.main.about;
 
+import android.view.HapticFeedbackConstants;
+
 import com.chad.library.adapter.base.BaseQuickAdapter;
 
 import java.util.List;
@@ -64,7 +66,10 @@ public class OpenSourceActivity extends BaseActivity {
         toolbar.setTitle(Utils.getString(R.string.os_title));
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        toolbar.setNavigationOnClickListener(view -> supportFinishAfterTransition());
+        toolbar.setNavigationOnClickListener(view -> {
+            view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+            finish();
+        });
     }
 
     public void initSwipe() {

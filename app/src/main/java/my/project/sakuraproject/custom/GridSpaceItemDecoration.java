@@ -6,9 +6,10 @@ import android.view.View;
 import androidx.recyclerview.widget.RecyclerView;
 
 /**
- * Stack Overflow
+ * RecyclerView item 间距均分
+ * <p>
  * https://stackoverflow.com/questions/28531996/android-recyclerview-gridlayoutmanager-column-spacing
- * @edwardaa
+ * </p>
  */
 public class GridSpaceItemDecoration extends RecyclerView.ItemDecoration {
     private int spanCount;

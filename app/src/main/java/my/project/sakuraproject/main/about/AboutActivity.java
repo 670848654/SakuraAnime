@@ -2,6 +2,7 @@ package my.project.sakuraproject.main.about;
 
 import android.content.Intent;
 import android.os.Environment;
+import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -70,7 +71,10 @@ public class AboutActivity extends BaseActivity {
         toolbar.setTitle(Utils.getString(R.string.about));
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        toolbar.setNavigationOnClickListener(view -> finish());
+        toolbar.setNavigationOnClickListener(view -> {
+            view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+            finish();
+        });
     }
 
     private void initViews() {

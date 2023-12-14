@@ -1,5 +1,6 @@
 package my.project.sakuraproject.main.my;
 
+import android.view.HapticFeedbackConstants;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
@@ -73,7 +74,10 @@ public class MyActivity extends BaseActivity implements ViewPager.OnPageChangeLi
         toolbar.setTitle(getResources().getString(R.string.my_title));
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        toolbar.setNavigationOnClickListener(view -> finish());
+        toolbar.setNavigationOnClickListener(view -> {
+            view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+            finish();
+        });
     }
 
     public void initFab() {

@@ -18,6 +18,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import my.project.sakuraproject.R;
 
+/**
+ * 列表滑动显示/隐藏浮动按钮
+ */
 public class ScrollAwareBehavior extends FloatingActionButton.Behavior {
     private static final Interpolator INTERPOLATOR = new FastOutSlowInInterpolator();
     private boolean mIsAnimatingOut = false;

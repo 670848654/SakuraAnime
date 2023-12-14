@@ -2,6 +2,7 @@ package my.project.sakuraproject.main.my;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.HapticFeedbackConstants;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
@@ -97,7 +98,10 @@ public class HistoryActivity extends BaseActivity<HistoryContract.View, HistoryP
         toolbar.setTitle(Utils.getString(R.string.history_title));
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        toolbar.setNavigationOnClickListener(view -> finish());
+        toolbar.setNavigationOnClickListener(view -> {
+            view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+            finish();
+        });
     }
 
     private void initAdapter() {

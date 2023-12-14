@@ -6,6 +6,9 @@ import android.util.AttributeSet;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatTextView;
 
+/**
+ * 使TextView获得焦点展示文本跑马灯效果
+ */
 public class MyTextView extends AppCompatTextView {
     public MyTextView(Context context) {
         super(context);

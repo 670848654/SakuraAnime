@@ -2,6 +2,7 @@ package my.project.sakuraproject.main.tag;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
@@ -109,7 +110,10 @@ public class TagActivity extends BaseActivity<TagContract.View, TagPresenter> im
         toolbar.setTitle(title.isEmpty() ? Utils.getString(R.string.tag_title) : title);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        toolbar.setNavigationOnClickListener(view -> finish());
+        toolbar.setNavigationOnClickListener(view -> {
+            view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+            finish();
+        });
     }
 
     public void initSwipe() {

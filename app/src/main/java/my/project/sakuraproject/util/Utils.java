@@ -1029,4 +1029,12 @@ public class Utils {
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }
+
+    public static boolean isNullOrEmpty(String str) {
+        return str == null || str.isEmpty();
+    }
+
+    public static boolean isNullOrEmpty(Object obj) {
+        return obj == null;
+    }
 }

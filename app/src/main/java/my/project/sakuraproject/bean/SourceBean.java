@@ -1,5 +1,8 @@
 package my.project.sakuraproject.bean;
 
+/**
+ * 开源相关
+ */
 public class SourceBean {
     private String title;
     private String author;

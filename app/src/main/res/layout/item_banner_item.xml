@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_alignParentBottom="true"
-        android:background="#44000000"
+        android:background="@drawable/desc_update_time_gradient"
         android:orientation="horizontal"
         android:padding="5dp">
 

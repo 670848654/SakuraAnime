@@ -9,6 +9,7 @@ import static my.project.sakuraproject.config.SettingEnum.VIDEO_PLAYER_KERNEL;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Patterns;
+import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -103,7 +104,10 @@ public class SettingActivity extends BaseActivity {
         toolbar.setTitle(Utils.getString(R.string.home_setting_item_title));
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        toolbar.setNavigationOnClickListener(view -> finish());
+        toolbar.setNavigationOnClickListener(view -> {
+            view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+            finish();
+        });
     }
 
     public void initViews() {

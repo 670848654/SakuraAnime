@@ -9,6 +9,9 @@ import com.google.android.material.button.MaterialButton;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+/**
+ * 使Button获得焦点展示文本跑马灯效果
+ */
 public class MyButton extends MaterialButton {
 
     public MyButton(@NonNull Context context) { super(context); }

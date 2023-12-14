@@ -44,6 +44,9 @@ import master.flame.danmaku.danmaku.util.DanmakuUtils;
 
 import static master.flame.danmaku.danmaku.model.IDanmakus.ST_BY_TIME;
 
+/**
+ * XML格式弹幕解析
+ */
 public class BiliDanmukuParser extends BaseDanmakuParser {
 
     static {

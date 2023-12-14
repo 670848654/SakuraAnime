@@ -1,5 +1,7 @@
 package my.project.sakuraproject.main.week;
 
+import android.view.HapticFeedbackConstants;
+
 import com.google.android.material.tabs.TabLayout;
 
 import org.greenrobot.eventbus.Subscribe;
@@ -79,7 +81,10 @@ public class WeekActivity extends BaseActivity<HomeContract.View, HomePresenter>
         toolbar.setTitle(getResources().getString(R.string.app_sub_name));
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        toolbar.setNavigationOnClickListener(view -> finish());
+        toolbar.setNavigationOnClickListener(view -> {
+            view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+            finish();
+        });
     }
 
     public void initSwipe() {
